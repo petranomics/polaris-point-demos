@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lone Star Plumbing Co. | Austin Plumbers 24/7</title>
+  <meta name="description" content="Lone Star Plumbing Co. offers fast, reliable plumbing in Austin, TX. Licensed and insured with same-day service available." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1B3A6B;
+      --navy-dark: #0f2748;
+      --orange: #E8601E;
+      --orange-light: #FF7A3D;
+      --light: #f6f8fc;
+      --text: #173052;
+      --muted: #5a6f8f;
+      --white: #fff;
+      --radius: 14px;
+      --shadow: 0 8px 30px rgba(10, 35, 68, 0.12);
+      --max: 1140px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--text);
+      background: var(--light);
+      line-height: 1.6;
+    }
+    h1, h2, h3 { font-family: 'Montserrat', sans-serif; letter-spacing: -.01em; margin-top: 0; }
+    .container { width: min(100% - 2rem, var(--max)); margin-inline: auto; }
+    section { padding: 80px 0; }
+
+    /* DEMO BANNER */
+    .demo-banner {
+      background: #0B1F3A;
+      color: #00C2B2;
+      text-align: center;
+      padding: 10px 20px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+    }
+    .demo-banner a { color: #F5A623; font-weight: bold; text-decoration: none; }
+
+    .topbar {
+      background: var(--navy-dark);
+      color: #c8d8ee;
+      font-size: .88rem;
+      padding: 8px 0;
+    }
+    .topbar-wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .topbar a {
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar a svg { flex-shrink: 0; }
+
+    .site-header {
+      position: sticky;
+      top: 44px;
+      z-index: 900;
+      background: rgba(27, 58, 107, 0.97);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(10px);
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+    }
+    .logo {
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--orange);
+      display: grid;
+      place-items: center;
+    }
+    .logo-icon svg { display: block; }
+    .nav-links { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+    .nav-links a { color: #c8d8ee; text-decoration: none; font-weight: 600; font-size: .92rem; transition: color .2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: var(--orange) !important;
+      color: #fff !important;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700 !important;
+      transition: background .2s ease, transform .2s ease;
+    }
+    .nav-cta:hover { background: var(--orange-light) !important; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      color: #fff;
+      padding: 0;
+      overflow: hidden;
+      min-height: 520px;
+      display: grid;
+      align-items: center;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(15,39,72,.92) 40%, rgba(27,58,107,.7) 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 80px 0 70px;
+    }
+    .hero h1 {
+      font-size: clamp(2.1rem, 5vw, 3.4rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      max-width: 16ch;
+      line-height: 1.1;
+    }
+    .hero p { margin-top: 0; color: #c8d8ee; font-size: 1.1rem; max-width: 48ch; }
+
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 13px 22px;
+      font-weight: 700;
+      font-size: .95rem;
+      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+      border: 2px solid transparent;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+    .btn-primary { background: var(--orange); color: #fff; }
+    .btn-primary:hover { background: var(--orange-light); }
+    .btn-secondary { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.35); color: #fff; backdrop-filter: blur(4px); }
+    .btn-secondary:hover { background: rgba(255,255,255,.18); }
+
+    .trust-strip {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.85);
+    }
+    .trust-item svg { color: #6dd47e; flex-shrink: 0; }
+
+    /* SERVICES */
+    .section-label {
+      text-transform: uppercase;
+      font-size: .72rem;
+      letter-spacing: 2.5px;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      border: 1px solid #e4eaf4;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(10,35,68,.16); }
+    .service-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #e8f0fd, #dae6f8);
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    .card h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .card p { color: var(--muted); font-size: .92rem; margin: 0 0 10px; }
+    .card-link { color: var(--orange); font-weight: 700; text-decoration: none; font-size: .88rem; display: inline-flex; align-items: center; gap: 4px; }
+    .card-link:hover { text-decoration: underline; }
+
+    /* PHOTO + TEXT SPLIT */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .split-img {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .split-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      min-height: 320px;
+    }
+
+    /* WHY CHOOSE US */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .why-card {
+      background: #fff;
+      border: 1px solid #e4eaf4;
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: transform .2s ease;
+    }
+    .why-card:hover { transform: translateY(-3px); }
+    .why-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #fff3eb, #ffe8d9);
+      color: var(--orange);
+    }
+    .why-card h3 { font-size: .95rem; margin-bottom: 4px; }
+    .why-card p { color: var(--muted); font-size: .9rem; margin: 0; }
+
+    /* REVIEWS */
+    .review-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      border: 1px solid #e4eaf4;
+      position: relative;
+    }
+    .review-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 16px;
+      bottom: 16px;
+      width: 4px;
+      border-radius: 2px;
+      background: var(--orange);
+    }
+    .stars { color: #f59e0b; letter-spacing: 2px; font-size: 1rem; }
+    .review-card h3 { font-size: .85rem; margin-bottom: 8px; color: var(--muted); }
+
+    /* SERVICE AREA */
+    .area-img {
+      border-radius: 16px;
+      overflow: hidden;
+      height: 280px;
+    }
+    .area-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .area-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .area-tag {
+      background: #fff;
+      border: 1px solid #dce6f6;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    /* FORM */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 30px;
+      align-items: start;
+    }
+    form {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid #e4eaf4;
+      display: grid;
+      gap: 14px;
+    }
+    label { font-weight: 700; font-size: .88rem; }
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1px solid #d0daea;
+      font: inherit;
+      font-size: .92rem;
+      transition: border-color .2s;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); }
+    textarea { min-height: 100px; resize: vertical; }
+    .form-info h2 { margin-bottom: 12px; }
+    .form-info p { color: var(--muted); }
+    .form-contact-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 16px;
+    }
+    .form-contact-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #e8f0fd, #dae6f8);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: var(--navy);
+    }
+    .form-contact-item strong { display: block; font-size: .85rem; }
+    .form-contact-item span, .form-contact-item a { font-size: .88rem; color: var(--muted); text-decoration: none; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--navy), #16345e);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+    .cta-banner h2 { color: #fff; margin-bottom: 8px; }
+    .cta-banner p { color: #b8c8e0; margin-bottom: 20px; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    footer {
+      background: #0a1c34;
+      color: #9eb3cf;
+      padding: 32px 0;
+      margin-top: 0;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 24px;
+    }
+    .footer-grid h4 { color: #fff; font-family: 'Montserrat', sans-serif; font-size: .85rem; margin: 0 0 10px; }
+    .footer-grid a { color: #8aa4c4; text-decoration: none; display: block; font-size: .88rem; margin-bottom: 4px; }
+    .footer-grid a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      margin-top: 20px;
+      padding-top: 16px;
+      font-size: .82rem;
+      color: #6b86a8;
+    }
+
+    @media (max-width: 860px) {
+      .site-header { top: 40px; }
+      .nav-links { display: none; }
+      section { padding: 56px 0; }
+      .split, .form-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+      .hero { min-height: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- DEMO BANNER -->
+  <div class="demo-banner">This is a <strong>Polaris Point</strong> demo website. Want one like this for your business? <a href="https://polarispoint.io" target="_blank">Get a free quote &rarr;</a></div>
+
+  <div class="topbar">
+    <div class="container topbar-wrap">
+      <span>24/7 Emergency Service Available</span>
+      <a href="tel:+15125550190">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        (512) 555-0190
+      </a>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#top" class="logo">
+        <span class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </span>
+        Lone Star Plumbing
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact" class="nav-cta">Free Estimate</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO with real photo background -->
+    <section class="hero">
+      <div class="hero-bg">
+        <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Professional plumber installing pipe fittings" loading="eager">
+      </div>
+      <div class="container hero-content reveal">
+        <h1>Fast, Reliable Plumbing in Austin, TX</h1>
+        <p>Licensed &amp; insured plumbers available same-day. From drain cleaning to full re-pipes, we do it right the first time.</p>
+        <div class="btn-row">
+          <a href="tel:+15125550190" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Call (512) 555-0190
+          </a>
+          <a href="#contact" class="btn btn-secondary">Get a Free Estimate</a>
+        </div>
+        <div class="trust-strip">
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            Licensed &amp; Insured
+          </div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            5-Star Rated
+          </div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Locally Owned
+          </div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            15+ Years Experience
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="container">
+        <span class="section-label reveal">What We Do</span>
+        <h2 class="reveal">Our Plumbing Services</h2>
+        <div class="grid" style="margin-top:22px;">
+          <article class="card reveal">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/><path d="M12 12v4"/></svg>
+            </div>
+            <h3>Drain Cleaning</h3>
+            <p>Clogged drains fixed quickly with professional-grade hydro-jetting and cable equipment.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M6 8h12l-1 10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8z"/><path d="M9 22v-4"/><path d="M15 22v-4"/></svg>
+            </div>
+            <h3>Water Heater Repair</h3>
+            <p>Repair or upgrade your tank or tankless water heater for reliable hot water every day.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
+            <h3>Leak Detection</h3>
+            <p>Find hidden leaks fast with electronic detection equipment and prevent expensive damage.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <h3>Fixture Repair</h3>
+            <p>Stop constant drips and running toilets with lasting faucet, toilet, and fixture repairs.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><polyline points="16 21 16 3 8 3 8 21"/></svg>
+            </div>
+            <h3>Pipe Installation</h3>
+            <p>New pipe installs and whole-house re-pipes built for code compliance and long-term flow.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <div class="service-icon" style="background: linear-gradient(135deg, #fff3eb, #ffe8d9); color: var(--orange);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h3>Emergency Plumbing</h3>
+            <p>Burst pipe or major backup? Our emergency response team is on call around the clock.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT with real photo -->
+    <section id="about" style="background:#fff;">
+      <div class="container split reveal">
+        <div class="split-img">
+          <img src="https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Professional plumber with tools ready for service" loading="lazy">
+        </div>
+        <div>
+          <span class="section-label">Why Choose Us</span>
+          <h2>Austin Trusts Lone Star</h2>
+          <p style="color:var(--muted);">For over 15 years, we've been the call Austin homeowners make when the water won't stop running, the drain won't clear, or the heater goes cold. Every technician is background-checked, state-licensed, and treats your home with respect.</p>
+          <div class="why-grid" style="margin-top:18px;">
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <h3>Same-Day Service</h3>
+                <p>Most calls handled the same day across Austin and surrounding areas.</p>
+              </div>
+            </div>
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <h3>Upfront Pricing</h3>
+                <p>Clear quotes before work starts. No surprise fees, ever.</p>
+              </div>
+            </div>
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <h3>Satisfaction Guaranteed</h3>
+                <p>If the problem comes back, so do we. At no extra cost.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section id="reviews" style="background: var(--light);">
+      <div class="container">
+        <span class="section-label reveal">Testimonials</span>
+        <h2 class="reveal">What Our Customers Say</h2>
+        <div class="grid" style="margin-top:22px;">
+          <article class="review-card reveal">
+            <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <p>Our water heater quit in the morning and Lone Star had someone out by lunch. Clear pricing, no pressure, and the tech explained everything.</p>
+            <h3>Maria G. &middot; Cedar Park &middot; Jan 2026</h3>
+          </article>
+          <article class="review-card reveal">
+            <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <p>Called for a late-night leak and they actually answered. Fast service, professional work, and they cleaned up before leaving.</p>
+            <h3>James T. &middot; East Austin &middot; Dec 2025</h3>
+          </article>
+          <article class="review-card reveal">
+            <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <p>I appreciated the honest quote and timeline. They fixed two bathroom issues in one visit and everything has worked perfectly since.</p>
+            <h3>Priya M. &middot; Round Rock &middot; Nov 2025</h3>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICE AREA with real photo -->
+    <section style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal">Coverage Area</span>
+        <h2 class="reveal">Serving All of Austin &amp; Surrounding Areas</h2>
+        <div class="split reveal" style="margin-top:20px;">
+          <div>
+            <p style="color:var(--muted);">From South Congress to Round Rock, our fleet of fully-stocked service trucks means a licensed plumber is never far from your door.</p>
+            <div class="area-tags">
+              <span class="area-tag">Austin</span>
+              <span class="area-tag">Round Rock</span>
+              <span class="area-tag">Cedar Park</span>
+              <span class="area-tag">Pflugerville</span>
+              <span class="area-tag">Georgetown</span>
+              <span class="area-tag">Kyle</span>
+              <span class="area-tag">Buda</span>
+              <span class="area-tag">Lakeway</span>
+            </div>
+          </div>
+          <div class="area-img">
+            <img src="https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin home we service" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT FORM -->
+    <section id="contact" style="background:var(--light);">
+      <div class="container">
+        <div class="form-grid reveal">
+          <div class="form-info">
+            <span class="section-label">Get In Touch</span>
+            <h2>Request Your Free Estimate</h2>
+            <p>Fill out the form and one of our licensed plumbers will get back to you within 2 hours during business hours &mdash; or call us directly for immediate assistance.</p>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div>
+                <strong>Phone</strong>
+                <a href="tel:+15125550190">(512) 555-0190</a>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <strong>Email</strong>
+                <span>info@lonestarplumbing.com</span>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <strong>Office</strong>
+                <span>8100 Burnet Rd, Austin TX 78757</span>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <strong>Hours</strong>
+                <span>Mon&ndash;Sat 7am&ndash;7pm &middot; Emergency 24/7</span>
+              </div>
+            </div>
+          </div>
+          <form action="#" method="post">
+            <h3 style="margin-bottom: 4px;">Get Your Free Estimate</h3>
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="John Smith">
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" required placeholder="(512) 555-0000">
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="john@example.com">
+            </div>
+            <div>
+              <label for="service">Service Needed</label>
+              <select id="service" name="service" required>
+                <option value="">Select a service...</option>
+                <option>Drain Cleaning</option>
+                <option>Water Heater Repair</option>
+                <option>Leak Detection &amp; Repair</option>
+                <option>Fixture Repair</option>
+                <option>Pipe Installation</option>
+                <option>Emergency Plumbing</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="message">Describe the issue</label>
+              <textarea id="message" name="message" placeholder="Tell us what's happening..."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit" style="justify-content:center;">Request Free Estimate</button>
+            <small style="color:var(--muted); text-align:center;">We respond within 2 hours during business hours.</small>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section style="padding: 60px 0; background: var(--light);">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <h2>Need a Plumber Right Now?</h2>
+          <p>Our emergency team is available 24 hours a day, 7 days a week.</p>
+          <a href="tel:+15125550190" class="btn btn-primary" style="font-size:1.05rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Call (512) 555-0190
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Lone Star Plumbing Co.</h4>
+          <p style="font-size:.88rem; margin:0;">Austin's trusted plumbing company for over 15 years. Licensed, insured, and committed to getting the job done right.</p>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <a href="#services">Drain Cleaning</a>
+          <a href="#services">Water Heater Repair</a>
+          <a href="#services">Leak Detection</a>
+          <a href="#services">Fixture Repair</a>
+          <a href="#services">Emergency Plumbing</a>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="tel:+15125550190">(512) 555-0190</a>
+          <a href="#">info@lonestarplumbing.com</a>
+          <span style="font-size:.88rem;">8100 Burnet Rd, Austin TX 78757</span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Lone Star Plumbing Co. All rights reserved. &middot; TPCL #12345
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
