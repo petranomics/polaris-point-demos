@@ -560,7 +560,67 @@
       .step-dot { width: 34px; height: 34px; font-size: .85rem; }
       .demo-thumb { height: 180px; }
     }
-  </style>
+  
+      .demo-card {
+        background: var(--navy);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #fff;
+        transition: transform .3s ease, box-shadow .3s ease;
+      }
+      .demo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(0,0,0,.3);
+      }
+      .demo-card h3 {
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .demo-card p {
+        color: #b0bdd0;
+        font-size: .92rem;
+        line-height: 1.55;
+      }
+      .demo-category-tag {
+        display: inline-block;
+        background: rgba(0,194,178,0.15);
+        color: var(--teal);
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+      }
+      .demo-tech-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .demo-tech-tag {
+        background: rgba(255,255,255,0.07);
+        color: #8fa3c0;
+        font-size: .72rem;
+        padding: 3px 9px;
+        border-radius: 6px;
+        font-weight: 500;
+      }
+      .demo-metric {
+        font-style: italic;
+        color: var(--gold);
+        font-size: .82rem;
+        margin-bottom: 14px;
+      }
+      .demo-content {
+        padding: 16px 18px 18px;
+      }
+      .demo-card .btn-primary {
+        display: inline-block;
+        font-size: .88rem;
+        padding: 10px 16px;
+      }
+    </style>
 </head>
 <body>
 
