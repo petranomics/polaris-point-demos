@@ -281,7 +281,67 @@
       .hero { padding-top: 74px; }
       .price-box { border-radius: 14px; }
     }
-  </style>
+  
+      .demo-card {
+        background: var(--navy);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #fff;
+        transition: transform .3s ease, box-shadow .3s ease;
+      }
+      .demo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(0,0,0,.3);
+      }
+      .demo-card h3 {
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .demo-card p {
+        color: #b0bdd0;
+        font-size: .92rem;
+        line-height: 1.55;
+      }
+      .demo-category-tag {
+        display: inline-block;
+        background: rgba(0,194,178,0.15);
+        color: var(--teal);
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+      }
+      .demo-tech-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .demo-tech-tag {
+        background: rgba(255,255,255,0.07);
+        color: #8fa3c0;
+        font-size: .72rem;
+        padding: 3px 9px;
+        border-radius: 6px;
+        font-weight: 500;
+      }
+      .demo-metric {
+        font-style: italic;
+        color: var(--gold);
+        font-size: .82rem;
+        margin-bottom: 14px;
+      }
+      .demo-content {
+        padding: 16px 18px 18px;
+      }
+      .demo-card .btn-primary {
+        display: inline-block;
+        font-size: .88rem;
+        padding: 10px 16px;
+      }
+    </style>
 </head>
 <body>
   <header class="site-header">
@@ -378,39 +438,76 @@
         <div class="card-grid" style="margin-top: 20px;">
           <article class="demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Plumber installing pipe fittings" loading="lazy">
+              <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lone Star Plumbing Co." loading="lazy">
               <div class="demo-thumb-overlay">Lone Star Plumbing Co.</div>
             </div>
-            <h3>Plumbing Website</h3>
-            <p>Built for trust, urgent calls, and quote requests.</p>
-            <a class="btn btn-primary" href="plumber/">View Demo</a>
+            <div class="demo-content">
+              <span class="demo-category-tag">Service Industry</span>
+              <h3>Lone Star Plumbing Co.</h3>
+              <p>Lead-generating service pro website with trust badges, emergency CTAs, and quote request forms. Navy and orange color scheme built for urgency and credibility.</p>
+              <div class="demo-tech-tags">
+                <span class="demo-tech-tag">HTML/CSS</span>
+                <span class="demo-tech-tag">SVG Icons</span>
+                <span class="demo-tech-tag">Responsive</span>
+              </div>
+              <p class="demo-metric">"Designed for same-day lead capture"</p>
+              <a class="btn btn-primary" href="https://polaris-point-demos.vercel.app/plumber" target="_blank" rel="noopener noreferrer">View Case Study</a>
+            </div>
           </article>
           <article class="demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Woman getting a haircut at a salon" loading="lazy">
+              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Velvet &amp; Vine Salon" loading="lazy">
               <div class="demo-thumb-overlay">Velvet &amp; Vine Salon</div>
             </div>
-            <h3>Salon Website</h3>
-            <p>Elegant visuals, service pricing, and booking-first layout.</p>
-            <a class="btn btn-primary" href="salon/">View Demo</a>
+            <div class="demo-content">
+              <span class="demo-category-tag">Beauty &amp; Wellness</span>
+              <h3>Velvet &amp; Vine Salon</h3>
+              <p>Boutique salon site with service menu, style gallery, team profiles, and booking-first layout. Sage green and rose color palette with premium typography.</p>
+              <div class="demo-tech-tags">
+                <span class="demo-tech-tag">HTML/CSS</span>
+                <span class="demo-tech-tag">Google Fonts</span>
+                <span class="demo-tech-tag">Responsive</span>
+              </div>
+              <p class="demo-metric">"Booking-optimized for walk-ins &amp; appointments"</p>
+              <a class="btn btn-primary" href="https://polaris-point-demos.vercel.app/salon" target="_blank" rel="noopener noreferrer">View Case Study</a>
+            </div>
           </article>
           <article class="demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/12645502/pexels-photo-12645502.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Slicing brisket at a BBQ restaurant" loading="lazy">
+              <img src="https://images.pexels.com/photos/12645502/pexels-photo-12645502.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Smoke &amp; Stone BBQ" loading="lazy">
               <div class="demo-thumb-overlay">Smoke &amp; Stone BBQ</div>
             </div>
-            <h3>Restaurant Website</h3>
-            <p>Bold menu presentation and pickup-focused conversion flow.</p>
-            <a class="btn btn-primary" href="restaurant/">View Demo</a>
+            <div class="demo-content">
+              <span class="demo-category-tag">Restaurant &amp; Food</span>
+              <h3>Smoke &amp; Stone BBQ</h3>
+              <p>Dark, food-forward restaurant site with real food photography, text-based menu, pitmaster story section, and pickup ordering CTA. Built to make people hungry.</p>
+              <div class="demo-tech-tags">
+                <span class="demo-tech-tag">HTML/CSS</span>
+                <span class="demo-tech-tag">SVG Icons</span>
+                <span class="demo-tech-tag">Responsive</span>
+              </div>
+              <p class="demo-metric">"Menu-first design for pickup conversion"</p>
+              <a class="btn btn-primary" href="https://polaris-point-demos.vercel.app/restaurant" target="_blank" rel="noopener noreferrer">View Case Study</a>
+            </div>
           </article>
           <article class="demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Suburban home with green lawn" loading="lazy">
-              <div class="demo-thumb-overlay">Pete's Pest Control</div>
+              <img src="https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Pete's Termite &amp; Pest Control" loading="lazy">
+              <div class="demo-thumb-overlay">Pete's Termite &amp; Pest Control</div>
             </div>
-            <h3>Pest Control Website</h3>
-            <p>Trust-building design with service cards and lead capture forms.</p>
-            <a class="btn btn-primary" href="pest-control/">View Demo</a>
+            <div class="demo-content">
+              <span class="demo-category-tag">Service Industry</span>
+              <h3>Pete's Termite &amp; Pest Control</h3>
+              <p>Full-service pest control site with 9 service cards, customer reviews, 4-step process section, service area coverage, and detailed lead capture form. Forest green and amber palette.</p>
+              <div class="demo-tech-tags">
+                <span class="demo-tech-tag">HTML</span>
+                <span class="demo-tech-tag">CSS</span>
+                <span class="demo-tech-tag">JavaScript</span>
+                <span class="demo-tech-tag">Responsive</span>
+              </div>
+              <p class="demo-metric">"9 services with dedicated lead funnel"</p>
+              <a class="btn btn-primary" href="https://polaris-point-demos.vercel.app/pest-control" target="_blank" rel="noopener noreferrer">View Case Study</a>
+            </div>
           </article>
         </div>
       </div>
