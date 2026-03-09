@@ -3,58 +3,169 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Polaris Point | Austin Web Design for Small Businesses</title>
-  <meta name="description" content="Polaris Point builds fast, beautiful websites for Austin small businesses. We put your business on the map." />
+  <title>Polaris Point | Your North Star to Digital Success</title>
+  <meta name="description" content="Polaris Point builds fast, beautiful websites that guide Austin customers to your door. Modern design, clear messaging, and a launch process made for busy owners." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --navy: #0B1F3A;
-      --teal: #00C2B2;
-      --gold: #F5A623;
-      --bg: #F8F7F4;
-      --ink: #16243b;
-      --muted: #55627a;
-      --white: #ffffff;
+      --space: #050D1E;
+      --space-light: #0A1628;
+      --surface: rgba(15, 25, 55, 0.55);
+      --border: rgba(91, 141, 239, 0.15);
+      --border-hover: rgba(91, 141, 239, 0.35);
+      --blue: #5B8DEF;
+      --blue-glow: rgba(91, 141, 239, 0.25);
+      --gold: #E8C547;
+      --gold-dim: rgba(232, 197, 71, 0.15);
+      --text: #FFFFFF;
+      --text-secondary: #9BB0D4;
+      --text-muted: #6B82A8;
       --radius: 16px;
-      --shadow: 0 12px 30px rgba(11, 31, 58, 0.14);
-      --max: 1140px;
+      --radius-sm: 10px;
+      --max: 1100px;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; }
     html { scroll-behavior: smooth; }
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      line-height: 1.6;
+      background: var(--space);
+      color: var(--text-secondary);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
     }
 
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text);
+      line-height: 1.15;
+    }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); letter-spacing: -0.02em; }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); letter-spacing: -0.01em; margin-bottom: 12px; }
+    h3 { font-size: 1.15rem; margin-bottom: 8px; }
+    p { margin: 0 0 16px; }
+    a { color: var(--blue); }
+
     .container {
-      width: min(100% - 2.2rem, var(--max));
+      width: min(100% - 2rem, var(--max));
       margin-inline: auto;
     }
 
-    .section { padding: 82px 0; }
+    .section {
+      padding: 90px 0;
+      position: relative;
+    }
 
+    /* --- Reveal animations --- */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(24px);
       transition: opacity .7s ease, transform .7s ease;
     }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(8px);
-      background: rgba(11, 31, 58, 0.86);
-      border-bottom: 1px solid rgba(255,255,255,0.12);
+    /* --- Buttons --- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 13px 24px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: .95rem;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: transform .2s, box-shadow .2s, background .2s;
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-gold {
+      background: var(--gold);
+      color: var(--space);
+    }
+    .btn-gold:hover { box-shadow: 0 8px 30px rgba(232, 197, 71, 0.3); }
+    .btn-glass {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+    }
+    .btn-glass:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); }
+    .btn-blue {
+      background: var(--blue);
+      color: #fff;
+    }
+    .btn-blue:hover { box-shadow: 0 8px 25px var(--blue-glow); }
+
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--blue);
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .section-label::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 8px var(--blue);
     }
 
+    /* --- Glass card --- */
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(12px);
+      transition: border-color .3s, box-shadow .3s, transform .3s;
+    }
+    .glass:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 0 30px rgba(91, 141, 239, 0.08);
+    }
+
+    /* ============ STAR FIELD ============ */
+    .starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur, 4s) ease-in-out infinite alternate;
+      animation-delay: var(--delay, 0s);
+    }
+    @keyframes twinkle {
+      0% { opacity: var(--from, 0.15); }
+      100% { opacity: var(--to, 0.6); }
+    }
+
+    /* ============ HEADER ============ */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: rgba(5, 13, 30, 0.75);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(91, 141, 239, 0.08);
+    }
     .nav-wrap {
       display: flex;
       align-items: center;
@@ -62,276 +173,479 @@
       padding: 14px 0;
       gap: 16px;
     }
-
     .logo {
-      color: var(--white);
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      text-decoration: none;
-      letter-spacing: .3px;
-    }
-
-    .compass {
-      width: 26px;
-      aspect-ratio: 1;
-      border: 2px solid var(--teal);
-      border-radius: 50%;
-      position: relative;
-      display: inline-block;
-    }
-    .compass::before,
-    .compass::after {
-      content: "";
-      position: absolute;
-      inset: 50% auto auto 50%;
-      transform-origin: 0 0;
-      background: var(--gold);
-    }
-    .compass::before { width: 2px; height: 9px; transform: rotate(45deg) translate(-1px,-1px); }
-    .compass::after { width: 2px; height: 9px; transform: rotate(225deg) translate(-1px,-1px); }
-
-    .nav-links {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-    .nav-links a {
-      color: #d8e2f2;
-      text-decoration: none;
-      font-size: .95rem;
-    }
-
-    .hero {
-      position: relative;
-      background: radial-gradient(1000px 400px at 80% -20%, rgba(0,194,178,.25), transparent 60%),
-                  radial-gradient(700px 300px at 20% 0%, rgba(245,166,35,.18), transparent 50%),
-                  var(--navy);
-      color: var(--white);
-      overflow: hidden;
-      padding: 90px 0 100px;
-    }
-    .hero::after {
-      content: "✦ ✧ ✦";
-      position: absolute;
-      right: 4%;
-      bottom: 22px;
-      color: rgba(255,255,255,.2);
-      letter-spacing: 10px;
       font-size: 1.1rem;
     }
-
-    .eyebrow {
-      color: var(--teal);
-      text-transform: uppercase;
-      letter-spacing: 1.6px;
-      font-weight: 700;
-      font-size: .75rem;
-      margin-bottom: 14px;
+    .logo-star {
+      width: 28px;
+      height: 28px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    h1, h2, h3 {
-      font-family: 'Playfair Display', serif;
-      line-height: 1.15;
-      margin: 0 0 14px;
+    .logo-star svg {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 6px var(--blue));
     }
-    h1 { font-size: clamp(2rem, 4.8vw, 3.6rem); max-width: 14ch; }
-    h2 { font-size: clamp(1.55rem, 3.4vw, 2.4rem); }
-
-    .hero p {
-      max-width: 58ch;
-      color: #d6e3f5;
-      margin-bottom: 24px;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-
-    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 12px 18px;
+    .nav-links a {
+      color: var(--text-secondary);
       text-decoration: none;
-      font-weight: 700;
-      border: 1px solid transparent;
-      transition: transform .22s ease, background .22s ease, color .22s ease;
+      font-size: .9rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
     }
-    .btn:hover { transform: translateY(-2px); }
-    .btn-primary { background: var(--teal); color: var(--navy); }
-    .btn-secondary { background: transparent; color: var(--white); border-color: rgba(255,255,255,.45); }
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+    }
+    .nav-cta {
+      margin-left: 8px;
+    }
 
+    /* Mobile menu */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 160px 0 120px;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      top: -120px;
+      right: -100px;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(91,141,239,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-glow-gold {
+      position: absolute;
+      bottom: -200px;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,197,71,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+    }
+    .hero .section-label { margin-bottom: 20px; }
+    .hero h1 { margin-bottom: 20px; }
+    .hero h1 .accent { color: var(--gold); }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 54ch;
+      margin-bottom: 32px;
+    }
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(232, 197, 71, 0.08);
+      border: 1px solid rgba(232, 197, 71, 0.2);
+      font-size: .85rem;
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .trust-stars { letter-spacing: 2px; }
+
+    /* ============ STATS / PROBLEM ============ */
     .card-grid {
       display: grid;
-      gap: 18px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 28px;
     }
 
-    .stat-card, .demo-card, .build-card {
-      background: #fff;
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
+    .stat-card {
+      padding: 28px 24px;
     }
-
-    .stat-icon, .build-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
       display: grid;
       place-items: center;
-      color: var(--navy);
-      background: linear-gradient(145deg, #baf0eb, #f9e3bd);
-      margin-bottom: 10px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, rgba(91,141,239,0.15), rgba(232,197,71,0.1));
+      border: 1px solid rgba(91,141,239,0.2);
+    }
+    .stat-icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--blue);
+    }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.4rem;
       font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 8px;
     }
 
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--navy);
+    .section-intro {
+      max-width: 52ch;
       margin-bottom: 4px;
     }
 
+    /* ============ SERVICES / WHAT WE BUILD ============ */
+    .service-card { padding: 28px 24px; }
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(232, 197, 71, 0.2);
+    }
+    .service-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--gold);
+    }
+
+    /* ============ PORTFOLIO / DEMOS ============ */
+    .demo-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 28px;
+    }
+    .demo-card {
+      overflow: hidden;
+      transition: transform .3s, border-color .3s, box-shadow .3s;
+    }
+    .demo-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
+      box-shadow: 0 12px 40px rgba(91, 141, 239, 0.12);
+    }
     .demo-thumb {
-      height: 170px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #d7dfeb, #f4f2ea);
-      border: 1px solid #d3dae6;
+      height: 200px;
       overflow: hidden;
       position: relative;
     }
-
     .demo-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform .4s ease;
+      transition: transform .5s ease;
     }
-
     .demo-card:hover .demo-thumb img {
-      transform: scale(1.05);
+      transform: scale(1.06);
     }
-
     .demo-thumb-overlay {
       position: absolute;
       inset: 0;
-      display: grid;
-      place-items: center;
-      color: #fff;
+      background: linear-gradient(to top, rgba(5,13,30,0.85) 0%, rgba(5,13,30,0.1) 50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+    .demo-thumb-name {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      text-align: center;
-      padding: 12px;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+    .demo-thumb-tag {
+      font-size: .78rem;
+      color: var(--gold);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .demo-body {
+      padding: 20px;
+    }
+    .demo-body p {
       font-size: .92rem;
-      line-height: 1.4;
-      background: linear-gradient(to top, rgba(11,31,58,0.7), rgba(11,31,58,0.2));
+      margin-bottom: 16px;
     }
 
-    .timeline {
+    /* ============ PROCESS ============ */
+    .process-grid {
       display: grid;
-      gap: 14px;
+      gap: 0;
+      margin-top: 32px;
+      position: relative;
     }
-    .step {
+    .process-step {
       display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 14px;
-      background: #fff;
-      border-radius: 14px;
-      padding: 14px;
-      border: 1px solid #e5e9f1;
+      grid-template-columns: 60px 1fr;
+      gap: 20px;
+      padding: 28px 0;
     }
-    .step-num {
-      width: 34px;
-      height: 34px;
+    .process-step + .process-step {
+      border-top: 1px solid var(--border);
+    }
+    .step-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+    .step-dot {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: var(--navy);
-      color: #fff;
+      background: var(--surface);
+      border: 2px solid var(--blue);
       display: grid;
       place-items: center;
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
+      font-size: .95rem;
+      color: var(--blue);
+      box-shadow: 0 0 16px var(--blue-glow);
+      position: relative;
+      z-index: 2;
     }
+    .step-line {
+      width: 2px;
+      flex: 1;
+      background: linear-gradient(to bottom, var(--blue), rgba(91,141,239,0.1));
+      margin-top: -4px;
+    }
+    .process-step:last-child .step-line { display: none; }
+    .step-content h3 { margin-top: 8px; }
 
-    .price-box {
-      background: linear-gradient(125deg, var(--navy), #16345e);
-      color: #fff;
+    /* ============ PRICING ============ */
+    .price-banner {
+      padding: 40px;
+      background:
+        radial-gradient(600px 300px at 20% 50%, rgba(91,141,239,0.12), transparent),
+        radial-gradient(400px 200px at 80% 50%, rgba(232,197,71,0.08), transparent),
+        var(--surface);
+      border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 28px;
-      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 24px;
       flex-wrap: wrap;
     }
+    .price-banner h2 { margin-bottom: 8px; }
+    .price-banner p { margin: 0; }
 
+    /* ============ CTA ============ */
+    .cta-section {
+      text-align: center;
+      padding: 100px 0;
+      position: relative;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 16px;
+    }
+    .cta-section h2 .accent { color: var(--gold); }
+    .cta-section p {
+      max-width: 48ch;
+      margin: 0 auto 32px;
+      font-size: 1.1rem;
+    }
+    .cta-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(91,141,239,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ============ FOOTER ============ */
     footer {
-      background: #08162a;
-      color: #ccdaed;
-      padding: 34px 0;
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
     }
-    .footer-grid {
-      display: grid;
-      gap: 8px;
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
     }
-    .footer-grid strong { color: #fff; }
+    .footer-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .footer-info {
+      font-size: .88rem;
+      color: var(--text-muted);
+    }
+    .footer-info a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .footer-info a:hover { color: var(--text); }
 
-    @media (max-width: 760px) {
-      .section { padding: 62px 0; }
+    /* ============ DIVIDER ============ */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0;
+      border: none;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .section { padding: 64px 0; }
+      .hero { padding: 130px 0 80px; }
       .nav-links { display: none; }
-      .hero { padding-top: 74px; }
-      .price-box { border-radius: 14px; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(5, 13, 30, 0.95);
+        backdrop-filter: blur(16px);
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        gap: 4px;
+      }
+      .nav-links.open .nav-cta { margin-left: 0; margin-top: 8px; }
+      .menu-toggle { display: block; }
+      .price-banner { padding: 28px 20px; }
+      .process-step { grid-template-columns: 44px 1fr; gap: 14px; }
+      .step-dot { width: 34px; height: 34px; font-size: .85rem; }
+      .demo-thumb { height: 180px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Star field -->
+  <div class="starfield" id="starfield" aria-hidden="true"></div>
+
+  <!-- Header -->
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="logo" href="#top" aria-label="Polaris Point home">
-        <span class="compass" aria-hidden="true"></span>
+        <span class="logo-star">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L14.09 8.26L20.18 8.64L15.54 12.74L17.07 19.02L12 15.77L6.93 19.02L8.46 12.74L3.82 8.64L9.91 8.26L12 2Z" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.5"/>
+          </svg>
+        </span>
         <span>Polaris Point</span>
       </a>
-      <nav class="nav-links" aria-label="Main navigation">
-        <a href="#problem">The Problem</a>
-        <a href="#build">What We Build</a>
-        <a href="#demos">Demos</a>
-        <a href="#process">How It Works</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#process">Process</a>
         <a href="#pricing">Pricing</a>
+        <a class="btn btn-gold btn-sm nav-cta" href="mailto:hello@polarispoint.com?subject=Free%20Consultation">Book a Call</a>
       </nav>
     </div>
   </header>
 
   <main id="top">
+
+    <!-- HERO -->
     <section class="hero">
-      <div class="container reveal">
-        <p class="eyebrow">We put your business on the map.</p>
-        <h1>Austin Businesses Deserve to Be Found.</h1>
-        <p>Polaris Point builds fast, beautiful websites that bring local customers to your door. Modern design, clear messaging, and a launch process made for busy owners.</p>
-        <div class="btn-row">
-          <a class="btn btn-primary" href="#demos">See Our Work</a>
-          <a class="btn btn-secondary" href="mailto:hello@polarispoint.com?subject=Free%20Quote%20Request">Get a Free Quote</a>
+      <div class="hero-glow"></div>
+      <div class="hero-glow-gold"></div>
+      <div class="container">
+        <div class="hero-content reveal">
+          <p class="section-label">Austin Web Design Studio</p>
+          <h1>Your <span class="accent">North Star</span> to Digital&nbsp;Success</h1>
+          <p>We build fast, beautiful websites that guide Austin customers to your door. Modern design, clear messaging, and a launch process made for busy owners.</p>
+          <div class="btn-row">
+            <a class="btn btn-gold" href="#portfolio">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+              View Our Work
+            </a>
+            <a class="btn btn-glass" href="mailto:hello@polarispoint.com?subject=Free%20Consultation">Book a Free Call</a>
+          </div>
+          <div class="trust-badge">
+            <span class="trust-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span>5.0 from 20+ projects</span>
+          </div>
         </div>
       </div>
     </section>
 
+    <hr class="section-divider">
+
+    <!-- THE PROBLEM -->
     <section class="section" id="problem">
       <div class="container">
         <div class="reveal">
-          <h2>The Problem</h2>
-          <p>Many Austin businesses still rely on word-of-mouth alone. Meanwhile, customers search online first and hire the business they can find fastest.</p>
+          <p class="section-label">The Problem</p>
+          <h2>Customers Search Online First</h2>
+          <p class="section-intro">Many Austin businesses still rely on word-of-mouth alone. Meanwhile, customers search online and hire the business they can find fastest.</p>
         </div>
-        <div class="card-grid" style="margin-top: 22px;">
-          <article class="stat-card reveal">
-            <div class="stat-icon" aria-hidden="true">◎</div>
+        <div class="card-grid">
+          <article class="glass stat-card reveal">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
             <div class="stat-number">40%</div>
-            <p>of small businesses still have no website presence.</p>
+            <p>of small businesses still have no website presence at all.</p>
           </article>
-          <article class="stat-card reveal">
-            <div class="stat-icon" aria-hidden="true">↗</div>
+          <article class="glass stat-card reveal">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </div>
             <div class="stat-number">76%</div>
             <p>of nearby searches lead to a same-day business visit.</p>
           </article>
-          <article class="stat-card reveal">
-            <div class="stat-icon" aria-hidden="true">★</div>
+          <article class="glass stat-card reveal">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
             <div class="stat-number">88%</div>
             <p>of customers check a business online before calling.</p>
           </article>
@@ -339,29 +653,42 @@
       </div>
     </section>
 
-    <section class="section" id="build" style="background: #ffffff;">
+    <hr class="section-divider">
+
+    <!-- WHAT WE BUILD -->
+    <section class="section" id="services">
       <div class="container">
         <div class="reveal">
-          <h2>What We Build</h2>
+          <p class="section-label">What We Build</p>
+          <h2>Websites That Work as Hard as You Do</h2>
+          <p class="section-intro">Every site is built for speed, trust, and conversions. Tailored to your industry.</p>
         </div>
-        <div class="card-grid" style="margin-top: 20px;">
-          <article class="build-card reveal">
-            <div class="build-icon">⌂</div>
+        <div class="card-grid">
+          <article class="glass service-card reveal">
+            <div class="service-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
             <h3>Local Business Sites</h3>
             <p>Clean, high-trust websites that make it easy to call, visit, and book.</p>
           </article>
-          <article class="build-card reveal">
-            <div class="build-icon">☰</div>
-            <h3>Restaurant & Menu Sites</h3>
+          <article class="glass service-card reveal">
+            <div class="service-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <h3>Restaurant &amp; Menu Sites</h3>
             <p>Fast menu browsing, hours, location, and pickup-ready calls to action.</p>
           </article>
-          <article class="build-card reveal">
-            <div class="build-icon">🛠</div>
+          <article class="glass service-card reveal">
+            <div class="service-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
             <h3>Service Pro Sites</h3>
-            <p>Plumbing, HVAC, landscaping, and more with lead-focused page sections.</p>
+            <p>Plumbing, HVAC, pest control, and more with lead-focused page sections.</p>
           </article>
-          <article class="build-card reveal">
-            <div class="build-icon">✓</div>
+          <article class="glass service-card reveal">
+            <div class="service-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+            </div>
             <h3>Booking-Ready Sites</h3>
             <p>Forms and booking flows designed to turn visitors into paying customers.</p>
           </article>
@@ -369,116 +696,202 @@
       </div>
     </section>
 
-    <section class="section" id="demos">
+    <hr class="section-divider">
+
+    <!-- PORTFOLIO -->
+    <section class="section" id="portfolio">
       <div class="container">
         <div class="reveal">
-          <h2>Demo Gallery</h2>
-          <p>Explore industry-specific examples tailored for Austin businesses.</p>
+          <p class="section-label">Portfolio</p>
+          <h2>Live Demo Sites</h2>
+          <p class="section-intro">Explore real examples built for Austin industries. Click to see them live.</p>
         </div>
-        <div class="card-grid" style="margin-top: 20px;">
-          <article class="demo-card reveal">
+        <div class="demo-grid">
+          <article class="glass demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Plumber installing pipe fittings" loading="lazy">
-              <div class="demo-thumb-overlay">Lone Star Plumbing Co.</div>
+              <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Plumber installing pipe fittings" loading="lazy">
+              <div class="demo-thumb-overlay">
+                <span class="demo-thumb-tag">Service Pro</span>
+                <span class="demo-thumb-name">Lone Star Plumbing Co.</span>
+              </div>
             </div>
-            <h3>Plumbing Website</h3>
-            <p>Built for trust, urgent calls, and quote requests.</p>
-            <a class="btn btn-primary" href="plumber/">View Demo</a>
+            <div class="demo-body">
+              <p>Trust-first design with emergency CTAs, service breakdowns, and quote capture forms.</p>
+              <a class="btn btn-blue" href="/plumber" target="_blank">View Live Demo</a>
+            </div>
           </article>
-          <article class="demo-card reveal">
+          <article class="glass demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Woman getting a haircut at a salon" loading="lazy">
-              <div class="demo-thumb-overlay">Velvet &amp; Vine Salon</div>
+              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Stylist working on a client's hair" loading="lazy">
+              <div class="demo-thumb-overlay">
+                <span class="demo-thumb-tag">Beauty &amp; Wellness</span>
+                <span class="demo-thumb-name">Velvet &amp; Vine Salon</span>
+              </div>
             </div>
-            <h3>Salon Website</h3>
-            <p>Elegant visuals, service pricing, and booking-first layout.</p>
-            <a class="btn btn-primary" href="salon/">View Demo</a>
+            <div class="demo-body">
+              <p>Elegant gallery, service pricing, and booking-first layout with a luxe editorial feel.</p>
+              <a class="btn btn-blue" href="/salon" target="_blank">View Live Demo</a>
+            </div>
           </article>
-          <article class="demo-card reveal">
+          <article class="glass demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/12645502/pexels-photo-12645502.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Slicing brisket at a BBQ restaurant" loading="lazy">
-              <div class="demo-thumb-overlay">Smoke &amp; Stone BBQ</div>
+              <img src="https://images.pexels.com/photos/12645502/pexels-photo-12645502.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Slicing brisket at a BBQ restaurant" loading="lazy">
+              <div class="demo-thumb-overlay">
+                <span class="demo-thumb-tag">Restaurant</span>
+                <span class="demo-thumb-name">Smoke &amp; Stone BBQ</span>
+              </div>
             </div>
-            <h3>Restaurant Website</h3>
-            <p>Bold menu presentation and pickup-focused conversion flow.</p>
-            <a class="btn btn-primary" href="restaurant/">View Demo</a>
+            <div class="demo-body">
+              <p>Bold menu showcase with food photography and pickup-ready conversion flow.</p>
+              <a class="btn btn-blue" href="/restaurant" target="_blank">View Live Demo</a>
+            </div>
           </article>
-          <article class="demo-card reveal">
+          <article class="glass demo-card reveal">
             <div class="demo-thumb">
-              <img src="https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Suburban home with green lawn" loading="lazy">
-              <div class="demo-thumb-overlay">Pete's Pest Control</div>
+              <img src="https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Suburban home with green lawn" loading="lazy">
+              <div class="demo-thumb-overlay">
+                <span class="demo-thumb-tag">Home Services</span>
+                <span class="demo-thumb-name">Pete's Pest Control</span>
+              </div>
             </div>
-            <h3>Pest Control Website</h3>
-            <p>Trust-building design with service cards and lead capture forms.</p>
-            <a class="btn btn-primary" href="pest-control/">View Demo</a>
+            <div class="demo-body">
+              <p>Trust badges, 9 service cards with SVG icons, and lead capture forms.</p>
+              <a class="btn btn-blue" href="/pest-control" target="_blank">View Live Demo</a>
+            </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="process" style="background:#fff;">
+    <hr class="section-divider">
+
+    <!-- PROCESS -->
+    <section class="section" id="process">
       <div class="container">
         <div class="reveal">
-          <h2>How It Works</h2>
+          <p class="section-label">How It Works</p>
+          <h2>Three Steps to Launch</h2>
+          <p class="section-intro">From first call to live site in two weeks. No complexity, no runaround.</p>
         </div>
-        <div class="timeline" style="margin-top: 20px;">
-          <article class="step reveal">
-            <div class="step-num">1</div>
-            <div>
+        <div class="process-grid">
+          <article class="process-step reveal">
+            <div class="step-marker">
+              <div class="step-dot">1</div>
+              <div class="step-line"></div>
+            </div>
+            <div class="step-content">
               <h3>We Learn Your Business</h3>
-              <p>Quick kickoff call to understand your services, ideal customer, and goals.</p>
+              <p>Quick kickoff call to understand your services, ideal customer, and goals. We come prepared with industry research.</p>
             </div>
           </article>
-          <article class="step reveal">
-            <div class="step-num">2</div>
-            <div>
-              <h3>We Build Your Site</h3>
-              <p>We write the copy, design the pages, and create a website that feels like your brand.</p>
+          <article class="process-step reveal">
+            <div class="step-marker">
+              <div class="step-dot">2</div>
+              <div class="step-line"></div>
+            </div>
+            <div class="step-content">
+              <h3>We Design &amp; Build</h3>
+              <p>We write the copy, source the photography, design the pages, and create a website that feels like your brand.</p>
             </div>
           </article>
-          <article class="step reveal">
-            <div class="step-num">3</div>
-            <div>
+          <article class="process-step reveal">
+            <div class="step-marker">
+              <div class="step-dot">3</div>
+            </div>
+            <div class="step-content">
               <h3>You Go Live in 2 Weeks</h3>
-              <p>We launch, test on mobile, and help you start collecting leads immediately.</p>
+              <p>We launch, test on every device, and help you start collecting leads immediately. Ongoing support included.</p>
             </div>
           </article>
         </div>
       </div>
     </section>
 
+    <hr class="section-divider">
+
+    <!-- PRICING -->
     <section class="section" id="pricing">
-      <div class="container">
-        <div class="price-box reveal">
+      <div class="container reveal">
+        <div class="price-banner">
           <div>
-            <h2 style="margin-bottom:8px;">Starting at $799. Monthly plans from $79/mo.</h2>
-            <p style="margin:0;color:#deebfb;">Simple pricing for Austin businesses ready to grow online.</p>
+            <p class="section-label">Pricing</p>
+            <h2>Starting at $799. Monthly plans from $79/mo.</h2>
+            <p>Simple, transparent pricing for Austin businesses ready to grow online. No hidden fees.</p>
           </div>
-          <a class="btn btn-primary" href="mailto:hello@polarispoint.com?subject=Pricing%20and%20Quote">Get a Free Quote</a>
+          <a class="btn btn-gold" href="mailto:hello@polarispoint.com?subject=Pricing%20and%20Quote">Get a Free Quote</a>
         </div>
       </div>
     </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="cta-glow"></div>
+      <div class="container reveal" style="position:relative;z-index:1;">
+        <h2>Ready to Find Your <span class="accent">North Star</span>?</h2>
+        <p>Let's build a website that puts your business on the map and brings customers to your door.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <a class="btn btn-gold" href="mailto:hello@polarispoint.com?subject=Let%27s%20Get%20Started">Start Your Project</a>
+          <a class="btn btn-glass" href="mailto:hello@polarispoint.com?subject=Free%20Consultation">Book a Free Call</a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer>
-    <div class="container footer-grid">
-      <strong>Polaris Point</strong>
-      <span>Austin, TX · (512) 555-0100 · hello@polarispoint.com</span>
-      <span>© 2025 Polaris Point. All rights reserved.</span>
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">Polaris Point</div>
+        <div class="footer-info" style="margin-top:4px;">Austin, TX &middot; <a href="mailto:hello@polarispoint.com">hello@polarispoint.com</a></div>
+      </div>
+      <div class="footer-info">&copy; 2025 Polaris Point. All rights reserved.</div>
     </div>
   </footer>
 
   <script>
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+    // Scroll reveal
+    var revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
+          revealObs.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.14 });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
 
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    // Star field
+    (function() {
+      var field = document.getElementById('starfield');
+      var count = 80;
+      for (var i = 0; i < count; i++) {
+        var star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--dur', (3 + Math.random() * 5) + 's');
+        star.style.setProperty('--delay', (Math.random() * 5) + 's');
+        star.style.setProperty('--from', (0.1 + Math.random() * 0.2).toFixed(2));
+        star.style.setProperty('--to', (0.4 + Math.random() * 0.5).toFixed(2));
+        if (Math.random() > 0.7) {
+          star.style.width = '3px';
+          star.style.height = '3px';
+        }
+        field.appendChild(star);
+      }
+    })();
+
+    // Mobile menu toggle
+    document.getElementById('menuToggle').addEventListener('click', function() {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('#navLinks a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
   </script>
 </body>
 </html>
