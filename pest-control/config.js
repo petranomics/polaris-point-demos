@@ -1,0 +1,174 @@
+// Pest Control Demo — Site Configuration
+// Edit this file to customize the site for a new prospect.
+// All business-specific content is defined here.
+window.SITE_CONFIG = {
+
+  // === PAGE META ===
+  pageTitle: "Pete's Termite & Pest Control | Austin, TX",
+  metaDescription: "Family-owned pest control in Austin, TX. Termites, ants, roaches, mosquitoes, rodents & more. Free inspections, same-day service, satisfaction guaranteed.",
+
+  // === IDENTITY ===
+  businessName: "Pete's Termite & Pest Control",
+  businessNameShort: "Pete's",
+  businessTagline: "Termite & Pest Control",
+
+  // === CONTACT ===
+  phone: "(512) 555-0147",
+  phoneTelHref: "tel:5125550147",
+  email: "info@petespestcontrol.com",
+  emailHref: "mailto:info@petespestcontrol.com",
+  address: "4521 N. Lamar Blvd, Suite 200",
+  addressLine2: "Austin, TX 78751",
+  hoursShort: "Mon\u2013Fri 7AM\u20136PM | Sat 8AM\u20131PM",
+  addressFull: "4521 N. Lamar Blvd, Suite 200<br>Austin, TX 78751",
+  hoursDetailed: "Mon\u2013Fri: 7:00 AM \u2013 6:00 PM<br>Saturday: 8:00 AM \u2013 1:00 PM<br>Sunday: Emergency Only",
+
+  // === TOPBAR ===
+  topbarText: "Serving Austin & Central Texas Since 2005",
+
+  // === HERO ===
+  heroHeadline: "Reliable Pest Control for <span>Austin Homes &amp; Businesses</span>",
+  heroSubtext: "Family-owned and locally operated for over 20 years. We protect your property from termites, ants, roaches, mosquitoes, rodents, and more \u2014 guaranteed.",
+  heroCta1: "Get a Free Quote",
+  heroCta2: "Call (512) 555-0147",
+
+  // === HERO BADGES (each has unique SVG icon, so numbered individually) ===
+  heroBadge1: "Licensed & Insured",
+  heroBadge2: "Same-Day Service",
+  heroBadge3: "Satisfaction Guaranteed",
+
+  // === SERVICES (each has unique SVG icon, so numbered individually) ===
+  servicesLabel: "What We Do",
+  servicesTitle: "Our Pest Control Services",
+  servicesSubtext: "Comprehensive protection for your home and business against Central Texas pests.",
+  service1Name: "Termite Control",
+  service1Desc: "Complete termite inspections, liquid treatments, bait stations, and pre-construction protection to safeguard your biggest investment.",
+  service2Name: "Ant Extermination",
+  service2Desc: "Targeted treatments for fire ants, carpenter ants, and sugar ants \u2014 inside and out. We eliminate colonies at the source.",
+  service3Name: "Roach Control",
+  service3Desc: "Advanced gel baits, growth regulators, and perimeter treatments to eliminate roach infestations and prevent recurrence.",
+  service4Name: "Mosquito Control",
+  service4Desc: "Monthly barrier sprays, larvicide treatments, and In2Care trap systems to reclaim your outdoor spaces.",
+  service5Name: "Rodent Control",
+  service5Desc: "Humane trapping, exclusion sealing, and bait stations for rats and mice. We find entry points and seal them for good.",
+  service6Name: "Spider Removal",
+  service6Desc: "Treatment for brown recluse, black widows, and common house spiders. Interior and exterior web removal included.",
+  service7Name: "Wasp & Bee Removal",
+  service7Desc: "Safe nest removal for wasps, yellow jackets, and hornets. Bee-friendly relocation services available for honeybees.",
+  service8Name: "Scorpion Control",
+  service8Desc: "Perimeter barrier treatments and harborage elimination to keep scorpions out of your home \u2014 a common Texas concern.",
+  service9Name: "Bed Bug Treatment",
+  service9Desc: "Heat treatments and targeted chemical applications to eliminate bed bugs at every life stage. Discreet, thorough service.",
+  servicesCtaText: "Not sure what pest you're dealing with?",
+  servicesCtaButton: "Request a Free Inspection",
+
+  // === PHOTO BREAK ===
+  photoBreak1Src: "https://images.pexels.com/photos/5008399/pexels-photo-5008399.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak1Alt: "Blue house with green lawn",
+  photoBreak2Src: "https://images.pexels.com/photos/4176539/pexels-photo-4176539.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak2Alt: "Pest control technician in protective equipment",
+  photoBreak3Src: "https://images.pexels.com/photos/5587964/pexels-photo-5587964.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak3Alt: "Suburban home under blue sky",
+
+  // === ABOUT ===
+  aboutImage: "https://images.pexels.com/photos/7577378/pexels-photo-7577378.jpeg?auto=compress&cs=tinysrgb&w=800",
+  aboutImageAlt: "Happy family standing outside their home",
+  aboutLabel: "About Us",
+  aboutTitle: "Your Neighbors in Pest Control",
+  aboutText1: "Pete\u2019s Termite & Pest Control was founded in 2005 by Pete Hernandez, a lifelong Austin resident and Board Certified Entomologist with a passion for protecting families and homes from unwanted pests.",
+  aboutText2: "What started as a one-truck operation has grown into one of Central Texas\u2019s most trusted pest control companies \u2014 but we\u2019ve never lost the personal touch that built our reputation. Every technician is background-checked, state-licensed, and treats your home like it\u2019s their own.",
+  aboutText3: "We believe in Integrated Pest Management (IPM): solutions that are effective, environmentally responsible, and safe for your family and pets. We don\u2019t just spray and pray \u2014 we find the root cause and fix it.",
+  stat1Number: "20+",
+  stat1Label: "Years in Business",
+  stat2Number: "15,000+",
+  stat2Label: "Homes Protected",
+  stat3Number: "4.9",
+  stat3Label: "Google Rating",
+  stat4Number: "A+",
+  stat4Label: "BBB Rating",
+
+  // === WHY CHOOSE US (each has unique SVG icon, so numbered individually) ===
+  whyLabel: "Why Pete's?",
+  whyTitle: "The Pete's Difference",
+  why1Title: "Free Inspections & Estimates",
+  why1Text: "No pressure, no surprises. We\u2019ll assess your situation and give you a transparent quote before any work begins.",
+  why2Title: "Customized Treatment Plans",
+  why2Text: "No cookie-cutter solutions. We design a plan based on your specific pest pressures, property layout, and family needs.",
+  why3Title: "Eco-Friendly Options",
+  why3Text: "Pet-safe and child-friendly treatments using the latest low-impact products and integrated pest management techniques.",
+  why4Title: "Satisfaction Guarantee",
+  why4Text: "If pests come back between scheduled services, so do we \u2014 at no additional cost. That\u2019s the Pete\u2019s promise.",
+  why5Title: "Same-Day & Emergency Service",
+  why5Text: "Got an urgent pest problem? Call before noon and we\u2019ll be there today. After-hours emergency service available.",
+  why6Title: "Locally Owned & Operated",
+  why6Text: "We live and work in Austin. We know Central Texas pests because we deal with them too. Your neighbor, not a franchise.",
+
+  // === PROCESS (each has unique step number, so numbered individually) ===
+  processLabel: "How It Works",
+  processTitle: "Our Simple 4-Step Process",
+  step1Title: "Contact Us",
+  step1Text: "Call, text, or fill out our online form to schedule your free inspection.",
+  step2Title: "Free Inspection",
+  step2Text: "A licensed technician inspects your property and identifies pest issues and entry points.",
+  step3Title: "Custom Treatment",
+  step3Text: "We apply targeted treatments tailored to your specific pest problems and property.",
+  step4Title: "Ongoing Protection",
+  step4Text: "Regular follow-ups and preventive treatments keep your home pest-free year-round.",
+
+  // === REVIEWS (identical structure, uses data-cfg-list) ===
+  reviewsLabel: "Testimonials",
+  reviewsTitle: "What Our Customers Say",
+  reviewsSubtext: "Over 500 five-star reviews from Austin homeowners and businesses.",
+  reviews: [
+    {
+      text: "\u201CPete\u2019s team came out same-day when we found termite damage in our garage. They were thorough, professional, and explained everything. Couldn\u2019t be happier with the service.\u201D",
+      author: "Sarah M.",
+      location: "Cedar Park, TX"
+    },
+    {
+      text: "\u201CWe\u2019ve used Pete\u2019s for our quarterly pest control for 3 years now. Zero roaches, zero ants. Their technician Marcus is always on time, friendly, and does a great job.\u201D",
+      author: "David & Lisa K.",
+      location: "Round Rock, TX"
+    },
+    {
+      text: "\u201CAs a restaurant owner, pest control is non-negotiable. Pete\u2019s handles our commercial account with discretion and reliability. They\u2019ve been our partner for over 5 years.\u201D",
+      author: "Tony R.",
+      location: "Austin, TX"
+    },
+    {
+      text: "\u201CHad a terrible scorpion problem in our new build in Dripping Springs. Pete\u2019s did a full perimeter treatment and we haven\u2019t seen one since. Worth every penny.\u201D",
+      author: "Jennifer W.",
+      location: "Dripping Springs, TX"
+    }
+  ],
+
+  // === SERVICE AREAS (uses data-cfg-list) ===
+  serviceAreaLabel: "Coverage",
+  serviceAreaTitle: "Serving All of Central Texas",
+  serviceAreas: ["Austin", "Round Rock", "Cedar Park", "Pflugerville", "Georgetown", "Leander", "Lakeway", "Bee Cave", "Dripping Springs", "Kyle", "Buda", "San Marcos", "Manor", "Hutto", "Taylor"],
+
+  // === CONTACT FORM ===
+  contactLabel: "Get In Touch",
+  contactTitle: "Request Your Free Quote",
+  contactText: "Fill out the form and one of our pest specialists will get back to you within 1 business hour \u2014 or call us directly for immediate assistance.",
+  contactFormTitle: "Get Your Free Estimate",
+  contactFormButton: "Request Free Quote",
+  contactFormDisclaimer: "By submitting this form, you agree to our privacy policy. We will never sell your information.",
+  formServiceOptions: ["Termite Control", "General Pest Control", "Mosquito Control", "Rodent Control", "Bed Bug Treatment", "Scorpion Control", "Wildlife Removal", "Commercial Services", "Other"],
+  formPropertyOptions: ["Residential", "Commercial", "Multi-Family", "New Construction"],
+  smsConsentText: "I consent to receive text messages from Pete's Termite & Pest Control. Message & data rates may apply.",
+
+  // === TRUST BADGES (each has unique SVG icon, so numbered individually) ===
+  trustBadge1: "BBB A+ Rated",
+  trustBadge2: "Texas SPCS Licensed",
+  trustBadge3: "NPMA Member",
+  trustBadge4: "QualityPro Certified",
+
+  // === FOOTER ===
+  footerDescription: "Locally owned and operated in Austin, Texas since 2005. Protecting homes and businesses from pests with safe, effective, eco-friendly solutions.",
+  footerServices: ["Termite Control", "Ant Extermination", "Roach Control", "Mosquito Control", "Rodent Control", "Bed Bug Treatment"],
+  footerLegal: "&copy; 2026 Pete's Termite & Pest Control. All rights reserved. | <a href=\"#\">Privacy Policy</a> | <a href=\"#\">Terms of Service</a> | TPCL #12345",
+
+  // === CTA BANNER (not present in current design but reserved for future use) ===
+  heroImage: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=1400"
+};
