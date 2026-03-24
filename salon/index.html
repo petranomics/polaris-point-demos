@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Velvet & Vine Salon | Austin Hair Salon</title>
-  <meta name="description" content="Velvet & Vine Salon in Austin offers cuts, color, and care in a boutique South Congress-inspired space." />
+  <title data-cfg="pageTitle">Velvet & Vine Salon | Austin Hair Salon</title>
+  <meta name="description" content="Velvet & Vine Salon in Austin offers cuts, color, and care in a boutique South Congress-inspired space." data-cfg-attr="content:metaDescription" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -341,13 +341,13 @@
         <span class="logo-mark">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M6 9v12"/><path d="M13 6l-4 6h8l-4 6"/></svg>
         </span>
-        Velvet &amp; Vine
+        <span data-cfg="businessNameShort">Velvet &amp; Vine</span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#services">Services</a>
         <a href="#gallery">Gallery</a>
         <a href="#team">Team</a>
-        <a href="#book" class="book-btn">Book Appointment</a>
+        <a href="#book" class="book-btn" data-cfg="navBookBtn">Book Appointment</a>
       </nav>
     </div>
   </header>
@@ -356,15 +356,15 @@
     <!-- HERO with real photo -->
     <section class="hero">
       <div class="hero-bg">
-        <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Woman getting a professional haircut at a salon" loading="eager">
+        <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Woman getting a professional haircut at a salon" loading="eager" data-cfg-attr="src:heroImage,alt:heroImageAlt">
       </div>
       <div class="container hero-content reveal">
-        <span class="section-label">Austin's Boutique Salon</span>
-        <h1>Your Best Hair Starts Here</h1>
-        <p>Cuts, color, and care by stylists who take the time to listen. Located on South Congress in the heart of Austin.</p>
+        <span class="section-label" data-cfg="heroLabel">Austin's Boutique Salon</span>
+        <h1 data-cfg="heroHeadline">Your Best Hair Starts Here</h1>
+        <p data-cfg="heroSubtext">Cuts, color, and care by stylists who take the time to listen. Located on South Congress in the heart of Austin.</p>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <a href="#book" class="btn btn-main">Book Your Appointment</a>
-          <a href="#services" class="btn btn-outline">View Services</a>
+          <a href="#book" class="btn btn-main" data-cfg="heroCta1">Book Your Appointment</a>
+          <a href="#services" class="btn btn-outline" data-cfg="heroCta2">View Services</a>
         </div>
       </div>
     </section>
@@ -372,24 +372,24 @@
     <!-- SERVICES -->
     <section id="services" style="background:#fff;">
       <div class="container">
-        <span class="section-label reveal">What We Offer</span>
-        <h2 class="reveal">Services &amp; Pricing</h2>
+        <span class="section-label reveal" data-cfg="servicesLabel">What We Offer</span>
+        <h2 class="reveal" data-cfg="servicesTitle">Services &amp; Pricing</h2>
         <div class="menu-card reveal" style="margin-top:22px;">
           <div class="menu-col">
-            <h3>Cuts &amp; Color</h3>
-            <div class="menu-item"><span>Women's Haircut</span><strong>$65&ndash;$95</strong></div>
-            <div class="menu-item"><span>Men's Haircut</span><strong>$40&ndash;$55</strong></div>
-            <div class="menu-item"><span>Balayage / Highlights</span><strong>$150&ndash;$250</strong></div>
-            <div class="menu-item"><span>Full Color</span><strong>$120&ndash;$180</strong></div>
-            <div class="menu-item"><span>Color Correction</span><strong>Starting at $200</strong></div>
+            <h3 data-cfg="menuCol1Title">Cuts &amp; Color</h3>
+            <div class="menu-item"><span data-cfg="menuItem1Name">Women's Haircut</span><strong data-cfg="menuItem1Price">$65&ndash;$95</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem2Name">Men's Haircut</span><strong data-cfg="menuItem2Price">$40&ndash;$55</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem3Name">Balayage / Highlights</span><strong data-cfg="menuItem3Price">$150&ndash;$250</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem4Name">Full Color</span><strong data-cfg="menuItem4Price">$120&ndash;$180</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem5Name">Color Correction</span><strong data-cfg="menuItem5Price">Starting at $200</strong></div>
           </div>
           <div class="menu-col">
-            <h3>Styling &amp; Care</h3>
-            <div class="menu-item"><span>Blowout</span><strong>$55&ndash;$75</strong></div>
-            <div class="menu-item"><span>Deep Conditioning</span><strong>$45</strong></div>
-            <div class="menu-item"><span>Keratin Treatment</span><strong>$250&ndash;$350</strong></div>
-            <div class="menu-item"><span>Bridal / Special Event</span><strong>Starting at $200</strong></div>
-            <div class="menu-item"><span>Extensions Consultation</span><strong>Complimentary</strong></div>
+            <h3 data-cfg="menuCol2Title">Styling &amp; Care</h3>
+            <div class="menu-item"><span data-cfg="menuItem6Name">Blowout</span><strong data-cfg="menuItem6Price">$55&ndash;$75</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem7Name">Deep Conditioning</span><strong data-cfg="menuItem7Price">$45</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem8Name">Keratin Treatment</span><strong data-cfg="menuItem8Price">$250&ndash;$350</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem9Name">Bridal / Special Event</span><strong data-cfg="menuItem9Price">Starting at $200</strong></div>
+            <div class="menu-item"><span data-cfg="menuItem10Name">Extensions Consultation</span><strong data-cfg="menuItem10Price">Complimentary</strong></div>
           </div>
         </div>
       </div>
@@ -399,29 +399,29 @@
     <section id="team" style="background:var(--warm);">
       <div class="container about-grid">
         <div class="reveal">
-          <span class="section-label">Our Story</span>
-          <h2>Austin's Boutique Salon Since 2018</h2>
-          <p>Velvet &amp; Vine was created for clients who want great hair without the rushed salon experience. We start every appointment with a conversation, then tailor each cut, color, and treatment to your routine and style goals.</p>
-          <p>Our stylists blend technical training with Austin creativity. Whether you're refreshing your everyday look or getting ready for a special event, you'll leave with hair that feels effortless, polished, and genuinely you.</p>
+          <span class="section-label" data-cfg="aboutLabel">Our Story</span>
+          <h2 data-cfg="aboutTitle">Austin's Boutique Salon Since 2018</h2>
+          <p data-cfg="aboutText1">Velvet &amp; Vine was created for clients who want great hair without the rushed salon experience. We start every appointment with a conversation, then tailor each cut, color, and treatment to your routine and style goals.</p>
+          <p data-cfg="aboutText2">Our stylists blend technical training with Austin creativity. Whether you're refreshing your everyday look or getting ready for a special event, you'll leave with hair that feels effortless, polished, and genuinely you.</p>
         </div>
         <div class="reveal">
-          <span class="section-label">The Team</span>
-          <h3 style="margin-bottom:10px;">Meet the Stylists</h3>
+          <span class="section-label" data-cfg="teamLabel">The Team</span>
+          <h3 style="margin-bottom:10px;" data-cfg="teamTitle">Meet the Stylists</h3>
           <div class="team">
             <div class="avatar">
-              <img src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Taylor R. working with a client" loading="lazy">
+              <img src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Taylor R. working with a client" loading="lazy" data-cfg-attr="src:team1Image,alt:team1ImageAlt">
             </div>
             <div class="avatar">
-              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=400&h=540&fit=crop" alt="Stylist Jade M. at the salon" loading="lazy">
+              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=400&h=540&fit=crop" alt="Stylist Jade M. at the salon" loading="lazy" data-cfg-attr="src:team2Image,alt:team2ImageAlt">
             </div>
             <div class="avatar">
-              <img src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Sofia L. coloring a client's hair" loading="lazy">
+              <img src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Sofia L. coloring a client's hair" loading="lazy" data-cfg-attr="src:team3Image,alt:team3ImageAlt">
             </div>
           </div>
           <div style="display:flex; gap:8px; margin-top:8px;">
-            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);">Taylor R.</span>
-            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);">Jade M.</span>
-            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);">Sofia L.</span>
+            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);" data-cfg="team1Name">Taylor R.</span>
+            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);" data-cfg="team2Name">Jade M.</span>
+            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);" data-cfg="team3Name">Sofia L.</span>
           </div>
         </div>
       </div>
@@ -430,32 +430,32 @@
     <!-- GALLERY with real photos -->
     <section id="gallery">
       <div class="container">
-        <span class="section-label reveal">Our Work</span>
-        <h2 class="reveal">Style Gallery</h2>
+        <span class="section-label reveal" data-cfg="galleryLabel">Our Work</span>
+        <h2 class="reveal" data-cfg="galleryTitle">Style Gallery</h2>
         <div class="gallery" style="margin-top:18px;">
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Hair coloring service in progress" loading="lazy">
-            <span>Color &amp; Highlights</span>
+            <img src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Hair coloring service in progress" loading="lazy" data-cfg-attr="src:gallery1Image,alt:gallery1Alt">
+            <span data-cfg="gallery1Label">Color &amp; Highlights</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist cutting hair with scissors" loading="lazy">
-            <span>Precision Cut</span>
+            <img src="https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist cutting hair with scissors" loading="lazy" data-cfg-attr="src:gallery2Image,alt:gallery2Alt">
+            <span data-cfg="gallery2Label">Precision Cut</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist blow drying client's hair" loading="lazy">
-            <span>Blowout</span>
+            <img src="https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist blow drying client's hair" loading="lazy" data-cfg-attr="src:gallery3Image,alt:gallery3Alt">
+            <span data-cfg="gallery3Label">Blowout</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/6487882/pexels-photo-6487882.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Close-up detail of hair cutting" loading="lazy">
-            <span>Detail Work</span>
+            <img src="https://images.pexels.com/photos/6487882/pexels-photo-6487882.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Close-up detail of hair cutting" loading="lazy" data-cfg-attr="src:gallery4Image,alt:gallery4Alt">
+            <span data-cfg="gallery4Label">Detail Work</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/8467969/pexels-photo-8467969.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Flat iron styling service" loading="lazy">
-            <span>Keratin &amp; Styling</span>
+            <img src="https://images.pexels.com/photos/8467969/pexels-photo-8467969.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Flat iron styling service" loading="lazy" data-cfg-attr="src:gallery5Image,alt:gallery5Alt">
+            <span data-cfg="gallery5Label">Keratin &amp; Styling</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Full service color and styling" loading="lazy">
-            <span>Full Service Color</span>
+            <img src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Full service color and styling" loading="lazy" data-cfg-attr="src:gallery6Image,alt:gallery6Alt">
+            <span data-cfg="gallery6Label">Full Service Color</span>
           </div>
         </div>
       </div>
@@ -464,23 +464,23 @@
     <!-- REVIEWS -->
     <section style="background:var(--warm);">
       <div class="container">
-        <span class="section-label reveal">Client Love</span>
-        <h2 class="reveal">What Clients Are Saying</h2>
-        <div class="review-grid" style="margin-top:18px;">
+        <span class="section-label reveal" data-cfg="reviewsLabel">Client Love</span>
+        <h2 class="reveal" data-cfg="reviewsTitle">What Clients Are Saying</h2>
+        <div class="review-grid" style="margin-top:18px;" data-cfg-list="reviews">
           <article class="review reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p>I've been coming here for 2 years and Taylor always knows exactly what I want. The color grows out beautifully every time.</p>
-            <strong>&mdash; Andrea K.</strong>
+            <p data-cfg-item="text">I've been coming here for 2 years and Taylor always knows exactly what I want. The color grows out beautifully every time.</p>
+            <strong data-cfg-item-html="attribution">&mdash; Andrea K.</strong>
           </article>
           <article class="review reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p>Jade fixed a bad color correction from another salon and made me feel so comfortable through the whole process.</p>
-            <strong>&mdash; Melissa J.</strong>
+            <p data-cfg-item="text">Jade fixed a bad color correction from another salon and made me feel so comfortable through the whole process.</p>
+            <strong data-cfg-item-html="attribution">&mdash; Melissa J.</strong>
           </article>
           <article class="review reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p>Warm team, gorgeous space, and Sofia gave me the best blowout I've had in Austin. Highly recommend.</p>
-            <strong>&mdash; Carina P.</strong>
+            <p data-cfg-item="text">Warm team, gorgeous space, and Sofia gave me the best blowout I've had in Austin. Highly recommend.</p>
+            <strong data-cfg-item-html="attribution">&mdash; Carina P.</strong>
           </article>
         </div>
       </div>
@@ -490,10 +490,10 @@
     <section id="book">
       <div class="container">
         <div class="cta-box reveal">
-          <h2>Ready for Your Best Hair Day?</h2>
-          <p>New clients always welcome. Walk-ins based on availability.</p>
-          <a href="#" class="btn btn-main">Book Online</a>
-          <p style="margin-top:12px; font-size:.9rem;">Or call us: <a href="tel:+15125550147" style="color:#fff; text-decoration:underline;">(512) 555-0147</a></p>
+          <h2 data-cfg="ctaTitle">Ready for Your Best Hair Day?</h2>
+          <p data-cfg="ctaText">New clients always welcome. Walk-ins based on availability.</p>
+          <a href="#" class="btn btn-main" data-cfg="ctaButton">Book Online</a>
+          <p style="margin-top:12px; font-size:.9rem;"><span data-cfg="ctaPhoneLabel">Or call us:</span> <a href="tel:+15125550147" style="color:#fff; text-decoration:underline;" data-cfg="ctaPhone" data-cfg-attr="href:phoneTelHref">(512) 555-0147</a></p>
         </div>
       </div>
     </section>
@@ -503,27 +503,31 @@
     <div class="container">
       <div class="footer-grid">
         <div>
-          <h4>Velvet &amp; Vine Salon</h4>
-          <p style="font-size:.88rem; margin:0;">Austin's boutique salon for cuts, color, and care. Located on South Congress since 2018.</p>
+          <h4 data-cfg="businessName">Velvet &amp; Vine Salon</h4>
+          <p style="font-size:.88rem; margin:0;" data-cfg="footerDescription">Austin's boutique salon for cuts, color, and care. Located on South Congress since 2018.</p>
         </div>
         <div>
           <h4>Visit</h4>
-          <span style="font-size:.88rem;">2204 S Congress Ave<br>Austin TX 78704</span><br>
-          <span style="font-size:.88rem;">Tue&ndash;Sat 10am&ndash;7pm<br>Sun 11am&ndash;5pm</span>
+          <span style="font-size:.88rem;" data-cfg="address">2204 S Congress Ave</span><br>
+          <span style="font-size:.88rem;" data-cfg="addressLine2">Austin TX 78704</span><br>
+          <span style="font-size:.88rem;" data-cfg="hours">Tue&ndash;Sat 10am&ndash;7pm</span><br>
+          <span style="font-size:.88rem;" data-cfg="hoursSunday">Sun 11am&ndash;5pm</span>
         </div>
         <div>
           <h4>Connect</h4>
           <a href="#">Instagram</a><br>
-          <a href="tel:+15125550147">(512) 555-0147</a><br>
-          <a href="#">hello@velvetandvine.com</a>
+          <a href="tel:+15125550147" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0147</a><br>
+          <a href="#" data-cfg="email">hello@velvetandvine.com</a>
         </div>
       </div>
-      <div class="footer-bottom">
+      <div class="footer-bottom" data-cfg-html="footerLegal">
         &copy; 2026 Velvet &amp; Vine Salon. All rights reserved.
       </div>
     </div>
   </footer>
 
+  <script src="/salon/config.js"></script>
+  <script src="/shared/config-engine.js"></script>
   <script>
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {

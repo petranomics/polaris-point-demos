@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lone Star Plumbing Co. | Austin Plumbers 24/7</title>
-  <meta name="description" content="Lone Star Plumbing Co. offers fast, reliable plumbing in Austin, TX. Licensed and insured with same-day service available." />
+  <title data-cfg="pageTitle">Lone Star Plumbing Co. | Austin Plumbers 24/7</title>
+  <meta name="description" data-cfg-attr="content:metaDescription" content="Lone Star Plumbing Co. offers fast, reliable plumbing in Austin, TX. Licensed and insured with same-day service available." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -440,10 +440,10 @@
 
   <div class="topbar">
     <div class="container topbar-wrap">
-      <span>24/7 Emergency Service Available</span>
-      <a href="tel:+15125550190">
+      <span data-cfg="topbarText">24/7 Emergency Service Available</span>
+      <a href="tel:+15125550190" data-cfg-attr="href:phoneTelHref">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        (512) 555-0190
+        <span data-cfg="phone">(512) 555-0190</span>
       </a>
     </div>
   </div>
@@ -454,7 +454,7 @@
         <span class="logo-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </span>
-        Lone Star Plumbing
+        <span data-cfg="businessNameShort">Lone Star Plumbing</span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#services">Services</a>
@@ -469,34 +469,34 @@
     <!-- HERO with real photo background -->
     <section class="hero">
       <div class="hero-bg">
-        <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Professional plumber installing pipe fittings" loading="eager">
+        <img data-cfg-attr="src:heroImage,alt:heroImageAlt" src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Professional plumber installing pipe fittings" loading="eager">
       </div>
       <div class="container hero-content reveal">
-        <h1>Fast, Reliable Plumbing in Austin, TX</h1>
-        <p>Licensed &amp; insured plumbers available same-day. From drain cleaning to full re-pipes, we do it right the first time.</p>
+        <h1 data-cfg="heroHeadline">Fast, Reliable Plumbing in Austin, TX</h1>
+        <p data-cfg="heroSubtext">Licensed &amp; insured plumbers available same-day. From drain cleaning to full re-pipes, we do it right the first time.</p>
         <div class="btn-row">
-          <a href="tel:+15125550190" class="btn btn-primary">
+          <a href="tel:+15125550190" class="btn btn-primary" data-cfg-attr="href:phoneTelHref">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Call (512) 555-0190
+            <span data-cfg="heroCta1">Call (512) 555-0190</span>
           </a>
-          <a href="#contact" class="btn btn-secondary">Get a Free Estimate</a>
+          <a href="#contact" class="btn btn-secondary" data-cfg="heroCta2">Get a Free Estimate</a>
         </div>
         <div class="trust-strip">
           <div class="trust-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            Licensed &amp; Insured
+            <span data-cfg="trustBadge1">Licensed &amp; Insured</span>
           </div>
           <div class="trust-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            5-Star Rated
+            <span data-cfg="trustBadge2">5-Star Rated</span>
           </div>
           <div class="trust-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Locally Owned
+            <span data-cfg="trustBadge3">Locally Owned</span>
           </div>
           <div class="trust-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            15+ Years Experience
+            <span data-cfg="trustBadge4">15+ Years Experience</span>
           </div>
         </div>
       </div>
@@ -505,55 +505,55 @@
     <!-- SERVICES -->
     <section id="services">
       <div class="container">
-        <span class="section-label reveal">What We Do</span>
-        <h2 class="reveal">Our Plumbing Services</h2>
+        <span class="section-label reveal" data-cfg="servicesLabel">What We Do</span>
+        <h2 class="reveal" data-cfg="servicesTitle">Our Plumbing Services</h2>
         <div class="grid" style="margin-top:22px;">
           <article class="card reveal">
             <div class="service-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/><path d="M12 12v4"/></svg>
             </div>
-            <h3>Drain Cleaning</h3>
-            <p>Clogged drains fixed quickly with professional-grade hydro-jetting and cable equipment.</p>
+            <h3 data-cfg="service1Name">Drain Cleaning</h3>
+            <p data-cfg="service1Desc">Clogged drains fixed quickly with professional-grade hydro-jetting and cable equipment.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
           <article class="card reveal">
             <div class="service-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M6 8h12l-1 10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8z"/><path d="M9 22v-4"/><path d="M15 22v-4"/></svg>
             </div>
-            <h3>Water Heater Repair</h3>
-            <p>Repair or upgrade your tank or tankless water heater for reliable hot water every day.</p>
+            <h3 data-cfg="service2Name">Water Heater Repair</h3>
+            <p data-cfg="service2Desc">Repair or upgrade your tank or tankless water heater for reliable hot water every day.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
           <article class="card reveal">
             <div class="service-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
             </div>
-            <h3>Leak Detection</h3>
-            <p>Find hidden leaks fast with electronic detection equipment and prevent expensive damage.</p>
+            <h3 data-cfg="service3Name">Leak Detection</h3>
+            <p data-cfg="service3Desc">Find hidden leaks fast with electronic detection equipment and prevent expensive damage.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
           <article class="card reveal">
             <div class="service-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             </div>
-            <h3>Fixture Repair</h3>
-            <p>Stop constant drips and running toilets with lasting faucet, toilet, and fixture repairs.</p>
+            <h3 data-cfg="service4Name">Fixture Repair</h3>
+            <p data-cfg="service4Desc">Stop constant drips and running toilets with lasting faucet, toilet, and fixture repairs.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
           <article class="card reveal">
             <div class="service-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><polyline points="16 21 16 3 8 3 8 21"/></svg>
             </div>
-            <h3>Pipe Installation</h3>
-            <p>New pipe installs and whole-house re-pipes built for code compliance and long-term flow.</p>
+            <h3 data-cfg="service5Name">Pipe Installation</h3>
+            <p data-cfg="service5Desc">New pipe installs and whole-house re-pipes built for code compliance and long-term flow.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
           <article class="card reveal">
             <div class="service-icon" style="background: linear-gradient(135deg, #fff3eb, #ffe8d9); color: var(--orange);">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
-            <h3>Emergency Plumbing</h3>
-            <p>Burst pipe or major backup? Our emergency response team is on call around the clock.</p>
+            <h3 data-cfg="service6Name">Emergency Plumbing</h3>
+            <p data-cfg="service6Desc">Burst pipe or major backup? Our emergency response team is on call around the clock.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
         </div>
@@ -564,20 +564,20 @@
     <section id="about" style="background:#fff;">
       <div class="container split reveal">
         <div class="split-img">
-          <img src="https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Professional plumber with tools ready for service" loading="lazy">
+          <img data-cfg-attr="src:aboutImage,alt:aboutImageAlt" src="https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Professional plumber with tools ready for service" loading="lazy">
         </div>
         <div>
-          <span class="section-label">Why Choose Us</span>
-          <h2>Austin Trusts Lone Star</h2>
-          <p style="color:var(--muted);">For over 15 years, we've been the call Austin homeowners make when the water won't stop running, the drain won't clear, or the heater goes cold. Every technician is background-checked, state-licensed, and treats your home with respect.</p>
+          <span class="section-label" data-cfg="aboutLabel">Why Choose Us</span>
+          <h2 data-cfg="aboutTitle">Austin Trusts Lone Star</h2>
+          <p style="color:var(--muted);" data-cfg="aboutText">For over 15 years, we've been the call Austin homeowners make when the water won't stop running, the drain won't clear, or the heater goes cold. Every technician is background-checked, state-licensed, and treats your home with respect.</p>
           <div class="why-grid" style="margin-top:18px;">
             <div class="why-card">
               <div class="why-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
               <div>
-                <h3>Same-Day Service</h3>
-                <p>Most calls handled the same day across Austin and surrounding areas.</p>
+                <h3 data-cfg="why1Title">Same-Day Service</h3>
+                <p data-cfg="why1Text">Most calls handled the same day across Austin and surrounding areas.</p>
               </div>
             </div>
             <div class="why-card">
@@ -585,8 +585,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
               <div>
-                <h3>Upfront Pricing</h3>
-                <p>Clear quotes before work starts. No surprise fees, ever.</p>
+                <h3 data-cfg="why2Title">Upfront Pricing</h3>
+                <p data-cfg="why2Text">Clear quotes before work starts. No surprise fees, ever.</p>
               </div>
             </div>
             <div class="why-card">
@@ -594,8 +594,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
               <div>
-                <h3>Satisfaction Guaranteed</h3>
-                <p>If the problem comes back, so do we. At no extra cost.</p>
+                <h3 data-cfg="why3Title">Satisfaction Guaranteed</h3>
+                <p data-cfg="why3Text">If the problem comes back, so do we. At no extra cost.</p>
               </div>
             </div>
           </div>
@@ -606,23 +606,23 @@
     <!-- REVIEWS -->
     <section id="reviews" style="background: var(--light);">
       <div class="container">
-        <span class="section-label reveal">Testimonials</span>
-        <h2 class="reveal">What Our Customers Say</h2>
-        <div class="grid" style="margin-top:22px;">
+        <span class="section-label reveal" data-cfg="reviewsLabel">Testimonials</span>
+        <h2 class="reveal" data-cfg="reviewsTitle">What Our Customers Say</h2>
+        <div class="grid" style="margin-top:22px;" data-cfg-list="reviews">
           <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p>Our water heater quit in the morning and Lone Star had someone out by lunch. Clear pricing, no pressure, and the tech explained everything.</p>
-            <h3>Maria G. &middot; Cedar Park &middot; Jan 2026</h3>
+            <p data-cfg-item="text">Our water heater quit in the morning and Lone Star had someone out by lunch. Clear pricing, no pressure, and the tech explained everything.</p>
+            <h3 data-cfg-item-html="attribution">Maria G. &middot; Cedar Park &middot; Jan 2026</h3>
           </article>
           <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p>Called for a late-night leak and they actually answered. Fast service, professional work, and they cleaned up before leaving.</p>
-            <h3>James T. &middot; East Austin &middot; Dec 2025</h3>
+            <p data-cfg-item="text">Called for a late-night leak and they actually answered. Fast service, professional work, and they cleaned up before leaving.</p>
+            <h3 data-cfg-item-html="attribution">James T. &middot; East Austin &middot; Dec 2025</h3>
           </article>
           <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p>I appreciated the honest quote and timeline. They fixed two bathroom issues in one visit and everything has worked perfectly since.</p>
-            <h3>Priya M. &middot; Round Rock &middot; Nov 2025</h3>
+            <p data-cfg-item="text">I appreciated the honest quote and timeline. They fixed two bathroom issues in one visit and everything has worked perfectly since.</p>
+            <h3 data-cfg-item-html="attribution">Priya M. &middot; Round Rock &middot; Nov 2025</h3>
           </article>
         </div>
       </div>
@@ -631,24 +631,24 @@
     <!-- SERVICE AREA with real photo -->
     <section style="background:#fff;">
       <div class="container">
-        <span class="section-label reveal">Coverage Area</span>
-        <h2 class="reveal">Serving All of Austin &amp; Surrounding Areas</h2>
+        <span class="section-label reveal" data-cfg="serviceAreaLabel">Coverage Area</span>
+        <h2 class="reveal" data-cfg="serviceAreaTitle">Serving All of Austin &amp; Surrounding Areas</h2>
         <div class="split reveal" style="margin-top:20px;">
           <div>
-            <p style="color:var(--muted);">From South Congress to Round Rock, our fleet of fully-stocked service trucks means a licensed plumber is never far from your door.</p>
-            <div class="area-tags">
-              <span class="area-tag">Austin</span>
-              <span class="area-tag">Round Rock</span>
-              <span class="area-tag">Cedar Park</span>
-              <span class="area-tag">Pflugerville</span>
-              <span class="area-tag">Georgetown</span>
-              <span class="area-tag">Kyle</span>
-              <span class="area-tag">Buda</span>
-              <span class="area-tag">Lakeway</span>
+            <p style="color:var(--muted);" data-cfg="serviceAreaText">From South Congress to Round Rock, our fleet of fully-stocked service trucks means a licensed plumber is never far from your door.</p>
+            <div class="area-tags" data-cfg-list="serviceAreas">
+              <span class="area-tag" data-cfg-item>Austin</span>
+              <span class="area-tag" data-cfg-item>Round Rock</span>
+              <span class="area-tag" data-cfg-item>Cedar Park</span>
+              <span class="area-tag" data-cfg-item>Pflugerville</span>
+              <span class="area-tag" data-cfg-item>Georgetown</span>
+              <span class="area-tag" data-cfg-item>Kyle</span>
+              <span class="area-tag" data-cfg-item>Buda</span>
+              <span class="area-tag" data-cfg-item>Lakeway</span>
             </div>
           </div>
           <div class="area-img">
-            <img src="https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin home we service" loading="lazy">
+            <img data-cfg-attr="src:serviceAreaImage,alt:serviceAreaImageAlt" src="https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin home we service" loading="lazy">
           </div>
         </div>
       </div>
@@ -659,16 +659,16 @@
       <div class="container">
         <div class="form-grid reveal">
           <div class="form-info">
-            <span class="section-label">Get In Touch</span>
-            <h2>Request Your Free Estimate</h2>
-            <p>Fill out the form and one of our licensed plumbers will get back to you within 2 hours during business hours &mdash; or call us directly for immediate assistance.</p>
+            <span class="section-label" data-cfg="contactLabel">Get In Touch</span>
+            <h2 data-cfg="contactTitle">Request Your Free Estimate</h2>
+            <p data-cfg="contactText">Fill out the form and one of our licensed plumbers will get back to you within 2 hours during business hours &mdash; or call us directly for immediate assistance.</p>
             <div class="form-contact-item">
               <div class="form-contact-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               </div>
               <div>
                 <strong>Phone</strong>
-                <a href="tel:+15125550190">(512) 555-0190</a>
+                <a href="tel:+15125550190" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0190</a>
               </div>
             </div>
             <div class="form-contact-item">
@@ -677,7 +677,7 @@
               </div>
               <div>
                 <strong>Email</strong>
-                <span>info@lonestarplumbing.com</span>
+                <span data-cfg="email">info@lonestarplumbing.com</span>
               </div>
             </div>
             <div class="form-contact-item">
@@ -686,7 +686,7 @@
               </div>
               <div>
                 <strong>Office</strong>
-                <span>8100 Burnet Rd, Austin TX 78757</span>
+                <span data-cfg="address">8100 Burnet Rd, Austin TX 78757</span>
               </div>
             </div>
             <div class="form-contact-item">
@@ -695,7 +695,7 @@
               </div>
               <div>
                 <strong>Hours</strong>
-                <span>Mon&ndash;Sat 7am&ndash;7pm &middot; Emergency 24/7</span>
+                <span data-cfg="hours">Mon&ndash;Sat 7am&ndash;7pm &middot; Emergency 24/7</span>
               </div>
             </div>
           </div>
@@ -715,7 +715,7 @@
             </div>
             <div>
               <label for="service">Service Needed</label>
-              <select id="service" name="service" required>
+              <select id="service" name="service" required data-cfg-options="formServiceOptions">
                 <option value="">Select a service...</option>
                 <option>Drain Cleaning</option>
                 <option>Water Heater Repair</option>
@@ -741,11 +741,11 @@
     <section style="padding: 60px 0; background: var(--light);">
       <div class="container">
         <div class="cta-banner reveal">
-          <h2>Need a Plumber Right Now?</h2>
-          <p>Our emergency team is available 24 hours a day, 7 days a week.</p>
-          <a href="tel:+15125550190" class="btn btn-primary" style="font-size:1.05rem;">
+          <h2 data-cfg="ctaTitle">Need a Plumber Right Now?</h2>
+          <p data-cfg="ctaText">Our emergency team is available 24 hours a day, 7 days a week.</p>
+          <a href="tel:+15125550190" class="btn btn-primary" style="font-size:1.05rem;" data-cfg-attr="href:phoneTelHref">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Call (512) 555-0190
+            <span data-cfg="ctaButton">Call (512) 555-0190</span>
           </a>
         </div>
       </div>
@@ -756,30 +756,34 @@
     <div class="container">
       <div class="footer-grid">
         <div>
-          <h4>Lone Star Plumbing Co.</h4>
-          <p style="font-size:.88rem; margin:0;">Austin's trusted plumbing company for over 15 years. Licensed, insured, and committed to getting the job done right.</p>
+          <h4 data-cfg="businessName">Lone Star Plumbing Co.</h4>
+          <p style="font-size:.88rem; margin:0;" data-cfg="footerDescription">Austin's trusted plumbing company for over 15 years. Licensed, insured, and committed to getting the job done right.</p>
         </div>
         <div>
           <h4>Services</h4>
-          <a href="#services">Drain Cleaning</a>
-          <a href="#services">Water Heater Repair</a>
-          <a href="#services">Leak Detection</a>
-          <a href="#services">Fixture Repair</a>
-          <a href="#services">Emergency Plumbing</a>
+          <div data-cfg-list="footerServices">
+            <a href="#services" data-cfg-item>Drain Cleaning</a>
+            <a href="#services" data-cfg-item>Water Heater Repair</a>
+            <a href="#services" data-cfg-item>Leak Detection</a>
+            <a href="#services" data-cfg-item>Fixture Repair</a>
+            <a href="#services" data-cfg-item>Emergency Plumbing</a>
+          </div>
         </div>
         <div>
           <h4>Contact</h4>
-          <a href="tel:+15125550190">(512) 555-0190</a>
-          <a href="#">info@lonestarplumbing.com</a>
-          <span style="font-size:.88rem;">8100 Burnet Rd, Austin TX 78757</span>
+          <a href="tel:+15125550190" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0190</a>
+          <a href="#" data-cfg="email" data-cfg-attr="href:emailHref">info@lonestarplumbing.com</a>
+          <span style="font-size:.88rem;" data-cfg="address">8100 Burnet Rd, Austin TX 78757</span>
         </div>
       </div>
       <div class="footer-bottom">
-        &copy; 2026 Lone Star Plumbing Co. All rights reserved. &middot; TPCL #12345
+        <span data-cfg-html="footerLegal">&copy; 2026 Lone Star Plumbing Co. All rights reserved. &middot; TPCL #12345</span>
       </div>
     </div>
   </footer>
 
+  <script src="/plumber/config.js"></script>
+  <script src="/shared/config-engine.js"></script>
   <script>
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
