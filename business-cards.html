@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polaris Point Business Card — Style D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #5B8DEF;
+      --gold: #D4A853;
+      --dark: #0B1120;
+      --text: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Inter', sans-serif; background: #080c16; color: #e2e8f0; padding: 40px 20px; }
+    h1 { text-align: center; font-size: 1rem; color: var(--text); margin-bottom: 6px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
+    .subtitle { text-align: center; color: #475569; font-size: .78rem; margin-bottom: 40px; }
+
+    /* Editor panel */
+    .editor {
+      max-width: 480px;
+      margin: 0 auto 48px;
+      background: #111827;
+      border: 1px solid rgba(91,141,239,.12);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .editor h2 { font-family: 'Outfit', sans-serif; font-size: .85rem; color: #fff; margin-bottom: 16px; font-weight: 600; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: .65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #475569; font-weight: 600; margin-bottom: 4px; }
+    .field input {
+      width: 100%;
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: .82rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .field input:focus { border-color: var(--blue); }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .btn-export {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .btn-export:hover { background: #4A7DE0; transform: translateY(-1px); }
+    .btn-export:active { transform: translateY(0); }
+    .btn-export.secondary { background: transparent; border: 1px solid #1e293b; color: var(--text); }
+    .btn-export.secondary:hover { border-color: #334155; color: #fff; }
+
+    /* Card display */
+    .cards-row {
+      display: flex; flex-wrap: wrap; gap: 40px;
+      justify-content: center; align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .card-pair { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+    .side-label { font-size: .55rem; text-transform: uppercase; letter-spacing: 1.5px; color: #374151; font-weight: 500; text-align: center; }
+
+    /* 3.5 x 2 at 96dpi scaled */
+    .bcard {
+      width: 360px;
+      height: 206px;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.06);
+    }
+
+    /* FRONT: Minimal Dark */
+    .bcard-front {
+      background: #0B1120;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      padding: 32px;
+    }
+    .bcard-front .star-svg { width: 40px; height: 40px; filter: drop-shadow(0 0 10px rgba(91,141,239,.3)); margin-bottom: 12px; }
+    .bcard-front .name { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: .9rem; color: #fff; letter-spacing: 4px; text-transform: uppercase; }
+    .bcard-front .tagline { font-size: .5rem; text-transform: uppercase; letter-spacing: 3px; color: var(--gold); font-weight: 600; margin-top: 6px; }
+
+    /* BACK: Galaxy Vibes */
+    .bcard-back {
+      background: linear-gradient(160deg, #070d1a 0%, #0b1a2d 45%, #081322 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 32px;
+    }
+    /* Galaxy background layers */
+    .bcard-back .galaxy {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    /* Ambient glow — matches the deeper navy base */
+    .bcard-back .galaxy::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 75% 50%, rgba(91,141,239,.06) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 60% at 25% 75%, rgba(91,141,239,.04) 0%, transparent 50%);
+    }
+    /* Background star dust — random filler stars */
+    .bcard-back .galaxy::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 5% 18%, rgba(255,255,255,.25) 0%, transparent 100%),
+        radial-gradient(1px 1px at 12% 72%, rgba(255,255,255,.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 45%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 33% 8%, rgba(255,255,255,.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 88%, rgba(255,255,255,.18) 0%, transparent 100%),
+        radial-gradient(1px 1px at 48% 32%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 78%, rgba(255,255,255,.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 62% 12%, rgba(255,255,255,.18) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 82%, rgba(255,255,255,.18) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 25%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 3% 52%, rgba(255,255,255,.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 92%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 78% 5%, rgba(255,255,255,.18) 0%, transparent 100%),
+        radial-gradient(1px 1px at 95% 62%, rgba(255,255,255,.12) 0%, transparent 100%),
+        /* Extra dust */
+        radial-gradient(1px 1px at 8% 35%, rgba(255,255,255,.14) 0%, transparent 100%),
+        radial-gradient(1px 1px at 27% 15%, rgba(255,255,255,.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 37% 68%, rgba(255,255,255,.16) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 42%, rgba(255,255,255,.1) 0%, transparent 100%),
+        radial-gradient(1px 1px at 58% 90%, rgba(255,255,255,.13) 0%, transparent 100%),
+        radial-gradient(1px 1px at 68% 28%, rgba(255,255,255,.14) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 48%, rgba(255,255,255,.11) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 60%, rgba(255,255,255,.13) 0%, transparent 100%),
+        radial-gradient(1px 1px at 44% 5%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 72%, rgba(255,255,255,.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 42%, rgba(255,255,255,.1) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 82%, rgba(255,255,255,.14) 0%, transparent 100%),
+        radial-gradient(1px 1px at 52% 58%, rgba(255,255,255,.1) 0%, transparent 100%),
+        radial-gradient(1px 1px at 2% 8%, rgba(255,255,255,.12) 0%, transparent 100%);
+    }
+
+    /* Constellation layer */
+    .constellation {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .cstar {
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    /*
+     * ORION — modeled after real photo reference.
+     * Layout: Betelgeuse (top-left, orange), Bellatrix (top-right),
+     * Belt: 3 tight stars angled slightly, Sword: 3 stars below belt
+     * including nebula glow, Rigel (bottom-right, blue-white),
+     * Saiph (bottom-left). Shield stars to the right of Bellatrix.
+     * Positioned upper-right of card, ~30% opacity range.
+     */
+
+    /* Betelgeuse — orange supergiant, top-left shoulder */
+    .cstar.betelgeuse {
+      width: 3px; height: 3px;
+      right: 28%; top: 12%;
+      background: rgba(255,190,140,.35);
+      box-shadow: 0 0 4px 2px rgba(255,170,110,.12);
+    }
+    /* Bellatrix — top-right shoulder */
+    .cstar.bellatrix {
+      width: 2.5px; height: 2.5px;
+      right: 16%; top: 16%;
+      background: rgba(200,220,255,.3);
+      box-shadow: 0 0 3px 1px rgba(180,210,255,.08);
+    }
+
+    /* Belt — 3 stars, tight row, slight diagonal */
+    .cstar.alnitak {
+      width: 2.5px; height: 2.5px;
+      right: 26%; top: 38%;
+      background: rgba(210,225,255,.35);
+      box-shadow: 0 0 3px 1px rgba(180,210,255,.1);
+    }
+    .cstar.alnilam {
+      width: 2.5px; height: 2.5px;
+      right: 22%; top: 40%;
+      background: rgba(210,225,255,.38);
+      box-shadow: 0 0 3px 1px rgba(180,210,255,.1);
+    }
+    .cstar.mintaka {
+      width: 2.5px; height: 2.5px;
+      right: 18%; top: 42%;
+      background: rgba(210,225,255,.35);
+      box-shadow: 0 0 3px 1px rgba(180,210,255,.08);
+    }
+
+    /* Sword — 3 stars hanging below belt, with nebula glow on middle */
+    .cstar.sword1 {
+      width: 1.5px; height: 1.5px;
+      right: 24%; top: 48%;
+      background: rgba(255,255,255,.22);
+    }
+    .cstar.sword2 {
+      width: 2px; height: 2px;
+      right: 23%; top: 52%;
+      background: rgba(220,200,255,.28);
+      box-shadow: 0 0 6px 3px rgba(200,160,240,.06);
+    }
+    .cstar.sword3 {
+      width: 1.5px; height: 1.5px;
+      right: 22%; top: 56%;
+      background: rgba(255,255,255,.2);
+    }
+
+    /* Rigel — blue-white, bottom-right foot */
+    .cstar.rigel {
+      width: 3px; height: 3px;
+      right: 14%; top: 68%;
+      background: rgba(180,210,255,.4);
+      box-shadow: 0 0 4px 2px rgba(140,190,255,.12);
+    }
+    /* Saiph — bottom-left foot */
+    .cstar.saiph {
+      width: 2px; height: 2px;
+      right: 30%; top: 65%;
+      background: rgba(255,255,255,.25);
+      box-shadow: 0 0 2px 1px rgba(255,255,255,.06);
+    }
+
+    /* Shield — arc of dimmer stars to the right of Bellatrix */
+    .cstar.shield1 {
+      width: 1.5px; height: 1.5px;
+      right: 6%; top: 18%;
+      background: rgba(255,255,255,.18);
+    }
+    .cstar.shield2 {
+      width: 1.5px; height: 1.5px;
+      right: 4%; top: 25%;
+      background: rgba(255,255,255,.16);
+    }
+    .cstar.shield3 {
+      width: 1.5px; height: 1.5px;
+      right: 5%; top: 33%;
+      background: rgba(255,255,255,.15);
+    }
+    .cstar.shield4 {
+      width: 1.5px; height: 1.5px;
+      right: 7%; top: 40%;
+      background: rgba(255,255,255,.14);
+    }
+
+    /* --- POLARIS (bottom-left, below text) --- */
+    .polaris-star {
+      position: absolute;
+      left: 28px; bottom: 8px;
+      width: 18px; height: 18px;
+      filter: drop-shadow(0 0 6px rgba(91,141,239,.35)) drop-shadow(0 0 12px rgba(91,141,239,.12));
+      opacity: .45;
+      z-index: 1;
+    }
+
+    /* --- MILKY WAY --- */
+    .milkyway {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    /* Galaxy color — scattered, no band, just ambient tints */
+    .milkyway .wash1 {
+      position: absolute;
+      width: 80%; height: 80%;
+      top: -20%; right: -10%;
+      background: radial-gradient(ellipse at center, rgba(60,90,160,.025) 0%, transparent 60%);
+      filter: blur(40px);
+    }
+    .milkyway .wash2 {
+      position: absolute;
+      width: 70%; height: 70%;
+      bottom: -10%; left: -10%;
+      background: radial-gradient(ellipse at center, rgba(100,60,140,.02) 0%, transparent 60%);
+      filter: blur(40px);
+    }
+    .milkyway .wash3 {
+      position: absolute;
+      width: 50%; height: 60%;
+      top: 20%; left: 30%;
+      background: radial-gradient(ellipse at center, rgba(50,120,160,.015) 0%, transparent 55%);
+      filter: blur(35px);
+    }
+    /* Tiny dense cluster stars scattered along the band */
+    .milkyway .clusters {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(.7px .7px at 22% 40%, rgba(255,255,255,.08) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 28% 42%, rgba(255,255,255,.06) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 34% 38%, rgba(255,255,255,.07) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 40% 41%, rgba(255,255,255,.06) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 46% 36%, rgba(255,255,255,.07) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 52% 43%, rgba(255,255,255,.05) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 58% 37%, rgba(255,255,255,.06) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 64% 44%, rgba(255,255,255,.05) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 70% 39%, rgba(255,255,255,.06) 0%, transparent 100%),
+        radial-gradient(.7px .7px at 76% 42%, rgba(255,255,255,.05) 0%, transparent 100%);
+    }
+
+    .bcard-back .top, .bcard-back .bottom { position: relative; z-index: 1; }
+    .bcard-back .person-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 2px; }
+    .bcard-back .person-title { font-size: .6rem; color: var(--blue); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+    .bcard-back .bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+    .bcard-back .info { font-size: .68rem; color: #64748b; line-height: 1.8; }
+    .bcard-back .info span { display: block; }
+    .bcard-back .mini-logo { display: none; }
+    .bcard-back::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 32px; right: 32px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(91,141,239,.15), rgba(212,168,83,.1), transparent);
+      z-index: 1;
+    }
+
+    .export-note { text-align: center; color: #334155; font-size: .7rem; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <h1>Polaris Point Business Card</h1>
+  <p class="subtitle">Style D — Minimal Dark with Galaxy Back</p>
+
+  <!-- EDITOR -->
+  <div class="editor">
+    <h2>Edit Card Info</h2>
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="inputName" value="Pete Moreno">
+    </div>
+    <div class="field">
+      <label>Title</label>
+      <input type="text" id="inputTitle" value="Founder &amp; Creative Director">
+    </div>
+    <div class="field">
+      <label>Phone</label>
+      <input type="text" id="inputPhone" value="(512) 555-0100">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="text" id="inputEmail" value="pete@polarispoint.io">
+    </div>
+    <div class="field">
+      <label>Website</label>
+      <input type="text" id="inputWeb" value="polarispoint.io">
+    </div>
+    <div class="btn-row">
+      <button class="btn-export" onclick="exportCard('front')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Front (PNG)
+      </button>
+      <button class="btn-export" onclick="exportCard('back')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Back (PNG)
+      </button>
+      <button class="btn-export secondary" onclick="exportCard('both')">
+        Export Both
+      </button>
+    </div>
+  </div>
+
+  <!-- CARD PREVIEW -->
+  <div class="cards-row">
+    <div class="card-pair">
+      <div class="side-label">Front</div>
+      <div class="bcard bcard-front" id="cardFront">
+        <svg class="star-svg" viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+        <span class="name">POLARIS POINT</span>
+        <span class="tagline">Digital Solutions</span>
+      </div>
+    </div>
+    <div class="card-pair">
+      <div class="side-label">Back</div>
+      <div class="bcard bcard-back" id="cardBack">
+        <div class="galaxy"></div>
+        <div class="milkyway">
+          <div class="wash1"></div>
+          <div class="wash2"></div>
+          <div class="wash3"></div>
+          <div class="clusters"></div>
+        </div>
+        <div class="constellation">
+          <!-- Orion -->
+          <span class="cstar betelgeuse"></span>
+          <span class="cstar bellatrix"></span>
+          <span class="cstar alnitak"></span>
+          <span class="cstar alnilam"></span>
+          <span class="cstar mintaka"></span>
+          <span class="cstar sword1"></span>
+          <span class="cstar sword2"></span>
+          <span class="cstar sword3"></span>
+          <span class="cstar rigel"></span>
+          <span class="cstar saiph"></span>
+          <span class="cstar shield1"></span>
+          <span class="cstar shield2"></span>
+          <span class="cstar shield3"></span>
+          <span class="cstar shield4"></span>
+
+          <!-- Polaris — Bethlehem Star, bottom-left -->
+          <svg class="polaris-star" viewBox="0 0 24 24" fill="none">
+            <polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/>
+          </svg>
+        </div>
+        <div class="top">
+          <div class="person-name" id="cardName">Pete Moreno</div>
+          <div class="person-title" id="cardTitle">Founder &amp; Creative Director</div>
+        </div>
+        <div class="bottom">
+          <div class="info">
+            <span id="cardPhone">(512) 555-0100</span>
+            <span id="cardEmail">pete@polarispoint.io</span>
+            <span id="cardWeb">polarispoint.io</span>
+          </div>
+          <div class="mini-logo">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="export-note">Exports at 1050 x 600px (print-quality at 300 DPI for 3.5" x 2")</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <script>
+    // Live preview binding
+    var fields = [
+      { input: 'inputName',  target: 'cardName' },
+      { input: 'inputTitle', target: 'cardTitle' },
+      { input: 'inputPhone', target: 'cardPhone' },
+      { input: 'inputEmail', target: 'cardEmail' },
+      { input: 'inputWeb',   target: 'cardWeb' }
+    ];
+    fields.forEach(function(f) {
+      document.getElementById(f.input).addEventListener('input', function() {
+        document.getElementById(f.target).textContent = this.value;
+      });
+    });
+
+    function exportCard(which) {
+      var sides = [];
+      if (which === 'front' || which === 'both') sides.push({ el: 'cardFront', name: 'polaris-point-card-front' });
+      if (which === 'back'  || which === 'both') sides.push({ el: 'cardBack',  name: 'polaris-point-card-back' });
+      sides.forEach(function(side) { doExport(side.el, side.name); });
+    }
+
+    function doExport(id, filename) {
+      var el = document.getElementById(id);
+      var btn = event.target.closest('.btn-export');
+      if (btn) { btn.textContent = 'Exporting...'; btn.disabled = true; }
+
+      // 1050x600 = 3.5"x2" at 300 DPI
+      var scale = 1050 / el.offsetWidth;
+
+      htmlToImage.toPng(el, {
+        width: 1050,
+        height: 600,
+        style: {
+          transform: 'scale(' + scale + ')',
+          transformOrigin: 'top left',
+          borderRadius: '0',
+          boxShadow: 'none'
+        },
+        pixelRatio: 1
+      }).then(function(dataUrl) {
+        var a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = filename + '.png';
+        a.click();
+      }).catch(function(err) {
+        console.error('Export failed:', err);
+        alert('Export failed — try again');
+      }).finally(function() {
+        if (btn) { btn.textContent = btn.dataset.label || 'Export'; btn.disabled = false; }
+      });
+    }
+
+    // Store button labels for restore after export
+    document.querySelectorAll('.btn-export').forEach(function(b) { b.dataset.label = b.textContent.trim(); });
+  </script>
+</body>
+</html>
