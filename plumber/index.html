@@ -8,431 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy: #1B3A6B;
-      --navy-dark: #0f2748;
-      --orange: #E8601E;
-      --orange-light: #FF7A3D;
-      --light: #f6f8fc;
-      --text: #173052;
-      --muted: #5a6f8f;
-      --white: #fff;
-      --radius: 14px;
-      --shadow: 0 8px 30px rgba(10, 35, 68, 0.12);
-      --max: 1140px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: 'Source Sans 3', sans-serif;
-      color: var(--text);
-      background: var(--light);
-      line-height: 1.6;
-    }
-    h1, h2, h3 { font-family: 'Montserrat', sans-serif; letter-spacing: -.01em; margin-top: 0; }
-    .container { width: min(100% - 2rem, var(--max)); margin-inline: auto; }
-    section { padding: 80px 0; }
-
-    /* DEMO BANNER */
-    .demo-banner {
-      background: #0B1F3A;
-      color: #00C2B2;
-      text-align: center;
-      padding: 10px 20px;
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-    }
-    .demo-banner a { color: #F5A623; font-weight: bold; text-decoration: none; }
-
-    .topbar {
-      background: var(--navy-dark);
-      color: #c8d8ee;
-      font-size: .88rem;
-      padding: 8px 0;
-    }
-    .topbar-wrap {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .topbar a {
-      color: #fff;
-      font-weight: 700;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .topbar a svg { flex-shrink: 0; }
-
-    .site-header {
-      position: sticky;
-      top: 44px;
-      z-index: 900;
-      background: rgba(27, 58, 107, 0.97);
-      border-bottom: 1px solid rgba(255,255,255,.1);
-      backdrop-filter: blur(10px);
-    }
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 0;
-    }
-    .logo {
-      color: #fff;
-      text-decoration: none;
-      display: inline-flex;
-      gap: 10px;
-      align-items: center;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 1.15rem;
-    }
-    .logo-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--orange);
-      display: grid;
-      place-items: center;
-    }
-    .logo-icon svg { display: block; }
-    .nav-links { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
-    .nav-links a { color: #c8d8ee; text-decoration: none; font-weight: 600; font-size: .92rem; transition: color .2s; }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta {
-      background: var(--orange) !important;
-      color: #fff !important;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 700 !important;
-      transition: background .2s ease, transform .2s ease;
-    }
-    .nav-cta:hover { background: var(--orange-light) !important; transform: translateY(-1px); }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      color: #fff;
-      padding: 0;
-      overflow: hidden;
-      min-height: 520px;
-      display: grid;
-      align-items: center;
-    }
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-    }
-    .hero-bg img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
-    }
-    .hero-bg::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(15,39,72,.92) 40%, rgba(27,58,107,.7) 100%);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      padding: 80px 0 70px;
-    }
-    .hero h1 {
-      font-size: clamp(2.1rem, 5vw, 3.4rem);
-      font-weight: 800;
-      margin-bottom: 12px;
-      max-width: 16ch;
-      line-height: 1.1;
-    }
-    .hero p { margin-top: 0; color: #c8d8ee; font-size: 1.1rem; max-width: 48ch; }
-
-    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      border-radius: 10px;
-      padding: 13px 22px;
-      font-weight: 700;
-      font-size: .95rem;
-      transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
-      border: 2px solid transparent;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.15); }
-    .btn-primary { background: var(--orange); color: #fff; }
-    .btn-primary:hover { background: var(--orange-light); }
-    .btn-secondary { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.35); color: #fff; backdrop-filter: blur(4px); }
-    .btn-secondary:hover { background: rgba(255,255,255,.18); }
-
-    .trust-strip {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 28px;
-    }
-    .trust-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: .88rem;
-      font-weight: 600;
-      color: rgba(255,255,255,.85);
-    }
-    .trust-item svg { color: #6dd47e; flex-shrink: 0; }
-
-    /* SERVICES */
-    .section-label {
-      text-transform: uppercase;
-      font-size: .72rem;
-      letter-spacing: 2.5px;
-      font-weight: 700;
-      color: var(--orange);
-      margin-bottom: 8px;
-      display: block;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px;
-    }
-    .card {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px;
-      border: 1px solid #e4eaf4;
-      transition: transform .25s ease, box-shadow .25s ease;
-    }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(10,35,68,.16); }
-    .service-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #e8f0fd, #dae6f8);
-      color: var(--navy);
-      margin-bottom: 12px;
-    }
-    .card h3 { font-size: 1.05rem; margin-bottom: 6px; }
-    .card p { color: var(--muted); font-size: .92rem; margin: 0 0 10px; }
-    .card-link { color: var(--orange); font-weight: 700; text-decoration: none; font-size: .88rem; display: inline-flex; align-items: center; gap: 4px; }
-    .card-link:hover { text-decoration: underline; }
-
-    /* PHOTO + TEXT SPLIT */
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: center;
-    }
-    .split-img {
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    .split-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      min-height: 320px;
-    }
-
-    /* WHY CHOOSE US */
-    .why-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 18px;
-    }
-    .why-card {
-      background: #fff;
-      border: 1px solid #e4eaf4;
-      border-radius: 14px;
-      padding: 22px;
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      transition: transform .2s ease;
-    }
-    .why-card:hover { transform: translateY(-3px); }
-    .why-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, #fff3eb, #ffe8d9);
-      color: var(--orange);
-    }
-    .why-card h3 { font-size: .95rem; margin-bottom: 4px; }
-    .why-card p { color: var(--muted); font-size: .9rem; margin: 0; }
-
-    /* REVIEWS */
-    .review-card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 22px;
-      box-shadow: var(--shadow);
-      border: 1px solid #e4eaf4;
-      position: relative;
-    }
-    .review-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 16px;
-      bottom: 16px;
-      width: 4px;
-      border-radius: 2px;
-      background: var(--orange);
-    }
-    .stars { color: #f59e0b; letter-spacing: 2px; font-size: 1rem; }
-    .review-card h3 { font-size: .85rem; margin-bottom: 8px; color: var(--muted); }
-
-    /* SERVICE AREA */
-    .area-img {
-      border-radius: 16px;
-      overflow: hidden;
-      height: 280px;
-    }
-    .area-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .area-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-    }
-    .area-tag {
-      background: #fff;
-      border: 1px solid #dce6f6;
-      border-radius: 8px;
-      padding: 6px 14px;
-      font-size: .88rem;
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    /* FORM */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 30px;
-      align-items: start;
-    }
-    form {
-      background: #fff;
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      border: 1px solid #e4eaf4;
-      display: grid;
-      gap: 14px;
-    }
-    label { font-weight: 700; font-size: .88rem; }
-    input, select, textarea {
-      width: 100%;
-      padding: 11px 14px;
-      border-radius: 10px;
-      border: 1px solid #d0daea;
-      font: inherit;
-      font-size: .92rem;
-      transition: border-color .2s;
-    }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); }
-    textarea { min-height: 100px; resize: vertical; }
-    .form-info h2 { margin-bottom: 12px; }
-    .form-info p { color: var(--muted); }
-    .form-contact-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      margin-top: 16px;
-    }
-    .form-contact-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #e8f0fd, #dae6f8);
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      color: var(--navy);
-    }
-    .form-contact-item strong { display: block; font-size: .85rem; }
-    .form-contact-item span, .form-contact-item a { font-size: .88rem; color: var(--muted); text-decoration: none; }
-
-    /* CTA BANNER */
-    .cta-banner {
-      background: linear-gradient(135deg, var(--navy), #16345e);
-      border-radius: 20px;
-      padding: 40px;
-      text-align: center;
-      color: #fff;
-      box-shadow: var(--shadow);
-    }
-    .cta-banner h2 { color: #fff; margin-bottom: 8px; }
-    .cta-banner p { color: #b8c8e0; margin-bottom: 20px; }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(18px);
-      transition: opacity .7s ease, transform .7s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    footer {
-      background: #0a1c34;
-      color: #9eb3cf;
-      padding: 32px 0;
-      margin-top: 0;
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 24px;
-    }
-    .footer-grid h4 { color: #fff; font-family: 'Montserrat', sans-serif; font-size: .85rem; margin: 0 0 10px; }
-    .footer-grid a { color: #8aa4c4; text-decoration: none; display: block; font-size: .88rem; margin-bottom: 4px; }
-    .footer-grid a:hover { color: #fff; }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,.08);
-      margin-top: 20px;
-      padding-top: 16px;
-      font-size: .82rem;
-      color: #6b86a8;
-    }
-
-    @media (max-width: 860px) {
-      .site-header { top: 40px; }
-      .nav-links { display: none; }
-      section { padding: 56px 0; }
-      .split, .form-grid { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; gap: 20px; }
-      .hero { min-height: 420px; }
-    }
-  </style>
+  <link rel="stylesheet" href="/shared/features.css">
+  <link rel="stylesheet" href="/plumber/styles.css">
 </head>
 <body>
   <!-- DEMO BANNER -->
@@ -448,7 +25,10 @@
     </div>
   </div>
 
-  <header class="site-header">
+  <!-- Urgency Banner (injected by features.js if configured) -->
+  <div id="urgencyBannerSlot"></div>
+
+  <header class="site-header" id="header">
     <div class="container nav">
       <a href="#top" class="logo">
         <span class="logo-icon">
@@ -460,6 +40,7 @@
         <a href="#services">Services</a>
         <a href="#about">About</a>
         <a href="#reviews">Reviews</a>
+        <a href="#faq">FAQ</a>
         <a href="#contact" class="nav-cta">Free Estimate</a>
       </nav>
     </div>
@@ -498,9 +79,13 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span data-cfg="trustBadge4">15+ Years Experience</span>
           </div>
+          <div id="googleBadgeSlot"></div>
         </div>
       </div>
     </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar-section" id="trustBarSlot" style="padding:20px 0;background:#fff;"></section>
 
     <!-- SERVICES -->
     <section id="services">
@@ -564,7 +149,7 @@
     <section id="about" style="background:#fff;">
       <div class="container split reveal">
         <div class="split-img">
-          <img data-cfg-attr="src:aboutImage,alt:aboutImageAlt" src="https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Professional plumber with tools ready for service" loading="lazy">
+          <img class="lightbox-trigger" data-cfg-attr="src:aboutImage,alt:aboutImageAlt" src="https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Professional plumber with tools ready for service" loading="lazy">
         </div>
         <div>
           <span class="section-label" data-cfg="aboutLabel">Why Choose Us</span>
@@ -608,7 +193,7 @@
       <div class="container">
         <span class="section-label reveal" data-cfg="reviewsLabel">Testimonials</span>
         <h2 class="reveal" data-cfg="reviewsTitle">What Our Customers Say</h2>
-        <div class="grid" style="margin-top:22px;" data-cfg-list="reviews">
+        <div class="grid" id="reviewsContainer" style="margin-top:22px;" data-cfg-list="reviews">
           <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
             <p data-cfg-item="text">Our water heater quit in the morning and Lone Star had someone out by lunch. Clear pricing, no pressure, and the tech explained everything.</p>
@@ -646,11 +231,30 @@
               <span class="area-tag" data-cfg-item>Buda</span>
               <span class="area-tag" data-cfg-item>Lakeway</span>
             </div>
+            <div id="mapSlot" style="margin-top:20px;border-radius:12px;overflow:hidden;"></div>
           </div>
           <div class="area-img">
-            <img data-cfg-attr="src:serviceAreaImage,alt:serviceAreaImageAlt" src="https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin home we service" loading="lazy">
+            <img class="lightbox-trigger" data-cfg-attr="src:serviceAreaImage,alt:serviceAreaImageAlt" src="https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin home we service" loading="lazy">
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion (built by features.js from config.faqs) -->
+    <section class="faq-section" id="faq" style="background:var(--light);">
+      <div class="container">
+        <span class="section-label reveal">Common Questions</span>
+        <h2 class="reveal">Frequently Asked Questions</h2>
+        <div id="faqContainer" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
+    <!-- Blog Preview (built by features.js from config.blogPosts) -->
+    <section class="blog-section" id="blogSlot" style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal">Tips & Resources</span>
+        <h2 class="reveal">From Our Blog</h2>
+        <div id="blogContainer" class="blog-grid" style="margin-top:22px;"></div>
       </div>
     </section>
 
@@ -699,7 +303,7 @@
               </div>
             </div>
           </div>
-          <form action="#" method="post">
+          <form id="contactForm" action="#" method="post">
             <h3 style="margin-bottom: 4px;">Get Your Free Estimate</h3>
             <div>
               <label for="name">Name</label>
@@ -784,16 +388,6 @@
 
   <script src="/plumber/config.js"></script>
   <script src="/shared/config-engine.js"></script>
-  <script>
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-  </script>
+  <script src="/shared/features.js"></script>
 </body>
 </html>

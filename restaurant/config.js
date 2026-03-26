@@ -133,5 +133,131 @@ window.SITE_CONFIG = {
   footerInstagramHref: "#",
   footerFacebookHref: "#",
   footerYelpHref: "#",
-  footerLegal: "&copy; 2026 Smoke &amp; Stone BBQ. All rights reserved."
+  footerLegal: "&copy; 2026 Smoke &amp; Stone BBQ. All rights reserved.",
+
+  // === FEATURE FLAGS ===
+  features: {
+    mobileNav: true,
+    activeNavHighlight: true,
+    stickyHeader: true,
+    smoothScroll: true,
+    formHandling: false,
+    scrollReveal: true,
+    reviewCarousel: true,
+    googleReviewsBadge: true,
+    floatingButtons: true,
+    stickyBottomCta: true,
+    exitIntent: true,
+    urgencyBanner: true,
+    faqAccordion: true,
+    serviceAreaMap: true,
+    lightbox: true,
+    beforeAfterGallery: false,
+    teamModals: false,
+    blogPreview: true,
+    cookieConsent: true,
+    trustBar: true,
+    analytics: false,
+  },
+
+  // === GOOGLE REVIEWS ===
+  googleReviewsRating: "4.7",
+  googleReviewsCount: "891",
+  googleReviewsUrl: "",
+
+  // === ENGAGEMENT ===
+  smsNumber: "5125550199",
+  whatsappNumber: "",
+  calcomUrl: "",
+
+  exitIntent: {
+    headline: "Wait \u2014 Free Side with Your First Order",
+    text: "Order online today and get a complimentary side of your choice. New customers only.",
+    cta: "Claim My Free Side",
+    ctaUrl: "#order"
+  },
+
+  urgencyBanner: {
+    text: "\ud83d\udd25 Weekend Special: Free banana pudding with any combo plate \u2014 Fri\u2013Sun only",
+    endDate: "2026-06-30"
+  },
+
+  // === FAQ ===
+  faqs: [
+    { question: "What are your hours?", answer: "We\u2019re open Tuesday\u2013Thursday 11am\u20139pm, Friday\u2013Saturday 11am\u201310pm, and Sunday 11am\u20138pm. We\u2019re closed on Mondays." },
+    { question: "Do you take reservations?", answer: "We\u2019re first-come, first-served for dine-in. For parties of 10 or more, call ahead and we\u2019ll do our best to accommodate you." },
+    { question: "Do you offer catering?", answer: "Yes! We cater events of all sizes \u2014 from backyard parties to corporate lunches. Call us or fill out our online form for a custom catering quote." },
+    { question: "Can I order online for pickup?", answer: "Absolutely. Place your order through our website and we\u2019ll have it hot and ready when you arrive. No waiting in line." },
+    { question: "Is there parking available?", answer: "We have a small lot next to the restaurant and additional street parking on E Cesar Chavez. On weekends, the overflow lot across the street is also available." },
+    { question: "Do you have options for dietary restrictions?", answer: "We offer several sides that are vegetarian and gluten-friendly. Our staff can walk you through options \u2014 just ask at the counter." }
+  ],
+
+  // === SERVICE AREA MAP ===
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3446.0!2d-97.7251!3d30.2563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s1847+E+Cesar+Chavez+St+Austin+TX+78702!5e0!3m2!1sen!2sus!4v1",
+
+  // === BLOG POSTS ===
+  blogPosts: [
+    {
+      title: "The Art of the Central Texas Brisket",
+      excerpt: "What makes Central Texas BBQ different? It starts with the cut, the rub, and 14 hours of patience over post oak smoke.",
+      image: "https://images.pexels.com/photos/12645502/pexels-photo-12645502.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Mar 2026"
+    },
+    {
+      title: "5 Sides That Make or Break a BBQ Plate",
+      excerpt: "Great BBQ deserves great sides. Here\u2019s how we think about coleslaw, grits, and everything in between.",
+      image: "https://images.pexels.com/photos/555775/pexels-photo-555775.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Feb 2026"
+    },
+    {
+      title: "How to Host the Perfect Backyard BBQ",
+      excerpt: "Our pitmaster shares tips for smoking at home \u2014 from choosing wood to managing your fire through the stall.",
+      image: "https://images.pexels.com/photos/13004116/pexels-photo-13004116.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Jan 2026"
+    }
+  ],
+
+  // === TRUST BAR LOGOS ===
+  trustLogos: [
+    { src: "", alt: "Yelp Top 10 BBQ" },
+    { src: "", alt: "Austin Chronicle Best Of" },
+    { src: "", alt: "Texas Monthly Top 50" },
+    { src: "", alt: "Google 4.7 Stars" },
+    { src: "", alt: "Food Network Featured" }
+  ],
+
+  // === SEO ===
+  canonicalUrl: "",
+  ogImage: "https://images.pexels.com/photos/12645502/pexels-photo-12645502.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  geoRegion: "US-TX",
+  geoPlacename: "Austin",
+  geoPosition: "30.2563;-97.7251",
+  schema: {
+    type: "Restaurant",
+    additionalType: "BBQRestaurant",
+    priceRange: "$$",
+    foundingDate: "2019",
+    servesCuisine: "Barbecue, Central Texas BBQ",
+    areaServed: ["Austin, TX", "East Austin, TX"],
+    openingHours: ["Tu-Th 11:00-21:00", "Fr-Sa 11:00-22:00", "Su 11:00-20:00"]
+  },
+
+  // === ANALYTICS (empty = disabled) ===
+  analytics: {
+    ga4Id: "",
+    metaPixelId: "",
+    hotjarId: "",
+    clarityId: ""
+  },
+
+  // === COOKIE CONSENT ===
+  cookieConsent: {
+    text: "We use cookies to improve your experience and analyze site traffic.",
+    acceptButton: "Accept",
+    declineButton: "No Thanks",
+    privacyUrl: "#"
+  }
 };

@@ -130,5 +130,129 @@ window.SITE_CONFIG = {
 
   // === FOOTER ===
   footerDescription: "Austin\u2019s boutique salon for cuts, color, and care. Located on South Congress since 2018.",
-  footerLegal: "&copy; 2026 Velvet & Vine Salon. All rights reserved."
+  footerLegal: "&copy; 2026 Velvet & Vine Salon. All rights reserved.",
+
+  // === FEATURE FLAGS ===
+  features: {
+    mobileNav: true,
+    activeNavHighlight: true,
+    stickyHeader: true,
+    smoothScroll: true,
+    formHandling: true,
+    scrollReveal: true,
+    reviewCarousel: true,
+    googleReviewsBadge: true,
+    floatingButtons: true,
+    stickyBottomCta: true,
+    exitIntent: true,
+    urgencyBanner: true,
+    faqAccordion: true,
+    serviceAreaMap: true,
+    lightbox: true,
+    teamModals: true,
+    blogPreview: true,
+    cookieConsent: true,
+    trustBar: true,
+    analytics: false,
+  },
+
+  // === GOOGLE REVIEWS ===
+  googleReviewsRating: "4.8",
+  googleReviewsCount: "248",
+  googleReviewsUrl: "",
+
+  // === ENGAGEMENT ===
+  smsNumber: "5125550147",
+  whatsappNumber: "",
+  calcomUrl: "",
+
+  exitIntent: {
+    headline: "Wait \u2014 Get $20 Off Your First Color Service",
+    text: "New to Velvet & Vine? Book your first color appointment today and save.",
+    cta: "Claim My Discount",
+    ctaUrl: "#book"
+  },
+
+  urgencyBanner: {
+    text: "\u2728 Spring Special: Free deep conditioning with any color service \u2014 limited time",
+    endDate: "2026-06-30"
+  },
+
+  // === FAQ ===
+  faqs: [
+    { question: "How do I book an appointment?", answer: "You can book online through our website or call us at (512) 555-0147. We recommend booking at least a week in advance for color services." },
+    { question: "What is your cancellation policy?", answer: "We ask for at least 24 hours\u2019 notice for cancellations or rescheduling. Late cancellations or no-shows may be subject to a fee." },
+    { question: "How much does a haircut or color cost?", answer: "Haircuts start at $40 for men and $65 for women. Color services range from $120 for full color to $250+ for balayage. We provide a personalized quote during your consultation." },
+    { question: "Do you accept walk-ins?", answer: "We do accept walk-ins based on availability, but appointments are strongly recommended to guarantee your preferred stylist and time slot." },
+    { question: "What hair products do you use?", answer: "We use professional-grade, salon-exclusive products including Olaplex, Redken, and Kevin Murphy. Our stylists can recommend take-home products tailored to your hair type." },
+    { question: "Do you offer bridal or special event styling?", answer: "Yes! We offer bridal and event styling packages starting at $200. We recommend a trial session 2\u20134 weeks before your event. Contact us to discuss your vision." }
+  ],
+
+  // === SERVICE AREA MAP ===
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3446.2!2d-97.7508!3d30.2462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b5a6b1b1b1b1%3A0x1234567890abcdef!2s2204%20S%20Congress%20Ave%2C%20Austin%2C%20TX%2078704!5e0!3m2!1sen!2sus!4v1",
+
+  // === BLOG POSTS ===
+  blogPosts: [
+    {
+      title: "How to Keep Your Color Vibrant Between Visits",
+      excerpt: "Simple tips from our stylists to extend the life of your balayage, highlights, or full color between salon appointments.",
+      image: "https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Mar 2026"
+    },
+    {
+      title: "5 Spring Hair Trends We're Loving in Austin",
+      excerpt: "From warm copper tones to soft curtain bangs, here are the styles our clients are asking for this season.",
+      image: "https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Feb 2026"
+    },
+    {
+      title: "The Truth About Heat Damage (And How to Fix It)",
+      excerpt: "Our stylists break down what heat damage really looks like and share their go-to repair treatments.",
+      image: "https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Jan 2026"
+    }
+  ],
+
+  // === TRUST BAR LOGOS ===
+  trustLogos: [
+    { src: "", alt: "Olaplex Partner Salon" },
+    { src: "", alt: "Redken Elite Salon" },
+    { src: "", alt: "Google 4.8 Stars" },
+    { src: "", alt: "Best of Austin 2025" },
+    { src: "", alt: "Kevin Murphy Salon" }
+  ],
+
+  // === SEO ===
+  canonicalUrl: "",
+  ogImage: "https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  geoRegion: "US-TX",
+  geoPlacename: "Austin",
+  geoPosition: "30.2462;-97.7508",
+  schema: {
+    type: "LocalBusiness",
+    additionalType: "HairSalon",
+    priceRange: "$$",
+    foundingDate: "2018",
+    areaServed: ["Austin, TX", "South Congress, TX", "Travis Heights, TX", "Zilker, TX", "Bouldin Creek, TX"],
+    openingHours: ["Tu-Sa 10:00-19:00", "Su 11:00-17:00"]
+  },
+
+  // === ANALYTICS (empty = disabled) ===
+  analytics: {
+    ga4Id: "",
+    metaPixelId: "",
+    hotjarId: "",
+    clarityId: ""
+  },
+
+  // === COOKIE CONSENT ===
+  cookieConsent: {
+    text: "We use cookies to improve your experience and analyze site traffic.",
+    acceptButton: "Accept",
+    declineButton: "No Thanks",
+    privacyUrl: "#"
+  }
 };

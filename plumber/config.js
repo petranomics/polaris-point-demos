@@ -108,5 +108,129 @@ window.SITE_CONFIG = {
   // === FOOTER ===
   footerDescription: "Austin\u2019s trusted plumbing company for over 15 years. Licensed, insured, and committed to getting the job done right.",
   footerLegal: "&copy; 2026 Lone Star Plumbing Co. All rights reserved. &middot; TPCL #12345",
-  footerServices: ["Drain Cleaning", "Water Heater Repair", "Leak Detection", "Fixture Repair", "Emergency Plumbing"]
+  footerServices: ["Drain Cleaning", "Water Heater Repair", "Leak Detection", "Fixture Repair", "Emergency Plumbing"],
+
+  // === FEATURE FLAGS ===
+  features: {
+    mobileNav: true,
+    activeNavHighlight: true,
+    stickyHeader: true,
+    smoothScroll: true,
+    formHandling: true,
+    scrollReveal: true,
+    reviewCarousel: true,
+    googleReviewsBadge: true,
+    floatingButtons: true,
+    stickyBottomCta: true,
+    exitIntent: true,
+    urgencyBanner: true,
+    faqAccordion: true,
+    serviceAreaMap: true,
+    lightbox: true,
+    teamModals: false,
+    blogPreview: true,
+    cookieConsent: true,
+    trustBar: true,
+    analytics: false,
+  },
+
+  // === GOOGLE REVIEWS ===
+  googleReviewsRating: "4.9",
+  googleReviewsCount: "312",
+  googleReviewsUrl: "",
+
+  // === ENGAGEMENT ===
+  smsNumber: "5125550190",
+  whatsappNumber: "",
+  calcomUrl: "",
+
+  exitIntent: {
+    headline: "Wait \u2014 Get $50 Off Your First Service",
+    text: "Book your plumbing service today and save. New customers only.",
+    cta: "Claim My Discount",
+    ctaUrl: "#contact"
+  },
+
+  urgencyBanner: {
+    text: "\ud83d\udca7 Spring Special: Free camera inspection with any drain cleaning \u2014 limited time",
+    endDate: "2026-06-30"
+  },
+
+  // === FAQ ===
+  faqs: [
+    { question: "Do you offer free estimates?", answer: "Yes! We provide free, no-obligation estimates for all plumbing services. Call us or fill out our online form to schedule." },
+    { question: "Are your plumbers licensed and insured?", answer: "Absolutely. Every technician on our team is state-licensed, background-checked, and fully insured for your protection." },
+    { question: "Do you offer emergency plumbing services?", answer: "Yes, we offer 24/7 emergency plumbing services. Call us any time and we'll dispatch a technician as quickly as possible." },
+    { question: "How much does a typical plumbing repair cost?", answer: "Costs vary depending on the issue, but we always provide upfront pricing before any work begins. No surprise fees, guaranteed." },
+    { question: "What areas do you serve?", answer: "We serve Austin and all surrounding communities including Round Rock, Cedar Park, Pflugerville, Georgetown, Kyle, Buda, and Lakeway." },
+    { question: "How quickly can you get to my home?", answer: "For most service calls, we can have a licensed plumber at your door the same day. Emergency calls are prioritized for fastest response." }
+  ],
+
+  // === SERVICE AREA MAP ===
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d220984.4538498842!2d-97.89379895!3d30.3076863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b599a0cc032f%3A0x5d9b464bd469d57a!2sAustin%2C%20TX!5e0!3m2!1sen!2sus!4v1",
+
+  // === BLOG POSTS ===
+  blogPosts: [
+    {
+      title: "5 Signs You Need to Replace Your Water Heater",
+      excerpt: "Is your water heater on its last legs? Here are the warning signs every homeowner should know before it's too late.",
+      image: "https://images.pexels.com/photos/6419065/pexels-photo-6419065.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Mar 2026"
+    },
+    {
+      title: "How to Prevent Frozen Pipes This Winter",
+      excerpt: "A few simple steps can save you thousands in burst pipe repairs. Our plumbers share their top prevention tips.",
+      image: "https://images.pexels.com/photos/6419071/pexels-photo-6419071.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Feb 2026"
+    },
+    {
+      title: "When to Call a Plumber vs. DIY",
+      excerpt: "Some fixes are easy enough to handle yourself. Others need a pro. Here's how to tell the difference.",
+      image: "https://images.pexels.com/photos/6419104/pexels-photo-6419104.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Jan 2026"
+    }
+  ],
+
+  // === TRUST BAR LOGOS ===
+  trustLogos: [
+    { src: "", alt: "Licensed & Insured" },
+    { src: "", alt: "BBB A+ Rated" },
+    { src: "", alt: "HomeAdvisor Approved" },
+    { src: "", alt: "Google Guaranteed" },
+    { src: "", alt: "Angi Certified" }
+  ],
+
+  // === SEO ===
+  canonicalUrl: "",
+  ogImage: "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  geoRegion: "US-TX",
+  geoPlacename: "Austin",
+  geoPosition: "30.2672;-97.7431",
+  schema: {
+    type: "LocalBusiness",
+    additionalType: "Plumber",
+    priceRange: "$$",
+    foundingDate: "2011",
+    areaServed: ["Austin, TX", "Round Rock, TX", "Cedar Park, TX", "Pflugerville, TX", "Georgetown, TX", "Kyle, TX", "Buda, TX", "Lakeway, TX"],
+    openingHours: ["Mo-Sa 07:00-19:00"]
+  },
+
+  // === ANALYTICS (empty = disabled) ===
+  analytics: {
+    ga4Id: "",
+    metaPixelId: "",
+    hotjarId: "",
+    clarityId: ""
+  },
+
+  // === COOKIE CONSENT ===
+  cookieConsent: {
+    text: "We use cookies to improve your experience and analyze site traffic.",
+    acceptButton: "Accept",
+    declineButton: "No Thanks",
+    privacyUrl: "#"
+  }
 };

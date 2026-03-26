@@ -170,5 +170,129 @@ window.SITE_CONFIG = {
   footerLegal: "&copy; 2026 Pete's Termite & Pest Control. All rights reserved. | <a href=\"#\">Privacy Policy</a> | <a href=\"#\">Terms of Service</a> | TPCL #12345",
 
   // === CTA BANNER (not present in current design but reserved for future use) ===
-  heroImage: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=1400"
+  heroImage: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=1400",
+
+  // === FEATURE FLAGS ===
+  features: {
+    mobileNav: true,
+    activeNavHighlight: true,
+    stickyHeader: true,
+    smoothScroll: true,
+    formHandling: true,
+    scrollReveal: true,
+    reviewCarousel: true,
+    googleReviewsBadge: true,
+    floatingButtons: true,
+    stickyBottomCta: true,
+    exitIntent: true,
+    urgencyBanner: true,
+    faqAccordion: true,
+    serviceAreaMap: true,
+    lightbox: true,
+    teamModals: false,
+    blogPreview: true,
+    cookieConsent: true,
+    trustBar: true,
+    analytics: false,
+  },
+
+  // === GOOGLE REVIEWS ===
+  googleReviewsRating: "4.9",
+  googleReviewsCount: "527",
+  googleReviewsUrl: "",
+
+  // === ENGAGEMENT ===
+  smsNumber: "5125550147",
+  whatsappNumber: "",
+  calcomUrl: "",
+
+  exitIntent: {
+    headline: "Wait \u2014 Get $50 Off Your First Treatment",
+    text: "Book your pest control service today and save. New customers only.",
+    cta: "Claim My Discount",
+    ctaUrl: "#contact"
+  },
+
+  urgencyBanner: {
+    text: "\uD83D\uDC1B Spring Special: Free termite inspection with any pest control plan \u2014 limited time",
+    endDate: "2026-06-30"
+  },
+
+  // === FAQ ===
+  faqs: [
+    { question: "Are your treatments safe for kids and pets?", answer: "Absolutely. We use EPA-registered, low-toxicity products and follow Integrated Pest Management practices. We\u2019ll let you know exactly when it\u2019s safe to re-enter treated areas \u2014 typically within 30 minutes to 2 hours." },
+    { question: "How often should I schedule pest control?", answer: "For most Austin homes, we recommend quarterly treatments to maintain a pest-free barrier year-round. Homes with heavier pest pressure or wooded lots may benefit from bi-monthly service." },
+    { question: "Do you guarantee your work?", answer: "Yes. If pests return between your scheduled treatments, we\u2019ll come back and re-treat at no additional charge. That\u2019s our satisfaction guarantee." },
+    { question: "I have pets \u2014 do I need to do anything before treatment?", answer: "We ask that pets be kept off treated surfaces until they\u2019re dry (usually 1\u20132 hours). Fish tanks should be covered. Our technician will give you specific guidance based on the products used." },
+    { question: "Do you offer eco-friendly pest control options?", answer: "Yes! We offer green and organic treatment plans that use botanical-based products and mechanical exclusion methods. These are highly effective while minimizing environmental impact." },
+    { question: "How much does pest control cost?", answer: "Our general pest control plans start at around $45/month for quarterly service. Termite treatments and specialty services vary based on property size and infestation level. We always provide a free, no-obligation estimate first." }
+  ],
+
+  // === SERVICE AREA MAP ===
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d220984.4538498842!2d-97.89379895!3d30.3076863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b599a0cc032f%3A0x5d9b464bd469d57a!2sAustin%2C%20TX!5e0!3m2!1sen!2sus!4v1",
+
+  // === BLOG POSTS ===
+  blogPosts: [
+    {
+      title: "How to Tell If You Have Termites: 7 Warning Signs",
+      excerpt: "Termites cause billions in damage every year. Learn the early warning signs so you can catch an infestation before it becomes costly.",
+      image: "https://images.pexels.com/photos/5008399/pexels-photo-5008399.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Mar 2026"
+    },
+    {
+      title: "Why Mosquitoes Love Austin (and How to Fight Back)",
+      excerpt: "Central Texas is prime mosquito territory. Discover what attracts them to your yard and the most effective prevention strategies.",
+      image: "https://images.pexels.com/photos/4176539/pexels-photo-4176539.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Feb 2026"
+    },
+    {
+      title: "Pet-Safe Pest Control: What Every Pet Owner Should Know",
+      excerpt: "Worried about your furry friends? Here\u2019s how modern pest control keeps your home bug-free without putting pets at risk.",
+      image: "https://images.pexels.com/photos/5587964/pexels-photo-5587964.jpeg?auto=compress&cs=tinysrgb&w=600",
+      url: "#",
+      date: "Jan 2026"
+    }
+  ],
+
+  // === TRUST BAR LOGOS ===
+  trustLogos: [
+    { src: "", alt: "BBB A+ Rated" },
+    { src: "", alt: "NPMA Member" },
+    { src: "", alt: "QualityPro Certified" },
+    { src: "", alt: "Texas SPCS Licensed" },
+    { src: "", alt: "HomeAdvisor Approved" }
+  ],
+
+  // === SEO ===
+  canonicalUrl: "",
+  ogImage: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  geoRegion: "US-TX",
+  geoPlacename: "Austin",
+  geoPosition: "30.2672;-97.7431",
+  schema: {
+    type: "LocalBusiness",
+    additionalType: "PestControlService",
+    priceRange: "$$",
+    foundingDate: "2005",
+    areaServed: ["Austin, TX", "Round Rock, TX", "Cedar Park, TX", "Pflugerville, TX", "Georgetown, TX", "Leander, TX", "Lakeway, TX", "Bee Cave, TX", "Dripping Springs, TX", "Kyle, TX", "Buda, TX", "San Marcos, TX"],
+    openingHours: ["Mo-Fr 07:00-18:00", "Sa 08:00-13:00"]
+  },
+
+  // === ANALYTICS (empty = disabled) ===
+  analytics: {
+    ga4Id: "",
+    metaPixelId: "",
+    hotjarId: "",
+    clarityId: ""
+  },
+
+  // === COOKIE CONSENT ===
+  cookieConsent: {
+    text: "We use cookies to improve your experience and analyze site traffic.",
+    acceptButton: "Accept",
+    declineButton: "No Thanks",
+    privacyUrl: "#"
+  }
 };

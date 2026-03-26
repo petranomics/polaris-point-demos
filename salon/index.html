@@ -8,334 +8,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --sage: #3d5a4c;
-      --sage-light: #5a7a6a;
-      --rose: #c4988e;
-      --rose-light: #e0c4bc;
-      --cream: #FAF6F0;
-      --warm: #f5efe7;
-      --text: #2d2a2a;
-      --muted: #6b6060;
-      --white: #fff;
-      --radius: 14px;
-      --shadow: 0 8px 30px rgba(61, 90, 76, 0.1);
-      --max: 1100px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      background: var(--cream);
-      line-height: 1.65;
-    }
-    h1, h2, h3 {
-      font-family: 'Cormorant Garamond', serif;
-      letter-spacing: .01em;
-      margin-top: 0;
-      color: #1f3028;
-      font-weight: 600;
-    }
-    .container { width: min(100% - 2rem, var(--max)); margin-inline: auto; }
-    section { padding: 80px 0; }
-
-    /* DEMO BANNER */
-    .demo-banner {
-      background: #0B1F3A;
-      color: #00C2B2;
-      text-align: center;
-      padding: 10px 20px;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-    }
-    .demo-banner a { color: #F5A623; font-weight: bold; text-decoration: none; }
-
-    header {
-      position: sticky;
-      top: 40px;
-      z-index: 888;
-      background: rgba(250,246,240,.94);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(61,90,76,.1);
-    }
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 0;
-    }
-    .logo {
-      text-decoration: none;
-      color: var(--sage);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-    }
-    .logo-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--sage);
-      color: #fff;
-    }
-    .logo-mark svg { display: block; }
-    .nav-links { display: flex; gap: 20px; align-items: center; }
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted);
-      font-weight: 500;
-      font-size: .92rem;
-      transition: color .2s;
-    }
-    .nav-links a:hover { color: var(--sage); }
-    .book-btn {
-      background: var(--sage) !important;
-      color: #fff !important;
-      border-radius: 8px;
-      padding: 9px 18px;
-      font-weight: 600 !important;
-      transition: transform .2s ease, background .2s ease;
-    }
-    .book-btn:hover { transform: translateY(-1px); background: var(--sage-light) !important; }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      min-height: 540px;
-      display: grid;
-      align-items: center;
-      overflow: hidden;
-    }
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-    }
-    .hero-bg img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 25%;
-    }
-    .hero-bg::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(250,246,240,.88) 35%, rgba(250,246,240,.5) 100%);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      padding: 80px 0;
-      max-width: 520px;
-    }
-    .hero h1 {
-      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
-      line-height: 1.1;
-      margin-bottom: 14px;
-    }
-    .hero p { color: var(--muted); font-size: 1.05rem; margin-bottom: 24px; max-width: 42ch; }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      border-radius: 10px;
-      padding: 13px 24px;
-      font-weight: 600;
-      font-size: .92rem;
-      transition: transform .2s ease, box-shadow .2s ease;
-      border: 2px solid transparent;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.1); }
-    .btn-main { background: var(--sage); color: #fff; }
-    .btn-main:hover { background: var(--sage-light); }
-    .btn-outline { border-color: var(--sage); color: var(--sage); background: transparent; }
-
-    /* SERVICES / MENU */
-    .section-label {
-      text-transform: uppercase;
-      font-size: .7rem;
-      letter-spacing: 2.5px;
-      font-weight: 600;
-      color: var(--rose);
-      margin-bottom: 6px;
-      display: block;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .menu-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(61,90,76,.08);
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .menu-col { padding: 28px; }
-    .menu-col + .menu-col { border-left: 1px solid rgba(61,90,76,.08); }
-    .menu-col h3 { font-size: 1.15rem; margin-bottom: 12px; }
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(61,90,76,.06);
-      font-size: .92rem;
-    }
-    .menu-item:last-child { border-bottom: 0; }
-    .menu-item strong { color: var(--sage); white-space: nowrap; }
-
-    /* ABOUT / TEAM */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 30px;
-      align-items: start;
-    }
-    .about-grid p { color: var(--muted); }
-    .team {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .avatar {
-      border-radius: 14px;
-      overflow: hidden;
-      aspect-ratio: 3/4;
-    }
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .avatar-placeholder {
-      background: linear-gradient(145deg, #e9d7d7, #d6dede);
-      width: 100%;
-      height: 100%;
-      display: grid;
-      place-items: center;
-      color: #41564d;
-      font-weight: 700;
-      font-size: .85rem;
-    }
-
-    /* GALLERY */
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-    .tile {
-      aspect-ratio: 1;
-      border-radius: 14px;
-      overflow: hidden;
-      position: relative;
-      transition: transform .22s ease;
-    }
-    .tile:hover { transform: scale(1.03); }
-    .tile img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .tile span {
-      position: absolute;
-      inset: auto 0 0;
-      padding: 10px 12px;
-      background: linear-gradient(transparent, rgba(0,0,0,.55));
-      color: #fff;
-      font-weight: 600;
-      font-size: .85rem;
-    }
-
-    /* REVIEWS */
-    .review-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .review {
-      background: #fff;
-      border: 1px solid rgba(61,90,76,.08);
-      border-radius: 14px;
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-    .stars { color: var(--rose); letter-spacing: 2px; font-size: 1rem; }
-    .review p { font-size: .92rem; color: var(--muted); }
-    .review strong { font-size: .85rem; }
-
-    /* CTA */
-    .cta-box {
-      text-align: center;
-      background: linear-gradient(135deg, var(--sage), #2d4a3e);
-      border-radius: 20px;
-      padding: 44px 30px;
-      box-shadow: var(--shadow);
-      color: #fff;
-    }
-    .cta-box h2 { color: #fff; }
-    .cta-box p { color: rgba(255,255,255,.8); margin-bottom: 20px; }
-    .cta-box .btn-main { background: var(--rose); color: #1f3028; }
-    .cta-box .btn-main:hover { background: var(--rose-light); }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity .7s ease, transform .7s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    footer {
-      background: #1f3028;
-      color: #b8cfc3;
-      padding: 30px 0;
-    }
-    footer a { color: var(--rose-light); text-decoration: none; }
-    footer a:hover { color: #fff; }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 20px;
-    }
-    .footer-grid h4 { color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 1rem; margin: 0 0 8px; }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,.1);
-      margin-top: 20px;
-      padding-top: 14px;
-      font-size: .8rem;
-      color: #6b8f7d;
-    }
-
-    @media (max-width: 850px) {
-      header { top: 40px; }
-      .nav-links a:not(.book-btn) { display: none; }
-      .menu-card, .about-grid { grid-template-columns: 1fr; }
-      .menu-col + .menu-col { border-left: 0; border-top: 1px solid rgba(61,90,76,.08); }
-      section { padding: 60px 0; }
-      .hero { min-height: 420px; }
-      .footer-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="/shared/features.css">
+  <link rel="stylesheet" href="/salon/styles.css">
 </head>
 <body>
   <!-- DEMO BANNER -->
   <div class="demo-banner">This is a <strong>Polaris Point</strong> demo website. Want one like this for your business? <a href="/">Get a free quote &rarr;</a></div>
 
-  <header>
+  <!-- Urgency Banner (injected by features.js if configured) -->
+  <div id="urgencyBannerSlot"></div>
+
+  <header id="header">
     <div class="container nav">
       <a class="logo" href="#top">
         <span class="logo-mark">
@@ -347,6 +30,7 @@
         <a href="#services">Services</a>
         <a href="#gallery">Gallery</a>
         <a href="#team">Team</a>
+        <a href="#faq">FAQ</a>
         <a href="#book" class="book-btn" data-cfg="navBookBtn">Book Appointment</a>
       </nav>
     </div>
@@ -366,8 +50,14 @@
           <a href="#book" class="btn btn-main" data-cfg="heroCta1">Book Your Appointment</a>
           <a href="#services" class="btn btn-outline" data-cfg="heroCta2">View Services</a>
         </div>
+        <div class="trust-strip" style="margin-top:18px;">
+          <div id="googleBadgeSlot"></div>
+        </div>
       </div>
     </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar-section" id="trustBarSlot" style="padding:20px 0;background:#fff;"></section>
 
     <!-- SERVICES -->
     <section id="services" style="background:#fff;">
@@ -409,13 +99,13 @@
           <h3 style="margin-bottom:10px;" data-cfg="teamTitle">Meet the Stylists</h3>
           <div class="team">
             <div class="avatar">
-              <img src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Taylor R. working with a client" loading="lazy" data-cfg-attr="src:team1Image,alt:team1ImageAlt">
+              <img class="lightbox-trigger" src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Taylor R. working with a client" loading="lazy" data-cfg-attr="src:team1Image,alt:team1ImageAlt">
             </div>
             <div class="avatar">
-              <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=400&h=540&fit=crop" alt="Stylist Jade M. at the salon" loading="lazy" data-cfg-attr="src:team2Image,alt:team2ImageAlt">
+              <img class="lightbox-trigger" src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=400&h=540&fit=crop" alt="Stylist Jade M. at the salon" loading="lazy" data-cfg-attr="src:team2Image,alt:team2ImageAlt">
             </div>
             <div class="avatar">
-              <img src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Sofia L. coloring a client's hair" loading="lazy" data-cfg-attr="src:team3Image,alt:team3ImageAlt">
+              <img class="lightbox-trigger" src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Sofia L. coloring a client's hair" loading="lazy" data-cfg-attr="src:team3Image,alt:team3ImageAlt">
             </div>
           </div>
           <div style="display:flex; gap:8px; margin-top:8px;">
@@ -434,27 +124,27 @@
         <h2 class="reveal" data-cfg="galleryTitle">Style Gallery</h2>
         <div class="gallery" style="margin-top:18px;">
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Hair coloring service in progress" loading="lazy" data-cfg-attr="src:gallery1Image,alt:gallery1Alt">
+            <img class="lightbox-trigger" src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Hair coloring service in progress" loading="lazy" data-cfg-attr="src:gallery1Image,alt:gallery1Alt">
             <span data-cfg="gallery1Label">Color &amp; Highlights</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist cutting hair with scissors" loading="lazy" data-cfg-attr="src:gallery2Image,alt:gallery2Alt">
+            <img class="lightbox-trigger" src="https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist cutting hair with scissors" loading="lazy" data-cfg-attr="src:gallery2Image,alt:gallery2Alt">
             <span data-cfg="gallery2Label">Precision Cut</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist blow drying client's hair" loading="lazy" data-cfg-attr="src:gallery3Image,alt:gallery3Alt">
+            <img class="lightbox-trigger" src="https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist blow drying client's hair" loading="lazy" data-cfg-attr="src:gallery3Image,alt:gallery3Alt">
             <span data-cfg="gallery3Label">Blowout</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/6487882/pexels-photo-6487882.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Close-up detail of hair cutting" loading="lazy" data-cfg-attr="src:gallery4Image,alt:gallery4Alt">
+            <img class="lightbox-trigger" src="https://images.pexels.com/photos/6487882/pexels-photo-6487882.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Close-up detail of hair cutting" loading="lazy" data-cfg-attr="src:gallery4Image,alt:gallery4Alt">
             <span data-cfg="gallery4Label">Detail Work</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/8467969/pexels-photo-8467969.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Flat iron styling service" loading="lazy" data-cfg-attr="src:gallery5Image,alt:gallery5Alt">
+            <img class="lightbox-trigger" src="https://images.pexels.com/photos/8467969/pexels-photo-8467969.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Flat iron styling service" loading="lazy" data-cfg-attr="src:gallery5Image,alt:gallery5Alt">
             <span data-cfg="gallery5Label">Keratin &amp; Styling</span>
           </div>
           <div class="tile reveal">
-            <img src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Full service color and styling" loading="lazy" data-cfg-attr="src:gallery6Image,alt:gallery6Alt">
+            <img class="lightbox-trigger" src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Full service color and styling" loading="lazy" data-cfg-attr="src:gallery6Image,alt:gallery6Alt">
             <span data-cfg="gallery6Label">Full Service Color</span>
           </div>
         </div>
@@ -462,11 +152,11 @@
     </section>
 
     <!-- REVIEWS -->
-    <section style="background:var(--warm);">
+    <section id="reviews" style="background:var(--warm);">
       <div class="container">
         <span class="section-label reveal" data-cfg="reviewsLabel">Client Love</span>
         <h2 class="reveal" data-cfg="reviewsTitle">What Clients Are Saying</h2>
-        <div class="review-grid" style="margin-top:18px;" data-cfg-list="reviews">
+        <div class="review-grid" id="reviewsContainer" style="margin-top:18px;" data-cfg-list="reviews">
           <article class="review reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
             <p data-cfg-item="text">I've been coming here for 2 years and Taylor always knows exactly what I want. The color grows out beautifully every time.</p>
@@ -486,6 +176,24 @@
       </div>
     </section>
 
+    <!-- FAQ Accordion (built by features.js from config.faqs) -->
+    <section class="faq-section" id="faq" style="background:var(--bg, #faf8f5);">
+      <div class="container">
+        <span class="section-label reveal">Common Questions</span>
+        <h2 class="reveal">Frequently Asked Questions</h2>
+        <div id="faqContainer" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
+    <!-- Blog Preview (built by features.js from config.blogPosts) -->
+    <section class="blog-section" id="blogSlot" style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal">Tips & Inspiration</span>
+        <h2 class="reveal">From Our Blog</h2>
+        <div id="blogContainer" class="blog-grid" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section id="book">
       <div class="container">
@@ -495,6 +203,15 @@
           <a href="#" class="btn btn-main" data-cfg="ctaButton">Book Online</a>
           <p style="margin-top:12px; font-size:.9rem;"><span data-cfg="ctaPhoneLabel">Or call us:</span> <a href="tel:+15125550147" style="color:#fff; text-decoration:underline;" data-cfg="ctaPhone" data-cfg-attr="href:phoneTelHref">(512) 555-0147</a></p>
         </div>
+      </div>
+    </section>
+
+    <!-- LOCATION -->
+    <section id="location" style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal">Find Us</span>
+        <h2 class="reveal">Visit the Salon</h2>
+        <div id="mapSlot" style="margin-top:20px;border-radius:12px;overflow:hidden;"></div>
       </div>
     </section>
   </main>
@@ -528,16 +245,6 @@
 
   <script src="/salon/config.js"></script>
   <script src="/shared/config-engine.js"></script>
-  <script>
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-  </script>
+  <script src="/shared/features.js"></script>
 </body>
 </html>
