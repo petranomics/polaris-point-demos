@@ -289,8 +289,26 @@
     .card-grid {
       display: grid;
       gap: 20px;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       margin-top: 28px;
+    }
+    .card-grid.cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 900px) {
+      .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .card-grid.cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (max-width: 500px) {
+      .card-grid,
+      .card-grid.cols-3 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
     }
 
     .stat-card {
@@ -364,6 +382,8 @@
     .demo-card {
       overflow: hidden;
       transition: transform .3s, border-color .3s, box-shadow .3s;
+      display: flex;
+      flex-direction: column;
     }
     .demo-card:hover {
       transform: translateY(-4px);
@@ -410,10 +430,17 @@
     }
     .demo-body {
       padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     .demo-body p {
       font-size: .92rem;
       margin-bottom: 16px;
+      flex: 1;
+    }
+    .demo-body .btn {
+      align-self: flex-start;
     }
 
     /* ============ PROCESS ============ */
@@ -636,7 +663,7 @@
           <h2>Customers Search Online First</h2>
           <p class="section-intro">Many Austin businesses still rely on word-of-mouth alone. Meanwhile, customers search online and hire the business they can find fastest.</p>
         </div>
-        <div class="card-grid">
+        <div class="card-grid cols-3">
           <article class="glass stat-card reveal">
             <div class="stat-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>

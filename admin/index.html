@@ -580,6 +580,12 @@
             <input type="text" id="searchCityState" placeholder="e.g. Austin, TX">
           </div>
         </div>
+        <div class="intake-row full">
+          <div class="intake-field">
+            <label>Or paste a Google Maps / Yelp URL</label>
+            <input type="text" id="searchUrl" placeholder="e.g. https://maps.google.com/... or https://yelp.com/biz/...">
+          </div>
+        </div>
         <div class="intake-row">
           <div class="intake-field">
             <label>Template</label>
@@ -591,7 +597,7 @@
             </select>
           </div>
           <div class="intake-field" style="display:flex;align-items:flex-end;">
-            <button class="btn-export" onclick="searchPlaces()" style="width:100%;">Search Google Places</button>
+            <button class="btn-export" onclick="searchPlaces()" style="width:100%;">Search &amp; Auto-Fill</button>
           </div>
         </div>
         <div id="searchResults" class="search-results">
@@ -715,11 +721,19 @@
           <button class="btn-export" onclick="generateConfig()">Generate config.js</button>
           <button class="btn-export secondary" id="btnCopyConfig" onclick="copyConfig()" style="display:none;">Copy to Clipboard</button>
           <button class="btn-export secondary" id="btnDownloadConfig" onclick="downloadConfig()" style="display:none;">Download as config.js</button>
+          <button class="btn-export" id="btnPreview" onclick="previewSite()" style="display:none;background:#16a34a;">Preview Live Site</button>
+        </div>
+        <div id="previewLink" style="display:none;margin-top:12px;padding:14px 18px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;">
+          <p style="font-size:.8rem;color:#94a3b8;margin-bottom:6px;">Share this link with your prospect:</p>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="previewUrl" readonly style="flex:1;background:#111827;border:1px solid #1e293b;border-radius:6px;padding:8px 10px;color:#5B8DEF;font-size:.8rem;font-family:monospace;">
+            <button class="btn-export" onclick="navigator.clipboard.writeText(document.getElementById('previewUrl').value);this.textContent='Copied!';var b=this;setTimeout(function(){b.textContent='Copy'},1500)" style="padding:8px 14px;font-size:.75rem;">Copy</button>
+          </div>
         </div>
         <div id="configOutput" class="config-output" style="display:none;">
           <pre id="configCode"></pre>
         </div>
-        <p class="export-note" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder</p>
+        <p class="export-note" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder, or use the preview link above to share with prospects</p>
       </div>
 
     </div>
@@ -892,53 +906,127 @@
       document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
     });
 
-    // === GOOGLE PLACES SEARCH ===
+    // === SEARCH: Google Places, Yelp URL, or name search ===
     function searchPlaces() {
+      var urlInput = document.getElementById('searchUrl').value.trim();
       var biz = document.getElementById('searchBizName').value.trim();
       var city = document.getElementById('searchCityState').value.trim();
-      if (!biz) { alert('Enter a business name to search.'); return; }
-      var query = encodeURIComponent(biz + ' ' + city);
       var resultsDiv = document.getElementById('searchResults');
       var listDiv = document.getElementById('searchResultsList');
+
+      // Determine what to search
+      var apiUrl = '';
+      if (urlInput) {
+        // Parse Google Maps or Yelp URL
+        if (urlInput.includes('yelp.com')) {
+          var yelpSlug = urlInput.match(/\/biz\/([\w-]+)/);
+          if (yelpSlug) {
+            apiUrl = '/api/yelp?q=' + encodeURIComponent(yelpSlug[1].replace(/-/g, ' '));
+            var locMatch = urlInput.match(/[\?&]loc=([\w+%-]+)/);
+            if (locMatch) apiUrl += '&location=' + locMatch[1];
+          }
+        }
+        if (!apiUrl && (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app'))) {
+          // Extract business name from Google Maps URL
+          var nameMatch = urlInput.match(/place\/([^\/]+)/);
+          if (nameMatch) {
+            var decoded = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+            apiUrl = '/api/places?q=' + encodeURIComponent(decoded);
+          }
+        }
+        if (!apiUrl) {
+          // Try the URL text as a direct search
+          apiUrl = '/api/places?q=' + encodeURIComponent(urlInput);
+        }
+      } else if (biz) {
+        apiUrl = '/api/places?q=' + encodeURIComponent(biz + ' ' + city);
+      } else {
+        alert('Enter a business name or paste a Google Maps / Yelp URL.');
+        return;
+      }
+
       listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Searching...</p>';
       resultsDiv.classList.add('visible');
 
-      fetch('/api/places?q=' + query)
-        .then(function(r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        })
+      fetch(apiUrl)
+        .then(function(r) { return r.json(); })
         .then(function(data) {
-          if (!data.results || data.results.length === 0) {
-            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Fill in details manually below.</p>';
+          if (data.error) {
+            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">' + data.error + '. Fill in details manually below.</p>';
             return;
           }
+          // API returns a single place object (not an array)
           listDiv.innerHTML = '';
-          data.results.forEach(function(place) {
-            var item = document.createElement('div');
-            item.className = 'search-result-item';
-            item.innerHTML = '<div class="name">' + (place.name || '') + '</div>' +
-              '<div class="addr">' + (place.address || place.formatted_address || '') + '</div>';
-            item.addEventListener('click', function() { fillFromPlace(place); });
-            listDiv.appendChild(item);
-          });
+          var item = document.createElement('div');
+          item.className = 'search-result-item';
+          item.innerHTML = '<div class="name">' + escHtml(data.name || '') + '</div>' +
+            '<div class="addr">' + escHtml(data.address || '') + '</div>' +
+            (data.rating ? '<div class="addr" style="color:#f59e0b;">\u2605 ' + data.rating + ' (' + (data.reviewCount || 0) + ' reviews)</div>' : '') +
+            '<div style="color:#5B8DEF;font-size:.72rem;margin-top:4px;">Click to auto-fill \u2192</div>';
+          item.addEventListener('click', function() { fillFromPlace(data); });
+          listDiv.appendChild(item);
+
+          // Also auto-fill reviews if available
+          if (data.reviews && data.reviews.length) {
+            var revNote = document.createElement('p');
+            revNote.style.cssText = 'color:#64748b;font-size:.75rem;margin-top:8px;';
+            revNote.textContent = data.reviews.length + ' reviews found \u2014 will be imported on click';
+            listDiv.appendChild(revNote);
+          }
         })
-        .catch(function() {
-          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">API not configured \u2014 fill in details manually.</p>';
+        .catch(function(err) {
+          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed: ' + err.message + '. Fill in details manually.</p>';
         });
     }
 
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
     function fillFromPlace(place) {
-      if (place.name) document.getElementById('intBizName').value = place.name;
-      if (place.address || place.formatted_address) document.getElementById('intAddress').value = place.address || place.formatted_address;
+      if (place.name) {
+        document.getElementById('intBizName').value = place.name;
+        // Auto-derive short name (first 2-3 words)
+        var words = place.name.split(' ');
+        document.getElementById('intBizShort').value = words.length > 3 ? words.slice(0, 2).join(' ') : place.name;
+      }
+      if (place.address) document.getElementById('intAddress').value = place.address;
       if (place.phone) {
         document.getElementById('intPhone').value = place.phone;
         var digits = place.phone.replace(/\D/g, '');
         document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
       }
       if (place.website) document.getElementById('intWebsite').value = place.website;
-      if (place.hours) document.getElementById('intHours').value = place.hours;
+      if (place.hoursFormatted || place.hours) {
+        var h = place.hoursFormatted || (Array.isArray(place.hours) ? place.hours.join(' | ') : place.hours);
+        document.getElementById('intHours').value = h;
+      }
+      // Fill Google reviews data
+      if (place.rating) document.getElementById('intBizName').dataset.rating = place.rating;
+      if (place.reviewCount) document.getElementById('intBizName').dataset.reviewCount = place.reviewCount;
+
+      // Import reviews into the reviews list
+      if (place.reviews && place.reviews.length) {
+        var rl = document.getElementById('reviewsList');
+        rl.innerHTML = '';
+        place.reviews.forEach(function(r) {
+          addReviewRow(rl);
+          var items = rl.querySelectorAll('.dynamic-item');
+          var last = items[items.length - 1];
+          last.querySelector('.rev-text').value = r.text || '';
+          last.querySelector('.rev-author').value = r.author || r.author_name || '';
+          last.querySelector('.rev-location').value = r.location || r.time || '';
+        });
+      }
+
       document.getElementById('searchResults').classList.remove('visible');
+
+      // Auto-fill hero headline
+      var city = document.getElementById('searchCityState').value.trim();
+      if (!document.getElementById('intHeroHeadline').value && place.name) {
+        document.getElementById('intHeroHeadline').value = 'Trusted ' + document.getElementById('searchTemplate').selectedOptions[0].text + ' in ' + (city || 'Your Area');
+      }
+      if (!document.getElementById('intAboutTitle').value && place.name) {
+        document.getElementById('intAboutTitle').value = (city || 'Your Community') + ' Trusts ' + (document.getElementById('intBizShort').value || place.name);
+      }
     }
 
     // === CONFIG GENERATOR ===
@@ -1185,6 +1273,7 @@
       document.getElementById('configOutput').style.display = 'block';
       document.getElementById('btnCopyConfig').style.display = 'inline-flex';
       document.getElementById('btnDownloadConfig').style.display = 'inline-flex';
+      document.getElementById('btnPreview').style.display = 'inline-flex';
       window._generatedConfig = config;
     }
 
@@ -1205,6 +1294,26 @@
       a.download = 'config.js';
       a.click();
       URL.revokeObjectURL(a.href);
+    }
+
+    function previewSite() {
+      if (!window._generatedConfig) return;
+      var template = document.getElementById('searchTemplate').value;
+      // Compress config to base64 for URL
+      try {
+        var compressed = btoa(unescape(encodeURIComponent(window._generatedConfig)));
+        var previewUrl = window.location.origin + '/' + template + '?preview=' + compressed;
+        // If URL is too long (>8000 chars), use localStorage instead
+        if (previewUrl.length > 8000) {
+          localStorage.setItem('pp_preview_config', window._generatedConfig);
+          previewUrl = window.location.origin + '/' + template + '?preview=local';
+        }
+        document.getElementById('previewUrl').value = previewUrl;
+        document.getElementById('previewLink').style.display = 'block';
+        window.open(previewUrl, '_blank');
+      } catch(e) {
+        alert('Preview failed: ' + e.message);
+      }
     }
 
     // Live preview binding

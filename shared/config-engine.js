@@ -1,8 +1,27 @@
 // Polaris Point — Config Engine
 // Reads window.SITE_CONFIG and injects values into elements with data-cfg attributes.
+// Supports ?preview= URL param for live previewing from admin intake form.
 // Fails silently if no config is found (HTML defaults remain visible).
 (function() {
   'use strict';
+
+  // Check for preview config in URL
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var preview = params.get('preview');
+    if (preview === 'local') {
+      var stored = localStorage.getItem('pp_preview_config');
+      if (stored) {
+        var fn = new Function(stored + '\nreturn SITE_CONFIG;');
+        window.SITE_CONFIG = fn();
+      }
+    } else if (preview && preview !== 'local') {
+      var decoded = decodeURIComponent(escape(atob(preview)));
+      var fn2 = new Function(decoded + '\nreturn SITE_CONFIG;');
+      window.SITE_CONFIG = fn2();
+    }
+  } catch(e) { console.warn('Preview config parse error:', e); }
+
   var C = window.SITE_CONFIG;
   if (!C) return;
 
