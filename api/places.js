@@ -1,0 +1,84 @@
+// /api/places.js — Vercel serverless proxy for Google Places API
+// Usage: GET /api/places?q=business+name+city
+module.exports = async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  var query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: 'Missing query parameter: q' });
+  }
+
+  var apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'Google Places API key not configured' });
+  }
+
+  try {
+    // Step 1: Find Place from text
+    var findUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
+      + '?input=' + encodeURIComponent(query)
+      + '&inputtype=textquery'
+      + '&fields=place_id,name,formatted_address'
+      + '&key=' + apiKey;
+
+    var findResp = await fetch(findUrl);
+    var findData = await findResp.json();
+
+    if (!findData.candidates || !findData.candidates.length) {
+      return res.status(404).json({ error: 'No results found', query: query });
+    }
+
+    // Step 2: Get Place Details
+    var placeId = findData.candidates[0].place_id;
+    var detailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json'
+      + '?place_id=' + placeId
+      + '&fields=name,formatted_address,formatted_phone_number,international_phone_number,website,url,rating,user_ratings_total,opening_hours,reviews,photos,types,business_status'
+      + '&key=' + apiKey;
+
+    var detailsResp = await fetch(detailsUrl);
+    var detailsData = await detailsResp.json();
+
+    if (!detailsData.result) {
+      return res.status(404).json({ error: 'Place details not found' });
+    }
+
+    var place = detailsData.result;
+
+    // Sanitize and return useful fields
+    var result = {
+      name: place.name || '',
+      address: place.formatted_address || '',
+      phone: place.formatted_phone_number || '',
+      phoneIntl: place.international_phone_number || '',
+      website: place.website || '',
+      mapsUrl: place.url || '',
+      rating: place.rating || null,
+      reviewCount: place.user_ratings_total || 0,
+      hours: (place.opening_hours && place.opening_hours.weekday_text) || [],
+      hoursFormatted: (place.opening_hours && place.opening_hours.weekday_text)
+        ? place.opening_hours.weekday_text.join(' | ')
+        : '',
+      reviews: (place.reviews || []).slice(0, 5).map(function(r) {
+        return {
+          text: r.text || '',
+          author: r.author_name || '',
+          rating: r.rating || 5,
+          time: r.relative_time_description || ''
+        };
+      }),
+      types: place.types || [],
+      status: place.business_status || 'OPERATIONAL',
+      placeId: placeId
+    };
+
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ error: 'API request failed: ' + err.message });
+  }
+};

@@ -340,6 +340,205 @@
     }
 
     .export-note { text-align: center; color: #334155; font-size: .7rem; margin-top: 32px; }
+
+    /* Admin Tabs */
+    .admin-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin: 16px 0 32px;
+      background: #111827;
+      border-radius: 10px;
+      padding: 4px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .admin-tab {
+      flex: 1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #64748b;
+      font-family: 'Inter', sans-serif;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .admin-tab.active {
+      background: #5B8DEF;
+      color: #fff;
+    }
+    .admin-tab:not(.active):hover {
+      color: #94a3b8;
+    }
+
+    /* Intake Form */
+    .intake-form {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .intake-section {
+      background: #111827;
+      border: 1px solid rgba(91,141,239,.12);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .intake-section h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: .95rem;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .intake-section h3 .step-num {
+      background: #5B8DEF;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .intake-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .intake-row.full { grid-template-columns: 1fr; }
+    .intake-field { margin-bottom: 12px; }
+    .intake-field label {
+      display: block;
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #475569;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .intake-field input,
+    .intake-field select,
+    .intake-field textarea {
+      width: 100%;
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: .82rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .intake-field input:focus,
+    .intake-field select:focus,
+    .intake-field textarea:focus {
+      border-color: #5B8DEF;
+    }
+    .intake-field textarea { min-height: 70px; resize: vertical; }
+    .intake-field select { cursor: pointer; }
+
+    /* Dynamic lists (services, reviews, FAQs) */
+    .dynamic-list { display: flex; flex-direction: column; gap: 8px; }
+    .dynamic-item {
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .dynamic-item .item-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .dynamic-item input,
+    .dynamic-item textarea {
+      width: 100%;
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 7px 10px;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: .8rem;
+      outline: none;
+    }
+    .dynamic-item textarea { min-height: 50px; resize: vertical; }
+    .dynamic-item .remove-item {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 1.1rem;
+      transition: color .2s;
+      flex-shrink: 0;
+    }
+    .dynamic-item .remove-item:hover { color: #f44336; }
+    .add-item-btn {
+      background: none;
+      border: 1px dashed #1e293b;
+      border-radius: 8px;
+      color: #5B8DEF;
+      padding: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .add-item-btn:hover { border-color: #5B8DEF; }
+
+    /* Search results */
+    .search-results {
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+      display: none;
+    }
+    .search-results.visible { display: block; }
+    .search-result-item {
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .search-result-item:hover { background: #111827; }
+    .search-result-item .name { color: #fff; font-weight: 600; font-size: .88rem; }
+    .search-result-item .addr { color: #64748b; font-size: .78rem; margin-top: 2px; }
+
+    /* Output area */
+    .config-output {
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .config-output pre {
+      color: #94a3b8;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: .75rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      margin: 0;
+    }
+
+    @media (max-width: 600px) {
+      .intake-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -358,7 +557,175 @@
   <!-- ADMIN CONTENT (hidden until login) -->
   <div id="adminContent" style="display:none;">
   <h1>Polaris Point Admin</h1>
-  <p class="subtitle">Business Card Generator</p>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchTab('intake')">Client Onboarding</button>
+    <button class="admin-tab" onclick="switchTab('cards')">Business Cards</button>
+  </div>
+
+  <!-- INTAKE TAB -->
+  <div id="tabIntake" class="tab-content">
+    <div class="intake-form">
+
+      <!-- Step 1: Business Search -->
+      <div class="intake-section">
+        <h3><span class="step-num">1</span> Business Search</h3>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Business Name</label>
+            <input type="text" id="searchBizName" placeholder="e.g. Lone Star Plumbing">
+          </div>
+          <div class="intake-field">
+            <label>City / State</label>
+            <input type="text" id="searchCityState" placeholder="e.g. Austin, TX">
+          </div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Template</label>
+            <select id="searchTemplate">
+              <option value="plumber">Plumber</option>
+              <option value="salon">Salon</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="pest-control">Pest Control</option>
+            </select>
+          </div>
+          <div class="intake-field" style="display:flex;align-items:flex-end;">
+            <button class="btn-export" onclick="searchPlaces()" style="width:100%;">Search Google Places</button>
+          </div>
+        </div>
+        <div id="searchResults" class="search-results">
+          <div id="searchResultsList"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Business Details -->
+      <div class="intake-section">
+        <h3><span class="step-num">2</span> Business Details</h3>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Business Name</label>
+            <input type="text" id="intBizName" placeholder="Full business name">
+          </div>
+          <div class="intake-field">
+            <label>Short Name (for logo)</label>
+            <input type="text" id="intBizShort" placeholder="e.g. Lone Star">
+          </div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Phone (display)</label>
+            <input type="text" id="intPhone" placeholder="(512) 555-0190">
+          </div>
+          <div class="intake-field">
+            <label>Phone (tel format)</label>
+            <input type="text" id="intPhoneTel" placeholder="Auto-derived from phone" readonly style="opacity:.6;">
+          </div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Email</label>
+            <input type="text" id="intEmail" placeholder="info@business.com">
+          </div>
+          <div class="intake-field">
+            <label>Address</label>
+            <input type="text" id="intAddress" placeholder="123 Main St, Austin TX 78701">
+          </div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Hours</label>
+            <input type="text" id="intHours" placeholder="Mon-Sat 7am-7pm">
+          </div>
+          <div class="intake-field">
+            <label>Website</label>
+            <input type="text" id="intWebsite" placeholder="www.business.com">
+          </div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>License Number</label>
+            <input type="text" id="intLicense" placeholder="TPCL #12345">
+          </div>
+          <div class="intake-field">
+            <label>Founded Year</label>
+            <input type="text" id="intFounded" placeholder="2011">
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Content -->
+      <div class="intake-section">
+        <h3><span class="step-num">3</span> Content</h3>
+
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Hero Headline</label>
+            <input type="text" id="intHeroHeadline" placeholder="Fast, Reliable Plumbing in Austin, TX">
+          </div>
+          <div class="intake-field">
+            <label>Hero Subtext</label>
+            <input type="text" id="intHeroSubtext" placeholder="Licensed & insured plumbers...">
+          </div>
+        </div>
+
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>About Title</label>
+            <input type="text" id="intAboutTitle" placeholder="Austin Trusts Lone Star">
+          </div>
+          <div class="intake-field">
+            <label>About Text</label>
+            <textarea id="intAboutText" placeholder="For over 15 years, we've been the call..."></textarea>
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div class="intake-field" style="margin-top:8px;">
+          <label>Services</label>
+          <div id="servicesList" class="dynamic-list"></div>
+          <button class="add-item-btn" onclick="addServiceRow(document.getElementById('servicesList'))" style="margin-top:8px;width:100%;">+ Add Service</button>
+        </div>
+
+        <!-- Reviews -->
+        <div class="intake-field" style="margin-top:16px;">
+          <label>Reviews</label>
+          <div id="reviewsList" class="dynamic-list"></div>
+          <button class="add-item-btn" onclick="addReviewRow(document.getElementById('reviewsList'))" style="margin-top:8px;width:100%;">+ Add Review</button>
+        </div>
+
+        <!-- Service Areas -->
+        <div class="intake-field" style="margin-top:16px;">
+          <label>Service Areas (comma-separated)</label>
+          <input type="text" id="intServiceAreas" placeholder="Austin, Round Rock, Cedar Park, Pflugerville">
+        </div>
+
+        <!-- FAQs -->
+        <div class="intake-field" style="margin-top:16px;">
+          <label>FAQs</label>
+          <div id="faqsList" class="dynamic-list"></div>
+          <button class="add-item-btn" onclick="addFaqRow(document.getElementById('faqsList'))" style="margin-top:8px;width:100%;">+ Add FAQ</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Generate -->
+      <div class="intake-section">
+        <h3><span class="step-num">4</span> Generate</h3>
+        <div class="btn-row" style="margin-top:0;">
+          <button class="btn-export" onclick="generateConfig()">Generate config.js</button>
+          <button class="btn-export secondary" id="btnCopyConfig" onclick="copyConfig()" style="display:none;">Copy to Clipboard</button>
+          <button class="btn-export secondary" id="btnDownloadConfig" onclick="downloadConfig()" style="display:none;">Download as config.js</button>
+        </div>
+        <div id="configOutput" class="config-output" style="display:none;">
+          <pre id="configCode"></pre>
+        </div>
+        <p class="export-note" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CARDS TAB -->
+  <div id="tabCards" class="tab-content" style="display:none;">
 
   <!-- EDITOR -->
   <div class="editor">
@@ -460,8 +827,385 @@
 
   <p class="export-note">Exports at 1050 x 600px (print-quality at 300 DPI for 3.5" x 2")</p>
 
+  </div><!-- /tabCards -->
+
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script>
+    // === TAB SWITCHING ===
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
+      if (tab === 'intake') {
+        document.getElementById('tabIntake').style.display = 'block';
+        document.querySelectorAll('.admin-tab')[0].classList.add('active');
+      } else {
+        document.getElementById('tabCards').style.display = 'block';
+        document.querySelectorAll('.admin-tab')[1].classList.add('active');
+      }
+    }
+
+    // === DYNAMIC LIST HELPERS ===
+    function addServiceRow(container) {
+      var div = document.createElement('div');
+      div.className = 'dynamic-item';
+      div.innerHTML = '<div class="item-fields">' +
+        '<input type="text" placeholder="Service name" class="svc-name">' +
+        '<textarea placeholder="Service description" class="svc-desc"></textarea>' +
+        '</div>' +
+        '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
+      container.appendChild(div);
+    }
+    function addReviewRow(container) {
+      var div = document.createElement('div');
+      div.className = 'dynamic-item';
+      div.innerHTML = '<div class="item-fields">' +
+        '<textarea placeholder="Review text" class="rev-text"></textarea>' +
+        '<input type="text" placeholder="Author name" class="rev-author">' +
+        '<input type="text" placeholder="Location (e.g. Cedar Park)" class="rev-location">' +
+        '</div>' +
+        '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
+      container.appendChild(div);
+    }
+    function addFaqRow(container) {
+      var div = document.createElement('div');
+      div.className = 'dynamic-item';
+      div.innerHTML = '<div class="item-fields">' +
+        '<input type="text" placeholder="Question" class="faq-q">' +
+        '<textarea placeholder="Answer" class="faq-a"></textarea>' +
+        '</div>' +
+        '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
+      container.appendChild(div);
+    }
+
+    // Pre-populate 3 rows each
+    (function() {
+      var sl = document.getElementById('servicesList');
+      var rl = document.getElementById('reviewsList');
+      var fl = document.getElementById('faqsList');
+      for (var i = 0; i < 3; i++) { addServiceRow(sl); addReviewRow(rl); addFaqRow(fl); }
+    })();
+
+    // Auto-derive tel format from display phone
+    document.getElementById('intPhone').addEventListener('input', function() {
+      var digits = this.value.replace(/\D/g, '');
+      document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
+    });
+
+    // === GOOGLE PLACES SEARCH ===
+    function searchPlaces() {
+      var biz = document.getElementById('searchBizName').value.trim();
+      var city = document.getElementById('searchCityState').value.trim();
+      if (!biz) { alert('Enter a business name to search.'); return; }
+      var query = encodeURIComponent(biz + ' ' + city);
+      var resultsDiv = document.getElementById('searchResults');
+      var listDiv = document.getElementById('searchResultsList');
+      listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Searching...</p>';
+      resultsDiv.classList.add('visible');
+
+      fetch('/api/places?q=' + query)
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(function(data) {
+          if (!data.results || data.results.length === 0) {
+            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Fill in details manually below.</p>';
+            return;
+          }
+          listDiv.innerHTML = '';
+          data.results.forEach(function(place) {
+            var item = document.createElement('div');
+            item.className = 'search-result-item';
+            item.innerHTML = '<div class="name">' + (place.name || '') + '</div>' +
+              '<div class="addr">' + (place.address || place.formatted_address || '') + '</div>';
+            item.addEventListener('click', function() { fillFromPlace(place); });
+            listDiv.appendChild(item);
+          });
+        })
+        .catch(function() {
+          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">API not configured \u2014 fill in details manually.</p>';
+        });
+    }
+
+    function fillFromPlace(place) {
+      if (place.name) document.getElementById('intBizName').value = place.name;
+      if (place.address || place.formatted_address) document.getElementById('intAddress').value = place.address || place.formatted_address;
+      if (place.phone) {
+        document.getElementById('intPhone').value = place.phone;
+        var digits = place.phone.replace(/\D/g, '');
+        document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
+      }
+      if (place.website) document.getElementById('intWebsite').value = place.website;
+      if (place.hours) document.getElementById('intHours').value = place.hours;
+      document.getElementById('searchResults').classList.remove('visible');
+    }
+
+    // === CONFIG GENERATOR ===
+    function val(id) { return document.getElementById(id).value.trim(); }
+
+    function generateConfig() {
+      var bizName = val('intBizName') || 'Business Name';
+      var bizShort = val('intBizShort') || bizName;
+      var phone = val('intPhone') || '(555) 555-5555';
+      var digits = phone.replace(/\D/g, '');
+      var phoneTel = 'tel:+1' + digits;
+      var email = val('intEmail') || 'info@example.com';
+      var address = val('intAddress') || '';
+      var hours = val('intHours') || '';
+      var website = val('intWebsite') || '';
+      var license = val('intLicense') || '';
+      var founded = val('intFounded') || '';
+      var heroHeadline = val('intHeroHeadline') || '';
+      var heroSubtext = val('intHeroSubtext') || '';
+      var aboutTitle = val('intAboutTitle') || '';
+      var aboutText = val('intAboutText') || '';
+      var template = document.getElementById('searchTemplate').value;
+
+      // Gather services
+      var services = [];
+      document.querySelectorAll('#servicesList .dynamic-item').forEach(function(item) {
+        var n = item.querySelector('.svc-name').value.trim();
+        var d = item.querySelector('.svc-desc').value.trim();
+        if (n) services.push({ name: n, desc: d });
+      });
+
+      // Gather reviews
+      var reviews = [];
+      document.querySelectorAll('#reviewsList .dynamic-item').forEach(function(item) {
+        var t = item.querySelector('.rev-text').value.trim();
+        var a = item.querySelector('.rev-author').value.trim();
+        var l = item.querySelector('.rev-location').value.trim();
+        if (t) reviews.push({ text: t, author: a, location: l });
+      });
+
+      // Gather FAQs
+      var faqs = [];
+      document.querySelectorAll('#faqsList .dynamic-item').forEach(function(item) {
+        var q = item.querySelector('.faq-q').value.trim();
+        var a = item.querySelector('.faq-a').value.trim();
+        if (q) faqs.push({ question: q, answer: a });
+      });
+
+      // Service areas
+      var areasRaw = val('intServiceAreas');
+      var areas = areasRaw ? areasRaw.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+
+      // Build numbered services
+      var svcLines = '';
+      services.forEach(function(s, i) {
+        var n = i + 1;
+        svcLines += '  service' + n + 'Name: ' + JSON.stringify(s.name) + ',\n';
+        svcLines += '  service' + n + 'Desc: ' + JSON.stringify(s.desc) + ',\n';
+      });
+
+      // Build reviews array
+      var revLines = '  reviews: [\n';
+      reviews.forEach(function(r, i) {
+        var attr = r.author + (r.location ? ' &middot; ' + r.location : '');
+        revLines += '    {\n';
+        revLines += '      text: ' + JSON.stringify(r.text) + ',\n';
+        revLines += '      attribution: ' + JSON.stringify(attr) + '\n';
+        revLines += '    }' + (i < reviews.length - 1 ? ',' : '') + '\n';
+      });
+      revLines += '  ],\n';
+
+      // Build FAQs array
+      var faqLines = '  faqs: [\n';
+      faqs.forEach(function(f, i) {
+        faqLines += '    { question: ' + JSON.stringify(f.question) + ', answer: ' + JSON.stringify(f.answer) + ' }' + (i < faqs.length - 1 ? ',' : '') + '\n';
+      });
+      faqLines += '  ],\n';
+
+      // Build service areas
+      var areaArrStr = JSON.stringify(areas);
+
+      // Build form service options from service names
+      var formOpts = services.map(function(s) { return s.name; });
+      formOpts.push('Other');
+
+      var smsNum = digits;
+
+      var config = '// Site Configuration \u2014 Generated by Polaris Point Admin\n' +
+        '// Template: ' + template + '\n' +
+        'window.SITE_CONFIG = {\n\n' +
+        '  // === PAGE META ===\n' +
+        '  pageTitle: ' + JSON.stringify(bizName + ' | ' + (areasRaw.split(',')[0] || '').trim()) + ',\n' +
+        '  metaDescription: ' + JSON.stringify(bizName + ' offers fast, reliable service. Licensed and insured.') + ',\n\n' +
+        '  // === IDENTITY ===\n' +
+        '  businessName: ' + JSON.stringify(bizName) + ',\n' +
+        '  businessNameShort: ' + JSON.stringify(bizShort) + ',\n' +
+        '  licenseNumber: ' + JSON.stringify(license) + ',\n\n' +
+        '  // === CONTACT ===\n' +
+        '  phone: ' + JSON.stringify(phone) + ',\n' +
+        '  phoneTelHref: ' + JSON.stringify(phoneTel) + ',\n' +
+        '  email: ' + JSON.stringify(email) + ',\n' +
+        '  emailHref: ' + JSON.stringify('mailto:' + email) + ',\n' +
+        '  address: ' + JSON.stringify(address) + ',\n' +
+        '  hours: ' + JSON.stringify(hours) + ',\n\n' +
+        '  // === TOPBAR ===\n' +
+        '  topbarText: "24/7 Emergency Service Available",\n\n' +
+        '  // === HERO ===\n' +
+        '  heroHeadline: ' + JSON.stringify(heroHeadline) + ',\n' +
+        '  heroSubtext: ' + JSON.stringify(heroSubtext) + ',\n' +
+        '  heroImage: "",\n' +
+        '  heroImageAlt: "",\n' +
+        '  heroCta1: ' + JSON.stringify('Call ' + phone) + ',\n' +
+        '  heroCta2: "Get a Free Estimate",\n\n' +
+        '  // === TRUST BADGES ===\n' +
+        '  trustBadge1: "Licensed & Insured",\n' +
+        '  trustBadge2: "5-Star Rated",\n' +
+        '  trustBadge3: "Locally Owned",\n' +
+        '  trustBadge4: ' + JSON.stringify(founded ? (new Date().getFullYear() - parseInt(founded)) + '+ Years Experience' : '10+ Years Experience') + ',\n\n' +
+        '  // === SERVICES ===\n' +
+        '  servicesLabel: "What We Do",\n' +
+        '  servicesTitle: "Our Services",\n' +
+        svcLines + '\n' +
+        '  // === ABOUT ===\n' +
+        '  aboutImage: "",\n' +
+        '  aboutImageAlt: "",\n' +
+        '  aboutLabel: "Why Choose Us",\n' +
+        '  aboutTitle: ' + JSON.stringify(aboutTitle) + ',\n' +
+        '  aboutText: ' + JSON.stringify(aboutText) + ',\n\n' +
+        '  // === WHY CARDS ===\n' +
+        '  why1Title: "Same-Day Service",\n' +
+        '  why1Text: "Most calls handled the same day.",\n' +
+        '  why2Title: "Upfront Pricing",\n' +
+        '  why2Text: "Clear quotes before work starts. No surprise fees.",\n' +
+        '  why3Title: "Satisfaction Guaranteed",\n' +
+        '  why3Text: "If the problem comes back, so do we.",\n\n' +
+        '  // === REVIEWS ===\n' +
+        '  reviewsLabel: "Testimonials",\n' +
+        '  reviewsTitle: "What Our Customers Say",\n' +
+        revLines + '\n' +
+        '  // === SERVICE AREA ===\n' +
+        '  serviceAreaLabel: "Coverage Area",\n' +
+        '  serviceAreaTitle: ' + JSON.stringify('Serving ' + (areas[0] || 'Your Area') + ' & Surrounding Areas') + ',\n' +
+        '  serviceAreaText: "",\n' +
+        '  serviceAreaImage: "",\n' +
+        '  serviceAreaImageAlt: "",\n' +
+        '  serviceAreas: ' + areaArrStr + ',\n\n' +
+        '  // === CONTACT FORM ===\n' +
+        '  contactLabel: "Get In Touch",\n' +
+        '  contactTitle: "Request Your Free Estimate",\n' +
+        '  contactText: "Fill out the form and we will get back to you within 2 hours during business hours.",\n' +
+        '  formServiceOptions: ' + JSON.stringify(formOpts) + ',\n\n' +
+        '  // === CTA BANNER ===\n' +
+        '  ctaTitle: "Need Help Right Now?",\n' +
+        '  ctaText: "Our team is available to help you today.",\n' +
+        '  ctaButton: ' + JSON.stringify('Call ' + phone) + ',\n\n' +
+        '  // === FOOTER ===\n' +
+        '  footerDescription: ' + JSON.stringify(bizName + '. Licensed, insured, and committed to getting the job done right.') + ',\n' +
+        '  footerLegal: ' + JSON.stringify('&copy; ' + new Date().getFullYear() + ' ' + bizName + '. All rights reserved.' + (license ? ' &middot; ' + license : '')) + ',\n' +
+        '  footerServices: ' + JSON.stringify(services.map(function(s) { return s.name; })) + ',\n\n' +
+        '  // === FEATURE FLAGS ===\n' +
+        '  features: {\n' +
+        '    mobileNav: true,\n' +
+        '    activeNavHighlight: true,\n' +
+        '    stickyHeader: true,\n' +
+        '    smoothScroll: true,\n' +
+        '    formHandling: true,\n' +
+        '    scrollReveal: true,\n' +
+        '    reviewCarousel: true,\n' +
+        '    googleReviewsBadge: true,\n' +
+        '    floatingButtons: true,\n' +
+        '    stickyBottomCta: true,\n' +
+        '    exitIntent: true,\n' +
+        '    urgencyBanner: true,\n' +
+        '    faqAccordion: true,\n' +
+        '    serviceAreaMap: true,\n' +
+        '    lightbox: true,\n' +
+        '    teamModals: false,\n' +
+        '    blogPreview: true,\n' +
+        '    cookieConsent: true,\n' +
+        '    trustBar: true,\n' +
+        '    analytics: false\n' +
+        '  },\n\n' +
+        '  // === GOOGLE REVIEWS ===\n' +
+        '  googleReviewsRating: "4.9",\n' +
+        '  googleReviewsCount: "100",\n' +
+        '  googleReviewsUrl: "",\n\n' +
+        '  // === ENGAGEMENT ===\n' +
+        '  smsNumber: ' + JSON.stringify(smsNum) + ',\n' +
+        '  whatsappNumber: "",\n' +
+        '  calcomUrl: "",\n\n' +
+        '  exitIntent: {\n' +
+        '    headline: "Wait \u2014 Get $50 Off Your First Service",\n' +
+        '    text: "Book your service today and save. New customers only.",\n' +
+        '    cta: "Claim My Discount",\n' +
+        '    ctaUrl: "#contact"\n' +
+        '  },\n\n' +
+        '  urgencyBanner: {\n' +
+        '    text: "Limited Time Offer \u2014 Call today for a free estimate",\n' +
+        '    endDate: "2026-12-31"\n' +
+        '  },\n\n' +
+        '  // === FAQ ===\n' +
+        faqLines + '\n' +
+        '  // === SERVICE AREA MAP ===\n' +
+        '  googleMapsEmbed: "",\n\n' +
+        '  // === BLOG POSTS ===\n' +
+        '  blogPosts: [],\n\n' +
+        '  // === TRUST BAR LOGOS ===\n' +
+        '  trustLogos: [\n' +
+        '    { src: "", alt: "Licensed & Insured" },\n' +
+        '    { src: "", alt: "BBB A+ Rated" },\n' +
+        '    { src: "", alt: "Google Guaranteed" }\n' +
+        '  ],\n\n' +
+        '  // === SEO ===\n' +
+        '  canonicalUrl: "",\n' +
+        '  ogImage: "",\n' +
+        '  geoRegion: "",\n' +
+        '  geoPlacename: ' + JSON.stringify(areas[0] || '') + ',\n' +
+        '  geoPosition: "",\n' +
+        '  schema: {\n' +
+        '    type: "LocalBusiness",\n' +
+        '    additionalType: "",\n' +
+        '    priceRange: "$$",\n' +
+        '    foundingDate: ' + JSON.stringify(founded) + ',\n' +
+        '    areaServed: ' + JSON.stringify(areas) + ',\n' +
+        '    openingHours: []\n' +
+        '  },\n\n' +
+        '  // === ANALYTICS ===\n' +
+        '  analytics: {\n' +
+        '    ga4Id: "",\n' +
+        '    metaPixelId: "",\n' +
+        '    hotjarId: "",\n' +
+        '    clarityId: ""\n' +
+        '  },\n\n' +
+        '  // === COOKIE CONSENT ===\n' +
+        '  cookieConsent: {\n' +
+        '    text: "We use cookies to improve your experience and analyze site traffic.",\n' +
+        '    acceptButton: "Accept",\n' +
+        '    declineButton: "No Thanks",\n' +
+        '    privacyUrl: "#"\n' +
+        '  }\n' +
+        '};\n';
+
+      document.getElementById('configCode').textContent = config;
+      document.getElementById('configOutput').style.display = 'block';
+      document.getElementById('btnCopyConfig').style.display = 'inline-flex';
+      document.getElementById('btnDownloadConfig').style.display = 'inline-flex';
+      window._generatedConfig = config;
+    }
+
+    function copyConfig() {
+      if (!window._generatedConfig) return;
+      navigator.clipboard.writeText(window._generatedConfig).then(function() {
+        var btn = document.getElementById('btnCopyConfig');
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy to Clipboard'; }, 2000);
+      });
+    }
+
+    function downloadConfig() {
+      if (!window._generatedConfig) return;
+      var blob = new Blob([window._generatedConfig], { type: 'text/javascript' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'config.js';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
     // Live preview binding
     var fields = [
       { input: 'inputName',  target: 'cardName' },
