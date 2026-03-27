@@ -51,12 +51,22 @@
     }
     // Inject logo image if provided
     if (T.logoUrl) {
+      // Nav logo
       var logoEl = document.querySelector('.logo');
       if (logoEl) {
         var logoIcon = logoEl.querySelector('.logo-icon');
         if (logoIcon) {
           logoIcon.innerHTML = '<img src="' + T.logoUrl + '" alt="Logo" style="width:30px;height:30px;object-fit:contain;border-radius:4px;">';
         }
+      }
+      // Hero logo — add above the h1
+      var heroH1 = document.querySelector('.hero h1, .hero-content h1');
+      if (heroH1) {
+        var heroLogo = document.createElement('img');
+        heroLogo.src = T.logoUrl;
+        heroLogo.alt = (C.businessName || 'Logo');
+        heroLogo.style.cssText = 'max-height:80px;max-width:280px;object-fit:contain;margin-bottom:16px;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));';
+        heroH1.parentNode.insertBefore(heroLogo, heroH1);
       }
     }
     // Apply background color to body

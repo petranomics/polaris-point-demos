@@ -665,8 +665,13 @@
         <h3><span class="step-num" style="background:#D4A853;">&#9733;</span> Theme</h3>
         <div class="intake-row full">
           <div class="intake-field">
-            <label>Logo URL (optional)</label>
-            <input type="text" id="intLogoUrl" placeholder="https://example.com/logo.png">
+            <label>Logo — paste an image (Ctrl/Cmd+V) or enter a URL</label>
+            <div id="logoPasteZone" style="min-height:80px;background:#0B1120;border:2px dashed #1e293b;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;" tabindex="0">
+              <span id="logoPasteHint" style="color:#475569;font-size:.78rem;padding:16px;text-align:center;">Click here and paste an image (Cmd+V), or drag & drop, or type a URL below</span>
+              <img id="logoPreviewImg" style="display:none;max-height:70px;max-width:90%;object-fit:contain;">
+            </div>
+            <input type="text" id="intLogoUrl" placeholder="Or enter image URL: https://..." style="margin-top:6px;">
+            <input type="hidden" id="intLogoData">
           </div>
         </div>
         <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:8px;">Choose a Color Theme</label>
@@ -1016,6 +1021,84 @@
 
     var selectedTheme = THEMES[0];
 
+    // Logo paste/drop/URL handling
+    (function() {
+      var zone = document.getElementById('logoPasteZone');
+      var hint = document.getElementById('logoPasteHint');
+      var preview = document.getElementById('logoPreviewImg');
+      var urlInput = document.getElementById('intLogoUrl');
+      var dataInput = document.getElementById('intLogoData');
+
+      function setLogo(src) {
+        preview.src = src;
+        preview.style.display = 'block';
+        hint.style.display = 'none';
+        dataInput.value = src;
+      }
+
+      function clearLogo() {
+        preview.style.display = 'none';
+        preview.src = '';
+        hint.style.display = 'block';
+        dataInput.value = '';
+        urlInput.value = '';
+      }
+
+      // Paste image from clipboard
+      zone.addEventListener('paste', function(e) {
+        var items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            e.preventDefault();
+            var file = items[i].getAsFile();
+            var reader = new FileReader();
+            reader.onload = function(ev) { setLogo(ev.target.result); };
+            reader.readAsDataURL(file);
+            return;
+          }
+        }
+        // If text was pasted, check if it's a URL
+        var text = e.clipboardData.getData('text');
+        if (text && (text.startsWith('http') || text.startsWith('data:'))) {
+          e.preventDefault();
+          urlInput.value = text;
+          setLogo(text);
+        }
+      });
+
+      // Drag and drop
+      zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.style.borderColor = '#5B8DEF'; });
+      zone.addEventListener('dragleave', function() { zone.style.borderColor = '#1e293b'; });
+      zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        zone.style.borderColor = '#1e293b';
+        var file = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          var reader = new FileReader();
+          reader.onload = function(ev) { setLogo(ev.target.result); };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // URL input change
+      urlInput.addEventListener('input', function() {
+        var url = this.value.trim();
+        if (url) {
+          var img = new Image();
+          img.onload = function() { setLogo(url); };
+          img.onerror = function() { clearLogo(); urlInput.value = url; };
+          img.src = url;
+        } else { clearLogo(); }
+      });
+
+      // Click to focus for paste
+      zone.addEventListener('click', function() { zone.focus(); });
+
+      // Double-click to clear
+      zone.addEventListener('dblclick', function() { clearLogo(); });
+    })();
+
     function renderThemes() {
       var grid = document.getElementById('themeGrid');
       grid.innerHTML = '';
@@ -1246,8 +1329,8 @@
 
       // === HERO & ABOUT ===
       var shortName = document.getElementById('intBizShort').value || place.name;
-      document.getElementById('intHeroHeadline').value = 'Trusted ' + template + ' in ' + (city || 'Your Area');
-      document.getElementById('intHeroSubtext').value = 'Licensed & insured. Proudly serving ' + (city || 'the community') + ' and surrounding areas. Call today for a free estimate.';
+      document.getElementById('intHeroHeadline').value = place.name || ('Your Trusted ' + template);
+      document.getElementById('intHeroSubtext').value = 'Licensed & insured ' + template.toLowerCase() + ' proudly serving ' + (city || 'the community') + ' and surrounding areas.' + (place.rating ? ' Rated ' + place.rating + ' stars by ' + (place.reviewCount || '') + '+ customers.' : '') + ' Call today for a free estimate.';
       document.getElementById('intAboutTitle').value = (city || 'Your Community') + ' Trusts ' + shortName;
       document.getElementById('intAboutText').value = place.name + ' has been serving ' + (city || 'the community') + ' with reliable, professional ' + template.toLowerCase() + ' services.' + (place.rating ? ' With a ' + place.rating + '-star rating from ' + (place.reviewCount || '') + ' customers, we take pride in quality work and honest pricing.' : '') + ' Every job is treated with care and respect.';
 
@@ -1408,7 +1491,7 @@
       var smsNum = digits;
 
       var T = selectedTheme;
-      var logoUrl = document.getElementById('intLogoUrl').value.trim();
+      var logoUrl = document.getElementById('intLogoData').value || document.getElementById('intLogoUrl').value.trim();
       var r = parseInt(T.text.slice(1,3),16), g = parseInt(T.text.slice(3,5),16), b = parseInt(T.text.slice(5,7),16);
       var mutedColor = 'rgba(' + r + ',' + g + ',' + b + ',.55)';
 
