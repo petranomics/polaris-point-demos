@@ -924,10 +924,15 @@
         if (urlInput.includes('yelp.com')) {
           var yelpSlug = urlInput.match(/\/biz\/([\w-]+)/);
           if (yelpSlug) {
-            searchName = yelpSlug[1].replace(/-/g, ' ');
-            // Extract city from Yelp URL slug (often last part like "austin" or "austin-2")
-            var parts = yelpSlug[1].split('-');
-            if (!searchLocation) searchLocation = parts[parts.length - 1].replace(/\d+/g, '');
+            // Yelp slug format: "business-name-city-N"
+            // Remove trailing number, then use last word as city, rest as name
+            var slugParts = yelpSlug[1].replace(/-\d+$/, '').split('-');
+            // Last part is usually the city
+            if (!searchLocation && slugParts.length > 1) {
+              searchLocation = slugParts[slugParts.length - 1];
+            }
+            // Full slug as search (Yelp handles partial matches well)
+            searchName = slugParts.join(' ');
             forceYelp = true;
           }
         } else if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
@@ -937,6 +942,8 @@
         if (!searchName) searchName = urlInput;
       } else if (biz) {
         searchName = biz;
+        // If no city provided, default to Texas for Yelp
+        if (!searchLocation) searchLocation = 'TX';
       } else {
         alert('Enter a business name or paste a Google Maps / Yelp URL.');
         return;
