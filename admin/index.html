@@ -955,40 +955,59 @@
       var yelpUrl = '/api/yelp?q=' + encodeURIComponent(searchName) + (searchLocation ? '&location=' + encodeURIComponent(searchLocation) : '');
       var placesUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
-      console.log('Yelp URL:', yelpUrl);
-      fetch(yelpUrl)
-        .then(function(r) { return r.json(); })
-        .then(function(yelpData) {
-          if (yelpData.error) throw new Error(yelpData.error);
-          // Try Google Places too for phone/hours/website (richer data)
-          if (!forceYelp) {
-            fetch(placesUrl).then(function(r) { return r.json(); }).then(function(gData) {
-              if (!gData.error) {
-                // Merge Google data into Yelp result
-                if (gData.phone && !yelpData.phone) yelpData.phone = gData.phone;
-                if (gData.website) yelpData.website = gData.website;
-                if (gData.hoursFormatted) yelpData.hoursFormatted = gData.hoursFormatted;
-                if (gData.reviews && gData.reviews.length > yelpData.reviews.length) yelpData.reviews = gData.reviews;
-              }
-              showResult(yelpData, listDiv);
-            }).catch(function() { showResult(yelpData, listDiv); });
-          } else {
-            showResult(yelpData, listDiv);
+      // Fetch both Yelp and Google Places in parallel, merge results
+      Promise.allSettled([
+        fetch(yelpUrl).then(function(r) { return r.json(); }),
+        fetch(placesUrl).then(function(r) { return r.json(); })
+      ]).then(function(results) {
+        var yelp = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value : null;
+        var google = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value : null;
+
+        if (!yelp && !google) {
+          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
+          return;
+        }
+
+        // Merge: prefer Yelp for name/rating/categories, Google for phone/website/hours/reviews
+        var merged = {};
+        if (yelp) {
+          merged.name = yelp.name;
+          merged.rating = yelp.rating;
+          merged.reviewCount = yelp.reviewCount;
+          merged.address = yelp.address;
+          merged.phone = yelp.phone;
+          merged.categories = yelp.categories;
+          merged.imageUrl = yelp.imageUrl;
+          merged.photos = yelp.photos || [];
+          merged.yelpUrl = yelp.yelpUrl;
+          merged.reviews = yelp.reviews || [];
+          merged.hours = yelp.hours;
+          merged.hoursFormatted = yelp.hoursFormatted;
+          merged.city = yelp.city;
+          merged.state = yelp.state;
+        }
+        if (google) {
+          if (!merged.name) merged.name = google.name;
+          if (!merged.address) merged.address = google.address;
+          if (!merged.phone && google.phone) merged.phone = google.phone;
+          if (google.website) merged.website = google.website;
+          if (google.hoursFormatted && !merged.hoursFormatted) merged.hoursFormatted = google.hoursFormatted;
+          if (!merged.rating && google.rating) { merged.rating = google.rating; merged.reviewCount = google.reviewCount; }
+          // Merge reviews from both sources (deduplicate by author)
+          if (google.reviews && google.reviews.length) {
+            var existing = {};
+            (merged.reviews || []).forEach(function(r) { existing[r.author] = true; });
+            google.reviews.forEach(function(r) {
+              if (!existing[r.author]) merged.reviews.push(r);
+            });
           }
-        })
-        .catch(function(err) {
-          console.warn('Yelp failed:', err);
-          // Yelp failed — try Google Places alone
-          fetch(placesUrl).then(function(r) { return r.json(); }).then(function(data) {
-            if (data.error) {
-              listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
-              return;
-            }
-            showResult(data, listDiv);
-          }).catch(function() {
-            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
-          });
-        });
+          if (google.mapsUrl) merged.mapsUrl = google.mapsUrl;
+        }
+
+        showResult(merged, listDiv);
+      }).catch(function() {
+        listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
+      });
     }
 
     function showResult(data, listDiv) {
@@ -1019,8 +1038,11 @@
       // === IDENTITY ===
       if (place.name) {
         document.getElementById('intBizName').value = place.name;
-        var words = place.name.split(' ');
-        document.getElementById('intBizShort').value = words.length > 3 ? words.slice(0, 2).join(' ') : place.name;
+        // Smart short name: remove generic suffixes, keep the distinctive part
+        var short = place.name
+          .replace(/\s*(LLC|Inc|Co|Corp|Ltd|Plumbing|Services?|Solutions?|Company|Group|Enterprises?)\s*\.?$/gi, '')
+          .trim();
+        document.getElementById('intBizShort').value = short || place.name;
       }
       if (place.address) document.getElementById('intAddress').value = place.address;
       if (place.phone) {
