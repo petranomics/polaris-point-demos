@@ -660,85 +660,17 @@
         </div>
       </div>
 
-      <!-- Step 2.5: Branding & Colors -->
+      <!-- Step 2.5: Theme -->
       <div class="intake-section">
-        <h3><span class="step-num" style="background:#D4A853;">&#9733;</span> Branding &amp; Colors</h3>
-        <div class="intake-row">
+        <h3><span class="step-num" style="background:#D4A853;">&#9733;</span> Theme</h3>
+        <div class="intake-row full">
           <div class="intake-field">
-            <label>Logo URL (or leave blank for text logo)</label>
+            <label>Logo URL (optional)</label>
             <input type="text" id="intLogoUrl" placeholder="https://example.com/logo.png">
           </div>
-          <div class="intake-field">
-            <label>Logo Preview</label>
-            <div id="logoPreview" style="height:48px;background:#0B1120;border:1px solid #1e293b;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-              <span style="color:#475569;font-size:.75rem;">No logo set</span>
-            </div>
-          </div>
         </div>
-        <div class="intake-row">
-          <div class="intake-field">
-            <label>Primary Color (header, buttons)</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="color" id="intColorPrimary" value="#1B3A6B" style="width:44px;height:36px;border:1px solid #1e293b;border-radius:6px;background:#0B1120;cursor:pointer;padding:2px;">
-              <input type="text" id="intColorPrimaryHex" value="#1B3A6B" style="flex:1" oninput="document.getElementById('intColorPrimary').value=this.value" placeholder="#1B3A6B">
-            </div>
-          </div>
-          <div class="intake-field">
-            <label>Accent Color (CTA buttons, highlights)</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="color" id="intColorAccent" value="#E8601E" style="width:44px;height:36px;border:1px solid #1e293b;border-radius:6px;background:#0B1120;cursor:pointer;padding:2px;">
-              <input type="text" id="intColorAccentHex" value="#E8601E" style="flex:1" oninput="document.getElementById('intColorAccent').value=this.value" placeholder="#E8601E">
-            </div>
-          </div>
-        </div>
-        <div class="intake-row">
-          <div class="intake-field">
-            <label>Background Color</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="color" id="intColorBg" value="#f6f8fc" style="width:44px;height:36px;border:1px solid #1e293b;border-radius:6px;background:#0B1120;cursor:pointer;padding:2px;">
-              <input type="text" id="intColorBgHex" value="#f6f8fc" style="flex:1" oninput="document.getElementById('intColorBg').value=this.value" placeholder="#f6f8fc">
-            </div>
-          </div>
-          <div class="intake-field">
-            <label>Text Color</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="color" id="intColorText" value="#173052" style="width:44px;height:36px;border:1px solid #1e293b;border-radius:6px;background:#0B1120;cursor:pointer;padding:2px;">
-              <input type="text" id="intColorTextHex" value="#173052" style="flex:1" oninput="document.getElementById('intColorText').value=this.value" placeholder="#173052">
-            </div>
-          </div>
-        </div>
-        <div class="intake-row">
-          <div class="intake-field">
-            <label>Heading Font</label>
-            <select id="intFontHeading">
-              <option value="'Montserrat', sans-serif">Montserrat (bold, geometric)</option>
-              <option value="'Outfit', sans-serif">Outfit (modern, rounded)</option>
-              <option value="'Space Grotesk', sans-serif">Space Grotesk (techy)</option>
-              <option value="'DM Sans', sans-serif">DM Sans (clean, balanced)</option>
-              <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans (premium)</option>
-              <option value="'Playfair Display', serif">Playfair Display (elegant)</option>
-              <option value="'Cormorant Garamond', serif">Cormorant Garamond (boutique)</option>
-            </select>
-          </div>
-          <div class="intake-field">
-            <label>Body Font</label>
-            <select id="intFontBody">
-              <option value="'Source Sans 3', sans-serif">Source Sans 3 (readable)</option>
-              <option value="'Inter', sans-serif">Inter (modern, neutral)</option>
-              <option value="'DM Sans', sans-serif">DM Sans (clean)</option>
-              <option value="'Outfit', sans-serif">Outfit (friendly)</option>
-            </select>
-          </div>
-        </div>
-        <div style="margin-top:12px;padding:12px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;">
-          <p style="font-size:.7rem;color:#475569;margin-bottom:8px;">COLOR PREVIEW</p>
-          <div id="colorPreviewBar" style="display:flex;gap:4px;height:32px;border-radius:6px;overflow:hidden;">
-            <div style="flex:2;background:#1B3A6B;" id="cpPrimary"></div>
-            <div style="flex:1;background:#E8601E;" id="cpAccent"></div>
-            <div style="flex:2;background:#f6f8fc;" id="cpBg"></div>
-            <div style="flex:1;background:#173052;" id="cpText"></div>
-          </div>
-        </div>
+        <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:8px;">Choose a Color Theme</label>
+        <div id="themeGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>
       </div>
 
       <!-- Step 3: Content -->
@@ -1072,33 +1004,43 @@
       for (var i = 0; i < 3; i++) { addServiceRow(sl); addReviewRow(rl); addFaqRow(fl); }
     })();
 
-    // Sync color pickers with hex inputs and preview
-    ['Primary','Accent','Bg','Text'].forEach(function(name) {
-      var picker = document.getElementById('intColor' + name);
-      var hex = document.getElementById('intColor' + name + 'Hex');
-      var preview = document.getElementById('cp' + name);
-      picker.addEventListener('input', function() {
-        hex.value = picker.value;
-        if (preview) preview.style.background = picker.value;
-      });
-      hex.addEventListener('input', function() {
-        if (/^#[0-9a-f]{6}$/i.test(hex.value)) {
-          picker.value = hex.value;
-          if (preview) preview.style.background = hex.value;
-        }
-      });
-    });
+    // Theme presets
+    var THEMES = [
+      { id: 'navy-orange', name: 'Professional', desc: 'Navy & Orange', primary: '#1B3A6B', primaryDark: '#0f2748', accent: '#E8601E', accentLight: '#FF7A3D', bg: '#f6f8fc', text: '#173052', fontHeading: "'Montserrat', sans-serif", fontBody: "'Source Sans 3', sans-serif" },
+      { id: 'forest-amber', name: 'Earthy', desc: 'Forest & Amber', primary: '#1B4332', primaryDark: '#0f2b1f', accent: '#D4A03C', accentLight: '#E4B44C', bg: '#f5f7f2', text: '#1a2e1a', fontHeading: "'Montserrat', sans-serif", fontBody: "'Source Sans 3', sans-serif" },
+      { id: 'slate-blue', name: 'Modern', desc: 'Slate & Blue', primary: '#1e293b', primaryDark: '#0f172a', accent: '#3b82f6', accentLight: '#60a5fa', bg: '#f8fafc', text: '#1e293b', fontHeading: "'Outfit', sans-serif", fontBody: "'Inter', sans-serif" },
+      { id: 'charcoal-red', name: 'Bold', desc: 'Charcoal & Red', primary: '#292524', primaryDark: '#1c1917', accent: '#dc2626', accentLight: '#ef4444', bg: '#fafaf9', text: '#292524', fontHeading: "'Plus Jakarta Sans', sans-serif", fontBody: "'DM Sans', sans-serif" },
+      { id: 'sage-rose', name: 'Boutique', desc: 'Sage & Rose', primary: '#3d5a4c', primaryDark: '#2a3f35', accent: '#c4988e', accentLight: '#d4a89e', bg: '#FAF6F0', text: '#2c3e34', fontHeading: "'Cormorant Garamond', serif", fontBody: "'DM Sans', sans-serif" },
+      { id: 'dark-gold', name: 'Premium', desc: 'Dark & Gold', primary: '#1a1512', primaryDark: '#0f0d0a', accent: '#c8651a', accentLight: '#d8752a', bg: '#faf8f5', text: '#1a1512', fontHeading: "'Playfair Display', serif", fontBody: "'Source Sans 3', sans-serif" }
+    ];
 
-    // Logo URL preview
-    document.getElementById('intLogoUrl').addEventListener('input', function() {
-      var url = this.value.trim();
-      var preview = document.getElementById('logoPreview');
-      if (url) {
-        preview.innerHTML = '<img src="' + url.replace(/"/g,'') + '" style="max-height:44px;max-width:100%;object-fit:contain;" onerror="this.parentNode.innerHTML=\'<span style=color:#f44336;font-size:.72rem>Failed to load</span>\'">';
-      } else {
-        preview.innerHTML = '<span style="color:#475569;font-size:.75rem;">No logo set</span>';
-      }
-    });
+    var selectedTheme = THEMES[0];
+
+    function renderThemes() {
+      var grid = document.getElementById('themeGrid');
+      grid.innerHTML = '';
+      THEMES.forEach(function(t) {
+        var card = document.createElement('div');
+        var isActive = selectedTheme.id === t.id;
+        card.style.cssText = 'cursor:pointer;border-radius:10px;padding:12px;border:2px solid ' + (isActive ? '#5B8DEF' : '#1e293b') + ';background:#0B1120;transition:border-color .2s;';
+        card.innerHTML =
+          '<div style="display:flex;gap:4px;height:24px;border-radius:4px;overflow:hidden;margin-bottom:8px;">' +
+            '<div style="flex:3;background:' + t.primary + ';"></div>' +
+            '<div style="flex:2;background:' + t.accent + ';"></div>' +
+            '<div style="flex:3;background:' + t.bg + ';border:1px solid #1e293b;"></div>' +
+          '</div>' +
+          '<div style="font-weight:600;font-size:.82rem;color:#fff;">' + t.name + '</div>' +
+          '<div style="font-size:.68rem;color:#64748b;">' + t.desc + '</div>';
+        card.addEventListener('click', function() {
+          selectedTheme = t;
+          renderThemes();
+        });
+        card.addEventListener('mouseenter', function() { if (!isActive) card.style.borderColor = '#334155'; });
+        card.addEventListener('mouseleave', function() { if (!isActive) card.style.borderColor = '#1e293b'; });
+        grid.appendChild(card);
+      });
+    }
+    renderThemes();
 
     // Auto-derive tel format from display phone
     document.getElementById('intPhone').addEventListener('input', function() {
@@ -1367,45 +1309,6 @@
         }
       }
 
-      // === AUTO-DETECT BRANDING FROM IMAGE ===
-      if (place.imageUrl) {
-        document.getElementById('intLogoUrl').value = '';
-        document.getElementById('logoPreview').innerHTML = '<span style="color:#475569;font-size:.72rem;">Detecting colors from business photo...</span>';
-        // Extract dominant colors from the Yelp image
-        try {
-          var img = new Image();
-          img.crossOrigin = 'anonymous';
-          img.onload = function() {
-            var canvas = document.createElement('canvas');
-            canvas.width = 50; canvas.height = 50;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, 50, 50);
-            var data = ctx.getImageData(0, 0, 50, 50).data;
-            // Sample colors and find dominant non-white/non-black
-            var colors = {};
-            for (var i = 0; i < data.length; i += 16) {
-              var r = data[i], g = data[i+1], b = data[i+2];
-              var lum = (r*0.299 + g*0.587 + b*0.114);
-              if (lum > 30 && lum < 220) { // skip near-black and near-white
-                var key = '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
-                var bucket = key.slice(0,5); // rough bucket
-                colors[bucket] = (colors[bucket] || 0) + 1;
-              }
-            }
-            var sorted = Object.keys(colors).sort(function(a,b) { return colors[b]-colors[a]; });
-            if (sorted.length >= 1) {
-              // Use top color as primary hint (show but don't auto-apply)
-              document.getElementById('logoPreview').innerHTML =
-                '<div style="display:flex;gap:4px;align-items:center;">' +
-                '<span style="color:#64748b;font-size:.72rem;">Detected colors:</span>' +
-                sorted.slice(0,4).map(function(c) { return '<div style="width:20px;height:20px;border-radius:4px;background:'+c+';border:1px solid #333;cursor:pointer;" title="Click to use as primary" onclick="document.getElementById(\'intColorPrimary\').value=\''+c+'0\';document.getElementById(\'intColorPrimaryHex\').value=\''+c+'0\';document.getElementById(\'cpPrimary\').style.background=\''+c+'0\'"></div>'; }).join('') +
-                '</div>';
-            }
-          };
-          img.src = place.imageUrl;
-        } catch(e) { /* color extraction failed silently */ }
-      }
-
       // === STORE DATA FOR CONFIG GENERATOR ===
       window._placeRating = place.rating || null;
       window._placeReviewCount = place.reviewCount || null;
@@ -1504,45 +1407,25 @@
 
       var smsNum = digits;
 
-      // Gather branding
-      var colorPrimary = document.getElementById('intColorPrimaryHex').value || '#1B3A6B';
-      var colorAccent = document.getElementById('intColorAccentHex').value || '#E8601E';
-      var colorBg = document.getElementById('intColorBgHex').value || '#f6f8fc';
-      var colorText = document.getElementById('intColorTextHex').value || '#173052';
-      var fontHeading = document.getElementById('intFontHeading').value;
-      var fontBody = document.getElementById('intFontBody').value;
+      var T = selectedTheme;
       var logoUrl = document.getElementById('intLogoUrl').value.trim();
-
-      // Derive darker/lighter variants
-      function darken(hex, pct) {
-        var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-        r = Math.round(r*(1-pct)); g = Math.round(g*(1-pct)); b = Math.round(b*(1-pct));
-        return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
-      }
-      function lighten(hex, pct) {
-        var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-        r = Math.min(255, Math.round(r + (255-r)*pct)); g = Math.min(255, Math.round(g + (255-g)*pct)); b = Math.min(255, Math.round(b + (255-b)*pct));
-        return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
-      }
-      function muted(hex) {
-        var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-        return 'rgba(' + r + ',' + g + ',' + b + ',.55)';
-      }
+      var r = parseInt(T.text.slice(1,3),16), g = parseInt(T.text.slice(3,5),16), b = parseInt(T.text.slice(5,7),16);
+      var mutedColor = 'rgba(' + r + ',' + g + ',' + b + ',.55)';
 
       var config = '// Site Configuration \u2014 Generated by Polaris Point Admin\n' +
-        '// Template: ' + template + '\n' +
+        '// Template: ' + template + ' | Theme: ' + T.name + '\n' +
         'window.SITE_CONFIG = {\n\n' +
-        '  // === THEME / BRANDING ===\n' +
+        '  // === THEME (' + T.name + ' \u2014 ' + T.desc + ') ===\n' +
         '  theme: {\n' +
-        '    primary: ' + JSON.stringify(colorPrimary) + ',\n' +
-        '    primaryDark: ' + JSON.stringify(darken(colorPrimary, 0.3)) + ',\n' +
-        '    accent: ' + JSON.stringify(colorAccent) + ',\n' +
-        '    accentLight: ' + JSON.stringify(lighten(colorAccent, 0.2)) + ',\n' +
-        '    bg: ' + JSON.stringify(colorBg) + ',\n' +
-        '    text: ' + JSON.stringify(colorText) + ',\n' +
-        '    muted: ' + JSON.stringify(muted(colorText)) + ',\n' +
-        '    fontHeading: ' + JSON.stringify(fontHeading) + ',\n' +
-        '    fontBody: ' + JSON.stringify(fontBody) + ',\n' +
+        '    primary: ' + JSON.stringify(T.primary) + ',\n' +
+        '    primaryDark: ' + JSON.stringify(T.primaryDark) + ',\n' +
+        '    accent: ' + JSON.stringify(T.accent) + ',\n' +
+        '    accentLight: ' + JSON.stringify(T.accentLight) + ',\n' +
+        '    bg: ' + JSON.stringify(T.bg) + ',\n' +
+        '    text: ' + JSON.stringify(T.text) + ',\n' +
+        '    muted: ' + JSON.stringify(mutedColor) + ',\n' +
+        '    fontHeading: ' + JSON.stringify(T.fontHeading) + ',\n' +
+        '    fontBody: ' + JSON.stringify(T.fontBody) + ',\n' +
         '    logoUrl: ' + JSON.stringify(logoUrl) + '\n' +
         '  },\n\n' +
         '  // === PAGE META ===\n' +
