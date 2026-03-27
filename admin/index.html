@@ -914,32 +914,28 @@
       var resultsDiv = document.getElementById('searchResults');
       var listDiv = document.getElementById('searchResultsList');
 
-      // Determine what to search
-      var apiUrl = '';
+      // Determine search query
+      var searchName = '';
+      var searchLocation = city;
+      var forceYelp = false;
+
       if (urlInput) {
-        // Parse Google Maps or Yelp URL
         if (urlInput.includes('yelp.com')) {
           var yelpSlug = urlInput.match(/\/biz\/([\w-]+)/);
           if (yelpSlug) {
-            apiUrl = '/api/yelp?q=' + encodeURIComponent(yelpSlug[1].replace(/-/g, ' '));
-            var locMatch = urlInput.match(/[\?&]loc=([\w+%-]+)/);
-            if (locMatch) apiUrl += '&location=' + locMatch[1];
+            searchName = yelpSlug[1].replace(/-/g, ' ');
+            // Extract city from Yelp URL slug (often last part like "austin" or "austin-2")
+            var parts = yelpSlug[1].split('-');
+            if (!searchLocation) searchLocation = parts[parts.length - 1].replace(/\d+/g, '');
+            forceYelp = true;
           }
+        } else if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
+          var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
+          if (nameMatch) searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
         }
-        if (!apiUrl && (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app'))) {
-          // Extract business name from Google Maps URL
-          var nameMatch = urlInput.match(/place\/([^\/]+)/);
-          if (nameMatch) {
-            var decoded = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
-            apiUrl = '/api/places?q=' + encodeURIComponent(decoded);
-          }
-        }
-        if (!apiUrl) {
-          // Try the URL text as a direct search
-          apiUrl = '/api/places?q=' + encodeURIComponent(urlInput);
-        }
+        if (!searchName) searchName = urlInput;
       } else if (biz) {
-        apiUrl = '/api/places?q=' + encodeURIComponent(biz + ' ' + city);
+        searchName = biz;
       } else {
         alert('Enter a business name or paste a Google Maps / Yelp URL.');
         return;
@@ -948,35 +944,62 @@
       listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Searching...</p>';
       resultsDiv.classList.add('visible');
 
-      fetch(apiUrl)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.error) {
-            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">' + data.error + '. Fill in details manually below.</p>';
-            return;
-          }
-          // API returns a single place object (not an array)
-          listDiv.innerHTML = '';
-          var item = document.createElement('div');
-          item.className = 'search-result-item';
-          item.innerHTML = '<div class="name">' + escHtml(data.name || '') + '</div>' +
-            '<div class="addr">' + escHtml(data.address || '') + '</div>' +
-            (data.rating ? '<div class="addr" style="color:#f59e0b;">\u2605 ' + data.rating + ' (' + (data.reviewCount || 0) + ' reviews)</div>' : '') +
-            '<div style="color:#5B8DEF;font-size:.72rem;margin-top:4px;">Click to auto-fill \u2192</div>';
-          item.addEventListener('click', function() { fillFromPlace(data); });
-          listDiv.appendChild(item);
+      // Try Yelp first (always works), then Google Places as enrichment
+      var yelpUrl = '/api/yelp?q=' + encodeURIComponent(searchName) + (searchLocation ? '&location=' + encodeURIComponent(searchLocation) : '');
+      var placesUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
-          // Also auto-fill reviews if available
-          if (data.reviews && data.reviews.length) {
-            var revNote = document.createElement('p');
-            revNote.style.cssText = 'color:#64748b;font-size:.75rem;margin-top:8px;';
-            revNote.textContent = data.reviews.length + ' reviews found \u2014 will be imported on click';
-            listDiv.appendChild(revNote);
+      // Search Yelp (reliable) — then try Google Places to supplement
+      fetch(yelpUrl)
+        .then(function(r) { return r.json(); })
+        .then(function(yelpData) {
+          if (yelpData.error) throw new Error(yelpData.error);
+          // Try Google Places too for phone/hours/website (richer data)
+          if (!forceYelp) {
+            fetch(placesUrl).then(function(r) { return r.json(); }).then(function(gData) {
+              if (!gData.error) {
+                // Merge Google data into Yelp result
+                if (gData.phone && !yelpData.phone) yelpData.phone = gData.phone;
+                if (gData.website) yelpData.website = gData.website;
+                if (gData.hoursFormatted) yelpData.hoursFormatted = gData.hoursFormatted;
+                if (gData.reviews && gData.reviews.length > yelpData.reviews.length) yelpData.reviews = gData.reviews;
+              }
+              showResult(yelpData, listDiv);
+            }).catch(function() { showResult(yelpData, listDiv); });
+          } else {
+            showResult(yelpData, listDiv);
           }
         })
-        .catch(function(err) {
-          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed: ' + err.message + '. Fill in details manually.</p>';
+        .catch(function() {
+          // Yelp failed too — try Google Places alone
+          fetch(placesUrl).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) {
+              listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
+              return;
+            }
+            showResult(data, listDiv);
+          }).catch(function() {
+            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
+          });
         });
+    }
+
+    function showResult(data, listDiv) {
+      listDiv.innerHTML = '';
+      var item = document.createElement('div');
+      item.className = 'search-result-item';
+      item.innerHTML = '<div class="name">' + escHtml(data.name || '') + '</div>' +
+        '<div class="addr">' + escHtml(data.address || '') + '</div>' +
+        (data.rating ? '<div class="addr" style="color:#f59e0b;">\u2605 ' + data.rating + ' (' + (data.reviewCount || 0) + ' reviews)</div>' : '') +
+        (data.categories ? '<div class="addr">' + escHtml(data.categories.join(', ')) + '</div>' : '') +
+        '<div style="color:#5B8DEF;font-size:.72rem;margin-top:4px;">Click to auto-fill \u2192</div>';
+      item.addEventListener('click', function() { fillFromPlace(data); });
+      listDiv.appendChild(item);
+      if (data.reviews && data.reviews.length) {
+        var revNote = document.createElement('p');
+        revNote.style.cssText = 'color:#64748b;font-size:.75rem;margin-top:8px;';
+        revNote.textContent = data.reviews.length + ' reviews found \u2014 will be imported on click';
+        listDiv.appendChild(revNote);
+      }
     }
 
     function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
