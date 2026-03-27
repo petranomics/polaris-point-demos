@@ -25,6 +25,44 @@
   var C = window.SITE_CONFIG;
   if (!C) return;
 
+  // 0. Apply theme overrides (colors, fonts, logo) via CSS custom properties
+  if (C.theme) {
+    var T = C.theme;
+    var root = document.documentElement;
+    if (T.primary) { root.style.setProperty('--pp-primary', T.primary); root.style.setProperty('--navy', T.primary); }
+    if (T.primaryDark) { root.style.setProperty('--pp-primary-dark', T.primaryDark); root.style.setProperty('--navy-dark', T.primaryDark); }
+    if (T.accent) { root.style.setProperty('--pp-accent', T.accent); root.style.setProperty('--orange', T.accent); root.style.setProperty('--accent', T.accent); }
+    if (T.accentLight) { root.style.setProperty('--pp-accent-light', T.accentLight); root.style.setProperty('--orange-light', T.accentLight); }
+    if (T.bg) { root.style.setProperty('--pp-bg', T.bg); root.style.setProperty('--light', T.bg); }
+    if (T.text) { root.style.setProperty('--pp-text', T.text); root.style.setProperty('--text', T.text); }
+    if (T.muted) { root.style.setProperty('--pp-muted', T.muted); root.style.setProperty('--muted', T.muted); }
+    if (T.fontHeading) root.style.setProperty('--pp-font-heading', T.fontHeading);
+    if (T.fontBody) root.style.setProperty('--pp-font-body', T.fontBody);
+    // Apply header/nav background color
+    var header = document.querySelector('.site-header') || document.querySelector('header');
+    if (header && T.primary) header.style.background = 'rgba(' + parseInt(T.primary.slice(1,3),16) + ',' + parseInt(T.primary.slice(3,5),16) + ',' + parseInt(T.primary.slice(5,7),16) + ',.97)';
+    var topbar = document.querySelector('.topbar');
+    if (topbar && T.primaryDark) topbar.style.background = T.primaryDark;
+    // Apply body font
+    if (T.fontBody) document.body.style.fontFamily = T.fontBody;
+    // Apply heading font to all headings
+    if (T.fontHeading) {
+      document.querySelectorAll('h1,h2,h3,h4').forEach(function(h) { h.style.fontFamily = T.fontHeading; });
+    }
+    // Inject logo image if provided
+    if (T.logoUrl) {
+      var logoEl = document.querySelector('.logo');
+      if (logoEl) {
+        var logoIcon = logoEl.querySelector('.logo-icon');
+        if (logoIcon) {
+          logoIcon.innerHTML = '<img src="' + T.logoUrl + '" alt="Logo" style="width:30px;height:30px;object-fit:contain;border-radius:4px;">';
+        }
+      }
+    }
+    // Apply background color to body
+    if (T.bg) document.body.style.background = T.bg;
+  }
+
   // 1. Text injection: data-cfg="key" → element.textContent = config[key]
   document.querySelectorAll('[data-cfg]').forEach(function(el) {
     var key = el.getAttribute('data-cfg');
