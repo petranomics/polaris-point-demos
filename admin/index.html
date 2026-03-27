@@ -992,30 +992,33 @@
     }
 
     function showResult(data, listDiv) {
-      listDiv.innerHTML = '';
-      var item = document.createElement('div');
-      item.className = 'search-result-item';
-      item.innerHTML = '<div class="name">' + escHtml(data.name || '') + '</div>' +
-        '<div class="addr">' + escHtml(data.address || '') + '</div>' +
-        (data.rating ? '<div class="addr" style="color:#f59e0b;">\u2605 ' + data.rating + ' (' + (data.reviewCount || 0) + ' reviews)</div>' : '') +
-        (data.categories ? '<div class="addr">' + escHtml(data.categories.join(', ')) + '</div>' : '') +
-        '<div style="color:#5B8DEF;font-size:.72rem;margin-top:4px;">Click to auto-fill \u2192</div>';
-      item.addEventListener('click', function() { fillFromPlace(data); });
-      listDiv.appendChild(item);
-      if (data.reviews && data.reviews.length) {
-        var revNote = document.createElement('p');
-        revNote.style.cssText = 'color:#64748b;font-size:.75rem;margin-top:8px;';
-        revNote.textContent = data.reviews.length + ' reviews found \u2014 will be imported on click';
-        listDiv.appendChild(revNote);
-      }
+      // Show confirmation of what was found
+      listDiv.innerHTML = '<div style="padding:10px;border-radius:8px;background:#111827;">' +
+        '<div style="color:#fff;font-weight:600;font-size:.9rem;">\u2705 ' + escHtml(data.name || '') + '</div>' +
+        '<div style="color:#64748b;font-size:.78rem;margin-top:2px;">' + escHtml(data.address || '') + '</div>' +
+        (data.rating ? '<div style="color:#f59e0b;font-size:.78rem;margin-top:2px;">\u2605 ' + data.rating + ' (' + (data.reviewCount || 0) + ' reviews)</div>' : '') +
+        (data.categories ? '<div style="color:#5B8DEF;font-size:.75rem;margin-top:2px;">' + escHtml(data.categories.join(', ')) + '</div>' : '') +
+        '<div style="color:#16a34a;font-size:.72rem;margin-top:6px;">Auto-filled all fields below \u2193</div>' +
+        '</div>';
+      // Auto-fill immediately — no click needed
+      fillFromPlace(data);
     }
 
     function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
     function fillFromPlace(place) {
+      var template = document.getElementById('searchTemplate').selectedOptions[0].text;
+      var city = document.getElementById('searchCityState').value.trim();
+
+      // Extract city from address if not provided
+      if (!city && place.address) {
+        var addrParts = place.address.split(',');
+        if (addrParts.length >= 2) city = addrParts[addrParts.length - 2].trim().replace(/\s+\w{2}\s+\d{5}.*/, '');
+      }
+
+      // === IDENTITY ===
       if (place.name) {
         document.getElementById('intBizName').value = place.name;
-        // Auto-derive short name (first 2-3 words)
         var words = place.name.split(' ');
         document.getElementById('intBizShort').value = words.length > 3 ? words.slice(0, 2).join(' ') : place.name;
       }
@@ -1030,11 +1033,15 @@
         var h = place.hoursFormatted || (Array.isArray(place.hours) ? place.hours.join(' | ') : place.hours);
         document.getElementById('intHours').value = h;
       }
-      // Fill Google reviews data
-      if (place.rating) document.getElementById('intBizName').dataset.rating = place.rating;
-      if (place.reviewCount) document.getElementById('intBizName').dataset.reviewCount = place.reviewCount;
 
-      // Import reviews into the reviews list
+      // === HERO & ABOUT ===
+      var shortName = document.getElementById('intBizShort').value || place.name;
+      document.getElementById('intHeroHeadline').value = 'Trusted ' + template + ' in ' + (city || 'Your Area');
+      document.getElementById('intHeroSubtext').value = 'Licensed & insured. Proudly serving ' + (city || 'the community') + ' and surrounding areas. Call today for a free estimate.';
+      document.getElementById('intAboutTitle').value = (city || 'Your Community') + ' Trusts ' + shortName;
+      document.getElementById('intAboutText').value = place.name + ' has been serving ' + (city || 'the community') + ' with reliable, professional ' + template.toLowerCase() + ' services.' + (place.rating ? ' With a ' + place.rating + '-star rating from ' + (place.reviewCount || '') + ' customers, we take pride in quality work and honest pricing.' : '') + ' Every job is treated with care and respect.';
+
+      // === REVIEWS ===
       if (place.reviews && place.reviews.length) {
         var rl = document.getElementById('reviewsList');
         rl.innerHTML = '';
@@ -1044,20 +1051,46 @@
           var last = items[items.length - 1];
           last.querySelector('.rev-text').value = r.text || '';
           last.querySelector('.rev-author').value = r.author || r.author_name || '';
-          last.querySelector('.rev-location').value = r.location || r.time || '';
+          last.querySelector('.rev-location').value = r.location || r.time || city || '';
         });
       }
 
-      document.getElementById('searchResults').style.display = 'none';
+      // === SERVICE AREAS (from address city) ===
+      if (city) {
+        var areasField = document.getElementById('intServiceAreas');
+        if (!areasField.value) areasField.value = city;
+      }
 
-      // Auto-fill hero headline
-      var city = document.getElementById('searchCityState').value.trim();
-      if (!document.getElementById('intHeroHeadline').value && place.name) {
-        document.getElementById('intHeroHeadline').value = 'Trusted ' + document.getElementById('searchTemplate').selectedOptions[0].text + ' in ' + (city || 'Your Area');
+      // === CATEGORIES → SERVICES ===
+      if (place.categories && place.categories.length) {
+        var sl = document.getElementById('servicesList');
+        // Only overwrite if the services are still the default empty rows
+        var existingNames = sl.querySelectorAll('.svc-name');
+        var allEmpty = true;
+        existingNames.forEach(function(inp) { if (inp.value.trim()) allEmpty = false; });
+        if (allEmpty && place.categories.length > 0) {
+          sl.innerHTML = '';
+          place.categories.forEach(function(cat) {
+            addServiceRow(sl);
+            var items = sl.querySelectorAll('.dynamic-item');
+            var last = items[items.length - 1];
+            last.querySelector('.svc-name').value = cat;
+            last.querySelector('.svc-desc').value = 'Professional ' + cat.toLowerCase() + ' services for residential and commercial customers.';
+          });
+          // Pad to at least 3 services
+          while (sl.querySelectorAll('.dynamic-item').length < 3) addServiceRow(sl);
+        }
       }
-      if (!document.getElementById('intAboutTitle').value && place.name) {
-        document.getElementById('intAboutTitle').value = (city || 'Your Community') + ' Trusts ' + (document.getElementById('intBizShort').value || place.name);
-      }
+
+      // === STORE RATING DATA FOR CONFIG GENERATOR ===
+      if (place.rating) window._placeRating = place.rating;
+      if (place.reviewCount) window._placeReviewCount = place.reviewCount;
+      if (place.yelpUrl) window._placeYelpUrl = place.yelpUrl;
+      if (place.imageUrl) window._placeImageUrl = place.imageUrl;
+
+      // Scroll down to show the filled fields
+      document.getElementById('searchResults').style.display = 'block';
+      document.querySelector('.intake-section:nth-child(2)').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // === CONFIG GENERATOR ===
@@ -1241,9 +1274,9 @@
         '    analytics: false\n' +
         '  },\n\n' +
         '  // === GOOGLE REVIEWS ===\n' +
-        '  googleReviewsRating: "4.9",\n' +
-        '  googleReviewsCount: "100",\n' +
-        '  googleReviewsUrl: "",\n\n' +
+        '  googleReviewsRating: ' + JSON.stringify(String(window._placeRating || '4.9')) + ',\n' +
+        '  googleReviewsCount: ' + JSON.stringify(String(window._placeReviewCount || '100')) + ',\n' +
+        '  googleReviewsUrl: ' + JSON.stringify(window._placeYelpUrl || '') + ',\n\n' +
         '  // === ENGAGEMENT ===\n' +
         '  smsNumber: ' + JSON.stringify(smsNum) + ',\n' +
         '  whatsappNumber: "",\n' +
