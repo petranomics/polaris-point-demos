@@ -1004,7 +1004,53 @@
           if (google.mapsUrl) merged.mapsUrl = google.mapsUrl;
         }
 
+        // Show initial results immediately
         showResult(merged, listDiv);
+
+        // Then scrape Yelp page for richer reviews + photos (async supplement)
+        if (merged.yelpUrl) {
+          var scrapeUrl = '/api/scrape?url=' + encodeURIComponent(merged.yelpUrl.split('?')[0]);
+          fetch(scrapeUrl).then(function(r) { return r.json(); }).then(function(scraped) {
+            if (scraped.error) return;
+            var updated = false;
+
+            // Import scraped reviews if we got more/better ones
+            if (scraped.reviews && scraped.reviews.length > (merged.reviews || []).length) {
+              merged.reviews = scraped.reviews;
+              // Re-fill reviews in the form
+              var rl = document.getElementById('reviewsList');
+              rl.innerHTML = '';
+              scraped.reviews.slice(0, 5).forEach(function(r) {
+                addReviewRow(rl);
+                var items = rl.querySelectorAll('.dynamic-item');
+                var last = items[items.length - 1];
+                last.querySelector('.rev-text').value = r.text || '';
+                last.querySelector('.rev-author').value = r.author || '';
+                last.querySelector('.rev-location').value = r.date || '';
+              });
+              updated = true;
+            }
+
+            // Import photos
+            if (scraped.photos && scraped.photos.length) {
+              window._placePhotos = scraped.photos;
+              updated = true;
+            }
+
+            // Update rating if scraped data has it
+            if (scraped.rating && !merged.rating) {
+              window._placeRating = scraped.rating;
+              window._placeReviewCount = scraped.reviewCount;
+            }
+
+            if (updated) {
+              var notice = document.createElement('div');
+              notice.style.cssText = 'color:#16a34a;font-size:.75rem;margin-top:8px;padding:8px 10px;background:rgba(22,163,74,.08);border-radius:6px;';
+              notice.textContent = '\u2705 Found ' + (scraped.reviews ? scraped.reviews.length : 0) + ' reviews and ' + (scraped.photos ? scraped.photos.length : 0) + ' photos from Yelp page';
+              document.getElementById('searchResultsList').appendChild(notice);
+            }
+          }).catch(function() { /* scrape failed silently */ });
+        }
       }).catch(function() {
         listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
       });
@@ -1222,8 +1268,8 @@
         '  // === HERO ===\n' +
         '  heroHeadline: ' + JSON.stringify(heroHeadline) + ',\n' +
         '  heroSubtext: ' + JSON.stringify(heroSubtext) + ',\n' +
-        '  heroImage: "",\n' +
-        '  heroImageAlt: "",\n' +
+        '  heroImage: ' + JSON.stringify((window._placePhotos && window._placePhotos[0]) || window._placeImageUrl || '') + ',\n' +
+        '  heroImageAlt: ' + JSON.stringify(bizName + ' - professional service') + ',\n' +
         '  heroCta1: ' + JSON.stringify('Call ' + phone) + ',\n' +
         '  heroCta2: "Get a Free Estimate",\n\n' +
         '  // === TRUST BADGES ===\n' +
@@ -1236,8 +1282,8 @@
         '  servicesTitle: "Our Services",\n' +
         svcLines + '\n' +
         '  // === ABOUT ===\n' +
-        '  aboutImage: "",\n' +
-        '  aboutImageAlt: "",\n' +
+        '  aboutImage: ' + JSON.stringify((window._placePhotos && window._placePhotos[1]) || window._placeImageUrl || '') + ',\n' +
+        '  aboutImageAlt: ' + JSON.stringify(bizName + ' team') + ',\n' +
         '  aboutLabel: "Why Choose Us",\n' +
         '  aboutTitle: ' + JSON.stringify(aboutTitle) + ',\n' +
         '  aboutText: ' + JSON.stringify(aboutText) + ',\n\n' +
@@ -1256,8 +1302,8 @@
         '  serviceAreaLabel: "Coverage Area",\n' +
         '  serviceAreaTitle: ' + JSON.stringify('Serving ' + (areas[0] || 'Your Area') + ' & Surrounding Areas') + ',\n' +
         '  serviceAreaText: "",\n' +
-        '  serviceAreaImage: "",\n' +
-        '  serviceAreaImageAlt: "",\n' +
+        '  serviceAreaImage: ' + JSON.stringify((window._placePhotos && window._placePhotos[2]) || '') + ',\n' +
+        '  serviceAreaImageAlt: ' + JSON.stringify('Serving ' + (areas[0] || 'your area')) + ',\n' +
         '  serviceAreas: ' + areaArrStr + ',\n\n' +
         '  // === CONTACT FORM ===\n' +
         '  contactLabel: "Get In Touch",\n' +
