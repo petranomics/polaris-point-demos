@@ -908,6 +908,7 @@
 
     // === SEARCH: Google Places, Yelp URL, or name search ===
     function searchPlaces() {
+      console.log('searchPlaces called');
       var urlInput = document.getElementById('searchUrl').value.trim();
       var biz = document.getElementById('searchBizName').value.trim();
       var city = document.getElementById('searchCityState').value.trim();
@@ -949,6 +950,7 @@
       var placesUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
       // Search Yelp (reliable) — then try Google Places to supplement
+      console.log('Fetching:', yelpUrl);
       fetch(yelpUrl)
         .then(function(r) { return r.json(); })
         .then(function(yelpData) {
@@ -969,8 +971,9 @@
             showResult(yelpData, listDiv);
           }
         })
-        .catch(function() {
-          // Yelp failed too — try Google Places alone
+        .catch(function(err) {
+          console.warn('Yelp failed:', err);
+          // Yelp failed — try Google Places alone
           fetch(placesUrl).then(function(r) { return r.json(); }).then(function(data) {
             if (data.error) {
               listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
