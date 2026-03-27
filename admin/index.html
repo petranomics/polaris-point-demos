@@ -597,7 +597,7 @@
             </select>
           </div>
           <div class="intake-field" style="display:flex;align-items:flex-end;">
-            <button class="btn-export" onclick="searchPlaces()" style="width:100%;">Search &amp; Auto-Fill</button>
+            <button class="btn-export" type="button" onclick="try{searchPlaces()}catch(e){alert('Error: '+e.message)}" style="width:100%;">Search &amp; Auto-Fill</button>
           </div>
         </div>
         <div id="searchResults" class="search-results">
@@ -942,15 +942,13 @@
         return;
       }
 
-      listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Searching...</p>';
-      resultsDiv.classList.add('visible');
+      listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Searching for "' + escHtml(searchName) + '"...</p>';
+      resultsDiv.style.display = 'block';
 
-      // Try Yelp first (always works), then Google Places as enrichment
       var yelpUrl = '/api/yelp?q=' + encodeURIComponent(searchName) + (searchLocation ? '&location=' + encodeURIComponent(searchLocation) : '');
       var placesUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
-      // Search Yelp (reliable) — then try Google Places to supplement
-      console.log('Fetching:', yelpUrl);
+      console.log('Yelp URL:', yelpUrl);
       fetch(yelpUrl)
         .then(function(r) { return r.json(); })
         .then(function(yelpData) {
@@ -1043,7 +1041,7 @@
         });
       }
 
-      document.getElementById('searchResults').classList.remove('visible');
+      document.getElementById('searchResults').style.display = 'none';
 
       // Auto-fill hero headline
       var city = document.getElementById('searchCityState').value.trim();
