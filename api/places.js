@@ -31,7 +31,12 @@ module.exports = async function handler(req, res) {
     var findData = await findResp.json();
 
     if (!findData.candidates || !findData.candidates.length) {
-      return res.status(404).json({ error: 'No results found', query: query });
+      return res.status(404).json({
+        error: 'No results found',
+        query: query,
+        status: findData.status || 'UNKNOWN',
+        debug: findData.error_message || null
+      });
     }
 
     // Step 2: Get Place Details
