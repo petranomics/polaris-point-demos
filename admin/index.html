@@ -696,6 +696,14 @@
         <!-- Reviews -->
         <div class="intake-field" style="margin-top:16px;">
           <label>Reviews</label>
+          <div style="margin-bottom:10px;">
+            <button class="add-item-btn" onclick="document.getElementById('pasteReviewsBox').style.display=document.getElementById('pasteReviewsBox').style.display==='none'?'block':'none'" style="width:100%;background:rgba(91,141,239,.08);border-color:rgba(91,141,239,.2);color:#5B8DEF;">Paste Reviews from Yelp / Google</button>
+            <div id="pasteReviewsBox" style="display:none;margin-top:8px;">
+              <p style="font-size:.72rem;color:#64748b;margin-bottom:6px;">Go to the Yelp or Google reviews page, select all the reviews (Cmd+A), copy (Cmd+C), and paste below. We'll extract the review text and author names automatically.</p>
+              <textarea id="pasteReviewsInput" style="width:100%;min-height:120px;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.8rem;resize:vertical;" placeholder="Paste copied review text here..."></textarea>
+              <button class="btn-export" onclick="parseReviews()" style="margin-top:6px;width:100%;padding:8px;font-size:.78rem;">Extract Reviews</button>
+            </div>
+          </div>
           <div id="reviewsList" class="dynamic-list"></div>
           <button class="add-item-btn" onclick="addReviewRow(document.getElementById('reviewsList'))" style="margin-top:8px;width:100%;">+ Add Review</button>
         </div>
@@ -890,6 +898,89 @@
         '</div>' +
         '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
       container.appendChild(div);
+    }
+
+    // Parse pasted reviews from Yelp/Google
+    function parseReviews() {
+      var raw = document.getElementById('pasteReviewsInput').value.trim();
+      if (!raw) { alert('Paste some review text first.'); return; }
+
+      var reviews = [];
+
+      // Try to detect review blocks from pasted Yelp/Google text
+      // Yelp pattern: author name, date, star count, then review text
+      // Google pattern: author name, X stars, date, review text
+      var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+
+      var current = null;
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
+        // Skip navigation/UI text
+        if (/^(Sort by|Yelp Sort|Newest|Oldest|Rating|Filter|Useful|Funny|Cool|Share|Photo|photos|Read more|Was this|Thank|Report|response from|Previous|Next|Menu|Write a|Log in|Sign up|stars?$)/i.test(line)) continue;
+        if (line.length < 3) continue;
+
+        // Detect star ratings (e.g., "5 star rating", "5.0 star", "★★★★★", "5/5")
+        var starMatch = line.match(/^(\d+(?:\.\d+)?)\s*(?:star|\/5)/i) || line.match(/^([★]{1,5})/);
+        if (starMatch) {
+          if (current && current.text) reviews.push(current);
+          current = { text: '', author: '', rating: starMatch[1].length <= 5 && starMatch[1].includes('★') ? starMatch[1].length : parseInt(starMatch[1]) };
+          // The previous line might be the author name
+          if (i > 0 && lines[i-1].length < 40 && !lines[i-1].match(/^\d/) && !lines[i-1].match(/star/i)) {
+            current.author = lines[i-1];
+          }
+          continue;
+        }
+
+        // Detect date patterns (skip as standalone lines)
+        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(line) || /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d/i.test(line)) continue;
+
+        // If line looks like a name (short, capitalized, no period)
+        if (line.length < 35 && /^[A-Z]/.test(line) && !line.includes('.') && !line.includes('!') && lines[i+1] && /star|\d\/5|★/i.test(lines[i+1])) {
+          // This is likely an author name — will be picked up when we hit the star rating
+          continue;
+        }
+
+        // Otherwise, it's review text
+        if (current) {
+          current.text += (current.text ? ' ' : '') + line;
+        } else {
+          // No star detected yet — start a new review if text is long enough
+          if (line.length > 50) {
+            current = { text: line, author: '', rating: 5 };
+          }
+        }
+      }
+      if (current && current.text) reviews.push(current);
+
+      // If no structured reviews found, split by double newlines or long paragraphs
+      if (reviews.length === 0) {
+        var blocks = raw.split(/\n\s*\n/).filter(function(b) { return b.trim().length > 40; });
+        blocks.forEach(function(b) {
+          reviews.push({ text: b.trim(), author: 'Customer', rating: 5 });
+        });
+      }
+
+      if (reviews.length === 0) {
+        alert('Could not parse any reviews. Try pasting just the review text.');
+        return;
+      }
+
+      // Fill the review rows
+      var rl = document.getElementById('reviewsList');
+      rl.innerHTML = '';
+      reviews.slice(0, 8).forEach(function(r) {
+        addReviewRow(rl);
+        var items = rl.querySelectorAll('.dynamic-item');
+        var last = items[items.length - 1];
+        last.querySelector('.rev-text').value = r.text;
+        last.querySelector('.rev-author').value = r.author || '';
+        last.querySelector('.rev-location').value = '';
+      });
+
+      document.getElementById('pasteReviewsBox').style.display = 'none';
+      document.getElementById('pasteReviewsInput').value = '';
+      alert('Extracted ' + Math.min(reviews.length, 8) + ' reviews!');
     }
 
     // Pre-populate 3 rows each
@@ -1381,7 +1472,7 @@
         '  // === FAQ ===\n' +
         faqLines + '\n' +
         '  // === SERVICE AREA MAP ===\n' +
-        '  googleMapsEmbed: "",\n\n' +
+        '  googleMapsEmbed: ' + JSON.stringify(address ? 'https://www.google.com/maps?q=' + encodeURIComponent(address) + '&output=embed' : '') + ',\n\n' +
         '  // === BLOG POSTS ===\n' +
         '  blogPosts: [],\n\n' +
         '  // === TRUST BAR LOGOS ===\n' +
