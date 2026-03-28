@@ -1052,10 +1052,59 @@
       var dataInput = document.getElementById('intLogoData');
 
       function setLogo(src) {
-        preview.src = src;
-        preview.style.display = 'block';
-        hint.style.display = 'none';
-        dataInput.value = src;
+        // Auto-crop whitespace from the logo before saving
+        autoCropImage(src, function(cropped) {
+          preview.src = cropped;
+          preview.style.display = 'block';
+          hint.style.display = 'none';
+          dataInput.value = cropped;
+        });
+      }
+
+      // Trims white/transparent space from all edges of an image
+      function autoCropImage(src, callback) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          try {
+            var c = document.createElement('canvas');
+            c.width = img.width; c.height = img.height;
+            var ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            var data = ctx.getImageData(0, 0, c.width, c.height).data;
+            var w = c.width, h = c.height;
+            // Scan for bounding box of non-white, non-transparent pixels
+            var top = h, left = w, right = 0, bottom = 0;
+            for (var y = 0; y < h; y++) {
+              for (var x = 0; x < w; x++) {
+                var i = (y * w + x) * 4;
+                var r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+                // Skip if transparent or near-white
+                if (a < 10) continue;
+                if (r > 245 && g > 245 && b > 245) continue;
+                if (y < top) top = y;
+                if (y > bottom) bottom = y;
+                if (x < left) left = x;
+                if (x > right) right = x;
+              }
+            }
+            // Add small padding (4px)
+            top = Math.max(0, top - 4);
+            left = Math.max(0, left - 4);
+            right = Math.min(w - 1, right + 4);
+            bottom = Math.min(h - 1, bottom + 4);
+            var cw = right - left + 1, ch = bottom - top + 1;
+            if (cw < 10 || ch < 10) { callback(src); return; } // too small, skip crop
+            var c2 = document.createElement('canvas');
+            c2.width = cw; c2.height = ch;
+            c2.getContext('2d').drawImage(img, left, top, cw, ch, 0, 0, cw, ch);
+            callback(c2.toDataURL('image/png'));
+          } catch(e) {
+            callback(src); // CORS or other error — use original
+          }
+        };
+        img.onerror = function() { callback(src); };
+        img.src = src;
       }
 
       function clearLogo() {

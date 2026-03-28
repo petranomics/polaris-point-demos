@@ -62,22 +62,35 @@
     }
     // Inject logo image if provided
     if (T.logoUrl) {
-      // Nav logo
+      // Nav logo — replace icon with logo image
       var logoEl = document.querySelector('.logo');
       if (logoEl) {
         var logoIcon = logoEl.querySelector('.logo-icon');
         if (logoIcon) {
-          logoIcon.innerHTML = '<img src="' + T.logoUrl + '" alt="Logo" style="width:30px;height:30px;object-fit:contain;border-radius:4px;">';
+          logoIcon.style.cssText = 'width:auto;height:34px;background:none;border-radius:0;display:flex;align-items:center;';
+          logoIcon.innerHTML = '<img src="' + T.logoUrl + '" alt="Logo" style="height:34px;width:auto;object-fit:contain;">';
         }
       }
-      // Hero logo — add above the h1
+      // Hero — prominent logo lockup above the headline
       var heroH1 = document.querySelector('.hero h1, .hero-content h1');
-      if (heroH1) {
+      if (heroH1 && heroH1.parentNode) {
+        var lockup = document.createElement('div');
+        lockup.style.cssText = 'margin-bottom:20px;';
         var heroLogo = document.createElement('img');
         heroLogo.src = T.logoUrl;
         heroLogo.alt = (C.businessName || 'Logo');
-        heroLogo.style.cssText = 'max-height:80px;max-width:280px;object-fit:contain;margin-bottom:16px;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));';
-        heroH1.parentNode.insertBefore(heroLogo, heroH1);
+        heroLogo.style.cssText = 'max-height:100px;max-width:320px;object-fit:contain;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));';
+        lockup.appendChild(heroLogo);
+        heroH1.parentNode.insertBefore(lockup, heroH1);
+      }
+      // Footer logo
+      var footerName = document.querySelector('footer h4[data-cfg="businessName"]');
+      if (footerName) {
+        var footerLogo = document.createElement('img');
+        footerLogo.src = T.logoUrl;
+        footerLogo.alt = 'Logo';
+        footerLogo.style.cssText = 'height:36px;width:auto;object-fit:contain;margin-bottom:10px;display:block;';
+        footerName.parentNode.insertBefore(footerLogo, footerName);
       }
     }
     // Apply background color to body

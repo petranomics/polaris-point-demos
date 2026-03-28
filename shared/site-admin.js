@@ -129,6 +129,47 @@
     parent.appendChild(row);
   }
 
+  // ── Auto-crop whitespace/transparency from images ──
+  function autoCropImage(src, callback) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      try {
+        var c = document.createElement('canvas');
+        c.width = img.width; c.height = img.height;
+        var ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        var data = ctx.getImageData(0, 0, c.width, c.height).data;
+        var w = c.width, h = c.height;
+        var top = h, left = w, right = 0, bottom = 0;
+        for (var y = 0; y < h; y++) {
+          for (var x = 0; x < w; x++) {
+            var i = (y * w + x) * 4;
+            var a = data[i+3];
+            if (a < 10) continue;
+            if (data[i] > 245 && data[i+1] > 245 && data[i+2] > 245) continue;
+            if (y < top) top = y;
+            if (y > bottom) bottom = y;
+            if (x < left) left = x;
+            if (x > right) right = x;
+          }
+        }
+        top = Math.max(0, top - 4);
+        left = Math.max(0, left - 4);
+        right = Math.min(w - 1, right + 4);
+        bottom = Math.min(h - 1, bottom + 4);
+        var cw = right - left + 1, ch = bottom - top + 1;
+        if (cw < 10 || ch < 10) { callback(src); return; }
+        var c2 = document.createElement('canvas');
+        c2.width = cw; c2.height = ch;
+        c2.getContext('2d').drawImage(img, left, top, cw, ch, 0, 0, cw, ch);
+        callback(c2.toDataURL('image/png'));
+      } catch(e) { callback(src); }
+    };
+    img.onerror = function() { callback(src); };
+    img.src = src;
+  }
+
   // ── Photo zone builder ──
   function addPhotoZone(parent, imgKey, altKey) {
     var zone = el('div', 'sa-photo-zone');
@@ -166,9 +207,11 @@
           e.preventDefault();
           var reader = new FileReader();
           reader.onload = function(ev) {
-            urlInp.value = ev.target.result;
-            preview.src = ev.target.result;
-            preview.classList.add('active');
+            autoCropImage(ev.target.result, function(cropped) {
+              urlInp.value = cropped;
+              preview.src = cropped;
+              preview.classList.add('active');
+            });
           };
           reader.readAsDataURL(items[i].getAsFile());
           return;
@@ -186,9 +229,11 @@
       if (file && file.type.indexOf('image') !== -1) {
         var reader = new FileReader();
         reader.onload = function(ev) {
-          urlInp.value = ev.target.result;
-          preview.src = ev.target.result;
-          preview.classList.add('active');
+          autoCropImage(ev.target.result, function(cropped) {
+            urlInp.value = cropped;
+            preview.src = cropped;
+            preview.classList.add('active');
+          });
         };
         reader.readAsDataURL(file);
       }
