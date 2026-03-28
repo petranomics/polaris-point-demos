@@ -6,6 +6,16 @@
   'use strict';
 
   // Check for localStorage config override (from per-site admin editor)
+  // Version check: clear stale overrides when template is updated
+  try {
+    var _v = localStorage.getItem('pp_config_version');
+    if (_v !== '2') {
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.startsWith('pp_config_') && k !== 'pp_config_version') localStorage.removeItem(k);
+      });
+      localStorage.setItem('pp_config_version', '2');
+    }
+  } catch(e) {}
   try {
     // Determine the storage key: use path segment (for polarispoint.io/plumber)
     // or PP_DEMO (for standalone sites at root like pp-geronimoandsons.vercel.app)
