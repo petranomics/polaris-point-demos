@@ -80,7 +80,7 @@ module.exports = async function handler(req, res) {
 
   try {
     // ── Step 1: Create new GitHub repo ──────────────────────────────────
-    var createRepoResp = await ghApi('https://api.github.com/orgs/' + owner + '/repos', {
+    var createRepoResp = await ghApi('https://api.github.com/user/repos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
