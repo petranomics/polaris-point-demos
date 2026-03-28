@@ -1,5 +1,5 @@
-// /api/preview.js — Store and retrieve preview configs via GitHub Gists
-// POST /api/preview { config, template } → creates gist, returns short ID
+// /api/preview.js — Store and retrieve preview configs in the repo
+// POST /api/preview { config, template, name } → saves file, returns short URL
 // GET /api/preview?id=xxx → returns the config content
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,32 +11,36 @@ module.exports = async function handler(req, res) {
   var token = process.env.GITHUB_TOKEN;
   if (!token) return res.status(500).json({ error: 'GITHUB_TOKEN not configured' });
 
+  var owner = 'petranomics';
+  var repo = 'polaris-point-demos';
+  var branch = 'main';
+
+  function gh(path, options) {
+    options = options || {};
+    options.headers = Object.assign({
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'PolarisPoint-Preview'
+    }, options.headers || {});
+    return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, options);
+  }
+
   // GET — retrieve a preview config
   if (req.method === 'GET') {
     var id = req.query.id;
-    if (!id) return res.status(400).json({ error: 'Missing id parameter' });
+    if (!id || !/^[a-z0-9-]+$/.test(id)) return res.status(400).json({ error: 'Invalid preview ID' });
 
     try {
-      var resp = await fetch('https://api.github.com/gists/' + id, {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'PolarisPoint-Preview'
-        }
-      });
+      var resp = await gh('_previews/' + id + '.json?ref=' + branch);
       if (resp.status !== 200) return res.status(404).json({ error: 'Preview not found' });
-      var gist = await resp.json();
-      var file = gist.files['config.js'];
-      if (!file) return res.status(404).json({ error: 'Config not found in preview' });
-
-      // Return the raw config content + template info
-      var meta = gist.files['meta.json'];
-      var template = meta ? JSON.parse(meta.content).template : 'plumber';
+      var fileData = await resp.json();
+      var content = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf-8'));
 
       return res.status(200).json({
-        config: file.content,
-        template: template,
-        created: gist.created_at
+        config: content.config,
+        template: content.template,
+        name: content.name,
+        created: content.created
       });
     } catch(err) {
       return res.status(500).json({ error: 'Failed to load preview: ' + err.message });
@@ -49,33 +53,36 @@ module.exports = async function handler(req, res) {
     if (!body || !body.config) return res.status(400).json({ error: 'Missing config' });
 
     try {
-      var resp = await fetch('https://api.github.com/gists', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'PolarisPoint-Preview',
-          'Content-Type': 'application/json'
-        },
+      // Generate a short readable ID from the name + random suffix
+      var nameSlug = (body.name || 'preview').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 30);
+      var suffix = Math.random().toString(36).substring(2, 8);
+      var id = nameSlug + '-' + suffix;
+
+      var payload = JSON.stringify({
+        config: body.config,
+        template: body.template || 'plumber',
+        name: body.name || '',
+        created: new Date().toISOString()
+      });
+
+      var resp = await gh('_previews/' + id + '.json', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          description: 'Polaris Point Preview — ' + (body.name || body.template || 'site'),
-          public: false,
-          files: {
-            'config.js': { content: body.config },
-            'meta.json': { content: JSON.stringify({ template: body.template || 'plumber', name: body.name || '', created: new Date().toISOString() }) }
-          }
+          message: 'Preview: ' + (body.name || id),
+          content: Buffer.from(payload).toString('base64'),
+          branch: branch
         })
       });
 
-      var gist = await resp.json();
-      if (!gist.id) return res.status(500).json({ error: 'Failed to create preview' });
-
-      // Build a readable URL with company name slug
-      var nameSlug = (body.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 30);
+      if (resp.status !== 201) {
+        var errData = await resp.json();
+        return res.status(500).json({ error: 'Failed to save preview: ' + (errData.message || resp.status) });
+      }
 
       return res.status(200).json({
-        id: gist.id,
-        url: 'https://polarispoint.io/' + (body.template || 'plumber') + '?p=' + gist.id + (nameSlug ? '&name=' + nameSlug : '')
+        id: id,
+        url: 'https://polarispoint.io/' + (body.template || 'plumber') + '?p=' + id
       });
     } catch(err) {
       return res.status(500).json({ error: 'Failed to create preview: ' + err.message });
