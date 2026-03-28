@@ -19,11 +19,28 @@
   // Check for preview config in URL
   try {
     var params = new URLSearchParams(window.location.search);
+
+    // Short preview link: ?p=gistId — fetch config from API
+    var previewId = params.get('p');
+    if (previewId) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/preview?id=' + previewId, false); // synchronous
+      xhr.send();
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+        if (data.config) {
+          var fn0 = new Function(data.config + '\nreturn SITE_CONFIG;');
+          window.SITE_CONFIG = fn0();
+        }
+      }
+    }
+
+    // Legacy: base64 preview or localStorage preview
     var preview = params.get('preview');
     if (preview === 'local') {
-      var stored = localStorage.getItem('pp_preview_config');
-      if (stored) {
-        var fn = new Function(stored + '\nreturn SITE_CONFIG;');
+      var stored2 = localStorage.getItem('pp_preview_config');
+      if (stored2) {
+        var fn = new Function(stored2 + '\nreturn SITE_CONFIG;');
         window.SITE_CONFIG = fn();
       }
     } else if (preview && preview !== 'local') {

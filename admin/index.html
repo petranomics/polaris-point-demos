@@ -1825,21 +1825,34 @@
     function previewSite() {
       if (!window._generatedConfig) return;
       var template = document.getElementById('searchTemplate').value;
-      // Compress config to base64 for URL
-      try {
-        var compressed = btoa(unescape(encodeURIComponent(window._generatedConfig)));
-        var previewUrl = window.location.origin + '/' + template + '?preview=' + compressed;
-        // If URL is too long (>8000 chars), use localStorage instead
-        if (previewUrl.length > 8000) {
-          localStorage.setItem('pp_preview_config', window._generatedConfig);
-          previewUrl = window.location.origin + '/' + template + '?preview=local';
-        }
-        document.getElementById('previewUrl').value = previewUrl;
+      var btn = document.getElementById('btnPreview');
+      btn.disabled = true;
+      btn.textContent = 'Creating link...';
+
+      fetch('/api/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config: window._generatedConfig, template: template })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        document.getElementById('previewUrl').value = data.url;
         document.getElementById('previewLink').style.display = 'block';
-        window.open(previewUrl, '_blank');
-      } catch(e) {
-        alert('Preview failed: ' + e.message);
-      }
+        window.open(data.url, '_blank');
+        btn.disabled = false;
+        btn.textContent = btn.dataset.label || 'Preview Live Site';
+      })
+      .catch(function(e) {
+        // Fallback to localStorage approach
+        localStorage.setItem('pp_preview_config', window._generatedConfig);
+        var fallbackUrl = window.location.origin + '/' + template + '?preview=local';
+        document.getElementById('previewUrl').value = fallbackUrl + ' (local only)';
+        document.getElementById('previewLink').style.display = 'block';
+        window.open(fallbackUrl, '_blank');
+        btn.disabled = false;
+        btn.textContent = btn.dataset.label || 'Preview Live Site';
+      });
     }
 
     // Live preview binding
