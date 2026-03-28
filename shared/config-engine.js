@@ -7,9 +7,22 @@
 
   // Check for localStorage config override (from per-site admin editor)
   try {
+    // Determine the storage key: use path segment (for polarispoint.io/plumber)
+    // or PP_DEMO (for standalone sites at root like pp-geronimoandsons.vercel.app)
+    // or hostname prefix (fallback)
     var demoPath = location.pathname.split('/').filter(Boolean)[0] || '';
+    var storageKey = '';
     if (demoPath && demoPath !== 'admin') {
-      var stored = localStorage.getItem('pp_config_' + demoPath);
+      storageKey = demoPath;
+    } else if (window.PP_DEMO) {
+      storageKey = window.PP_DEMO;
+    } else {
+      // For standalone deploys: extract from hostname (pp-geronimoandsons.vercel.app → geronimoandsons)
+      var host = location.hostname.replace('.vercel.app', '').replace(/^pp-/, '');
+      if (host && host !== 'polarispoint' && host !== 'localhost') storageKey = host;
+    }
+    if (storageKey) {
+      var stored = localStorage.getItem('pp_config_' + storageKey);
       if (stored) {
         window.SITE_CONFIG = JSON.parse(stored);
       }
