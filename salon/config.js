@@ -81,6 +81,13 @@ window.SITE_CONFIG = {
   team3Image: "https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400",
   team3ImageAlt: "Stylist Sofia L. coloring a client\u2019s hair",
 
+  // === FAMILY / TEAM PHOTO ===
+  familyLabel: "Our Team",
+  familyTitle: "Meet the Family Behind the Work",
+  familyText: "We're a family-owned business built on trust, hard work, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting people who care.",
+  familyPhoto: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800",
+  familyPhotoAlt: "Our team",
+
   // === GALLERY (each has unique photo, numbered individually) ===
   galleryLabel: "Our Work",
   galleryTitle: "Style Gallery",
@@ -153,6 +160,7 @@ window.SITE_CONFIG = {
     blogPreview: true,
     cookieConsent: true,
     trustBar: true,
+    familySection: true,
     analytics: false,
   },
 

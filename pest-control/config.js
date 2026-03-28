@@ -87,6 +87,13 @@ window.SITE_CONFIG = {
   stat4Number: "A+",
   stat4Label: "BBB Rating",
 
+  // === FAMILY / TEAM PHOTO ===
+  familyLabel: "Our Team",
+  familyTitle: "Meet the Family Behind the Work",
+  familyText: "We're a family-owned business built on trust, hard work, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting people who care.",
+  familyPhoto: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800",
+  familyPhotoAlt: "Our team",
+
   // === WHY CHOOSE US (each has unique SVG icon, so numbered individually) ===
   whyLabel: "Why Pete's?",
   whyTitle: "The Pete's Difference",
@@ -193,6 +200,7 @@ window.SITE_CONFIG = {
     blogPreview: true,
     cookieConsent: true,
     trustBar: true,
+    familySection: true,
     analytics: false,
   },
 

@@ -70,6 +70,13 @@ window.SITE_CONFIG = {
   aboutTitle: "Austin Trusts Lone Star",
   aboutText: "For over 15 years, we\u2019ve been the call Austin homeowners make when the water won\u2019t stop running, the drain won\u2019t clear, or the heater goes cold. Every technician is background-checked, state-licensed, and treats your home with respect.",
 
+  // === FAMILY / TEAM PHOTO ===
+  familyLabel: "Our Team",
+  familyTitle: "Meet the Family Behind the Work",
+  familyText: "We're a family-owned business built on trust, hard work, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting people who care.",
+  familyPhoto: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800",
+  familyPhotoAlt: "Our team",
+
   // === WHY CARDS (each has a unique SVG icon, so numbered individually) ===
   why1Title: "Same-Day Service",
   why1Text: "Most calls handled the same day across Austin and surrounding areas.",
@@ -141,6 +148,7 @@ window.SITE_CONFIG = {
     blogPreview: true,
     cookieConsent: true,
     trustBar: true,
+    familySection: true,
     analytics: false,
   },
 

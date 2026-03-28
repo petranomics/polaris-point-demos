@@ -57,6 +57,13 @@ window.SITE_CONFIG = {
   storyImage: "https://images.pexels.com/photos/2544829/pexels-photo-2544829.jpeg?auto=compress&cs=tinysrgb&w=800",
   storyImageAlt: "Chef cooking in the kitchen",
 
+  // === FAMILY / TEAM PHOTO ===
+  familyLabel: "Our Team",
+  familyTitle: "Meet the Family Behind the Work",
+  familyText: "We're a family-owned business built on trust, hard work, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting people who care.",
+  familyPhoto: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800",
+  familyPhotoAlt: "Our team",
+
   // === HOURS PANEL ===
   hoursPanelTitle: "Hours",
   hoursPanelHtml: "Tue&ndash;Thu: 11am&ndash;9pm<br>Fri&ndash;Sat: 11am&ndash;10pm<br>Sun: 11am&ndash;8pm<br>Monday: Closed",
@@ -157,6 +164,7 @@ window.SITE_CONFIG = {
     blogPreview: true,
     cookieConsent: true,
     trustBar: true,
+    familySection: true,
     analytics: false,
   },
 

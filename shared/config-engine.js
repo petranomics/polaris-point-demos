@@ -5,6 +5,17 @@
 (function() {
   'use strict';
 
+  // Check for localStorage config override (from per-site admin editor)
+  try {
+    var demoPath = location.pathname.split('/').filter(Boolean)[0] || '';
+    if (demoPath && demoPath !== 'admin') {
+      var stored = localStorage.getItem('pp_config_' + demoPath);
+      if (stored) {
+        window.SITE_CONFIG = JSON.parse(stored);
+      }
+    }
+  } catch(e) { /* fall back to config.js */ }
+
   // Check for preview config in URL
   try {
     var params = new URLSearchParams(window.location.search);

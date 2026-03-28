@@ -1,0 +1,366 @@
+/* ============================================
+   Polaris Point — Per-Site Admin Editor
+   Dark theme matching the central admin panel
+   ============================================ */
+
+:root {
+  --sa-blue: #5B8DEF;
+  --sa-blue-hover: #4A7DE0;
+  --sa-gold: #D4A853;
+  --sa-dark: #080c16;
+  --sa-card: #111827;
+  --sa-input: #0B1120;
+  --sa-border: rgba(91,141,239,.12);
+  --sa-border-solid: #1e293b;
+  --sa-text: #e2e8f0;
+  --sa-muted: #94a3b8;
+  --sa-dim: #475569;
+  --sa-danger: #ef4444;
+  --sa-success: #22c55e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--sa-dark);
+  color: var(--sa-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- LOGIN GATE ---- */
+.sa-login-gate {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+}
+.sa-login-box {
+  background: var(--sa-card);
+  border: 1px solid var(--sa-border);
+  border-radius: 14px;
+  padding: 36px;
+  width: 320px;
+  text-align: center;
+}
+.sa-login-box .sa-star { width: 36px; height: 36px; margin-bottom: 12px; filter: drop-shadow(0 0 6px rgba(91,141,239,.4)); }
+.sa-login-box h2 { font-family: 'Outfit', sans-serif; font-size: 1rem; color: #fff; margin-bottom: 4px; }
+.sa-login-box .sa-login-sub { font-size: .6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--sa-gold); margin-bottom: 24px; }
+.sa-login-box input[type="password"] {
+  width: 100%; background: var(--sa-input); border: 1px solid var(--sa-border-solid);
+  border-radius: 8px; padding: 10px 14px; color: var(--sa-text);
+  font-family: 'Inter', sans-serif; font-size: .85rem; text-align: center; outline: none;
+  transition: border-color .2s;
+}
+.sa-login-box input[type="password"]:focus { border-color: var(--sa-blue); }
+.sa-login-box .sa-login-btn {
+  width: 100%; margin-top: 10px; background: var(--sa-blue); color: #fff;
+  border: none; border-radius: 8px; padding: 10px;
+  font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 600; cursor: pointer;
+  transition: background .2s;
+}
+.sa-login-box .sa-login-btn:hover { background: var(--sa-blue-hover); }
+.sa-login-error { color: var(--sa-danger); font-size: .72rem; margin-top: 10px; display: none; }
+
+/* ---- MAIN LAYOUT ---- */
+.sa-admin-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+.sa-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.sa-header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.sa-header p {
+  font-size: .72rem;
+  color: var(--sa-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* ---- SECTION CARDS ---- */
+.sa-section {
+  background: var(--sa-card);
+  border: 1px solid var(--sa-border);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.sa-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.sa-step {
+  width: 28px; height: 28px;
+  background: rgba(91,141,239,.1);
+  border: 1px solid rgba(91,141,239,.2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--sa-blue);
+  flex-shrink: 0;
+}
+.sa-section-head h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: .88rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ---- FORM FIELDS ---- */
+.sa-field {
+  margin-bottom: 14px;
+}
+.sa-field label {
+  display: block;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--sa-dim);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.sa-field input[type="text"],
+.sa-field textarea {
+  width: 100%;
+  background: var(--sa-input);
+  border: 1px solid var(--sa-border-solid);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--sa-text);
+  font-family: 'Inter', sans-serif;
+  font-size: .82rem;
+  outline: none;
+  transition: border-color .2s;
+  resize: vertical;
+}
+.sa-field input[type="text"]:focus,
+.sa-field textarea:focus {
+  border-color: var(--sa-blue);
+}
+.sa-field textarea { min-height: 70px; }
+.sa-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Checkbox toggle */
+.sa-toggle-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.sa-toggle-row input[type="checkbox"] {
+  width: 18px; height: 18px; accent-color: var(--sa-blue);
+  cursor: pointer;
+}
+.sa-toggle-row label {
+  font-size: .78rem; color: var(--sa-text); cursor: pointer;
+  text-transform: none; letter-spacing: 0; font-weight: 500;
+}
+
+/* ---- PHOTO PASTE ZONES ---- */
+.sa-photo-zone {
+  margin-bottom: 16px;
+}
+.sa-photo-preview {
+  width: 100%; max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: none;
+}
+.sa-photo-preview.active { display: block; }
+.sa-paste-area {
+  border: 2px dashed #1e293b;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: var(--sa-dim);
+  font-size: .72rem;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  user-select: none;
+}
+.sa-paste-area:hover,
+.sa-paste-area.dragover {
+  border-color: var(--sa-blue);
+  background: rgba(91,141,239,.04);
+}
+.sa-paste-area.dragover {
+  background: rgba(91,141,239,.08);
+}
+
+/* ---- DYNAMIC LISTS ---- */
+.sa-list-item {
+  background: rgba(11,17,32,.5);
+  border: 1px solid var(--sa-border-solid);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.sa-list-item .sa-remove-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: none;
+  border: 1px solid rgba(239,68,68,.2);
+  border-radius: 6px;
+  color: var(--sa-danger);
+  font-size: .65rem;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.sa-list-item .sa-remove-btn:hover {
+  background: rgba(239,68,68,.1);
+}
+.sa-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px dashed var(--sa-border-solid);
+  border-radius: 8px;
+  color: var(--sa-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: .75rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+  margin-top: 4px;
+}
+.sa-add-btn:hover {
+  border-color: var(--sa-blue);
+  color: var(--sa-blue);
+}
+
+/* ---- THEME GRID ---- */
+.sa-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.sa-theme-card {
+  background: var(--sa-input);
+  border: 2px solid var(--sa-border-solid);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, transform .15s;
+}
+.sa-theme-card:hover { transform: translateY(-1px); }
+.sa-theme-card.active {
+  border-color: var(--sa-blue);
+  box-shadow: 0 0 0 1px var(--sa-blue);
+}
+.sa-theme-swatches {
+  display: flex; gap: 5px; justify-content: center;
+  margin-bottom: 8px;
+}
+.sa-swatch {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.sa-theme-card .sa-theme-name {
+  font-size: .72rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.sa-theme-card .sa-theme-desc {
+  font-size: .6rem;
+  color: var(--sa-dim);
+}
+
+/* ---- BUTTONS ---- */
+.sa-btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.sa-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.sa-btn:hover { transform: translateY(-1px); }
+.sa-btn:active { transform: translateY(0); }
+.sa-btn-primary { background: var(--sa-blue); color: #fff; }
+.sa-btn-primary:hover { background: var(--sa-blue-hover); }
+.sa-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--sa-border-solid);
+  color: var(--sa-muted);
+}
+.sa-btn-secondary:hover { border-color: #334155; color: #fff; }
+.sa-btn-danger {
+  background: transparent;
+  border: 1px solid rgba(239,68,68,.2);
+  color: var(--sa-danger);
+}
+.sa-btn-danger:hover { background: rgba(239,68,68,.08); }
+
+/* Sticky save bar */
+.sa-save-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(17,24,39,.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--sa-border);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 100;
+}
+
+/* ---- NOTIFICATIONS ---- */
+.sa-notify {
+  position: fixed;
+  top: 20px; right: 20px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #fff;
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity .3s, transform .3s;
+  pointer-events: none;
+}
+.sa-notify.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sa-notify.success { background: rgba(34,197,94,.9); }
+.sa-notify.error { background: rgba(239,68,68,.9); }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 600px) {
+  .sa-admin-wrap { padding: 20px 14px 80px; }
+  .sa-section { padding: 20px; }
+  .sa-field-row { grid-template-columns: 1fr; }
+  .sa-theme-grid { grid-template-columns: repeat(2, 1fr); }
+}
