@@ -1832,7 +1832,7 @@
       fetch('/api/preview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ config: window._generatedConfig, template: template })
+        body: JSON.stringify({ config: window._generatedConfig, template: template, name: document.getElementById('intBizName').value.trim() })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {

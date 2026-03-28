@@ -58,11 +58,11 @@ module.exports = async function handler(req, res) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          description: 'Polaris Point Preview — ' + (body.template || 'site'),
+          description: 'Polaris Point Preview — ' + (body.name || body.template || 'site'),
           public: false,
           files: {
             'config.js': { content: body.config },
-            'meta.json': { content: JSON.stringify({ template: body.template || 'plumber', created: new Date().toISOString() }) }
+            'meta.json': { content: JSON.stringify({ template: body.template || 'plumber', name: body.name || '', created: new Date().toISOString() }) }
           }
         })
       });
@@ -70,9 +70,12 @@ module.exports = async function handler(req, res) {
       var gist = await resp.json();
       if (!gist.id) return res.status(500).json({ error: 'Failed to create preview' });
 
+      // Build a readable URL with company name slug
+      var nameSlug = (body.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 30);
+
       return res.status(200).json({
         id: gist.id,
-        url: 'https://polarispoint.io/' + (body.template || 'plumber') + '?p=' + gist.id
+        url: 'https://polarispoint.io/' + (body.template || 'plumber') + '?p=' + gist.id + (nameSlug ? '&name=' + nameSlug : '')
       });
     } catch(err) {
       return res.status(500).json({ error: 'Failed to create preview: ' + err.message });
