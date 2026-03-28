@@ -762,13 +762,17 @@
         <p class="export-note" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder, or use the preview link above to share with prospects</p>
         <hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
         <h3 style="font-family:'Outfit',sans-serif;font-size:.95rem;color:#fff;margin-bottom:12px;text-align:center;">Or deploy instantly</h3>
-        <div class="intake-row" style="max-width:480px;margin:0 auto;">
-          <div class="intake-field" style="flex:1;">
-            <label>Site URL</label>
+        <div style="max-width:480px;margin:0 auto;">
+          <div class="intake-field">
+            <label>Site Slug</label>
             <div style="display:flex;align-items:center;gap:0;">
-              <span style="background:#0B1120;border:1px solid #1e293b;border-right:none;border-radius:8px 0 0 8px;padding:9px 10px;color:#475569;font-size:.8rem;white-space:nowrap;">polarispoint.io /</span>
+              <span style="background:#0B1120;border:1px solid #1e293b;border-right:none;border-radius:8px 0 0 8px;padding:9px 10px;color:#475569;font-size:.8rem;white-space:nowrap;">pp-</span>
               <input type="text" id="deploySlug" placeholder="business-name" style="border-radius:0 8px 8px 0;border-left:none;" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'').substring(0,30)">
             </div>
+          </div>
+          <div class="intake-field">
+            <label>Custom Domain (optional — can add later)</label>
+            <input type="text" id="deployDomain" placeholder="e.g. geronimoplumbing.com">
           </div>
         </div>
         <div style="text-align:center;margin-top:12px;">
@@ -1712,15 +1716,16 @@
     function deploySite() {
       if (!window._generatedConfig) { alert('Generate a config first.'); return; }
       var slug = document.getElementById('deploySlug').value.trim();
-      if (!slug) { alert('Enter a site URL slug.'); return; }
+      if (!slug) { alert('Enter a site slug.'); return; }
       var template = document.getElementById('searchTemplate').value;
+      var domain = document.getElementById('deployDomain').value.trim() || null;
       var btn = document.getElementById('btnDeploy');
       var status = document.getElementById('deployStatus');
 
       btn.disabled = true;
       btn.textContent = 'Deploying...';
       status.style.display = 'block';
-      status.innerHTML = '<p style="color:#5B8DEF;font-size:.85rem;">Creating site files...</p>';
+      status.innerHTML = '<p style="color:#5B8DEF;font-size:.85rem;">Creating repo &amp; deploying to Vercel...</p>';
 
       fetch('/api/deploy', {
         method: 'POST',
@@ -1728,7 +1733,8 @@
         body: JSON.stringify({
           slug: slug,
           template: template,
-          config: window._generatedConfig
+          config: window._generatedConfig,
+          domain: domain
         })
       })
       .then(function(r) { return r.json(); })
@@ -1739,6 +1745,13 @@
           btn.textContent = 'Deploy Live Site';
           return;
         }
+        var liveUrl = data.siteUrl;
+        var dnsNote = '';
+        if (data.customDomain) {
+          dnsNote = '<p style="color:#f59e0b;font-size:.78rem;margin-top:12px;line-height:1.4;">DNS setup needed: Point <strong>' + data.customDomain + '</strong> to <code style="color:#5B8DEF;">cname.vercel-dns.com</code></p>';
+        } else if (domain) {
+          dnsNote = '<p style="color:#64748b;font-size:.78rem;margin-top:12px;">Custom domain could not be added automatically. Add it in Vercel project settings.</p>';
+        }
         status.innerHTML =
           '<div style="margin-bottom:12px;">' +
             '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" style="margin-bottom:8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
@@ -1746,9 +1759,11 @@
           '<p style="color:#16a34a;font-size:1rem;font-weight:700;margin-bottom:4px;">Site Deployed!</p>' +
           '<p style="color:#64748b;font-size:.78rem;margin-bottom:12px;">Live in 30-60 seconds after Vercel builds</p>' +
           '<div style="display:flex;flex-direction:column;gap:8px;max-width:400px;margin:0 auto;">' +
-            '<a href="' + data.url + '" target="_blank" style="background:#5B8DEF;color:#fff;padding:10px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.85rem;">Visit Site \u2192 ' + data.url + '</a>' +
-            '<a href="' + data.adminUrl + '" target="_blank" style="background:#111827;color:#94a3b8;padding:10px;border-radius:8px;text-decoration:none;font-size:.82rem;border:1px solid #1e293b;">Site Admin \u2192 ' + data.adminUrl + '</a>' +
-          '</div>';
+            '<a href="' + liveUrl + '" target="_blank" style="background:#5B8DEF;color:#fff;padding:10px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.85rem;">Visit Site &#8594; ' + liveUrl + '</a>' +
+            '<a href="' + data.adminUrl + '" target="_blank" style="background:#111827;color:#94a3b8;padding:10px;border-radius:8px;text-decoration:none;font-size:.82rem;border:1px solid #1e293b;">Site Admin &#8594; ' + data.adminUrl + '</a>' +
+            '<a href="' + data.repoUrl + '" target="_blank" style="background:#111827;color:#94a3b8;padding:10px;border-radius:8px;text-decoration:none;font-size:.82rem;border:1px solid #1e293b;">GitHub Repo &#8594; ' + data.repoUrl + '</a>' +
+          '</div>' +
+          dnsNote;
         btn.style.display = 'none';
       })
       .catch(function(err) {

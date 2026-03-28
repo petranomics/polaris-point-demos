@@ -1,5 +1,5 @@
-// /api/deploy.js — One-click site deployment via GitHub API
-// POST /api/deploy { slug, template, config }
+// /api/deploy.js — One-click site deployment: creates a new GitHub repo + Vercel project per client
+// POST /api/deploy { slug, template, config, domain (optional) }
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -8,8 +8,10 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
-  var token = process.env.GITHUB_TOKEN;
-  if (!token) return res.status(500).json({ error: 'GITHUB_TOKEN not configured' });
+  var ghToken = process.env.GITHUB_TOKEN;
+  var vercelToken = process.env.VERCEL_TOKEN;
+  if (!ghToken) return res.status(500).json({ error: 'GITHUB_TOKEN not configured' });
+  if (!vercelToken) return res.status(500).json({ error: 'VERCEL_TOKEN not configured' });
 
   var body = req.body;
   if (!body || !body.slug || !body.template || !body.config) {
@@ -20,74 +22,156 @@ module.exports = async function handler(req, res) {
   if (!slug) return res.status(400).json({ error: 'Invalid slug' });
 
   var owner = 'petranomics';
-  var repo = 'polaris-point-demos';
+  var sourceRepo = 'polaris-point-demos';
   var branch = 'main';
-  var template = body.template; // plumber, salon, restaurant, pest-control
+  var newRepoName = 'pp-' + slug;
+  var template = body.template;
+  var domain = body.domain ? body.domain.trim().toLowerCase() : null;
+
   var validTemplates = ['plumber', 'salon', 'restaurant', 'pest-control'];
   if (validTemplates.indexOf(template) === -1) {
     return res.status(400).json({ error: 'Invalid template: ' + template });
   }
 
-  var gh = function(path, options) {
+  // GitHub API helper for the source repo (reading files)
+  var ghSource = function(path) {
+    return fetch('https://api.github.com/repos/' + owner + '/' + sourceRepo + '/contents/' + path + '?ref=' + branch, {
+      headers: {
+        'Authorization': 'Bearer ' + ghToken,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'PolarisPoint-Deploy'
+      }
+    });
+  };
+
+  // GitHub API helper for the new repo (writing files)
+  var ghNew = function(path, options) {
     options = options || {};
     options.headers = Object.assign({
-      'Authorization': 'Bearer ' + token,
+      'Authorization': 'Bearer ' + ghToken,
       'Accept': 'application/vnd.github.v3+json',
       'User-Agent': 'PolarisPoint-Deploy'
     }, options.headers || {});
-    return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, options);
+    return fetch('https://api.github.com/repos/' + owner + '/' + newRepoName + '/contents/' + path, options);
   };
 
+  // GitHub API helper (generic)
+  var ghApi = function(url, options) {
+    options = options || {};
+    options.headers = Object.assign({
+      'Authorization': 'Bearer ' + ghToken,
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'PolarisPoint-Deploy'
+    }, options.headers || {});
+    return fetch(url, options);
+  };
+
+  // Vercel API helper
+  var vercelApi = function(path, options) {
+    options = options || {};
+    options.headers = Object.assign({
+      'Authorization': 'Bearer ' + vercelToken,
+      'Content-Type': 'application/json'
+    }, options.headers || {});
+    return fetch('https://api.vercel.com' + path, options);
+  };
+
+  var createdRepo = false;
+
   try {
-    // Check if slug folder already exists
-    var checkResp = await gh(slug);
-    if (checkResp.status === 200) {
-      return res.status(409).json({ error: 'Site "' + slug + '" already exists' });
-    }
-
-    // Determine which template files to copy
-    var filesToCopy = ['index.html', 'styles.css'];
-    // Check if template has a script.js
-    var scriptCheck = await gh(template + '/script.js');
-    if (scriptCheck.status === 200) filesToCopy.push('script.js');
-
-    var createdFiles = [];
-
-    // Copy each template file
-    for (var i = 0; i < filesToCopy.length; i++) {
-      var fileName = filesToCopy[i];
-      // Read from template
-      var readResp = await gh(template + '/' + fileName + '?ref=' + branch);
-      if (readResp.status !== 200) continue;
-      var readData = await readResp.json();
-
-      // Create in new folder
-      var createResp = await gh(slug + '/' + fileName, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: 'Deploy ' + slug + ': add ' + fileName,
-          content: readData.content, // already base64
-          branch: branch
-        })
-      });
-      if (createResp.status === 201) createdFiles.push(fileName);
-    }
-
-    // Write config.js
-    var configB64 = Buffer.from(body.config).toString('base64');
-    await gh(slug + '/config.js', {
-      method: 'PUT',
+    // ── Step 1: Create new GitHub repo ──────────────────────────────────
+    var createRepoResp = await ghApi('https://api.github.com/orgs/' + owner + '/repos', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: 'Deploy ' + slug + ': add config.js',
-        content: configB64,
-        branch: branch
+        name: newRepoName,
+        description: 'Polaris Point demo site: ' + slug,
+        private: false,
+        auto_init: true
       })
     });
-    createdFiles.push('config.js');
 
-    // Create admin/index.html
+    if (createRepoResp.status === 422) {
+      return res.status(409).json({ error: 'Repo "' + newRepoName + '" already exists' });
+    }
+    if (!createRepoResp.ok) {
+      var errData = await createRepoResp.json().catch(function() { return {}; });
+      return res.status(500).json({ error: 'Failed to create repo: ' + (errData.message || createRepoResp.status) });
+    }
+
+    createdRepo = true;
+
+    // Brief pause to let GitHub initialize the repo with README
+    await new Promise(function(resolve) { setTimeout(resolve, 2000); });
+
+    // ── Step 2: Read all source files in parallel ───────────────────────
+
+    // Shared files to copy
+    var sharedFiles = [
+      'shared/config-engine.js',
+      'shared/features.js',
+      'shared/features.css',
+      'shared/site-admin.js',
+      'shared/site-admin.css',
+      'favicon.svg'
+    ];
+
+    // Template files to copy
+    var templateFiles = ['index.html', 'styles.css'];
+
+    // Check if template has a script.js
+    var scriptCheck = await ghSource(template + '/script.js');
+    if (scriptCheck.status === 200) templateFiles.push('script.js');
+
+    // Read all source files in parallel
+    var allSourceReads = [];
+    var allSourcePaths = [];
+
+    sharedFiles.forEach(function(f) {
+      allSourcePaths.push({ source: f, dest: f }); // shared/ files keep their path
+      allSourceReads.push(ghSource(f));
+    });
+
+    templateFiles.forEach(function(f) {
+      allSourcePaths.push({ source: template + '/' + f, dest: f }); // template files go to root
+      allSourceReads.push(ghSource(template + '/' + f));
+    });
+
+    var sourceResponses = await Promise.all(allSourceReads);
+    var sourceDataPromises = sourceResponses.map(function(r, i) {
+      if (r.status !== 200) return null;
+      return r.json();
+    });
+    var sourceData = await Promise.all(sourceDataPromises);
+
+    // ── Step 3: Prepare all files to write ──────────────────────────────
+    var filesToWrite = [];
+
+    for (var i = 0; i < allSourcePaths.length; i++) {
+      if (!sourceData[i]) continue;
+      var destPath = allSourcePaths[i].dest;
+      var content = sourceData[i].content; // base64 from GitHub
+
+      // For template index.html, fix paths (remove template prefix)
+      if (destPath === 'index.html') {
+        var decoded = Buffer.from(content, 'base64').toString('utf8');
+        // Replace /{template}/config.js → /config.js etc.
+        decoded = decoded.replace(new RegExp('/' + template + '/config\\.js', 'g'), '/config.js');
+        decoded = decoded.replace(new RegExp('/' + template + '/styles\\.css', 'g'), '/styles.css');
+        decoded = decoded.replace(new RegExp('/' + template + '/script\\.js', 'g'), '/script.js');
+        content = Buffer.from(decoded).toString('base64');
+      }
+
+      filesToWrite.push({ path: destPath, content: content });
+    }
+
+    // config.js
+    filesToWrite.push({
+      path: 'config.js',
+      content: Buffer.from(body.config).toString('base64')
+    });
+
+    // admin/index.html
     var adminHtml = '<!doctype html>\n<html lang="en">\n<head>\n' +
       '  <meta charset="UTF-8">\n' +
       '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
@@ -99,36 +183,135 @@ module.exports = async function handler(req, res) {
       '  <link rel="stylesheet" href="/shared/site-admin.css">\n' +
       '</head>\n<body>\n' +
       '  <script>window.PP_DEMO = ' + JSON.stringify(slug) + ';</script>\n' +
-      '  <script src="/' + slug + '/config.js"></script>\n' +
+      '  <script src="/config.js"></script>\n' +
       '  <div id="adminRoot"></div>\n' +
       '  <script src="/shared/site-admin.js"></script>\n' +
       '</body>\n</html>';
 
-    var adminB64 = Buffer.from(adminHtml).toString('base64');
-    await gh(slug + '/admin/index.html', {
+    filesToWrite.push({
+      path: 'admin/index.html',
+      content: Buffer.from(adminHtml).toString('base64')
+    });
+
+    // vercel.json
+    var vercelJson = JSON.stringify({
+      cleanUrls: true,
+      trailingSlash: false
+    }, null, 2);
+
+    filesToWrite.push({
+      path: 'vercel.json',
+      content: Buffer.from(vercelJson).toString('base64')
+    });
+
+    // ── Step 4: Write all files to the new repo ─────────────────────────
+    // GitHub Contents API requires sequential commits (each needs the latest SHA).
+    // To parallelize, we batch files that don't collide. But the simplest reliable
+    // approach within the time budget: write them sequentially with a single commit
+    // message pattern. We can parallelize the first batch since the repo only has
+    // the auto-init README.
+
+    // Write first file to establish the branch
+    var firstFile = filesToWrite.shift();
+    var firstResp = await ghNew(firstFile.path, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: 'Deploy ' + slug + ': add admin',
-        content: adminB64,
+        message: 'Deploy ' + slug + ': initial files',
+        content: firstFile.content,
         branch: branch
       })
     });
-    createdFiles.push('admin/index.html');
 
-    var siteUrl = 'https://polarispoint.io/' + slug;
-    var adminUrl = siteUrl + '/admin';
+    if (!firstResp.ok) {
+      var firstErr = await firstResp.json().catch(function() { return {}; });
+      throw new Error('Failed to write ' + firstFile.path + ': ' + (firstErr.message || firstResp.status));
+    }
+
+    // Write remaining files — must be sequential since each commit updates the branch tip
+    var createdFiles = [firstFile.path];
+    for (var j = 0; j < filesToWrite.length; j++) {
+      var file = filesToWrite[j];
+      var writeResp = await ghNew(file.path, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: 'Deploy ' + slug + ': add ' + file.path,
+          content: file.content,
+          branch: branch
+        })
+      });
+      if (writeResp.ok) {
+        createdFiles.push(file.path);
+      } else {
+        var writeErr = await writeResp.json().catch(function() { return {}; });
+        console.error('Failed to write ' + file.path + ':', writeErr.message || writeResp.status);
+      }
+    }
+
+    // ── Step 5: Create Vercel project linked to the new repo ────────────
+    var vercelResp = await vercelApi('/v10/projects', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: newRepoName,
+        framework: null,
+        gitRepository: {
+          type: 'github',
+          repo: owner + '/' + newRepoName
+        }
+      })
+    });
+
+    var vercelData = await vercelResp.json().catch(function() { return {}; });
+    var vercelProjectId = vercelData.id || null;
+
+    if (!vercelResp.ok) {
+      console.error('Vercel project creation warning:', vercelData.error || vercelData);
+      // Don't fail the whole deploy — the repo is created and Vercel can be linked manually
+    }
+
+    // ── Step 6: Add custom domain if provided ───────────────────────────
+    var customDomain = null;
+    if (domain && vercelProjectId) {
+      var domainResp = await vercelApi('/v10/projects/' + vercelProjectId + '/domains', {
+        method: 'POST',
+        body: JSON.stringify({ name: domain })
+      });
+      if (domainResp.ok) {
+        customDomain = domain;
+      } else {
+        var domainErr = await domainResp.json().catch(function() { return {}; });
+        console.error('Domain add warning:', domainErr.error || domainErr);
+      }
+    }
+
+    // ── Response ────────────────────────────────────────────────────────
+    var siteUrl = 'https://' + newRepoName + '.vercel.app';
+    var repoUrl = 'https://github.com/' + owner + '/' + newRepoName;
 
     return res.status(200).json({
       success: true,
       slug: slug,
-      url: siteUrl,
-      adminUrl: adminUrl,
+      repoUrl: repoUrl,
+      siteUrl: customDomain ? 'https://' + customDomain : siteUrl,
+      vercelUrl: siteUrl,
+      adminUrl: (customDomain ? 'https://' + customDomain : siteUrl) + '/admin',
+      customDomain: customDomain,
       files: createdFiles,
       message: 'Site deployed! It may take 30-60 seconds for Vercel to build.'
     });
 
   } catch (err) {
+    // Cleanup: try to delete the repo if it was created but something failed
+    if (createdRepo) {
+      try {
+        await ghApi('https://api.github.com/repos/' + owner + '/' + newRepoName, {
+          method: 'DELETE'
+        });
+      } catch (cleanupErr) {
+        console.error('Cleanup failed — orphaned repo:', newRepoName);
+      }
+    }
     return res.status(500).json({ error: 'Deploy failed: ' + err.message });
   }
 };
