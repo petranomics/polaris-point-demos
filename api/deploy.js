@@ -270,7 +270,29 @@ module.exports = async function handler(req, res) {
       // Don't fail the whole deploy — the repo is created and Vercel can be linked manually
     }
 
-    // ── Step 6: Add custom domain if provided ───────────────────────────
+    // ── Step 6: Trigger first deployment ──────────────────────────────
+    if (vercelProjectId) {
+      try {
+        await vercelApi('/v13/deployments', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: newRepoName,
+            project: vercelProjectId,
+            gitSource: {
+              type: 'github',
+              org: owner,
+              repo: newRepoName,
+              ref: branch
+            },
+            target: 'production'
+          })
+        });
+      } catch(e) {
+        console.error('Deploy trigger warning:', e.message);
+      }
+    }
+
+    // ── Step 7: Add custom domain if provided ───────────────────────────
     var customDomain = null;
     if (domain && vercelProjectId) {
       var domainResp = await vercelApi('/v10/projects/' + vercelProjectId + '/domains', {
