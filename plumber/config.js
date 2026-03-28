@@ -37,6 +37,16 @@ window.SITE_CONFIG = {
   trustBadge3: "Locally Owned",
   trustBadge4: "15+ Years Experience",
 
+  // === STATS BAR ===
+  stat1Number: "2,400+",
+  stat1Label: "Homes Served",
+  stat2Number: "15+",
+  stat2Label: "Years Experience",
+  stat3Number: "4.9",
+  stat3Label: "Google Rating",
+  stat4Number: "24/7",
+  stat4Label: "Emergency Service",
+
   // === SERVICES (each has a unique SVG icon, so numbered individually) ===
   servicesLabel: "What We Do",
   servicesTitle: "Our Plumbing Services",
