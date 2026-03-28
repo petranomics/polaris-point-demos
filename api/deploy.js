@@ -265,6 +265,14 @@ module.exports = async function handler(req, res) {
     var vercelData = await vercelResp.json().catch(function() { return {}; });
     var vercelProjectId = vercelData.id || null;
 
+    // Disable Vercel authentication so the site is publicly accessible
+    if (vercelProjectId) {
+      await vercelApi('/v9/projects/' + vercelProjectId, {
+        method: 'PATCH',
+        body: JSON.stringify({ ssoProtection: null, passwordProtection: null })
+      }).catch(function() {});
+    }
+
     if (!vercelResp.ok) {
       console.error('Vercel project creation warning:', vercelData.error || vercelData);
       // Don't fail the whole deploy — the repo is created and Vercel can be linked manually
