@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-cfg="pageTitle">Velvet & Vine Salon | Austin Hair Salon</title>
-  <meta name="description" content="Velvet & Vine Salon in Austin offers cuts, color, and care in a boutique South Congress-inspired space." data-cfg-attr="content:metaDescription" />
+  <title data-cfg="pageTitle">Austin Home Pros | Handyman & General Contractor</title>
+  <meta name="description" data-cfg-attr="content:metaDescription" content="Austin Home Pros offers reliable handyman and general contractor services in Austin, TX. Licensed, insured, and ready for any home project." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/features.css">
   <link rel="stylesheet" href="/salon/styles.css">
 </head>
@@ -16,42 +16,70 @@
   <!-- DEMO BANNER -->
   <div class="demo-banner">This is a <strong>Polaris Point</strong> demo website. Want one like this for your business? <a href="/">Get a free quote &rarr;</a></div>
 
+  <div class="topbar">
+    <div class="container topbar-wrap">
+      <span data-cfg="topbarText">Free Estimates &middot; Licensed &amp; Insured</span>
+      <a href="tel:+15125550388" data-cfg-attr="href:phoneTelHref">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span data-cfg="phone">(512) 555-0388</span>
+      </a>
+    </div>
+  </div>
+
   <!-- Urgency Banner (injected by features.js if configured) -->
   <div id="urgencyBannerSlot"></div>
 
-  <header id="header">
+  <header class="site-header" id="header">
     <div class="container nav">
-      <a class="logo" href="#top">
-        <span class="logo-mark">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M6 9v12"/><path d="M13 6l-4 6h8l-4 6"/></svg>
+      <a href="#top" class="logo">
+        <span class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </span>
-        <span data-cfg="businessNameShort">Velvet &amp; Vine</span>
+        <span data-cfg="businessNameShort">Home Pros</span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#services">Services</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#team">Team</a>
+        <a href="#about">About</a>
+        <a href="#reviews">Reviews</a>
         <a href="#faq">FAQ</a>
-        <a href="#book" class="book-btn" data-cfg="navBookBtn">Book Appointment</a>
+        <a href="#contact" class="nav-cta">Free Estimate</a>
       </nav>
     </div>
   </header>
 
   <main id="top">
-    <!-- HERO with real photo -->
+    <!-- HERO with real photo background -->
     <section class="hero">
       <div class="hero-bg">
-        <img src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Woman getting a professional haircut at a salon" loading="eager" data-cfg-attr="src:heroImage,alt:heroImageAlt">
+        <img data-cfg-attr="src:heroImage,alt:heroImageAlt" src="https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Handyman performing home repair work" loading="eager">
       </div>
       <div class="container hero-content reveal">
-        <span class="section-label" data-cfg="heroLabel">Austin's Boutique Salon</span>
-        <h1 data-cfg="heroHeadline">Your Best Hair Starts Here</h1>
-        <p data-cfg="heroSubtext">Cuts, color, and care by stylists who take the time to listen. Located on South Congress in the heart of Austin.</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <a href="#book" class="btn btn-main" data-cfg="heroCta1">Book Your Appointment</a>
-          <a href="#services" class="btn btn-outline" data-cfg="heroCta2">View Services</a>
+        <h1 data-cfg="heroHeadline">Your Trusted Austin Handyman &amp; Contractor</h1>
+        <p data-cfg="heroSubtext">From small repairs to full remodels, we handle every project with care. Licensed, insured, and backed by 12+ years of experience.</p>
+        <div class="btn-row">
+          <a href="tel:+15125550388" class="btn btn-primary" data-cfg-attr="href:phoneTelHref">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span data-cfg="heroCta1">Call (512) 555-0388</span>
+          </a>
+          <a href="#contact" class="btn btn-secondary" data-cfg="heroCta2">Get a Free Estimate</a>
         </div>
-        <div class="trust-strip" style="margin-top:18px;">
+        <div class="trust-strip">
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span data-cfg="trustBadge1">Licensed &amp; Insured</span>
+          </div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg>
+            <span data-cfg="trustBadge2">Background Checked</span>
+          </div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span data-cfg="trustBadge3">Free Estimates</span>
+          </div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span data-cfg="trustBadge4">Satisfaction Guaranteed</span>
+          </div>
           <div id="googleBadgeSlot"></div>
         </div>
       </div>
@@ -61,59 +89,124 @@
     <section class="trust-bar-section" id="trustBarSlot" style="padding:20px 0;background:#fff;"></section>
 
     <!-- SERVICES -->
-    <section id="services" style="background:#fff;">
+    <section id="services" class="services-section">
       <div class="container">
-        <span class="section-label reveal" data-cfg="servicesLabel">What We Offer</span>
-        <h2 class="reveal" data-cfg="servicesTitle">Services &amp; Pricing</h2>
-        <div class="menu-card reveal" style="margin-top:22px;">
-          <div class="menu-col">
-            <h3 data-cfg="menuCol1Title">Cuts &amp; Color</h3>
-            <div class="menu-item"><span data-cfg="menuItem1Name">Women's Haircut</span><strong data-cfg="menuItem1Price">$65&ndash;$95</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem2Name">Men's Haircut</span><strong data-cfg="menuItem2Price">$40&ndash;$55</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem3Name">Balayage / Highlights</span><strong data-cfg="menuItem3Price">$150&ndash;$250</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem4Name">Full Color</span><strong data-cfg="menuItem4Price">$120&ndash;$180</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem5Name">Color Correction</span><strong data-cfg="menuItem5Price">Starting at $200</strong></div>
-          </div>
-          <div class="menu-col">
-            <h3 data-cfg="menuCol2Title">Styling &amp; Care</h3>
-            <div class="menu-item"><span data-cfg="menuItem6Name">Blowout</span><strong data-cfg="menuItem6Price">$55&ndash;$75</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem7Name">Deep Conditioning</span><strong data-cfg="menuItem7Price">$45</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem8Name">Keratin Treatment</span><strong data-cfg="menuItem8Price">$250&ndash;$350</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem9Name">Bridal / Special Event</span><strong data-cfg="menuItem9Price">Starting at $200</strong></div>
-            <div class="menu-item"><span data-cfg="menuItem10Name">Extensions Consultation</span><strong data-cfg="menuItem10Price">Complimentary</strong></div>
+        <span class="section-label reveal" data-cfg="servicesLabel">What We Do</span>
+        <h2 class="reveal" data-cfg="servicesTitle">Our Handyman Services</h2>
+        <div class="grid" style="margin-top:22px;">
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <h3 data-cfg="service1Name">General Repairs</h3>
+            <p data-cfg="service1Desc">Leaky faucets, squeaky doors, broken fixtures — no job is too small. We handle the everyday repairs that keep your home running smoothly.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/6444260/pexels-photo-6444260.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><polyline points="16 21 16 3 8 3 8 21"/></svg>
+            </div>
+            <h3 data-cfg="service2Name">Kitchen &amp; Bath Remodeling</h3>
+            <p data-cfg="service2Desc">Transform your kitchen or bathroom with custom cabinetry, tile work, countertops, and modern fixtures installed right.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            </div>
+            <h3 data-cfg="service3Name">Drywall &amp; Painting</h3>
+            <p data-cfg="service3Desc">From patching holes to full interior repaints, we deliver clean lines and flawless finishes every time.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/5691622/pexels-photo-5691622.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h3 data-cfg="service4Name">Deck &amp; Fence Building</h3>
+            <p data-cfg="service4Desc">Custom decks, pergolas, and fences built to last. We handle design, permits, and construction from start to finish.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h3 data-cfg="service5Name">Electrical &amp; Plumbing Fixes</h3>
+            <p data-cfg="service5Desc">Outlet replacements, light fixture installs, minor plumbing repairs, and more — handled safely and up to code.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/6969926/pexels-photo-6969926.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            </div>
+            <h3 data-cfg="service6Name">Furniture Assembly &amp; Mounting</h3>
+            <p data-cfg="service6Desc">TV mounting, shelving, furniture assembly, and heavy item installation. We make sure everything is level, secure, and safe.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT with real photo -->
+    <section id="about" style="background:#fff;">
+      <div class="container split reveal">
+        <div class="split-img">
+          <img class="lightbox-trigger" data-cfg-attr="src:aboutImage,alt:aboutImageAlt" src="https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Handyman working on electrical repair" loading="lazy">
+        </div>
+        <div>
+          <span class="section-label" data-cfg="aboutLabel">Why Choose Us</span>
+          <h2 data-cfg="aboutTitle">Austin Trusts Home Pros</h2>
+          <p style="color:var(--muted);" data-cfg="aboutText">For over 12 years, we've been the team Austin homeowners call when something breaks, needs upgrading, or when a weekend project turns into more than expected. Every technician is background-checked, licensed, and treats your home with the same care as their own.</p>
+          <div class="why-grid" style="margin-top:18px;">
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <h3 data-cfg="why1Title">Same-Day Service</h3>
+                <p data-cfg="why1Text">Most jobs scheduled within 24-48 hours. Same-day available for urgent repairs.</p>
+              </div>
+            </div>
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <h3 data-cfg="why2Title">Upfront Pricing</h3>
+                <p data-cfg="why2Text">Transparent quotes before work starts. No hidden fees or surprise charges.</p>
+              </div>
+            </div>
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <h3 data-cfg="why3Title">Satisfaction Guaranteed</h3>
+                <p data-cfg="why3Text">Not happy with the work? We'll come back and make it right at no extra cost.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ABOUT + TEAM -->
-    <section id="team" style="background:var(--warm);">
-      <div class="container about-grid">
-        <div class="reveal">
-          <span class="section-label" data-cfg="aboutLabel">Our Story</span>
-          <h2 data-cfg="aboutTitle">Austin's Boutique Salon Since 2018</h2>
-          <p data-cfg="aboutText1">Velvet &amp; Vine was created for clients who want great hair without the rushed salon experience. We start every appointment with a conversation, then tailor each cut, color, and treatment to your routine and style goals.</p>
-          <p data-cfg="aboutText2">Our stylists blend technical training with Austin creativity. Whether you're refreshing your everyday look or getting ready for a special event, you'll leave with hair that feels effortless, polished, and genuinely you.</p>
+    <!-- STATS BAR -->
+    <section class="stats-bar">
+      <div class="container stats-grid">
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat1Number">3,200+</span>
+          <span class="stat-label" data-cfg="stat1Label">Jobs Completed</span>
         </div>
-        <div class="reveal">
-          <span class="section-label" data-cfg="teamLabel">The Team</span>
-          <h3 style="margin-bottom:10px;" data-cfg="teamTitle">Meet the Stylists</h3>
-          <div class="team">
-            <div class="avatar">
-              <img class="lightbox-trigger" src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Taylor R. working with a client" loading="lazy" data-cfg-attr="src:team1Image,alt:team1ImageAlt">
-            </div>
-            <div class="avatar">
-              <img class="lightbox-trigger" src="https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=400&h=540&fit=crop" alt="Stylist Jade M. at the salon" loading="lazy" data-cfg-attr="src:team2Image,alt:team2ImageAlt">
-            </div>
-            <div class="avatar">
-              <img class="lightbox-trigger" src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Stylist Sofia L. coloring a client's hair" loading="lazy" data-cfg-attr="src:team3Image,alt:team3ImageAlt">
-            </div>
-          </div>
-          <div style="display:flex; gap:8px; margin-top:8px;">
-            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);" data-cfg="team1Name">Taylor R.</span>
-            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);" data-cfg="team2Name">Jade M.</span>
-            <span style="flex:1; text-align:center; font-size:.82rem; font-weight:600; color:var(--sage);" data-cfg="team3Name">Sofia L.</span>
-          </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat2Number">12+</span>
+          <span class="stat-label" data-cfg="stat2Label">Years Experience</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat3Number">4.9</span>
+          <span class="stat-label" data-cfg="stat3Label">Google Rating</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat4Number">&check;</span>
+          <span class="stat-label" data-cfg="stat4Label">Licensed &amp; Insured</span>
         </div>
       </div>
     </section>
@@ -121,80 +214,81 @@
     <!-- Family / Team Photo -->
     <section id="family" class="family-section" style="background:#fff;">
       <div class="container">
-        <div class="about-grid" style="align-items:center;">
-          <div>
-            <img id="familyPhotoImg" data-cfg-attr="src:familyPhoto,alt:familyPhotoAlt" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Our team" loading="lazy" style="border-radius:12px;">
+        <div class="split" style="align-items:center;">
+          <div class="split-img">
+            <img id="familyPhotoImg" data-cfg-attr="src:familyPhoto,alt:familyPhotoAlt" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800" alt="The Austin Home Pros team" loading="lazy" style="border-radius:12px;">
           </div>
           <div>
             <span class="section-label" data-cfg="familyLabel">Our Team</span>
-            <h2 data-cfg="familyTitle">Meet the Family Behind the Work</h2>
-            <p style="color:var(--muted,#5a6f8f);" data-cfg="familyText">We're a family-owned business built on trust, hard work, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting people who care.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GALLERY with real photos -->
-    <section id="gallery">
-      <div class="container">
-        <span class="section-label reveal" data-cfg="galleryLabel">Our Work</span>
-        <h2 class="reveal" data-cfg="galleryTitle">Style Gallery</h2>
-        <div class="gallery" style="margin-top:18px;">
-          <div class="tile reveal">
-            <img class="lightbox-trigger" src="https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Hair coloring service in progress" loading="lazy" data-cfg-attr="src:gallery1Image,alt:gallery1Alt">
-            <span data-cfg="gallery1Label">Color &amp; Highlights</span>
-          </div>
-          <div class="tile reveal">
-            <img class="lightbox-trigger" src="https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist cutting hair with scissors" loading="lazy" data-cfg-attr="src:gallery2Image,alt:gallery2Alt">
-            <span data-cfg="gallery2Label">Precision Cut</span>
-          </div>
-          <div class="tile reveal">
-            <img class="lightbox-trigger" src="https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Stylist blow drying client's hair" loading="lazy" data-cfg-attr="src:gallery3Image,alt:gallery3Alt">
-            <span data-cfg="gallery3Label">Blowout</span>
-          </div>
-          <div class="tile reveal">
-            <img class="lightbox-trigger" src="https://images.pexels.com/photos/6487882/pexels-photo-6487882.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Close-up detail of hair cutting" loading="lazy" data-cfg-attr="src:gallery4Image,alt:gallery4Alt">
-            <span data-cfg="gallery4Label">Detail Work</span>
-          </div>
-          <div class="tile reveal">
-            <img class="lightbox-trigger" src="https://images.pexels.com/photos/8467969/pexels-photo-8467969.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Flat iron styling service" loading="lazy" data-cfg-attr="src:gallery5Image,alt:gallery5Alt">
-            <span data-cfg="gallery5Label">Keratin &amp; Styling</span>
-          </div>
-          <div class="tile reveal">
-            <img class="lightbox-trigger" src="https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Full service color and styling" loading="lazy" data-cfg-attr="src:gallery6Image,alt:gallery6Alt">
-            <span data-cfg="gallery6Label">Full Service Color</span>
+            <h2 data-cfg="familyTitle">Meet the Crew Behind the Work</h2>
+            <p style="color:var(--muted,#5a6f8f);" data-cfg="familyText">We're a locally owned team built on trust, craftsmanship, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting skilled pros who take pride in every project.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- REVIEWS -->
-    <section id="reviews" style="background:var(--warm);">
+    <section id="reviews" class="reviews-section">
       <div class="container">
-        <span class="section-label reveal" data-cfg="reviewsLabel">Client Love</span>
-        <h2 class="reveal" data-cfg="reviewsTitle">What Clients Are Saying</h2>
-        <div class="review-grid" id="reviewsContainer" style="margin-top:18px;" data-cfg-list="reviews">
-          <article class="review reveal">
+        <span class="section-label reveal" data-cfg="reviewsLabel">Testimonials</span>
+        <h2 class="reveal" data-cfg="reviewsTitle">What Our Customers Say</h2>
+        <div class="grid" id="reviewsContainer" style="margin-top:22px;" data-cfg-list="reviews">
+          <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p data-cfg-item="text">I've been coming here for 2 years and Taylor always knows exactly what I want. The color grows out beautifully every time.</p>
-            <strong data-cfg-item-html="attribution">&mdash; Andrea K.</strong>
+            <p data-cfg-item="text">Had a long list of small repairs — leaky faucet, sticking doors, a few drywall patches. They knocked it all out in one visit and the pricing was exactly what they quoted.</p>
+            <h3 data-cfg-item-html="attribution">Rachel M. &middot; Cedar Park &middot; Feb 2026</h3>
           </article>
-          <article class="review reveal">
+          <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p data-cfg-item="text">Jade fixed a bad color correction from another salon and made me feel so comfortable through the whole process.</p>
-            <strong data-cfg-item-html="attribution">&mdash; Melissa J.</strong>
+            <p data-cfg-item="text">Austin Home Pros built us a beautiful backyard deck. They handled the permit, showed up on time every day, and the craftsmanship is outstanding.</p>
+            <h3 data-cfg-item-html="attribution">David &amp; Lisa K. &middot; Round Rock &middot; Jan 2026</h3>
           </article>
-          <article class="review reveal">
+          <article class="review-card reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p data-cfg-item="text">Warm team, gorgeous space, and Sofia gave me the best blowout I've had in Austin. Highly recommend.</p>
-            <strong data-cfg-item-html="attribution">&mdash; Carina P.</strong>
+            <p data-cfg-item="text">I needed my entire downstairs repainted before selling my house. They were fast, clean, and the result looks like a brand-new home. Highly recommend.</p>
+            <h3 data-cfg-item-html="attribution">Sandra T. &middot; Lakeway &middot; Dec 2025</h3>
           </article>
         </div>
       </div>
     </section>
 
+    <!-- DARK PHOTO CTA SECTION -->
+    <section class="dark-photo-section" style="background-image:url('https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1600');">
+      <div class="container" style="text-align:center;padding:60px 0;">
+        <h2 class="reveal" style="color:#fff;font-size:1.8rem;max-width:600px;margin:0 auto 16px;">Quality Craftsmanship. Honest Pricing. Every Project.</h2>
+        <p class="reveal" style="color:rgba(255,255,255,.75);max-width:500px;margin:0 auto 24px;">We treat every home like it's our own. That's been our promise since day one.</p>
+        <a href="#contact" class="btn btn-primary reveal">Get Your Free Estimate</a>
+      </div>
+    </section>
+
+    <!-- SERVICE AREA with real photo -->
+    <section style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal" data-cfg="serviceAreaLabel">Coverage Area</span>
+        <h2 class="reveal" data-cfg="serviceAreaTitle">Serving Austin &amp; Surrounding Communities</h2>
+        <div class="split reveal" style="margin-top:20px;">
+          <div>
+            <p style="color:var(--muted);" data-cfg="serviceAreaText">Our fully equipped service trucks cover Austin and all surrounding areas. Whether you're in the city or the suburbs, a skilled handyman is never far away.</p>
+            <div class="area-tags" data-cfg-list="serviceAreas">
+              <span class="area-tag" data-cfg-item>Austin</span>
+              <span class="area-tag" data-cfg-item>Round Rock</span>
+              <span class="area-tag" data-cfg-item>Cedar Park</span>
+              <span class="area-tag" data-cfg-item>Pflugerville</span>
+              <span class="area-tag" data-cfg-item>Georgetown</span>
+              <span class="area-tag" data-cfg-item>Lakeway</span>
+              <span class="area-tag" data-cfg-item>Bee Cave</span>
+            </div>
+            <div id="mapSlot" style="margin-top:20px;border-radius:12px;overflow:hidden;"></div>
+          </div>
+          <div class="area-img">
+            <img class="lightbox-trigger" data-cfg-attr="src:serviceAreaImage,alt:serviceAreaImageAlt" src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin neighborhood home" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- FAQ Accordion (built by features.js from config.faqs) -->
-    <section class="faq-section" id="faq" style="background:var(--bg, #faf8f5);">
+    <section class="faq-section" id="faq">
       <div class="container">
         <span class="section-label reveal">Common Questions</span>
         <h2 class="reveal">Frequently Asked Questions</h2>
@@ -205,30 +299,106 @@
     <!-- Blog Preview (built by features.js from config.blogPosts) -->
     <section class="blog-section" id="blogSlot" style="background:#fff;">
       <div class="container">
-        <span class="section-label reveal">Tips & Inspiration</span>
+        <span class="section-label reveal">Tips & Resources</span>
         <h2 class="reveal">From Our Blog</h2>
         <div id="blogContainer" class="blog-grid" style="margin-top:22px;"></div>
       </div>
     </section>
 
-    <!-- CTA -->
-    <section id="book">
+    <!-- CONTACT FORM -->
+    <section id="contact" style="background:var(--light);">
       <div class="container">
-        <div class="cta-box reveal">
-          <h2 data-cfg="ctaTitle">Ready for Your Best Hair Day?</h2>
-          <p data-cfg="ctaText">New clients always welcome. Walk-ins based on availability.</p>
-          <a href="#" class="btn btn-main" data-cfg="ctaButton">Book Online</a>
-          <p style="margin-top:12px; font-size:.9rem;"><span data-cfg="ctaPhoneLabel">Or call us:</span> <a href="tel:+15125550147" style="color:#fff; text-decoration:underline;" data-cfg="ctaPhone" data-cfg-attr="href:phoneTelHref">(512) 555-0147</a></p>
+        <div class="form-grid reveal">
+          <div class="form-info">
+            <span class="section-label" data-cfg="contactLabel">Get In Touch</span>
+            <h2 data-cfg="contactTitle">Request Your Free Estimate</h2>
+            <p data-cfg="contactText">Fill out the form and one of our team members will get back to you within 2 hours during business hours &mdash; or call us directly for immediate assistance.</p>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div>
+                <strong>Phone</strong>
+                <a href="tel:+15125550388" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0388</a>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <strong>Email</strong>
+                <span data-cfg="email">info@austinhomepros.com</span>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <strong>Office</strong>
+                <span data-cfg="address">4710 S Lamar Blvd, Austin TX 78745</span>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <strong>Hours</strong>
+                <span data-cfg="hours">Mon&ndash;Sat 7am&ndash;6pm</span>
+              </div>
+            </div>
+          </div>
+          <form id="contactForm" action="#" method="post">
+            <h3 style="margin-bottom: 4px;">Get Your Free Estimate</h3>
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="John Smith">
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" required placeholder="(512) 555-0000">
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="john@example.com">
+            </div>
+            <div>
+              <label for="service">Service Needed</label>
+              <select id="service" name="service" required data-cfg-options="formServiceOptions">
+                <option value="">Select a service...</option>
+                <option>General Repairs</option>
+                <option>Kitchen &amp; Bath Remodeling</option>
+                <option>Drywall &amp; Painting</option>
+                <option>Deck &amp; Fence Building</option>
+                <option>Electrical &amp; Plumbing Fixes</option>
+                <option>Furniture Assembly &amp; Mounting</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="message">Describe your project</label>
+              <textarea id="message" name="message" placeholder="Tell us about your project..."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit" style="justify-content:center;">Request Free Estimate</button>
+            <small style="color:var(--muted); text-align:center;">We respond within 2 hours during business hours.</small>
+          </form>
         </div>
       </div>
     </section>
 
-    <!-- LOCATION -->
-    <section id="location" style="background:#fff;">
+    <!-- CTA BANNER -->
+    <section style="padding: 48px 0; background: var(--light);">
       <div class="container">
-        <span class="section-label reveal">Find Us</span>
-        <h2 class="reveal">Visit the Salon</h2>
-        <div id="mapSlot" style="margin-top:20px;border-radius:12px;overflow:hidden;"></div>
+        <div class="cta-banner reveal">
+          <h2 data-cfg="ctaTitle">Ready to Get Your Project Started?</h2>
+          <p data-cfg="ctaText">Free estimates on every job. Call today or fill out our form &mdash; we'll get back to you fast.</p>
+          <a href="tel:+15125550388" class="btn btn-primary" style="font-size:1.05rem;" data-cfg-attr="href:phoneTelHref">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span data-cfg="ctaButton">Call (512) 555-0388</span>
+          </a>
+        </div>
       </div>
     </section>
   </main>
@@ -237,25 +407,45 @@
     <div class="container">
       <div class="footer-grid">
         <div>
-          <h4 data-cfg="businessName">Velvet &amp; Vine Salon</h4>
-          <p style="font-size:.88rem; margin:0;" data-cfg="footerDescription">Austin's boutique salon for cuts, color, and care. Located on South Congress since 2018.</p>
+          <h4 data-cfg="businessName">Austin Home Pros</h4>
+          <p style="font-size:.88rem; margin:0;" data-cfg="footerDescription">Austin's trusted handyman and general contractor for over 12 years. Licensed, insured, and committed to quality craftsmanship on every job.</p>
         </div>
         <div>
-          <h4>Visit</h4>
-          <span style="font-size:.88rem;" data-cfg="address">2204 S Congress Ave</span><br>
-          <span style="font-size:.88rem;" data-cfg="addressLine2">Austin TX 78704</span><br>
-          <span style="font-size:.88rem;" data-cfg="hours">Tue&ndash;Sat 10am&ndash;7pm</span><br>
-          <span style="font-size:.88rem;" data-cfg="hoursSunday">Sun 11am&ndash;5pm</span>
+          <h4>Services</h4>
+          <div data-cfg-list="footerServices">
+            <a href="#services" data-cfg-item>General Repairs</a>
+            <a href="#services" data-cfg-item>Kitchen &amp; Bath Remodeling</a>
+            <a href="#services" data-cfg-item>Drywall &amp; Painting</a>
+            <a href="#services" data-cfg-item>Deck &amp; Fence Building</a>
+            <a href="#services" data-cfg-item>Electrical &amp; Plumbing</a>
+          </div>
         </div>
         <div>
-          <h4>Connect</h4>
-          <a href="#">Instagram</a><br>
-          <a href="tel:+15125550147" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0147</a><br>
-          <a href="#" data-cfg="email">hello@velvetandvine.com</a>
+          <h4>Contact</h4>
+          <a href="tel:+15125550388" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0388</a>
+          <a href="#" data-cfg="email" data-cfg-attr="href:emailHref">info@austinhomepros.com</a>
+          <span style="font-size:.88rem;" data-cfg="address">4710 S Lamar Blvd, Austin TX 78745</span>
+          <div style="display:flex;gap:12px;margin-top:12px;">
+            <a href="#" aria-label="Facebook" style="color:#8ab4a4;transition:color .2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="#" aria-label="Google" style="color:#8ab4a4;transition:color .2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            </a>
+            <a href="#" aria-label="Nextdoor" style="color:#8ab4a4;transition:color .2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-6h2v6zm4 0h-2v-6h2v6zm-3-8c-.83 0-1.5-.67-1.5-1.5S11.17 6 12 6s1.5.67 1.5 1.5S12.83 9 12 9z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Hours</h4>
+          <span style="font-size:.88rem;display:block;margin-bottom:4px;">Mon &ndash; Fri: 7am &ndash; 6pm</span>
+          <span style="font-size:.88rem;display:block;margin-bottom:4px;">Saturday: 8am &ndash; 4pm</span>
+          <span style="font-size:.88rem;display:block;margin-bottom:4px;">Sunday: Closed</span>
         </div>
       </div>
-      <div class="footer-bottom" data-cfg-html="footerLegal">
-        &copy; 2026 Velvet &amp; Vine Salon. All rights reserved.
+      <div class="footer-bottom">
+        <span data-cfg-html="footerLegal">&copy; 2026 Austin Home Pros. All rights reserved.</span>
       </div>
     </div>
   </footer>

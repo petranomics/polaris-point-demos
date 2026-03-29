@@ -1,143 +1,130 @@
-// Salon Demo — Site Configuration
+// Handyman Demo — Site Configuration
 // Edit this file to customize the site for a new prospect.
 // All business-specific content is defined here.
 window.SITE_CONFIG = {
 
   // === PAGE META ===
-  pageTitle: "Velvet & Vine Salon | Austin Hair Salon",
-  metaDescription: "Velvet & Vine Salon in Austin offers cuts, color, and care in a boutique South Congress-inspired space.",
+  pageTitle: "Austin Home Pros | Handyman & General Contractor",
+  metaDescription: "Austin Home Pros offers reliable handyman and general contractor services in Austin, TX. Licensed, insured, and ready for any home project.",
 
   // === IDENTITY ===
-  businessName: "Velvet & Vine Salon",
-  businessNameShort: "Velvet & Vine",
+  businessName: "Austin Home Pros",
+  businessNameShort: "Home Pros",
 
   // === CONTACT ===
-  phone: "(512) 555-0147",
-  phoneTelHref: "tel:+15125550147",
-  email: "hello@velvetandvine.com",
-  address: "2204 S Congress Ave",
-  addressLine2: "Austin TX 78704",
-  hours: "Tue\u2013Sat 10am\u20137pm",
-  hoursSunday: "Sun 11am\u20135pm",
+  phone: "(512) 555-0388",
+  phoneTelHref: "tel:+15125550388",
+  email: "info@austinhomepros.com",
+  emailHref: "mailto:info@austinhomepros.com",
+  address: "4710 S Lamar Blvd, Austin TX 78745",
+  hours: "Mon\u2013Sat 7am\u20136pm",
 
-  // === NAV ===
-  navBookBtn: "Book Appointment",
+  // === TOPBAR ===
+  topbarText: "Free Estimates \u00b7 Licensed & Insured",
 
   // === HERO ===
-  heroLabel: "Austin\u2019s Boutique Salon",
-  heroHeadline: "Your Best Hair Starts Here",
-  heroSubtext: "Cuts, color, and care by stylists who take the time to listen. Located on South Congress in the heart of Austin.",
-  heroImage: "https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  heroImageAlt: "Woman getting a professional haircut at a salon",
-  heroCta1: "Book Your Appointment",
-  heroCta2: "View Services",
+  heroHeadline: "Your Trusted Austin Handyman & Contractor",
+  heroSubtext: "From small repairs to full remodels, we handle every project with care. Licensed, insured, and backed by 12+ years of experience.",
+  heroImage: "https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  heroImageAlt: "Handyman performing home repair work",
+  heroCta1: "Call (512) 555-0388",
+  heroCta2: "Get a Free Estimate",
 
-  // === SERVICES / MENU (two-column menu with unique items, numbered individually) ===
-  servicesLabel: "What We Offer",
-  servicesTitle: "Services & Pricing",
+  // === TRUST BADGES ===
+  trustBadge1: "Licensed & Insured",
+  trustBadge2: "Background Checked",
+  trustBadge3: "Free Estimates",
+  trustBadge4: "Satisfaction Guaranteed",
 
-  // -- Cuts & Color column --
-  menuCol1Title: "Cuts & Color",
-  menuItem1Name: "Women\u2019s Haircut",
-  menuItem1Price: "$65\u2013$95",
-  menuItem2Name: "Men\u2019s Haircut",
-  menuItem2Price: "$40\u2013$55",
-  menuItem3Name: "Balayage / Highlights",
-  menuItem3Price: "$150\u2013$250",
-  menuItem4Name: "Full Color",
-  menuItem4Price: "$120\u2013$180",
-  menuItem5Name: "Color Correction",
-  menuItem5Price: "Starting at $200",
+  // === STATS BAR ===
+  stat1Number: "3,200+",
+  stat1Label: "Jobs Completed",
+  stat2Number: "12+",
+  stat2Label: "Years Experience",
+  stat3Number: "4.9",
+  stat3Label: "Google Rating",
+  stat4Number: "\u2713",
+  stat4Label: "Licensed & Insured",
 
-  // -- Styling & Care column --
-  menuCol2Title: "Styling & Care",
-  menuItem6Name: "Blowout",
-  menuItem6Price: "$55\u2013$75",
-  menuItem7Name: "Deep Conditioning",
-  menuItem7Price: "$45",
-  menuItem8Name: "Keratin Treatment",
-  menuItem8Price: "$250\u2013$350",
-  menuItem9Name: "Bridal / Special Event",
-  menuItem9Price: "Starting at $200",
-  menuItem10Name: "Extensions Consultation",
-  menuItem10Price: "Complimentary",
+  // === SERVICES ===
+  servicesLabel: "What We Do",
+  servicesTitle: "Our Handyman Services",
+  service1Name: "General Repairs",
+  service1Desc: "Leaky faucets, squeaky doors, broken fixtures \u2014 no job is too small. We handle the everyday repairs that keep your home running smoothly.",
+  service2Name: "Kitchen & Bath Remodeling",
+  service2Desc: "Transform your kitchen or bathroom with custom cabinetry, tile work, countertops, and modern fixtures installed right.",
+  service3Name: "Drywall & Painting",
+  service3Desc: "From patching holes to full interior repaints, we deliver clean lines and flawless finishes every time.",
+  service4Name: "Deck & Fence Building",
+  service4Desc: "Custom decks, pergolas, and fences built to last. We handle design, permits, and construction from start to finish.",
+  service5Name: "Electrical & Plumbing Fixes",
+  service5Desc: "Outlet replacements, light fixture installs, minor plumbing repairs, and more \u2014 handled safely and up to code.",
+  service6Name: "Furniture Assembly & Mounting",
+  service6Desc: "TV mounting, shelving, furniture assembly, and heavy item installation. We make sure everything is level, secure, and safe.",
 
-  // === ABOUT / STORY ===
-  aboutLabel: "Our Story",
-  aboutTitle: "Austin\u2019s Boutique Salon Since 2018",
-  aboutText1: "Velvet & Vine was created for clients who want great hair without the rushed salon experience. We start every appointment with a conversation, then tailor each cut, color, and treatment to your routine and style goals.",
-  aboutText2: "Our stylists blend technical training with Austin creativity. Whether you\u2019re refreshing your everyday look or getting ready for a special event, you\u2019ll leave with hair that feels effortless, polished, and genuinely you.",
-
-  // === TEAM (each has unique photo, numbered individually) ===
-  teamLabel: "The Team",
-  teamTitle: "Meet the Stylists",
-  team1Name: "Taylor R.",
-  team1Image: "https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=400",
-  team1ImageAlt: "Stylist Taylor R. working with a client",
-  team2Name: "Jade M.",
-  team2Image: "https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=400&h=540&fit=crop",
-  team2ImageAlt: "Stylist Jade M. at the salon",
-  team3Name: "Sofia L.",
-  team3Image: "https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=400",
-  team3ImageAlt: "Stylist Sofia L. coloring a client\u2019s hair",
+  // === ABOUT ===
+  aboutImage: "https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=800",
+  aboutImageAlt: "Handyman working on electrical repair",
+  aboutLabel: "Why Choose Us",
+  aboutTitle: "Austin Trusts Home Pros",
+  aboutText: "For over 12 years, we\u2019ve been the team Austin homeowners call when something breaks, needs upgrading, or when a weekend project turns into more than expected. Every technician is background-checked, licensed, and treats your home with the same care as their own.",
 
   // === FAMILY / TEAM PHOTO ===
   familyLabel: "Our Team",
-  familyTitle: "Meet the Family Behind the Work",
-  familyText: "We're a family-owned business built on trust, hard work, and treating every customer like a neighbor. When you call us, you're not getting a faceless corporation — you're getting people who care.",
+  familyTitle: "Meet the Crew Behind the Work",
+  familyText: "We\u2019re a locally owned team built on trust, craftsmanship, and treating every customer like a neighbor. When you call us, you\u2019re not getting a faceless corporation \u2014 you\u2019re getting skilled pros who take pride in every project.",
   familyPhoto: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800",
-  familyPhotoAlt: "Our team",
+  familyPhotoAlt: "The Austin Home Pros team",
 
-  // === GALLERY (each has unique photo, numbered individually) ===
-  galleryLabel: "Our Work",
-  galleryTitle: "Style Gallery",
-  gallery1Image: "https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop",
-  gallery1Alt: "Hair coloring service in progress",
-  gallery1Label: "Color & Highlights",
-  gallery2Image: "https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop",
-  gallery2Alt: "Stylist cutting hair with scissors",
-  gallery2Label: "Precision Cut",
-  gallery3Image: "https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop",
-  gallery3Alt: "Stylist blow drying client\u2019s hair",
-  gallery3Label: "Blowout",
-  gallery4Image: "https://images.pexels.com/photos/6487882/pexels-photo-6487882.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop",
-  gallery4Alt: "Close-up detail of hair cutting",
-  gallery4Label: "Detail Work",
-  gallery5Image: "https://images.pexels.com/photos/8467969/pexels-photo-8467969.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop",
-  gallery5Alt: "Flat iron styling service",
-  gallery5Label: "Keratin & Styling",
-  gallery6Image: "https://images.pexels.com/photos/7440054/pexels-photo-7440054.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop",
-  gallery6Alt: "Full service color and styling",
-  gallery6Label: "Full Service Color",
+  // === WHY CARDS ===
+  why1Title: "Same-Day Service",
+  why1Text: "Most jobs scheduled within 24\u201348 hours. Same-day available for urgent repairs.",
+  why2Title: "Upfront Pricing",
+  why2Text: "Transparent quotes before work starts. No hidden fees or surprise charges.",
+  why3Title: "Satisfaction Guaranteed",
+  why3Text: "Not happy with the work? We\u2019ll come back and make it right at no extra cost.",
 
-  // === REVIEWS (identical structure, uses data-cfg-list) ===
-  reviewsLabel: "Client Love",
-  reviewsTitle: "What Clients Are Saying",
+  // === REVIEWS ===
+  reviewsLabel: "Testimonials",
+  reviewsTitle: "What Our Customers Say",
   reviews: [
     {
-      text: "I\u2019ve been coming here for 2 years and Taylor always knows exactly what I want. The color grows out beautifully every time.",
-      attribution: "&mdash; Andrea K."
+      text: "Had a long list of small repairs \u2014 leaky faucet, sticking doors, a few drywall patches. They knocked it all out in one visit and the pricing was exactly what they quoted. Will definitely call again.",
+      attribution: "Rachel M. &middot; Cedar Park &middot; Feb 2026"
     },
     {
-      text: "Jade fixed a bad color correction from another salon and made me feel so comfortable through the whole process.",
-      attribution: "&mdash; Melissa J."
+      text: "Austin Home Pros built us a beautiful backyard deck. They handled the permit, showed up on time every day, and the craftsmanship is outstanding. Our neighbors keep asking who did the work.",
+      attribution: "David & Lisa K. &middot; Round Rock &middot; Jan 2026"
     },
     {
-      text: "Warm team, gorgeous space, and Sofia gave me the best blowout I\u2019ve had in Austin. Highly recommend.",
-      attribution: "&mdash; Carina P."
+      text: "I needed my entire downstairs repainted before selling my house. They were fast, clean, and the result looks like a brand-new home. Highly recommend for any painting project.",
+      attribution: "Sandra T. &middot; Lakeway &middot; Dec 2025"
     }
   ],
 
-  // === CTA ===
-  ctaTitle: "Ready for Your Best Hair Day?",
-  ctaText: "New clients always welcome. Walk-ins based on availability.",
-  ctaButton: "Book Online",
-  ctaPhoneLabel: "Or call us:",
-  ctaPhone: "(512) 555-0147",
+  // === SERVICE AREA ===
+  serviceAreaLabel: "Coverage Area",
+  serviceAreaTitle: "Serving Austin & Surrounding Communities",
+  serviceAreaText: "Our fully equipped service trucks cover Austin and all surrounding areas. Whether you\u2019re in the city or the suburbs, a skilled handyman is never far away.",
+  serviceAreaImage: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800",
+  serviceAreaImageAlt: "Beautiful Austin neighborhood home",
+  serviceAreas: ["Austin", "Round Rock", "Cedar Park", "Pflugerville", "Georgetown", "Lakeway", "Bee Cave"],
+
+  // === CONTACT FORM ===
+  contactLabel: "Get In Touch",
+  contactTitle: "Request Your Free Estimate",
+  contactText: "Fill out the form and one of our team members will get back to you within 2 hours during business hours \u2014 or call us directly for immediate assistance.",
+  formServiceOptions: ["General Repairs", "Kitchen & Bath Remodeling", "Drywall & Painting", "Deck & Fence Building", "Electrical & Plumbing Fixes", "Furniture Assembly & Mounting", "Other"],
+
+  // === CTA BANNER ===
+  ctaTitle: "Ready to Get Your Project Started?",
+  ctaText: "Free estimates on every job. Call today or fill out our form \u2014 we\u2019ll get back to you fast.",
+  ctaButton: "Call (512) 555-0388",
 
   // === FOOTER ===
-  footerDescription: "Austin\u2019s boutique salon for cuts, color, and care. Located on South Congress since 2018.",
-  footerLegal: "&copy; 2026 Velvet & Vine Salon. All rights reserved.",
+  footerDescription: "Austin\u2019s trusted handyman and general contractor for over 12 years. Licensed, insured, and committed to quality craftsmanship on every job.",
+  footerLegal: "&copy; 2026 Austin Home Pros. All rights reserved.",
+  footerServices: ["General Repairs", "Kitchen & Bath Remodeling", "Drywall & Painting", "Deck & Fence Building", "Electrical & Plumbing"],
 
   // === FEATURE FLAGS ===
   features: {
@@ -165,60 +152,60 @@ window.SITE_CONFIG = {
   },
 
   // === GOOGLE REVIEWS ===
-  googleReviewsRating: "4.8",
-  googleReviewsCount: "248",
+  googleReviewsRating: "4.9",
+  googleReviewsCount: "387",
   googleReviewsUrl: "",
 
   // === ENGAGEMENT ===
-  smsNumber: "5125550147",
+  smsNumber: "5125550388",
   whatsappNumber: "",
   calcomUrl: "",
 
   exitIntent: {
-    headline: "Wait \u2014 Get $20 Off Your First Color Service",
-    text: "New to Velvet & Vine? Book your first color appointment today and save.",
+    headline: "Wait \u2014 Get $50 Off Your First Service",
+    text: "New to Austin Home Pros? Book your first handyman visit today and save.",
     cta: "Claim My Discount",
-    ctaUrl: "#book"
+    ctaUrl: "#contact"
   },
 
   urgencyBanner: {
-    text: "\u2728 Spring Special: Free deep conditioning with any color service \u2014 limited time",
+    text: "\ud83d\udee0\ufe0f Spring Special: 10% off deck & fence builds through June \u2014 limited time",
     endDate: "2026-06-30"
   },
 
   // === FAQ ===
   faqs: [
-    { question: "How do I book an appointment?", answer: "You can book online through our website or call us at (512) 555-0147. We recommend booking at least a week in advance for color services." },
-    { question: "What is your cancellation policy?", answer: "We ask for at least 24 hours\u2019 notice for cancellations or rescheduling. Late cancellations or no-shows may be subject to a fee." },
-    { question: "How much does a haircut or color cost?", answer: "Haircuts start at $40 for men and $65 for women. Color services range from $120 for full color to $250+ for balayage. We provide a personalized quote during your consultation." },
-    { question: "Do you accept walk-ins?", answer: "We do accept walk-ins based on availability, but appointments are strongly recommended to guarantee your preferred stylist and time slot." },
-    { question: "What hair products do you use?", answer: "We use professional-grade, salon-exclusive products including Olaplex, Redken, and Kevin Murphy. Our stylists can recommend take-home products tailored to your hair type." },
-    { question: "Do you offer bridal or special event styling?", answer: "Yes! We offer bridal and event styling packages starting at $200. We recommend a trial session 2\u20134 weeks before your event. Contact us to discuss your vision." }
+    { question: "How much do handyman services cost?", answer: "Pricing depends on the scope of work. Small repairs typically start at $150, while larger projects like remodeling are quoted individually. We always provide a free, upfront estimate before any work begins." },
+    { question: "How long does a typical project take?", answer: "Most small repairs and installations are completed in 1\u20133 hours. Larger projects like deck builds or bathroom remodels may take several days. We\u2019ll give you a clear timeline during the estimate." },
+    { question: "Do you handle permits for larger projects?", answer: "Yes. For projects that require city permits \u2014 like deck construction, electrical work, or remodeling \u2014 we handle the entire permitting process so you don\u2019t have to." },
+    { question: "Do you provide the materials or do I need to buy them?", answer: "We can handle materials for you, or you\u2019re welcome to purchase them yourself. If we source materials, we pass along our contractor pricing with no markup." },
+    { question: "Are you licensed and insured?", answer: "Absolutely. Austin Home Pros is fully licensed, bonded, and insured. Every team member is background-checked for your peace of mind." },
+    { question: "Is there a minimum job size?", answer: "No minimum. We\u2019re happy to help with anything from hanging a TV to a full kitchen remodel. No job is too small or too large for our team." }
   ],
 
   // === SERVICE AREA MAP ===
-  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3446.2!2d-97.7508!3d30.2462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b5a6b1b1b1b1%3A0x1234567890abcdef!2s2204%20S%20Congress%20Ave%2C%20Austin%2C%20TX%2078704!5e0!3m2!1sen!2sus!4v1",
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d220984.4538498842!2d-97.89379895!3d30.3076863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b599a0cc032f%3A0x5d9b464bd469d57a!2sAustin%2C%20TX!5e0!3m2!1sen!2sus!4v1",
 
   // === BLOG POSTS ===
   blogPosts: [
     {
-      title: "How to Keep Your Color Vibrant Between Visits",
-      excerpt: "Simple tips from our stylists to extend the life of your balayage, highlights, or full color between salon appointments.",
-      image: "https://images.pexels.com/photos/3993311/pexels-photo-3993311.jpeg?auto=compress&cs=tinysrgb&w=600",
+      title: "10 Home Repairs You Shouldn\u2019t Put Off This Spring",
+      excerpt: "From caulking windows to fixing that wobbly railing, here are the spring maintenance tasks that save you money long-term.",
+      image: "https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
     {
-      title: "5 Spring Hair Trends We're Loving in Austin",
-      excerpt: "From warm copper tones to soft curtain bangs, here are the styles our clients are asking for this season.",
-      image: "https://images.pexels.com/photos/3356170/pexels-photo-3356170.jpeg?auto=compress&cs=tinysrgb&w=600",
+      title: "DIY vs. Hiring a Pro: When to Call a Handyman",
+      excerpt: "Some projects are weekend warriors material. Others need a licensed pro. Here\u2019s how to know the difference and avoid costly mistakes.",
+      image: "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },
     {
-      title: "The Truth About Heat Damage (And How to Fix It)",
-      excerpt: "Our stylists break down what heat damage really looks like and share their go-to repair treatments.",
-      image: "https://images.pexels.com/photos/7440133/pexels-photo-7440133.jpeg?auto=compress&cs=tinysrgb&w=600",
+      title: "How to Plan a Kitchen Remodel on a Budget",
+      excerpt: "A kitchen upgrade doesn\u2019t have to break the bank. Our contractors share smart strategies for getting the most out of your remodel budget.",
+      image: "https://images.pexels.com/photos/6444260/pexels-photo-6444260.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
@@ -226,26 +213,32 @@ window.SITE_CONFIG = {
 
   // === TRUST BAR LOGOS ===
   trustLogos: [
-    { src: "", alt: "Olaplex Partner Salon" },
-    { src: "", alt: "Redken Elite Salon" },
-    { src: "", alt: "Google 4.8 Stars" },
-    { src: "", alt: "Best of Austin 2025" },
-    { src: "", alt: "Kevin Murphy Salon" }
+    { src: "", alt: "Licensed & Insured" },
+    { src: "", alt: "BBB A+ Rated" },
+    { src: "", alt: "HomeAdvisor Approved" },
+    { src: "", alt: "Google Guaranteed" },
+    { src: "", alt: "Angi Certified" }
   ],
+
+  // === THEME ===
+  theme: {
+    primary: "#1B4332",
+    accent: "#D4A03C"
+  },
 
   // === SEO ===
   canonicalUrl: "",
-  ogImage: "https://images.pexels.com/photos/3993453/pexels-photo-3993453.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ogImage: "https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1200",
   geoRegion: "US-TX",
   geoPlacename: "Austin",
-  geoPosition: "30.2462;-97.7508",
+  geoPosition: "30.2672;-97.7431",
   schema: {
     type: "LocalBusiness",
-    additionalType: "HairSalon",
+    additionalType: "HomeAndConstructionBusiness",
     priceRange: "$$",
-    foundingDate: "2018",
-    areaServed: ["Austin, TX", "South Congress, TX", "Travis Heights, TX", "Zilker, TX", "Bouldin Creek, TX"],
-    openingHours: ["Tu-Sa 10:00-19:00", "Su 11:00-17:00"]
+    foundingDate: "2014",
+    areaServed: ["Austin, TX", "Round Rock, TX", "Cedar Park, TX", "Pflugerville, TX", "Georgetown, TX", "Lakeway, TX", "Bee Cave, TX"],
+    openingHours: ["Mo-Sa 07:00-18:00"]
   },
 
   // === ANALYTICS (empty = disabled) ===
