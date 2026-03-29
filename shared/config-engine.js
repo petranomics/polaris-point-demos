@@ -9,11 +9,11 @@
   // Version check: clear stale overrides when template is updated
   try {
     var _v = localStorage.getItem('pp_config_version');
-    if (_v !== '2') {
+    if (_v !== '3') {
       Object.keys(localStorage).forEach(function(k) {
         if (k.startsWith('pp_config_') && k !== 'pp_config_version') localStorage.removeItem(k);
       });
-      localStorage.setItem('pp_config_version', '2');
+      localStorage.setItem('pp_config_version', '3');
     }
   } catch(e) {}
   try {
