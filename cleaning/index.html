@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-cfg="pageTitle">Crystal Clear Cleaning Co. | Austin House Cleaning</title>
+  <meta name="description" data-cfg-attr="content:metaDescription" content="Crystal Clear Cleaning Co. provides professional house cleaning, deep cleaning, and maid services in Austin, TX. Eco-friendly products, background-checked staff." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/features.css">
+  <link rel="stylesheet" href="/cleaning/styles.css">
+</head>
+<body>
+  <!-- DEMO BANNER -->
+  <div class="demo-banner">This is a <strong>Polaris Point</strong> demo website. Want one like this for your business? <a href="/">Get a free quote &rarr;</a></div>
+
+  <div class="topbar">
+    <div class="container topbar-wrap">
+      <span data-cfg="topbarText">Book Online & Get 15% Off Your First Clean</span>
+      <a href="tel:+15125550275" data-cfg-attr="href:phoneTelHref">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span data-cfg="phone">(512) 555-0275</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Urgency Banner (injected by features.js if configured) -->
+  <div id="urgencyBannerSlot"></div>
+
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a href="#top" class="logo">
+        <span class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </span>
+        <span data-cfg="businessNameShort">Crystal Clear</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="nav-cta">Free Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO with real photo background -->
+    <section class="hero">
+      <div class="hero-bg">
+        <img data-cfg-attr="src:heroImage,alt:heroImageAlt" src="https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Professional cleaner wiping down a bright kitchen counter" loading="eager">
+      </div>
+      <div class="container hero-content reveal">
+        <h1 data-cfg="heroHeadline">A Spotless Home Without Lifting a Finger</h1>
+        <p data-cfg="heroSubtext">Professional cleaning services in Austin, TX. Background-checked teams, eco-friendly products, and a satisfaction guarantee on every visit.</p>
+        <div class="btn-row">
+          <a href="tel:+15125550275" class="btn btn-primary" data-cfg-attr="href:phoneTelHref">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span data-cfg="heroCta1">Call (512) 555-0275</span>
+          </a>
+          <a href="#contact" class="btn btn-secondary" data-cfg="heroCta2">Get a Free Quote</a>
+        </div>
+        <div class="trust-checklist">
+          <span class="trust-check-item" data-cfg="trustBadge1">&#10003; Licensed &amp; Insured</span>
+          <span class="trust-check-item" data-cfg="trustBadge2">&#10003; Eco-Friendly</span>
+          <span class="trust-check-item" data-cfg="trustBadge3">&#10003; Background Checked</span>
+          <span class="trust-check-item" data-cfg="trustBadge4">&#10003; 100% Satisfaction</span>
+          <div id="googleBadgeSlot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar-section" id="trustBarSlot" style="padding:20px 0;background:#fff;"></section>
+
+    <!-- SERVICES -->
+    <section id="services" class="services-section">
+      <div class="container">
+        <span class="section-label reveal" data-cfg="servicesLabel">What We Do</span>
+        <h2 class="reveal" data-cfg="servicesTitle">Our Cleaning Services</h2>
+        <div class="grid-2col" style="margin-top:22px;">
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <h3 data-cfg="service1Name">House Cleaning</h3>
+            <p data-cfg="service1Desc">Thorough top-to-bottom cleaning of your entire home — kitchens, bathrooms, bedrooms, and living areas.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <h3 data-cfg="service2Name">Deep Cleaning</h3>
+            <p data-cfg="service2Desc">Intensive scrub-down that tackles grease, grime, and buildup in every corner of your home.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/4239031/pexels-photo-4239031.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <h3 data-cfg="service3Name">Move-In/Move-Out Cleaning</h3>
+            <p data-cfg="service3Desc">Get your deposit back or start fresh. We leave the space spotless for the next chapter.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <h3 data-cfg="service4Name">Office Cleaning</h3>
+            <p data-cfg="service4Desc">Keep your workspace professional and hygienic with scheduled commercial cleaning services.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/5591475/pexels-photo-5591475.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <h3 data-cfg="service5Name">Post-Construction Cleanup</h3>
+            <p data-cfg="service5Desc">Dust, debris, and residue removed after renovations so your new space is move-in ready.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+          <article class="card reveal card-popular" style="background-image:url('https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <span class="popular-badge">Most Popular</span>
+            <h3 data-cfg="service6Name">Recurring Maid Service</h3>
+            <p data-cfg="service6Desc">Weekly, biweekly, or monthly visits tailored to your schedule. Consistent team, consistent results.</p>
+            <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works">
+      <div class="container">
+        <span class="section-label reveal">Simple Process</span>
+        <h2 class="reveal">How It Works</h2>
+        <div class="steps-row reveal">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Book Online</h3>
+            <p>Pick your service, choose a date, and get an instant quote in under 60 seconds.</p>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>We Clean</h3>
+            <p>Our background-checked team arrives on time with eco-friendly supplies and gets to work.</p>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>You Relax</h3>
+            <p>Come home to a spotless space. Not satisfied? We'll re-clean at no extra charge.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING PREVIEW -->
+    <section class="pricing-preview">
+      <div class="container">
+        <span class="section-label reveal">Transparent Pricing</span>
+        <h2 class="reveal">Simple, Honest Pricing</h2>
+        <p class="reveal" style="color:var(--muted);max-width:520px;">Every home is different, but here's where our most popular services start. Get an exact quote in minutes.</p>
+        <div class="pricing-grid reveal">
+          <div class="pricing-card">
+            <h3>Standard Clean</h3>
+            <div class="pricing-price">$149</div>
+            <span class="pricing-note">starting at</span>
+            <ul class="pricing-features">
+              <li>All rooms dusted &amp; vacuumed</li>
+              <li>Kitchen &amp; bath sanitized</li>
+              <li>Floors mopped</li>
+            </ul>
+            <a href="#contact" class="btn btn-secondary" style="color:var(--blue);border-color:var(--blue);">Get a Quote</a>
+          </div>
+          <div class="pricing-card pricing-card-featured">
+            <span class="popular-badge">Best Value</span>
+            <h3>Deep Clean</h3>
+            <div class="pricing-price">$249</div>
+            <span class="pricing-note">starting at</span>
+            <ul class="pricing-features">
+              <li>Everything in Standard</li>
+              <li>Inside appliances &amp; cabinets</li>
+              <li>Baseboards &amp; light fixtures</li>
+              <li>Window sills &amp; blinds</li>
+            </ul>
+            <a href="#contact" class="btn btn-primary">Get a Quote</a>
+          </div>
+          <div class="pricing-card">
+            <h3>Move-In / Move-Out</h3>
+            <div class="pricing-price">$349</div>
+            <span class="pricing-note">starting at</span>
+            <ul class="pricing-features">
+              <li>Everything in Deep Clean</li>
+              <li>Inside all closets &amp; storage</li>
+              <li>Garage sweep-out</li>
+            </ul>
+            <a href="#contact" class="btn btn-secondary" style="color:var(--blue);border-color:var(--blue);">Get a Quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="stats-bar">
+      <div class="container stats-grid">
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat1Number">1,800+</span>
+          <span class="stat-label" data-cfg="stat1Label">Homes Cleaned</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat2Number">10+</span>
+          <span class="stat-label" data-cfg="stat2Label">Years Experience</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat3Number">4.8</span>
+          <span class="stat-label" data-cfg="stat3Label">Google Rating</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat4Number">100%</span>
+          <span class="stat-label" data-cfg="stat4Label">Satisfaction</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT with real photo -->
+    <section id="about" style="background:#fff;">
+      <div class="container split reveal">
+        <div class="split-img">
+          <img class="lightbox-trigger" data-cfg-attr="src:aboutImage,alt:aboutImageAlt" src="https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Professional cleaner in a bright modern home" loading="lazy">
+        </div>
+        <div>
+          <span class="section-label" data-cfg="aboutLabel">Why Choose Us</span>
+          <h2 data-cfg="aboutTitle">Austin&rsquo;s Most Trusted Cleaning Team</h2>
+          <p style="color:var(--muted);" data-cfg="aboutText">For over a decade, Crystal Clear has been the cleaning company Austin homeowners call when they want it done right. Every team member is background-checked, trained to our standards, and equipped with eco-friendly products that are safe for kids, pets, and the planet.</p>
+          <div class="why-grid" style="margin-top:18px;">
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div>
+                <h3 data-cfg="why1Title">Same-Week Booking</h3>
+                <p data-cfg="why1Text">Need a cleaning fast? Most first-time appointments are available within the week.</p>
+              </div>
+            </div>
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <h3 data-cfg="why2Title">Transparent Pricing</h3>
+                <p data-cfg="why2Text">Flat-rate quotes upfront based on home size. No hidden fees, no surprises.</p>
+              </div>
+            </div>
+            <div class="why-card">
+              <div class="why-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <h3 data-cfg="why3Title">100% Satisfaction Guarantee</h3>
+                <p data-cfg="why3Text">Not happy? We'll come back and re-clean the area at no extra charge.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Family / Team Photo -->
+    <section id="family" class="family-section" style="background:#fff;">
+      <div class="container">
+        <div class="split" style="align-items:center;">
+          <div class="split-img">
+            <img id="familyPhotoImg" data-cfg-attr="src:familyPhoto,alt:familyPhotoAlt" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Our cleaning team" loading="lazy" style="border-radius:12px;">
+          </div>
+          <div>
+            <span class="section-label" data-cfg="familyLabel">Our Team</span>
+            <h2 data-cfg="familyTitle">Meet the Family Behind the Clean</h2>
+            <p style="color:var(--muted,#5a6f8f);" data-cfg="familyText">We're a family-owned business built on trust, attention to detail, and treating every home like our own. When you book with us, you get real people who take pride in their work — not a faceless franchise.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS — pull-quote featured style -->
+    <section id="reviews" class="reviews-section">
+      <div class="container">
+        <span class="section-label reveal" data-cfg="reviewsLabel">Testimonials</span>
+        <h2 class="reveal" data-cfg="reviewsTitle">What Our Clients Say</h2>
+        <div id="reviewsContainer" style="margin-top:22px;" data-cfg-list="reviews">
+          <article class="pull-quote reveal">
+            <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <blockquote data-cfg-item="text">Crystal Clear has been cleaning our home biweekly for over a year. They're thorough, on time, and the same team shows up every visit. Our house has never looked better.</blockquote>
+            <h3 data-cfg-item-html="attribution">Sarah K. &middot; Cedar Park &middot; Feb 2026</h3>
+          </article>
+          <div class="reviews-supporting-grid">
+            <article class="review-card reveal">
+              <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+              <p data-cfg-item="text">We hired them for a move-out clean and got our full deposit back. They cleaned things I didn't even think to ask about. Highly recommend.</p>
+              <h3 data-cfg-item-html="attribution">David R. &middot; Round Rock &middot; Jan 2026</h3>
+            </article>
+            <article class="review-card reveal">
+              <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+              <p data-cfg-item="text">I was nervous about letting strangers into my home, but the background-check policy and the eco-friendly products gave me peace of mind. The results speak for themselves.</p>
+              <h3 data-cfg-item-html="attribution">Michelle T. &middot; Lakeway &middot; Dec 2025</h3>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DARK PHOTO CTA SECTION -->
+    <section class="dark-photo-section" style="background-image:url('https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=1600');">
+      <div class="container" style="text-align:center;padding:60px 0;">
+        <h2 class="reveal" style="color:#fff;font-size:1.8rem;max-width:600px;margin:0 auto 16px;" data-cfg="darkCtaHeadline">Spotless Homes. Happy Families. Every Time.</h2>
+        <p class="reveal" style="color:rgba(255,255,255,.75);max-width:500px;margin:0 auto 24px;" data-cfg="darkCtaText">We treat every home like it's our own. That's been our standard since day one.</p>
+        <a href="#contact" class="btn btn-primary reveal" data-cfg="darkCtaCta">Book Your Clean</a>
+      </div>
+    </section>
+
+    <!-- SERVICE AREA with real photo -->
+    <section style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal" data-cfg="serviceAreaLabel">Coverage Area</span>
+        <h2 class="reveal" data-cfg="serviceAreaTitle">Serving Austin &amp; Surrounding Communities</h2>
+        <div class="split reveal" style="margin-top:20px;">
+          <div>
+            <p style="color:var(--muted);" data-cfg="serviceAreaText">From downtown condos to suburban homes, our cleaning teams cover all of Greater Austin. Fully equipped, fully insured, and always on time.</p>
+            <div class="area-tags" data-cfg-list="serviceAreas">
+              <span class="area-tag" data-cfg-item>Austin</span>
+              <span class="area-tag" data-cfg-item>Round Rock</span>
+              <span class="area-tag" data-cfg-item>Cedar Park</span>
+              <span class="area-tag" data-cfg-item>Pflugerville</span>
+              <span class="area-tag" data-cfg-item>Georgetown</span>
+              <span class="area-tag" data-cfg-item>Lakeway</span>
+            </div>
+            <div id="mapSlot" style="margin-top:20px;border-radius:12px;overflow:hidden;"></div>
+          </div>
+          <div class="area-img">
+            <img class="lightbox-trigger" data-cfg-attr="src:serviceAreaImage,alt:serviceAreaImageAlt" src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beautiful Austin neighborhood we serve" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT FORM (moved above FAQ for quick booking) -->
+    <section id="contact" style="background:var(--light);">
+      <div class="container">
+        <div class="form-grid reveal">
+          <div class="form-info">
+            <span class="section-label" data-cfg="contactLabel">Get In Touch</span>
+            <h2 data-cfg="contactTitle">Request Your Free Quote</h2>
+            <p data-cfg="contactText">Fill out the form and we'll send you a customized quote within 2 hours during business hours &mdash; or call us directly to book your first clean.</p>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div>
+                <strong>Phone</strong>
+                <a href="tel:+15125550275" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0275</a>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <strong>Email</strong>
+                <span data-cfg="email">hello@crystalclearcleaning.com</span>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <strong>Office</strong>
+                <span data-cfg="address">4200 S Lamar Blvd, Austin TX 78745</span>
+              </div>
+            </div>
+            <div class="form-contact-item">
+              <div class="form-contact-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <strong>Hours</strong>
+                <span data-cfg="hours">Mon&ndash;Sat 7am&ndash;6pm</span>
+              </div>
+            </div>
+          </div>
+          <form id="contactForm" action="#" method="post">
+            <h3 style="margin-bottom: 4px;">Get Your Free Quote</h3>
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="Jane Smith">
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" required placeholder="(512) 555-0000">
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="jane@example.com">
+            </div>
+            <div>
+              <label for="service">Service Needed</label>
+              <select id="service" name="service" required data-cfg-options="formServiceOptions">
+                <option value="">Select a service...</option>
+                <option>House Cleaning</option>
+                <option>Deep Cleaning</option>
+                <option>Move-In/Move-Out Cleaning</option>
+                <option>Office Cleaning</option>
+                <option>Post-Construction Cleanup</option>
+                <option>Recurring Maid Service</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="message">Tell us about your space</label>
+              <textarea id="message" name="message" placeholder="Number of bedrooms/bathrooms, any special requests..."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit" style="justify-content:center;">Request Free Quote</button>
+            <small style="color:var(--muted); text-align:center;">We respond within 2 hours during business hours.</small>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion (built by features.js from config.faqs) -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <span class="section-label reveal">Common Questions</span>
+        <h2 class="reveal">Frequently Asked Questions</h2>
+        <div id="faqContainer" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
+    <!-- Blog Preview (built by features.js from config.blogPosts) -->
+    <section class="blog-section" id="blogSlot" style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal">Tips & Resources</span>
+        <h2 class="reveal">From Our Blog</h2>
+        <div id="blogContainer" class="blog-grid" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section style="padding: 48px 0; background: var(--light);">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <h2 data-cfg="ctaTitle">Ready for a Cleaner Home?</h2>
+          <p data-cfg="ctaText">Book your first cleaning today and see why 1,800+ Austin homes trust Crystal Clear.</p>
+          <a href="tel:+15125550275" class="btn btn-primary" style="font-size:1.05rem;" data-cfg-attr="href:phoneTelHref">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span data-cfg="ctaButton">Call (512) 555-0275</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4 data-cfg="businessName">Crystal Clear Cleaning Co.</h4>
+          <p style="font-size:.88rem; margin:0;" data-cfg="footerDescription">Austin's trusted cleaning company for over 10 years. Licensed, insured, and committed to a spotless finish every time.</p>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <div data-cfg-list="footerServices">
+            <a href="#services" data-cfg-item>House Cleaning</a>
+            <a href="#services" data-cfg-item>Deep Cleaning</a>
+            <a href="#services" data-cfg-item>Move-In/Out Cleaning</a>
+            <a href="#services" data-cfg-item>Office Cleaning</a>
+            <a href="#services" data-cfg-item>Recurring Maid Service</a>
+          </div>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="tel:+15125550275" data-cfg="phone" data-cfg-attr="href:phoneTelHref">(512) 555-0275</a>
+          <a href="#" data-cfg="email" data-cfg-attr="href:emailHref">hello@crystalclearcleaning.com</a>
+          <span style="font-size:.88rem;" data-cfg="address">4200 S Lamar Blvd, Austin TX 78745</span>
+          <div style="display:flex;gap:12px;margin-top:12px;">
+            <a href="#" aria-label="Facebook" style="color:#8aa4c4;transition:color .2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="#" aria-label="Google" style="color:#8aa4c4;transition:color .2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram" style="color:#8aa4c4;transition:color .2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Hours</h4>
+          <span style="font-size:.88rem;display:block;margin-bottom:4px;">Mon &ndash; Fri: 7am &ndash; 6pm</span>
+          <span style="font-size:.88rem;display:block;margin-bottom:4px;">Saturday: 8am &ndash; 4pm</span>
+          <span style="font-size:.88rem;display:block;margin-bottom:4px;">Sunday: Closed</span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span data-cfg-html="footerLegal">&copy; 2026 Crystal Clear Cleaning Co. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/cleaning/config.js"></script>
+  <script src="/shared/config-engine.js"></script>
+  <script src="/shared/features.js"></script>
+  <script src="/shared/schema-generator.js"></script>
+</body>
+</html>
