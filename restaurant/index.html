@@ -63,23 +63,11 @@
           </a>
           <a href="#contact" class="btn btn-secondary" data-cfg="heroCta2">Get a Free Quote</a>
         </div>
-        <div class="trust-strip">
-          <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            <span data-cfg="trustBadge1">Licensed &amp; Insured</span>
-          </div>
-          <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg>
-            <span data-cfg="trustBadge2">Background Checked</span>
-          </div>
-          <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-            <span data-cfg="trustBadge3">Eco-Friendly Products</span>
-          </div>
-          <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-cfg="trustBadge4">Satisfaction Guaranteed</span>
-          </div>
+        <div class="trust-checklist">
+          <span class="trust-check-item" data-cfg="trustBadge1">&#10003; Licensed &amp; Insured</span>
+          <span class="trust-check-item" data-cfg="trustBadge2">&#10003; Eco-Friendly</span>
+          <span class="trust-check-item" data-cfg="trustBadge3">&#10003; Background Checked</span>
+          <span class="trust-check-item" data-cfg="trustBadge4">&#10003; 100% Satisfaction</span>
           <div id="googleBadgeSlot"></div>
         </div>
       </div>
@@ -93,7 +81,7 @@
       <div class="container">
         <span class="section-label reveal" data-cfg="servicesLabel">What We Do</span>
         <h2 class="reveal" data-cfg="servicesTitle">Our Cleaning Services</h2>
-        <div class="grid" style="margin-top:22px;">
+        <div class="grid-2col" style="margin-top:22px;">
           <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=600');">
             <h3 data-cfg="service1Name">House Cleaning</h3>
             <p data-cfg="service1Desc">Thorough top-to-bottom cleaning of your entire home — kitchens, bathrooms, bedrooms, and living areas.</p>
@@ -119,11 +107,107 @@
             <p data-cfg="service5Desc">Dust, debris, and residue removed after renovations so your new space is move-in ready.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
-          <article class="card reveal" style="background-image:url('https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=600');">
+          <article class="card reveal card-popular" style="background-image:url('https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=600');">
+            <span class="popular-badge">Most Popular</span>
             <h3 data-cfg="service6Name">Recurring Maid Service</h3>
             <p data-cfg="service6Desc">Weekly, biweekly, or monthly visits tailored to your schedule. Consistent team, consistent results.</p>
             <a class="card-link" href="#contact">Get a quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works">
+      <div class="container">
+        <span class="section-label reveal">Simple Process</span>
+        <h2 class="reveal">How It Works</h2>
+        <div class="steps-row reveal">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Book Online</h3>
+            <p>Pick your service, choose a date, and get an instant quote in under 60 seconds.</p>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>We Clean</h3>
+            <p>Our background-checked team arrives on time with eco-friendly supplies and gets to work.</p>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>You Relax</h3>
+            <p>Come home to a spotless space. Not satisfied? We'll re-clean at no extra charge.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING PREVIEW -->
+    <section class="pricing-preview">
+      <div class="container">
+        <span class="section-label reveal">Transparent Pricing</span>
+        <h2 class="reveal">Simple, Honest Pricing</h2>
+        <p class="reveal" style="color:var(--muted);max-width:520px;">Every home is different, but here's where our most popular services start. Get an exact quote in minutes.</p>
+        <div class="pricing-grid reveal">
+          <div class="pricing-card">
+            <h3>Standard Clean</h3>
+            <div class="pricing-price">$149</div>
+            <span class="pricing-note">starting at</span>
+            <ul class="pricing-features">
+              <li>All rooms dusted &amp; vacuumed</li>
+              <li>Kitchen &amp; bath sanitized</li>
+              <li>Floors mopped</li>
+            </ul>
+            <a href="#contact" class="btn btn-secondary" style="color:var(--blue);border-color:var(--blue);">Get a Quote</a>
+          </div>
+          <div class="pricing-card pricing-card-featured">
+            <span class="popular-badge">Best Value</span>
+            <h3>Deep Clean</h3>
+            <div class="pricing-price">$249</div>
+            <span class="pricing-note">starting at</span>
+            <ul class="pricing-features">
+              <li>Everything in Standard</li>
+              <li>Inside appliances &amp; cabinets</li>
+              <li>Baseboards &amp; light fixtures</li>
+              <li>Window sills &amp; blinds</li>
+            </ul>
+            <a href="#contact" class="btn btn-primary">Get a Quote</a>
+          </div>
+          <div class="pricing-card">
+            <h3>Move-In / Move-Out</h3>
+            <div class="pricing-price">$349</div>
+            <span class="pricing-note">starting at</span>
+            <ul class="pricing-features">
+              <li>Everything in Deep Clean</li>
+              <li>Inside all closets &amp; storage</li>
+              <li>Garage sweep-out</li>
+            </ul>
+            <a href="#contact" class="btn btn-secondary" style="color:var(--blue);border-color:var(--blue);">Get a Quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="stats-bar">
+      <div class="container stats-grid">
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat1Number">1,800+</span>
+          <span class="stat-label" data-cfg="stat1Label">Homes Cleaned</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat2Number">10+</span>
+          <span class="stat-label" data-cfg="stat2Label">Years Experience</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat3Number">4.8</span>
+          <span class="stat-label" data-cfg="stat3Label">Google Rating</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-number" data-cfg="stat4Number">100%</span>
+          <span class="stat-label" data-cfg="stat4Label">Satisfaction</span>
         </div>
       </div>
     </section>
@@ -171,28 +255,6 @@
       </div>
     </section>
 
-    <!-- STATS BAR -->
-    <section class="stats-bar">
-      <div class="container stats-grid">
-        <div class="stat-item reveal">
-          <span class="stat-number" data-cfg="stat1Number">1,800+</span>
-          <span class="stat-label" data-cfg="stat1Label">Homes Cleaned</span>
-        </div>
-        <div class="stat-item reveal">
-          <span class="stat-number" data-cfg="stat2Number">10+</span>
-          <span class="stat-label" data-cfg="stat2Label">Years Experience</span>
-        </div>
-        <div class="stat-item reveal">
-          <span class="stat-number" data-cfg="stat3Number">4.8</span>
-          <span class="stat-label" data-cfg="stat3Label">Google Rating</span>
-        </div>
-        <div class="stat-item reveal">
-          <span class="stat-number" data-cfg="stat4Number">100%</span>
-          <span class="stat-label" data-cfg="stat4Label">Satisfaction</span>
-        </div>
-      </div>
-    </section>
-
     <!-- Family / Team Photo -->
     <section id="family" class="family-section" style="background:#fff;">
       <div class="container">
@@ -209,27 +271,29 @@
       </div>
     </section>
 
-    <!-- REVIEWS -->
+    <!-- REVIEWS — pull-quote featured style -->
     <section id="reviews" class="reviews-section">
       <div class="container">
         <span class="section-label reveal" data-cfg="reviewsLabel">Testimonials</span>
         <h2 class="reveal" data-cfg="reviewsTitle">What Our Clients Say</h2>
-        <div class="grid" id="reviewsContainer" style="margin-top:22px;" data-cfg-list="reviews">
-          <article class="review-card reveal">
+        <div id="reviewsContainer" style="margin-top:22px;" data-cfg-list="reviews">
+          <article class="pull-quote reveal">
             <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p data-cfg-item="text">Crystal Clear has been cleaning our home biweekly for over a year. They're thorough, on time, and the same team shows up every visit. Our house has never looked better.</p>
+            <blockquote data-cfg-item="text">Crystal Clear has been cleaning our home biweekly for over a year. They're thorough, on time, and the same team shows up every visit. Our house has never looked better.</blockquote>
             <h3 data-cfg-item-html="attribution">Sarah K. &middot; Cedar Park &middot; Feb 2026</h3>
           </article>
-          <article class="review-card reveal">
-            <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p data-cfg-item="text">We hired them for a move-out clean and got our full deposit back. They cleaned things I didn't even think to ask about. Highly recommend.</p>
-            <h3 data-cfg-item-html="attribution">David R. &middot; Round Rock &middot; Jan 2026</h3>
-          </article>
-          <article class="review-card reveal">
-            <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p data-cfg-item="text">I was nervous about letting strangers into my home, but the background-check policy and the eco-friendly products gave me peace of mind. The results speak for themselves.</p>
-            <h3 data-cfg-item-html="attribution">Michelle T. &middot; Lakeway &middot; Dec 2025</h3>
-          </article>
+          <div class="reviews-supporting-grid">
+            <article class="review-card reveal">
+              <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+              <p data-cfg-item="text">We hired them for a move-out clean and got our full deposit back. They cleaned things I didn't even think to ask about. Highly recommend.</p>
+              <h3 data-cfg-item-html="attribution">David R. &middot; Round Rock &middot; Jan 2026</h3>
+            </article>
+            <article class="review-card reveal">
+              <p class="stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+              <p data-cfg-item="text">I was nervous about letting strangers into my home, but the background-check policy and the eco-friendly products gave me peace of mind. The results speak for themselves.</p>
+              <h3 data-cfg-item-html="attribution">Michelle T. &middot; Lakeway &middot; Dec 2025</h3>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -268,25 +332,7 @@
       </div>
     </section>
 
-    <!-- FAQ Accordion (built by features.js from config.faqs) -->
-    <section class="faq-section" id="faq">
-      <div class="container">
-        <span class="section-label reveal">Common Questions</span>
-        <h2 class="reveal">Frequently Asked Questions</h2>
-        <div id="faqContainer" style="margin-top:22px;"></div>
-      </div>
-    </section>
-
-    <!-- Blog Preview (built by features.js from config.blogPosts) -->
-    <section class="blog-section" id="blogSlot" style="background:#fff;">
-      <div class="container">
-        <span class="section-label reveal">Tips & Resources</span>
-        <h2 class="reveal">From Our Blog</h2>
-        <div id="blogContainer" class="blog-grid" style="margin-top:22px;"></div>
-      </div>
-    </section>
-
-    <!-- CONTACT FORM -->
+    <!-- CONTACT FORM (moved above FAQ for quick booking) -->
     <section id="contact" style="background:var(--light);">
       <div class="container">
         <div class="form-grid reveal">
@@ -366,6 +412,24 @@
             <small style="color:var(--muted); text-align:center;">We respond within 2 hours during business hours.</small>
           </form>
         </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion (built by features.js from config.faqs) -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <span class="section-label reveal">Common Questions</span>
+        <h2 class="reveal">Frequently Asked Questions</h2>
+        <div id="faqContainer" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
+    <!-- Blog Preview (built by features.js from config.blogPosts) -->
+    <section class="blog-section" id="blogSlot" style="background:#fff;">
+      <div class="container">
+        <span class="section-label reveal">Tips & Resources</span>
+        <h2 class="reveal">From Our Blog</h2>
+        <div id="blogContainer" class="blog-grid" style="margin-top:22px;"></div>
       </div>
     </section>
 

@@ -1,5 +1,6 @@
 /* ============================================
    Austin Home Pros — Site Styles (Earthy Theme)
+   Rugged / Contractor Portfolio
    ============================================ */
 
 :root {
@@ -42,6 +43,11 @@ body {
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; letter-spacing: -.01em; margin-top: 0; }
 .container { width: min(100% - 2rem, var(--max)); margin-inline: auto; }
 section { padding: 64px 0; }
+
+/* Alternating section backgrounds for visual texture */
+.section-alt {
+  background: #eef2ea;
+}
 
 /* DEMO BANNER */
 .demo-banner {
@@ -128,13 +134,13 @@ section { padding: 64px 0; }
 }
 .nav-cta:hover { background: var(--amber-light) !important; transform: translateY(-1px); }
 
-/* HERO */
+/* HERO — heavier, darker overlay, bolder weight */
 .hero {
   position: relative;
   color: #fff;
   padding: 0;
   overflow: hidden;
-  min-height: 520px;
+  min-height: 540px;
   display: grid;
   align-items: center;
 }
@@ -153,7 +159,7 @@ section { padding: 64px 0; }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(15,43,31,.92) 40%, rgba(27,67,50,.7) 100%);
+  background: linear-gradient(135deg, rgba(10,28,20,.95) 40%, rgba(27,67,50,.75) 100%);
 }
 .hero-content {
   position: relative;
@@ -162,12 +168,39 @@ section { padding: 64px 0; }
 }
 .hero h1 {
   font-size: clamp(2.1rem, 5vw, 3.4rem);
-  font-weight: 800;
+  font-weight: 900;
   margin-bottom: 12px;
   max-width: 16ch;
-  line-height: 1.1;
+  line-height: 1.08;
 }
 .hero p { margin-top: 0; color: #b8d4c3; font-size: 1.1rem; max-width: 48ch; }
+
+/* Hero phone number — prominent display */
+.hero-phone {
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+.hero-phone-label {
+  display: block;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,.6);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.hero-phone-number {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 900;
+  color: var(--amber);
+  text-decoration: none;
+  letter-spacing: .02em;
+  transition: color .2s;
+}
+.hero-phone-number:hover {
+  color: var(--amber-light);
+}
 
 .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
 .btn {
@@ -204,6 +237,18 @@ section { padding: 64px 0; }
 }
 .trust-item svg { color: #6dd47e; flex-shrink: 0; }
 
+/* LICENSE BANNER */
+.license-banner {
+  background: var(--forest-dark);
+  color: rgba(255,255,255,.85);
+  text-align: center;
+  padding: 10px 0;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  border-bottom: 2px solid var(--amber);
+}
+
 /* SERVICES */
 .section-label {
   text-transform: uppercase;
@@ -224,7 +269,14 @@ section { padding: 64px 0; }
   gap: 18px;
 }
 
-/* SERVICE CARDS — photo-backed */
+/* Masonry-style grid */
+.masonry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+/* SERVICE CARDS — photo-backed with masonry heights */
 .card {
   position: relative;
   border-radius: 12px;
@@ -240,11 +292,17 @@ section { padding: 64px 0; }
   box-shadow: 0 4px 20px rgba(0,0,0,.12);
   transition: transform .3s, box-shadow .3s;
 }
+.card-tall {
+  min-height: 280px;
+}
+.card-short {
+  min-height: 180px;
+}
 .card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.75) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,.1) 100%);
+  background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.25) 55%, rgba(0,0,0,.15) 100%);
   z-index: 1;
 }
 .card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.2); }
@@ -307,9 +365,9 @@ section { padding: 64px 0; }
 .why-card h3 { font-size: .95rem; margin-bottom: 4px; }
 .why-card p { color: var(--muted); font-size: .9rem; margin: 0; }
 
-/* STATS BAR */
+/* STATS BAR — dark green with amber/white */
 .stats-bar {
-  background: var(--forest-dark);
+  background: #0d3321;
   padding: 48px 0;
 }
 .stats-grid {
@@ -329,16 +387,97 @@ section { padding: 64px 0; }
 }
 .stat-label {
   font-size: .85rem;
-  color: rgba(255,255,255,.7);
+  color: rgba(255,255,255,.85);
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
 }
 
-/* REVIEWS */
+/* PROJECT GALLERY — 2x2 grid with hover overlays */
+.project-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.project-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  cursor: pointer;
+}
+.project-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+.project-item:hover img {
+  transform: scale(1.05);
+}
+.project-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,28,20,.85) 0%, rgba(10,28,20,.2) 50%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.project-item:hover .project-overlay {
+  opacity: 1;
+}
+.project-overlay span {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+}
+.project-overlay small {
+  color: var(--amber-light);
+  font-weight: 600;
+  font-size: .85rem;
+}
+
+/* REVIEWS — 3 side by side (not carousel) */
 .reviews-section {
   background: var(--light);
   position: relative;
+}
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.google-rating-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #d4e4d4;
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+.google-rating-badge strong {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.google-rating-badge span {
+  display: block;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.reviews-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
 }
 .review-card {
   background: #fff;
@@ -373,7 +512,7 @@ section { padding: 64px 0; }
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(15, 43, 31, .85);
+  background: rgba(10, 28, 20, .88);
 }
 .dark-photo-section > * { position: relative; z-index: 1; }
 
@@ -470,6 +609,19 @@ textarea { min-height: 100px; resize: vertical; }
 .cta-banner h2 { color: #fff; margin-bottom: 8px; }
 .cta-banner p { color: #a8c8b4; margin-bottom: 20px; }
 
+/* TRUST BAR */
+.trust-bar-section {
+  background: #fff !important;
+}
+
+/* REVEAL ANIMATION */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .65s ease, transform .65s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
 footer {
   background: #0a1c14;
   color: #8eb3a0;
@@ -499,13 +651,20 @@ footer {
   section { padding: 48px 0; }
   .split, .form-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
-  .hero { min-height: 420px; }
+  .hero { min-height: 440px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
   .dark-photo-section { background-attachment: scroll; }
+  .reviews-row { grid-template-columns: 1fr; }
+  .project-gallery { grid-template-columns: 1fr; }
+  .project-overlay { opacity: 1; }
+  .masonry-grid { grid-template-columns: 1fr; }
+  .card-tall, .card-short { min-height: 200px; }
+  .reviews-header { flex-direction: column; }
 }
 
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .stat-number { font-size: 1.8rem; }
+  .hero-phone-number { font-size: 1.4rem; }
 }
