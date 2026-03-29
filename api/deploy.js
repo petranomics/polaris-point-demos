@@ -111,6 +111,7 @@ module.exports = async function handler(req, res) {
       'shared/config-engine.js',
       'shared/features.js',
       'shared/features.css',
+      'shared/schema-generator.js',
       'shared/site-admin.js',
       'shared/site-admin.css',
       'favicon.svg'
