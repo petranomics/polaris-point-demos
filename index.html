@@ -197,6 +197,114 @@
       height: 28px;
       filter: drop-shadow(0 0 6px var(--blue));
     }
+
+    /* ============ STAR FLY-IN INTRO ============ */
+    .logo-star.star-intro svg {
+      animation: starFlyIn 1.8s cubic-bezier(.22,.61,.36,1) forwards;
+      transform-style: preserve-3d;
+    }
+    .logo > span:last-child {
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .logo.star-intro-active > span:last-child {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    .logo.star-intro-done > span:last-child {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Shockwave ring */
+    .star-shockwave {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 28px;
+      height: 28px;
+      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      border: 1.5px solid var(--blue);
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 0 12px var(--blue);
+    }
+    .star-shockwave.fire {
+      animation: shockwave .8s ease-out forwards;
+    }
+    .star-shockwave.ring2 {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+    .star-shockwave.ring2.fire {
+      animation: shockwave .9s .08s ease-out forwards;
+    }
+
+    /* Lens flare */
+    .star-flare {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 1.5px;
+      width: 0;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(90deg, transparent, rgba(91,141,239,.5), #fff, rgba(91,141,239,.5), transparent);
+      border-radius: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .star-flare.fire {
+      animation: lensFlare 1.2s .4s ease-out forwards;
+    }
+
+    /* Glow pulse after landing */
+    .logo-star.star-settled svg {
+      animation: starGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes starFlyIn {
+      0% {
+        transform: translate(60vw, -60vh) scale(4) rotateY(180deg) rotateX(-45deg);
+        filter: drop-shadow(0 0 20px var(--blue)) drop-shadow(0 0 40px rgba(91,141,239,.4));
+        opacity: 0;
+      }
+      8% {
+        opacity: 1;
+      }
+      35% {
+        transform: translate(15vw, -15vh) scale(2.5) rotateY(540deg) rotateX(20deg);
+        filter: drop-shadow(0 0 30px var(--blue)) drop-shadow(0 0 50px rgba(91,141,239,.5));
+      }
+      65% {
+        transform: translate(0, 0) scale(1.3) rotateY(340deg) rotateX(-8deg);
+        filter: drop-shadow(0 0 15px var(--blue)) drop-shadow(0 0 30px rgba(91,141,239,.3));
+      }
+      85% {
+        transform: translate(0, 0) scale(1.05) rotateY(365deg) rotateX(2deg);
+      }
+      100% {
+        transform: translate(0, 0) scale(1) rotateY(360deg) rotateX(0deg);
+        filter: drop-shadow(0 0 6px var(--blue));
+        opacity: 1;
+      }
+    }
+
+    @keyframes shockwave {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: .6; }
+      100% { transform: translate(-50%, -50%) scale(5); opacity: 0; }
+    }
+
+    @keyframes lensFlare {
+      0% { width: 0; opacity: 0; }
+      20% { width: 200px; opacity: .7; }
+      50% { width: 120px; opacity: .4; }
+      100% { width: 0; opacity: 0; }
+    }
+
+    @keyframes starGlow {
+      0% { filter: drop-shadow(0 0 4px var(--blue)); }
+      100% { filter: drop-shadow(0 0 10px var(--blue)) drop-shadow(0 0 20px rgba(91,141,239,.25)); }
+    }
     .nav-links {
       display: flex;
       align-items: center;
@@ -609,11 +717,14 @@
   <!-- Header -->
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="logo" href="#top" aria-label="Polaris Point home">
-        <span class="logo-star">
+      <a class="logo star-intro-active" href="#top" aria-label="Polaris Point home">
+        <span class="logo-star star-intro">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/>
           </svg>
+          <div class="star-shockwave" id="shockwave1"></div>
+          <div class="star-shockwave ring2" id="shockwave2"></div>
+          <div class="star-flare" id="starFlare"></div>
         </span>
         <span>Polaris Point</span>
       </a>
@@ -892,6 +1003,37 @@
   </footer>
 
   <script>
+    // Star fly-in intro
+    (function() {
+      var logo = document.querySelector('.logo');
+      var star = document.querySelector('.logo-star');
+      var sw1 = document.getElementById('shockwave1');
+      var sw2 = document.getElementById('shockwave2');
+      var flare = document.getElementById('starFlare');
+
+      // Fire shockwaves + flare when star arrives (~65% of 1.8s = 1.17s)
+      setTimeout(function() {
+        sw1.classList.add('fire');
+        sw2.classList.add('fire');
+        flare.classList.add('fire');
+      }, 1100);
+
+      // Show text when star settles (~85% of 1.8s = 1.53s)
+      setTimeout(function() {
+        logo.classList.remove('star-intro-active');
+        logo.classList.add('star-intro-done');
+      }, 1400);
+
+      // Clean up: remove intro classes, switch to subtle idle glow
+      setTimeout(function() {
+        star.classList.remove('star-intro');
+        star.classList.add('star-settled');
+        sw1.remove();
+        sw2.remove();
+        flare.remove();
+      }, 2600);
+    })();
+
     // Scroll reveal
     var revealObs = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
