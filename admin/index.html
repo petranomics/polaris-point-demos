@@ -2849,10 +2849,12 @@
         }
         status.style.background = 'rgba(22,163,74,.08)';
         status.style.color = '#16a34a';
-        status.textContent = 'Changes applied. Hit "Re-Preview" to see the updated site.';
+        status.textContent = 'Changes applied! Generating new preview...';
         document.getElementById('aiPrompt').value = '';
         btn.disabled = false;
         btn.textContent = 'Apply Changes';
+        // Auto-preview with the updated config
+        previewSite();
       })
       .catch(function(err) {
         status.style.background = 'rgba(239,68,68,.08)';
