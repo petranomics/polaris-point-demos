@@ -2301,6 +2301,9 @@
           merged.city = yelp.city;
           merged.state = yelp.state;
         }
+        // Ensure reviews array exists
+        if (!merged.reviews) merged.reviews = [];
+
         if (google) {
           if (!merged.name) merged.name = google.name;
           if (!merged.address) merged.address = google.address;
@@ -2308,16 +2311,18 @@
           if (google.website) merged.website = google.website;
           if (google.hoursFormatted && !merged.hoursFormatted) merged.hoursFormatted = google.hoursFormatted;
           if (!merged.rating && google.rating) { merged.rating = google.rating; merged.reviewCount = google.reviewCount; }
-          // Merge reviews from both sources (deduplicate by author)
+          // Google reviews have full text — use them as primary, add Yelp as supplement
           if (google.reviews && google.reviews.length) {
-            var existing = {};
-            (merged.reviews || []).forEach(function(r) { existing[r.author] = true; });
-            google.reviews.forEach(function(r) {
-              if (!existing[r.author]) merged.reviews.push(r);
+            var googleReviews = google.reviews;
+            var yelpOnly = merged.reviews.filter(function(r) {
+              return !googleReviews.some(function(g) { return g.author === r.author; });
             });
+            merged.reviews = googleReviews.concat(yelpOnly);
           }
           if (google.mapsUrl) merged.mapsUrl = google.mapsUrl;
         }
+
+        console.log('Merged reviews:', merged.reviews ? merged.reviews.length : 0, merged.reviews);
 
         // Show initial results immediately
         showResult(merged, listDiv);
