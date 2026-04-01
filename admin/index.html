@@ -351,22 +351,24 @@
       background: #111827;
       border-radius: 10px;
       padding: 4px;
-      max-width: 400px;
+      max-width: 680px;
       margin-left: auto;
       margin-right: auto;
+      flex-wrap: wrap;
     }
     .admin-tab {
       flex: 1;
-      padding: 10px 20px;
+      padding: 10px 14px;
       border: none;
       border-radius: 8px;
       background: transparent;
       color: #64748b;
       font-family: 'Inter', sans-serif;
-      font-size: .8rem;
+      font-size: .75rem;
       font-weight: 600;
       cursor: pointer;
       transition: all .2s;
+      white-space: nowrap;
     }
     .admin-tab.active {
       background: #5B8DEF;
@@ -374,6 +376,430 @@
     }
     .admin-tab:not(.active):hover {
       color: #94a3b8;
+    }
+    .admin-tab.senior-only { display: none; }
+    body.role-senior .admin-tab.senior-only { display: block; }
+
+    /* Role badge */
+    .role-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .role-badge.senior { background: rgba(212,168,83,.15); color: #D4A853; }
+    .role-badge.junior { background: rgba(91,141,239,.15); color: #5B8DEF; }
+
+    /* Gated feature overlay */
+    .gated-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(8,12,22,.85);
+      backdrop-filter: blur(4px);
+      border-radius: 14px;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      color: #64748b;
+      font-size: .85rem;
+      text-align: center;
+      padding: 20px;
+    }
+    .gated-overlay svg { opacity: .4; }
+    body:not(.role-senior) .gated-overlay { display: flex; }
+
+    /* Sales content styles */
+    .sales-section {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .sales-card {
+      background: #111827;
+      border: 1px solid rgba(91,141,239,.12);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .sales-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: .95rem;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .sales-card p, .sales-card li {
+      color: #94a3b8;
+      font-size: .85rem;
+      line-height: 1.7;
+    }
+    .sales-card ul { padding-left: 18px; margin: 8px 0; }
+    .sales-card li { margin-bottom: 6px; }
+    .sales-card .highlight {
+      color: #5B8DEF;
+      font-weight: 600;
+    }
+    .sales-card .gold { color: #D4A853; font-weight: 600; }
+
+    /* ============ FULLSCREEN SLIDE DECK ============ */
+    .deck-launcher {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .deck-launcher p {
+      color: #64748b;
+      font-size: .85rem;
+      margin-bottom: 20px;
+    }
+    .deck-launch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: linear-gradient(135deg, #5B8DEF 0%, #4A6FD4 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(91,141,239,.3);
+    }
+    .deck-launch-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(91,141,239,.4); }
+
+    .slide-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #050D1E;
+      flex-direction: column;
+    }
+    .slide-overlay.active { display: flex; }
+
+    .slide-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 80px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity .4s ease;
+    }
+    .slide.active { display: flex; opacity: 1; }
+
+    .slide .slide-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 24px;
+      opacity: .9;
+    }
+    .slide h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+      max-width: 800px;
+    }
+    .slide h2 .accent { color: #D4A853; }
+    .slide h2 .blue { color: #5B8DEF; }
+    .slide .slide-subtitle {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: #9BB0D4;
+      max-width: 650px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .slide .slide-points {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      max-width: 600px;
+      width: 100%;
+    }
+    .slide .slide-points li {
+      font-size: clamp(.85rem, 1.5vw, 1.05rem);
+      color: #cbd5e1;
+      line-height: 1.7;
+      padding: 8px 0 8px 28px;
+      position: relative;
+    }
+    .slide .slide-points li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #5B8DEF;
+      box-shadow: 0 0 8px rgba(91,141,239,.4);
+    }
+    .slide .slide-points li .hl { color: #5B8DEF; font-weight: 600; }
+    .slide .slide-points li .gl { color: #D4A853; font-weight: 600; }
+
+    .slide .slide-stat {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 800;
+      color: #5B8DEF;
+      line-height: 1;
+      margin-bottom: 12px;
+      text-shadow: 0 0 40px rgba(91,141,239,.3);
+    }
+    .slide .slide-stat.gold { color: #D4A853; text-shadow: 0 0 40px rgba(212,168,83,.3); }
+
+    /* Slide background effects */
+    .slide .slide-bg-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      opacity: .15;
+      pointer-events: none;
+      filter: blur(80px);
+    }
+
+    /* Slide nav */
+    .slide-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: rgba(11,17,32,.9);
+      border-top: 1px solid rgba(91,141,239,.1);
+    }
+    .slide-nav-btn {
+      padding: 10px 24px;
+      background: rgba(91,141,239,.1);
+      border: 1px solid rgba(91,141,239,.2);
+      border-radius: 8px;
+      color: #5B8DEF;
+      font-family: 'Inter', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .slide-nav-btn:hover { background: rgba(91,141,239,.2); }
+    .slide-nav-btn:disabled { opacity: .3; cursor: default; }
+    .slide-nav-btn.close-btn { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.2); color: #ef4444; }
+    .slide-nav-btn.close-btn:hover { background: rgba(239,68,68,.2); }
+    .slide-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .slide-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: none;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+      padding: 0;
+    }
+    .slide-dot.active { background: #5B8DEF; transform: scale(1.3); box-shadow: 0 0 8px rgba(91,141,239,.4); }
+    .slide-logo {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1;
+    }
+    .slide-logo svg { width: 24px; height: 24px; filter: drop-shadow(0 0 6px rgba(91,141,239,.4)); }
+    .slide-logo span { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .85rem; color: rgba(255,255,255,.5); }
+
+    /* Offer tiers */
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .offer-tier {
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color .2s, transform .2s;
+    }
+    .offer-tier:hover { border-color: rgba(91,141,239,.3); transform: translateY(-2px); }
+    .offer-tier.featured { border-color: #D4A853; }
+    .offer-tier .price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 8px 0;
+    }
+    .offer-tier .tier-name {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #5B8DEF;
+      font-weight: 700;
+    }
+    .offer-tier.featured .tier-name { color: #D4A853; }
+    .offer-tier ul {
+      text-align: left;
+      padding-left: 14px;
+      margin: 12px 0 0;
+    }
+    .offer-tier li {
+      color: #94a3b8;
+      font-size: .78rem;
+      line-height: 1.7;
+      margin-bottom: 4px;
+    }
+
+    /* Script box */
+    .script-box {
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      font-size: .84rem;
+      line-height: 1.8;
+      color: #cbd5e1;
+    }
+    .script-box .speaker {
+      font-weight: 700;
+      color: #5B8DEF;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 4px;
+      margin-top: 12px;
+    }
+    .script-box .speaker:first-child { margin-top: 0; }
+
+    /* Lead management */
+    .lead-card {
+      background: #0B1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+      transition: border-color .2s;
+    }
+    .lead-card:hover { border-color: rgba(91,141,239,.25); }
+    .lead-card .lead-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .lead-card .lead-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: .9rem;
+    }
+    .lead-rank {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .lead-rank.hot { background: rgba(239,68,68,.15); color: #ef4444; }
+    .lead-rank.warm { background: rgba(245,158,11,.15); color: #f59e0b; }
+    .lead-rank.cold { background: rgba(100,116,139,.15); color: #64748b; }
+    .lead-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .lead-detail {
+      font-size: .78rem;
+      color: #64748b;
+    }
+    .lead-detail span { color: #94a3b8; display: block; }
+    .lead-stage {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .lead-stage-step {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: #1e293b;
+    }
+    .lead-stage-step.done { background: #5B8DEF; }
+    .lead-stage-step.active { background: #D4A853; }
+    .lead-notes textarea {
+      width: 100%;
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: .8rem;
+      min-height: 50px;
+      resize: vertical;
+      outline: none;
+    }
+    .lead-notes textarea:focus { border-color: #5B8DEF; }
+
+    /* Sales step cards */
+    .step-card {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .step-num-lg {
+      background: #5B8DEF;
+      color: #fff;
+      min-width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+    .step-content h4 {
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+      font-size: .9rem;
+      margin-bottom: 4px;
+    }
+    .step-content p {
+      color: #94a3b8;
+      font-size: .82rem;
+      line-height: 1.6;
     }
 
     /* Intake Form */
@@ -548,23 +974,493 @@
     <div style="background:#111827;border:1px solid rgba(91,141,239,.12);border-radius:14px;padding:36px;width:320px;text-align:center;">
       <svg viewBox="0 0 24 24" fill="none" style="width:36px;height:36px;margin-bottom:12px;filter:drop-shadow(0 0 6px rgba(91,141,239,.4));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
       <h2 style="font-family:'Outfit',sans-serif;font-size:1rem;color:#fff;margin-bottom:4px;">Polaris Point</h2>
-      <p style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:#D4A853;margin-bottom:24px;">Admin Portal</p>
-      <input type="password" id="loginPass" placeholder="Password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
-      <button onclick="doLogin()" style="width:100%;margin-top:10px;background:#5B8DEF;color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">Sign In</button>
-      <p id="loginError" style="color:#f44336;font-size:.72rem;margin-top:10px;display:none;">Incorrect password</p>
+      <p style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:#D4A853;margin-bottom:16px;">Admin Portal</p>
+
+      <!-- Sign In form -->
+      <div id="loginForm">
+        <input type="text" id="loginUser" placeholder="Username" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
+        <input type="password" id="loginPass" placeholder="Password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
+        <button onclick="doLogin()" style="width:100%;margin-top:10px;background:#5B8DEF;color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">Sign In</button>
+        <p style="color:#475569;font-size:.72rem;margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="toggleSignUp()">New team member? Create an account</p>
+      </div>
+
+      <!-- Sign Up form (hidden) -->
+      <div id="signUpForm" style="display:none;">
+        <input type="text" id="signUpUser" placeholder="Choose a username" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
+        <input type="text" id="signUpFullName" placeholder="Your full name" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
+        <input type="password" id="signUpPass" placeholder="Create a password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
+        <input type="password" id="signUpPassConfirm" placeholder="Confirm password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doSignUp()">
+        <button onclick="doSignUp()" style="width:100%;margin-top:10px;background:#D4A853;color:#0B1120;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">Create Account</button>
+        <p style="color:#475569;font-size:.72rem;margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="toggleSignUp()">Already have an account? Sign in</p>
+      </div>
+
+      <p id="loginError" style="color:#f44336;font-size:.72rem;margin-top:10px;display:none;"></p>
     </div>
   </div>
 
   <!-- ADMIN CONTENT (hidden until login) -->
   <div id="adminContent" style="display:none;">
-  <h1>Polaris Point Admin</h1>
+  <h1>Polaris Point Admin <span id="roleBadge" class="role-badge"></span></h1>
+  <p id="welcomeUser" style="text-align:center;color:#475569;font-size:.75rem;margin-bottom:4px;"></p>
   <div class="admin-tabs">
-    <button class="admin-tab active" onclick="switchTab('intake')">Client Onboarding</button>
-    <button class="admin-tab" onclick="switchTab('cards')">Business Cards</button>
+    <button class="admin-tab active" onclick="switchTab('deck')">Sales Deck</button>
+    <button class="admin-tab" onclick="switchTab('offers')">Offers</button>
+    <button class="admin-tab" onclick="switchTab('guide')">Sales Guide</button>
+    <button class="admin-tab" onclick="switchTab('leads')">My Leads</button>
+    <button class="admin-tab" onclick="switchTab('intake')">Site Builder</button>
+    <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
   </div>
 
-  <!-- INTAKE TAB -->
-  <div id="tabIntake" class="tab-content">
+  <!-- SALES DECK TAB -->
+  <div id="tabDeck" class="tab-content">
+    <div class="deck-launcher">
+      <svg viewBox="0 0 24 24" fill="none" style="width:48px;height:48px;margin-bottom:16px;filter:drop-shadow(0 0 10px rgba(91,141,239,.4));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      <h2 style="font-family:'Outfit',sans-serif;color:#fff;font-size:1.3rem;margin-bottom:6px;">Polaris Point Sales Deck</h2>
+      <p>Present this fullscreen to your prospect. Use arrow keys or click to navigate.</p>
+      <button class="deck-launch-btn" onclick="openDeck()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Launch Presentation
+      </button>
+      <p style="color:#334155;font-size:.75rem;margin-top:16px;">Tip: Press <kbd style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#94a3b8;">F</kbd> for fullscreen, <kbd style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#94a3b8;">Esc</kbd> to exit</p>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN SLIDE DECK OVERLAY -->
+  <div id="slideDeck" class="slide-overlay">
+    <div class="slide-viewport">
+
+      <!-- Slide 0: Title -->
+      <div class="slide active">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(91,141,239,.3),transparent);top:30%;left:50%;transform:translate(-50%,-50%);"></div>
+        <svg viewBox="0 0 24 24" fill="none" style="width:80px;height:80px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(91,141,239,.5));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+        <h2>Your <span class="accent">North Star</span> to Digital&nbsp;Success</h2>
+        <p class="slide-subtitle">How a professional web presence drives organic customers, builds trust, and closes more contracts.</p>
+        <p style="color:#475569;font-size:.85rem;letter-spacing:2px;text-transform:uppercase;margin-top:24px;">Polaris Point</p>
+      </div>
+
+      <!-- Slide 1: The Problem -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(239,68,68,.15),transparent);top:40%;right:10%;"></div>
+        <div class="slide-stat gold">97%</div>
+        <h2>of customers search online <span class="blue">before</span> they ever call</h2>
+        <p class="slide-subtitle">If your business doesn't show up, your competitors get the call instead.</p>
+      </div>
+
+      <!-- Slide 2: Invisible -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(212,168,83,.15),transparent);top:50%;left:20%;"></div>
+        <div class="slide-stat">70-80%</div>
+        <h2>of potential customers <span class="accent">lost</span> without a website</h2>
+        <p class="slide-subtitle">A Facebook page or Google listing alone isn't enough. Customers expect a professional web presence to trust your business.</p>
+      </div>
+
+      <!-- Slide 3: Own Your Story -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(91,141,239,.2),transparent);top:30%;left:50%;transform:translate(-50%,0);"></div>
+        <svg class="slide-icon" viewBox="0 0 24 24" fill="none" stroke="#5B8DEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <h2>Tell Your Story, <span class="accent">Your Way</span></h2>
+        <ul class="slide-points">
+          <li>Social media controls your reach — a website is the <span class="hl">only channel you fully own</span></li>
+          <li>Showcase services, reviews, and your unique value with <span class="gl">no character limits</span></li>
+          <li>Build instant trust with professional design, testimonials, and licensing</li>
+          <li>Your website is a <span class="hl">24/7 salesperson</span> — generating leads while you sleep</li>
+        </ul>
+      </div>
+
+      <!-- Slide 4: SEO -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(91,141,239,.2),transparent);top:20%;right:20%;"></div>
+        <svg class="slide-icon" viewBox="0 0 24 24" fill="none" stroke="#D4A853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <h2>Drive <span class="accent">Organic Traffic</span> with SEO</h2>
+        <ul class="slide-points">
+          <li><span class="gl">SEO-optimized copy</span> targeting the exact keywords your customers search</li>
+          <li>Schema markup so Google shows your business with <span class="hl">stars, hours, and phone number</span></li>
+          <li>Blog posts and press releases that <span class="gl">compound your visibility</span> over time</li>
+          <li>Local SEO — Google Maps, "near me" searches, city-specific pages</li>
+        </ul>
+      </div>
+
+      <!-- Slide 5: AI Discovery -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(212,168,83,.2),transparent);top:40%;left:30%;"></div>
+        <svg class="slide-icon" viewBox="0 0 24 24" fill="none" stroke="#5B8DEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <h2>Show Up on Google, Yelp, <span class="accent">AND ChatGPT</span></h2>
+        <ul class="slide-points">
+          <li><span class="hl">AI assistants are the new front door</span> — "Who's a good plumber in Austin?"</li>
+          <li>AI recommends businesses with <span class="gl">well-structured websites and content</span></li>
+          <li>No website = <span class="hl">invisible to AI</span>. Your competitors with content get mentioned</li>
+          <li>We build every site with AI-discoverable structure from day one</li>
+        </ul>
+      </div>
+
+      <!-- Slide 6: Content -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(91,141,239,.15),transparent);bottom:20%;right:25%;"></div>
+        <svg class="slide-icon" viewBox="0 0 24 24" fill="none" stroke="#D4A853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <h2>Blog Posts & Press Releases:<br><span class="accent">Your Secret Weapon</span></h2>
+        <ul class="slide-points">
+          <li><span class="gl">Blog posts</span> — answer the questions your customers ask Google</li>
+          <li><span class="gl">Press releases</span> — build backlinks, get picked up by news aggregators</li>
+          <li>Each piece of content is a new entry point for customers to find you</li>
+          <li>We handle strategy and publishing — <span class="hl">you just approve, we ship</span></li>
+        </ul>
+      </div>
+
+      <!-- Slide 7: Conversion -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(91,141,239,.2),transparent);top:30%;left:50%;transform:translate(-50%,0);"></div>
+        <svg class="slide-icon" viewBox="0 0 24 24" fill="none" stroke="#5B8DEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h2>Built to <span class="accent">Convert</span></h2>
+        <ul class="slide-points">
+          <li>Strategic calls-to-action that guide visitors to <span class="hl">call, book, or submit a form</span></li>
+          <li>Mobile-optimized — over <span class="gl">60% of local searches</span> happen on phones</li>
+          <li>Trust signals front and center: reviews, licenses, years in business</li>
+          <li>Exit-intent popups, urgency banners, and sticky CTAs to capture every lead</li>
+        </ul>
+      </div>
+
+      <!-- Slide 8: CTA -->
+      <div class="slide">
+        <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(212,168,83,.2),transparent);top:40%;left:50%;transform:translate(-50%,0);width:600px;height:600px;"></div>
+        <svg viewBox="0 0 24 24" fill="none" style="width:60px;height:60px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(91,141,239,.5));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+        <h2>Let Us Build <span class="accent">Yours</span></h2>
+        <p class="slide-subtitle">Professional website, live in 48 hours. Starting at $699.</p>
+        <div style="display:flex;gap:16px;margin-top:20px;">
+          <div style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:12px;padding:16px 28px;text-align:center;">
+            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;">$699</div>
+            <div style="font-size:.75rem;color:#5B8DEF;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Starter</div>
+          </div>
+          <div style="background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.25);border-radius:12px;padding:16px 28px;text-align:center;">
+            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;">$1,299</div>
+            <div style="font-size:.75rem;color:#D4A853;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Growth</div>
+          </div>
+          <div style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:12px;padding:16px 28px;text-align:center;">
+            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;">$2,499</div>
+            <div style="font-size:.75rem;color:#5B8DEF;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Pro</div>
+          </div>
+        </div>
+        <p style="color:#475569;font-size:.9rem;margin-top:28px;">polarispoint.io</p>
+      </div>
+
+    </div>
+
+    <!-- Slide navigation bar -->
+    <div class="slide-nav">
+      <button class="slide-nav-btn" id="slidePrev" onclick="changeSlide(-1)">&larr; Previous</button>
+      <div class="slide-dots" id="slideDots"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="slide-nav-btn" id="slideNext" onclick="changeSlide(1)">Next &rarr;</button>
+        <button class="slide-nav-btn close-btn" onclick="closeDeck()">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFERS TAB -->
+  <div id="tabOffers" class="tab-content" style="display:none;">
+    <div class="sales-section">
+
+      <div class="sales-card" style="text-align:center;">
+        <h3>What We Offer</h3>
+        <p>Simple, transparent pricing. Every plan includes a professional website built in 48 hours or less.</p>
+      </div>
+
+      <div class="offer-grid">
+        <div class="offer-tier">
+          <div class="tier-name">Starter</div>
+          <div class="price">$699</div>
+          <p style="font-size:.75rem;color:#64748b;margin-bottom:8px;">One-time build</p>
+          <ul>
+            <li>Professional 1-page website</li>
+            <li>Mobile-responsive design</li>
+            <li>Contact form & click-to-call</li>
+            <li>Google-optimized SEO basics</li>
+            <li>Custom domain setup</li>
+            <li>48-hour delivery</li>
+          </ul>
+        </div>
+
+        <div class="offer-tier featured">
+          <div class="tier-name">Growth</div>
+          <div class="price">$1,299</div>
+          <p style="font-size:.75rem;color:#64748b;margin-bottom:8px;">One-time + $49/mo</p>
+          <ul>
+            <li>Everything in Starter</li>
+            <li>Multi-page site (up to 5 pages)</li>
+            <li>Monthly blog post (SEO-optimized)</li>
+            <li>Google Business Profile setup</li>
+            <li>Review collection system</li>
+            <li>Monthly performance report</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+
+        <div class="offer-tier">
+          <div class="tier-name">Pro</div>
+          <div class="price">$2,499</div>
+          <p style="font-size:.75rem;color:#64748b;margin-bottom:8px;">One-time + $99/mo</p>
+          <ul>
+            <li>Everything in Growth</li>
+            <li>Fully custom design</li>
+            <li>Booking/scheduling integration</li>
+            <li>Automation workflows (email, SMS)</li>
+            <li>4 blog posts/month</li>
+            <li>Quarterly press release</li>
+            <li>Lead generation campaigns</li>
+            <li>Dedicated account manager</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sales-card" style="margin-top:20px;">
+        <h3>Add-Ons</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+          <div style="padding:12px;background:#0B1120;border-radius:8px;">
+            <p style="color:#fff;font-weight:600;font-size:.82rem;margin-bottom:2px;">Additional Blog Posts</p>
+            <p style="color:#5B8DEF;font-weight:700;font-size:.9rem;">$75/post</p>
+          </div>
+          <div style="padding:12px;background:#0B1120;border-radius:8px;">
+            <p style="color:#fff;font-weight:600;font-size:.82rem;margin-bottom:2px;">Press Release</p>
+            <p style="color:#5B8DEF;font-weight:700;font-size:.9rem;">$199/release</p>
+          </div>
+          <div style="padding:12px;background:#0B1120;border-radius:8px;">
+            <p style="color:#fff;font-weight:600;font-size:.82rem;margin-bottom:2px;">Social Media Setup</p>
+            <p style="color:#5B8DEF;font-weight:700;font-size:.9rem;">$249 one-time</p>
+          </div>
+          <div style="padding:12px;background:#0B1120;border-radius:8px;">
+            <p style="color:#fff;font-weight:600;font-size:.82rem;margin-bottom:2px;">Custom Automation</p>
+            <p style="color:#5B8DEF;font-weight:700;font-size:.9rem;">From $149/mo</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sales-card">
+        <h3>Talking Points for Each Tier</h3>
+        <p><span class="gold">Starter ($699)</span> — "For the business that just needs to get online. A clean, professional site that shows up on Google and gives customers a way to reach you. No monthly fees."</p>
+        <p><span class="gold">Growth ($1,299)</span> — "For the business ready to start winning organic traffic. Monthly content, review management, and SEO work that compounds over time. This is where the magic happens."</p>
+        <p><span class="gold">Pro ($2,499)</span> — "For the business that wants a full digital presence. Custom design, automation, lead gen, and a dedicated team. This replaces hiring a marketing person."</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SALES GUIDE TAB -->
+  <div id="tabGuide" class="tab-content" style="display:none;">
+    <div class="sales-section">
+
+      <div class="sales-card">
+        <h3>How to Sell Polaris Point — Step by Step</h3>
+        <p>Follow this process for every prospect. The key is <span class="highlight">leading with their problem, not our product</span>.</p>
+      </div>
+
+      <div class="sales-card">
+        <div class="step-card">
+          <div class="step-num-lg">1</div>
+          <div class="step-content">
+            <h4>Research the Prospect</h4>
+            <p>Before reaching out, Google their business. Check if they have a website, how it looks on mobile, their Google reviews, and Yelp presence. Note anything broken or missing — this is your opening.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num-lg">2</div>
+          <div class="step-content">
+            <h4>Make First Contact</h4>
+            <p>Walk in, call, or email. Lead with a genuine compliment about their business, then transition to the gap you noticed.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num-lg">3</div>
+          <div class="step-content">
+            <h4>Identify Their Pain</h4>
+            <p>Ask questions: "How do new customers find you?" "What happens when someone Googles your business name?" "Are you happy with the leads you're getting?" Listen more than you talk.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num-lg">4</div>
+          <div class="step-content">
+            <h4>Show, Don't Tell</h4>
+            <p>Pull up a demo site on your phone. Show them what their business could look like in 48 hours. Let the quality speak for itself. Use the Site Builder to create a quick preview with their real info.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num-lg">5</div>
+          <div class="step-content">
+            <h4>Present the Offer</h4>
+            <p>Start with the Starter ($699) — low barrier, immediate value. Then mention Growth as the "smart play" for businesses that want to win long-term. Only mention Pro if they clearly have budget and ambition.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num-lg">6</div>
+          <div class="step-content">
+            <h4>Handle Objections</h4>
+            <p>"I already have a Facebook page" — "That's great, but you're renting space on someone else's platform. A website is yours forever." | "It's too expensive" — "How much is one new customer worth to you? Most of our clients pay for their site with their first lead."</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num-lg">7</div>
+          <div class="step-content">
+            <h4>Close & Collect Info</h4>
+            <p>Once they're in, use the Lead form below to capture their info. A senior admin will use the Site Builder to create their preview and deploy. You get credit for the sale.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sales-card">
+        <h3>Sample Script</h3>
+        <div class="script-box">
+          <span class="speaker">Opening (In-Person)</span>
+          "Hey, I was just checking out [business name] — really great [specific compliment about their work/reviews/location]. I'm with Polaris Point, we build websites for local businesses here in Austin. Quick question — when someone searches for [their service] on Google right now, are you happy with what comes up?"
+
+          <span class="speaker">If they don't have a website</span>
+          "That's actually super common — a lot of business owners are so busy doing great work they haven't had time for a website. The thing is, 97% of your customers are Googling before they call anyone. Right now, those searches are going to your competitors. We can fix that in 48 hours — want me to show you what it would look like?"
+
+          <span class="speaker">If they have a bad/outdated website</span>
+          "I actually pulled up your current site — and honestly, your business deserves better than what's showing up. On mobile especially, it's [specific issue]. We specialize in fast, modern sites that actually convert visitors into calls. Let me show you a quick example..."
+
+          <span class="speaker">Demo Transition</span>
+          [Pull up a demo site on your phone]
+          "This is one we built for a [similar business type]. See how clean it looks, the reviews right up front, click-to-call button, shows up great on Google. We can have something like this for you — with your real info, your reviews, your branding — ready in 48 hours."
+
+          <span class="speaker">Close</span>
+          "The starter package is $699, one-time. No monthly fees, no contracts. You own it. We handle the design, the copy, the SEO — all you do is approve it and we push it live. Sound fair?"
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LEADS TAB -->
+  <div id="tabLeads" class="tab-content" style="display:none;">
+    <div class="sales-section">
+
+      <div class="sales-card">
+        <h3>My Leads</h3>
+        <p style="margin-bottom:16px;">Track your prospects through the pipeline. Your leads are saved locally and only visible to you.</p>
+
+        <!-- Add lead form -->
+        <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:16px;margin-bottom:16px;">
+          <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:12px;">+ New Lead</h4>
+
+          <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:#5B8DEF;font-weight:600;margin-bottom:8px;">Business Info</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="intake-field">
+              <label>Business Name</label>
+              <input type="text" id="leadBizName" placeholder="e.g. Lone Star Plumbing">
+            </div>
+            <div class="intake-field">
+              <label>Industry</label>
+              <select id="leadIndustry">
+                <option value="plumber">Plumber</option>
+                <option value="handyman">Handyman / Contractor</option>
+                <option value="cleaning">Cleaning Services</option>
+                <option value="pest-control">Pest Control</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="salon">Salon / Barber</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="intake-field">
+              <label>Business Address</label>
+              <input type="text" id="leadAddress" placeholder="123 Main St, Austin TX 78701">
+            </div>
+            <div class="intake-field">
+              <label>Current Website</label>
+              <input type="text" id="leadWebsite" placeholder="www.business.com or 'none'">
+            </div>
+            <div class="intake-field">
+              <label>Google / Yelp Rating</label>
+              <input type="text" id="leadRating" placeholder="e.g. 4.5 stars, 28 reviews">
+            </div>
+            <div class="intake-field">
+              <label>Years in Business</label>
+              <input type="text" id="leadYears" placeholder="e.g. 8">
+            </div>
+          </div>
+
+          <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:#5B8DEF;font-weight:600;margin:16px 0 8px;">Contact Person</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="intake-field">
+              <label>Contact Name</label>
+              <input type="text" id="leadContact" placeholder="e.g. John Smith">
+            </div>
+            <div class="intake-field">
+              <label>Title / Role</label>
+              <input type="text" id="leadRole" placeholder="e.g. Owner, Manager">
+            </div>
+            <div class="intake-field">
+              <label>Phone</label>
+              <input type="text" id="leadPhone" placeholder="(512) 555-0100">
+            </div>
+            <div class="intake-field">
+              <label>Email</label>
+              <input type="text" id="leadEmail" placeholder="john@business.com">
+            </div>
+            <div class="intake-field">
+              <label>Preferred Contact Method</label>
+              <select id="leadContactMethod">
+                <option value="phone">Phone Call</option>
+                <option value="text">Text / SMS</option>
+                <option value="email">Email</option>
+                <option value="in-person">In Person</option>
+              </select>
+            </div>
+            <div class="intake-field">
+              <label>Best Time to Reach</label>
+              <input type="text" id="leadBestTime" placeholder="e.g. Mornings, After 3pm">
+            </div>
+          </div>
+
+          <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:#5B8DEF;font-weight:600;margin:16px 0 8px;">Sales Details</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="intake-field">
+              <label>Rank</label>
+              <select id="leadRank">
+                <option value="hot">Hot</option>
+                <option value="warm" selected>Warm</option>
+                <option value="cold">Cold</option>
+              </select>
+            </div>
+            <div class="intake-field">
+              <label>Interested Tier</label>
+              <select id="leadTier">
+                <option value="undecided">Undecided</option>
+                <option value="starter">Starter ($699)</option>
+                <option value="growth">Growth ($1,299)</option>
+                <option value="pro">Pro ($2,499)</option>
+              </select>
+            </div>
+            <div class="intake-field">
+              <label>How They Heard About Us</label>
+              <select id="leadSource">
+                <option value="walk-in">Walk-in / Door Knock</option>
+                <option value="referral">Referral</option>
+                <option value="google">Google Search</option>
+                <option value="social">Social Media</option>
+                <option value="cold-call">Cold Call</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="intake-field">
+              <label>Estimated Monthly Revenue</label>
+              <input type="text" id="leadRevenue" placeholder="e.g. $5k-10k/mo">
+            </div>
+          </div>
+          <div class="intake-field" style="margin-top:4px;">
+            <label>Notes & Observations</label>
+            <textarea id="leadNotes" placeholder="Current website issues, what they said, pain points, objections, follow-up plan..." style="min-height:80px;"></textarea>
+          </div>
+          <button class="btn-export" onclick="addLead()" style="width:100%;margin-top:8px;">Add Lead</button>
+        </div>
+
+        <!-- Lead list -->
+        <div id="leadsList"></div>
+        <p id="leadsEmpty" style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads yet. Start adding prospects above.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INTAKE TAB (Senior Only) -->
+  <div id="tabIntake" class="tab-content" style="display:none;">
     <div class="intake-form">
 
       <!-- Step 1: Business Search -->
@@ -761,27 +1657,33 @@
         </div>
         <p class="export-note" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder, or use the preview link above to share with prospects</p>
         <hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
-        <h3 style="font-family:'Outfit',sans-serif;font-size:.95rem;color:#fff;margin-bottom:12px;text-align:center;">Or deploy instantly</h3>
-        <div style="max-width:480px;margin:0 auto;">
-          <div class="intake-field">
-            <label>Site Slug</label>
-            <div style="display:flex;align-items:center;gap:0;">
-              <span style="background:#0B1120;border:1px solid #1e293b;border-right:none;border-radius:8px 0 0 8px;padding:9px 10px;color:#475569;font-size:.8rem;white-space:nowrap;">pp-</span>
-              <input type="text" id="deploySlug" placeholder="business-name" style="border-radius:0 8px 8px 0;border-left:none;" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'').substring(0,30)">
+        <div style="position:relative;">
+          <div class="gated-overlay">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <p>Deploy is restricted to senior admins.<br>Generate a config or preview link and send it to your manager.</p>
+          </div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:.95rem;color:#fff;margin-bottom:12px;text-align:center;">Or deploy instantly</h3>
+          <div style="max-width:480px;margin:0 auto;">
+            <div class="intake-field">
+              <label>Site Slug</label>
+              <div style="display:flex;align-items:center;gap:0;">
+                <span style="background:#0B1120;border:1px solid #1e293b;border-right:none;border-radius:8px 0 0 8px;padding:9px 10px;color:#475569;font-size:.8rem;white-space:nowrap;">pp-</span>
+                <input type="text" id="deploySlug" placeholder="business-name" style="border-radius:0 8px 8px 0;border-left:none;" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'').substring(0,30)">
+              </div>
+            </div>
+            <div class="intake-field">
+              <label>Custom Domain (optional — can add later)</label>
+              <input type="text" id="deployDomain" placeholder="e.g. geronimoplumbing.com">
             </div>
           </div>
-          <div class="intake-field">
-            <label>Custom Domain (optional — can add later)</label>
-            <input type="text" id="deployDomain" placeholder="e.g. geronimoplumbing.com">
+          <div style="text-align:center;margin-top:12px;">
+            <button class="btn-export" id="btnDeploy" onclick="deploySite()" style="background:#16a34a;padding:12px 32px;font-size:.9rem;display:none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Deploy Live Site
+            </button>
           </div>
+          <div id="deployStatus" style="display:none;margin-top:16px;padding:16px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;text-align:center;"></div>
         </div>
-        <div style="text-align:center;margin-top:12px;">
-          <button class="btn-export" id="btnDeploy" onclick="deploySite()" style="background:#16a34a;padding:12px 32px;font-size:.9rem;display:none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            Deploy Live Site
-          </button>
-        </div>
-        <div id="deployStatus" style="display:none;margin-top:16px;padding:16px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;text-align:center;"></div>
       </div>
 
     </div>
@@ -894,17 +1796,110 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script>
-    // === TAB SWITCHING ===
+    // === ROLE MANAGEMENT ===
+    var currentRole = null;
+    var currentUser = '';
+
+    var TAB_MAP = {
+      deck: 'tabDeck',
+      offers: 'tabOffers',
+      guide: 'tabGuide',
+      leads: 'tabLeads',
+      intake: 'tabIntake',
+      cards: 'tabCards'
+    };
+
+    // === SLIDE DECK ===
+    var currentSlide = 0;
+    var slides = [];
+
+    function openDeck() {
+      var overlay = document.getElementById('slideDeck');
+      overlay.classList.add('active');
+      slides = overlay.querySelectorAll('.slide');
+      currentSlide = 0;
+      buildDots();
+      showSlide(0);
+      document.addEventListener('keydown', deckKeyHandler);
+    }
+
+    function closeDeck() {
+      document.getElementById('slideDeck').classList.remove('active');
+      document.removeEventListener('keydown', deckKeyHandler);
+      if (document.fullscreenElement) document.exitFullscreen();
+    }
+
+    function showSlide(index) {
+      slides.forEach(function(s, i) {
+        s.classList.remove('active');
+        if (i === index) s.classList.add('active');
+      });
+      currentSlide = index;
+      document.getElementById('slidePrev').disabled = index === 0;
+      document.getElementById('slideNext').disabled = index === slides.length - 1;
+      document.querySelectorAll('.slide-dot').forEach(function(d, i) {
+        d.classList.toggle('active', i === index);
+      });
+    }
+
+    function changeSlide(dir) {
+      var next = currentSlide + dir;
+      if (next >= 0 && next < slides.length) showSlide(next);
+    }
+
+    function buildDots() {
+      var dots = document.getElementById('slideDots');
+      dots.innerHTML = '';
+      for (var i = 0; i < slides.length; i++) {
+        var dot = document.createElement('button');
+        dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('data-i', i);
+        dot.onclick = function() { showSlide(parseInt(this.getAttribute('data-i'))); };
+        dots.appendChild(dot);
+      }
+    }
+
+    function deckKeyHandler(e) {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+      else if (e.key === 'Escape') closeDeck();
+      else if (e.key === 'f' || e.key === 'F') {
+        var el = document.getElementById('slideDeck');
+        if (!document.fullscreenElement) el.requestFullscreen().catch(function(){});
+        else document.exitFullscreen();
+      }
+    }
+
     function switchTab(tab) {
+      // Senior-only tabs check
+      if (tab === 'cards' && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
-      if (tab === 'intake') {
-        document.getElementById('tabIntake').style.display = 'block';
-        document.querySelectorAll('.admin-tab')[0].classList.add('active');
+      var targetId = TAB_MAP[tab];
+      if (targetId) document.getElementById(targetId).style.display = 'block';
+      // Find and activate the correct tab button
+      document.querySelectorAll('.admin-tab').forEach(function(btn) {
+        if (btn.getAttribute('onclick') === "switchTab('" + tab + "')") btn.classList.add('active');
+      });
+      // Load leads when switching to leads tab
+      if (tab === 'leads') renderLeads();
+    }
+
+    function applyRole(role, userName) {
+      currentRole = role;
+      currentUser = userName;
+      var badge = document.getElementById('roleBadge');
+      var welcome = document.getElementById('welcomeUser');
+      if (role === 'senior') {
+        document.body.classList.add('role-senior');
+        badge.className = 'role-badge senior';
+        badge.textContent = 'Senior';
       } else {
-        document.getElementById('tabCards').style.display = 'block';
-        document.querySelectorAll('.admin-tab')[1].classList.add('active');
+        document.body.classList.remove('role-senior');
+        badge.className = 'role-badge junior';
+        badge.textContent = 'Team';
       }
+      welcome.textContent = 'Signed in as ' + userName;
     }
 
     // === DYNAMIC LIST HELPERS ===
@@ -1910,27 +2905,274 @@
     // Store button labels for restore after export
     document.querySelectorAll('.btn-export').forEach(function(b) { b.dataset.label = b.textContent.trim(); });
 
-    // Login
-    // Hash: SHA-256 of the password, checked client-side.
-    // Not bulletproof security — just a gate to keep randoms out.
-    var PASS_HASH = '89b5785d7fac3b066e5676eccd6051ad41ac2c10ff536fc8600ada7c8ed9123b';
-    function doLogin() {
-      var pass = document.getElementById('loginPass').value;
-      crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
-        var hash = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
-        if (hash === PASS_HASH) {
-          sessionStorage.setItem('pp_admin', '1');
-          showAdmin();
-        } else {
-          document.getElementById('loginError').style.display = 'block';
-        }
+    // === LOGIN & USER REGISTRATION ===
+    // Senior: hardcoded SHA-256 hash. Junior: user-created accounts stored in localStorage.
+    var SENIOR_HASH = '89b5785d7fac3b066e5676eccd6051ad41ac2c10ff536fc8600ada7c8ed9123b';
+
+    function hashPassword(pass) {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
+        return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
       });
     }
-    function showAdmin() {
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem('pp_users')) || {}; } catch(e) { return {}; }
+    }
+    function saveUsers(users) { localStorage.setItem('pp_users', JSON.stringify(users)); }
+
+    function toggleSignUp() {
+      var login = document.getElementById('loginForm');
+      var signup = document.getElementById('signUpForm');
+      var err = document.getElementById('loginError');
+      err.style.display = 'none';
+      if (login.style.display === 'none') {
+        login.style.display = 'block'; signup.style.display = 'none';
+      } else {
+        login.style.display = 'none'; signup.style.display = 'block';
+      }
+    }
+
+    function doSignUp() {
+      var username = document.getElementById('signUpUser').value.trim().toLowerCase();
+      var fullName = document.getElementById('signUpFullName').value.trim();
+      var pass = document.getElementById('signUpPass').value;
+      var confirm = document.getElementById('signUpPassConfirm').value;
+      var err = document.getElementById('loginError');
+
+      if (!username || username.length < 3) { err.textContent = 'Username must be at least 3 characters'; err.style.display = 'block'; return; }
+      if (!fullName) { err.textContent = 'Full name is required'; err.style.display = 'block'; return; }
+      if (pass.length < 4) { err.textContent = 'Password must be at least 4 characters'; err.style.display = 'block'; return; }
+      if (pass !== confirm) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; return; }
+
+      var users = getUsers();
+      if (users[username]) { err.textContent = 'Username already taken'; err.style.display = 'block'; return; }
+
+      hashPassword(pass).then(function(hash) {
+        users[username] = { hash: hash, fullName: fullName, created: new Date().toISOString().split('T')[0] };
+        saveUsers(users);
+        sessionStorage.setItem('pp_admin', 'junior');
+        sessionStorage.setItem('pp_user', username);
+        sessionStorage.setItem('pp_fullname', fullName);
+        showAdmin('junior', fullName, username);
+      });
+    }
+
+    function doLogin() {
+      var username = document.getElementById('loginUser').value.trim().toLowerCase();
+      var pass = document.getElementById('loginPass').value;
+      var err = document.getElementById('loginError');
+      if (!username || !pass) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
+
+      hashPassword(pass).then(function(hash) {
+        // Check senior admin first
+        if (hash === SENIOR_HASH) {
+          sessionStorage.setItem('pp_admin', 'senior');
+          sessionStorage.setItem('pp_user', username);
+          sessionStorage.setItem('pp_fullname', username);
+          showAdmin('senior', username, username);
+          return;
+        }
+        // Check registered junior users
+        var users = getUsers();
+        if (users[username] && users[username].hash === hash) {
+          sessionStorage.setItem('pp_admin', 'junior');
+          sessionStorage.setItem('pp_user', username);
+          sessionStorage.setItem('pp_fullname', users[username].fullName);
+          showAdmin('junior', users[username].fullName, username);
+          return;
+        }
+        err.textContent = 'Incorrect username or password';
+        err.style.display = 'block';
+      });
+    }
+
+    function showAdmin(role, displayName, username) {
+      role = role || sessionStorage.getItem('pp_admin') || 'junior';
+      displayName = displayName || sessionStorage.getItem('pp_fullname') || sessionStorage.getItem('pp_user') || 'Team Member';
+      username = username || sessionStorage.getItem('pp_user') || 'default';
       document.getElementById('loginGate').style.display = 'none';
       document.getElementById('adminContent').style.display = 'block';
+      applyRole(role, displayName);
+      switchTab('deck');
     }
-    if (sessionStorage.getItem('pp_admin') === '1') showAdmin();
+    // Auto-login from session; treat old '1' value as senior
+    var storedRole = sessionStorage.getItem('pp_admin');
+    if (storedRole === '1') { sessionStorage.setItem('pp_admin', 'senior'); storedRole = 'senior'; }
+    if (storedRole) showAdmin();
+
+    // === LEAD MANAGEMENT ===
+    function leadsKeyFor(username) { return 'pp_leads_' + (username || 'default'); }
+    var LEADS_KEY = leadsKeyFor(sessionStorage.getItem('pp_user'));
+
+    function getLeads(key) {
+      try { return JSON.parse(localStorage.getItem(key || LEADS_KEY)) || []; } catch(e) { return []; }
+    }
+    function saveLeads(leads, key) {
+      localStorage.setItem(key || LEADS_KEY, JSON.stringify(leads));
+    }
+
+    var STAGE_LABELS = ['Researched', 'Contacted', 'Demo Shown', 'Proposal Sent', 'Closed'];
+
+    function addLead() {
+      var biz = document.getElementById('leadBizName').value.trim();
+      if (!biz) return alert('Business name is required');
+      var lead = {
+        id: Date.now(),
+        bizName: biz,
+        industry: document.getElementById('leadIndustry').value,
+        address: document.getElementById('leadAddress').value.trim(),
+        website: document.getElementById('leadWebsite').value.trim(),
+        rating: document.getElementById('leadRating').value.trim(),
+        yearsInBiz: document.getElementById('leadYears').value.trim(),
+        contact: document.getElementById('leadContact').value.trim(),
+        contactRole: document.getElementById('leadRole').value.trim(),
+        phone: document.getElementById('leadPhone').value.trim(),
+        email: document.getElementById('leadEmail').value.trim(),
+        contactMethod: document.getElementById('leadContactMethod').value,
+        bestTime: document.getElementById('leadBestTime').value.trim(),
+        rank: document.getElementById('leadRank').value,
+        tier: document.getElementById('leadTier').value,
+        source: document.getElementById('leadSource').value,
+        revenue: document.getElementById('leadRevenue').value.trim(),
+        stage: 0,
+        notes: document.getElementById('leadNotes').value.trim(),
+        created: new Date().toISOString().split('T')[0],
+        owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown'
+      };
+      var leads = getLeads();
+      leads.unshift(lead);
+      saveLeads(leads);
+      // Reset form fields
+      ['leadBizName','leadAddress','leadWebsite','leadRating','leadYears',
+       'leadContact','leadRole','leadPhone','leadEmail','leadBestTime',
+       'leadRevenue','leadNotes'].forEach(function(id) {
+        document.getElementById(id).value = '';
+      });
+      renderLeads();
+    }
+
+    function updateLeadStage(id, stage, ownerKey) {
+      var key = ownerKey || LEADS_KEY;
+      var leads = getLeads(key);
+      var lead = leads.find(function(l) { return l.id === id; });
+      if (lead) { lead.stage = stage; saveLeads(leads, key); renderLeads(); }
+    }
+
+    function updateLeadRank(id, rank, ownerKey) {
+      var key = ownerKey || LEADS_KEY;
+      var leads = getLeads(key);
+      var lead = leads.find(function(l) { return l.id === id; });
+      if (lead) { lead.rank = rank; saveLeads(leads, key); renderLeads(); }
+    }
+
+    function updateLeadNotes(id, notes, ownerKey) {
+      var key = ownerKey || LEADS_KEY;
+      var leads = getLeads(key);
+      var lead = leads.find(function(l) { return l.id === id; });
+      if (lead) { lead.notes = notes; saveLeads(leads, key); }
+    }
+
+    function deleteLead(id, ownerKey) {
+      if (!confirm('Delete this lead?')) return;
+      var key = ownerKey || LEADS_KEY;
+      var leads = getLeads(key).filter(function(l) { return l.id !== id; });
+      saveLeads(leads, key);
+      renderLeads();
+    }
+
+    function renderLeadCard(lead, ownerKey, ownerLabel) {
+      var key = ownerKey || LEADS_KEY;
+      var stages = STAGE_LABELS.map(function(label, i) {
+        var cls = i < lead.stage ? 'done' : (i === lead.stage ? 'active' : '');
+        return '<div class="lead-stage-step ' + cls + '" title="' + label + '"></div>';
+      }).join('');
+
+      var stageButtons = STAGE_LABELS.map(function(label, i) {
+        var active = i === lead.stage ? 'color:#D4A853;font-weight:700;' : 'color:#475569;';
+        return '<button onclick="updateLeadStage(' + lead.id + ',' + i + ',\'' + key + '\')" style="background:none;border:none;font-size:.68rem;cursor:pointer;padding:2px 6px;border-radius:4px;' + active + '">' + label + '</button>';
+      }).join('');
+
+      var tierLabel = lead.tier && lead.tier !== 'undecided' ? ' — <span style="color:#D4A853;">' + lead.tier.charAt(0).toUpperCase() + lead.tier.slice(1) + '</span>' : '';
+      var ownerTag = ownerLabel ? '<span style="font-size:.65rem;background:rgba(91,141,239,.12);color:#5B8DEF;padding:2px 8px;border-radius:999px;margin-left:8px;">' + ownerLabel + '</span>' : '';
+
+      return '<div class="lead-card">' +
+        '<div class="lead-header">' +
+          '<span class="lead-name">' + lead.bizName + tierLabel + ownerTag + '</span>' +
+          '<select onchange="updateLeadRank(' + lead.id + ',this.value,\'' + key + '\')" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.72rem;outline:none;">' +
+            '<option value="hot"' + (lead.rank==='hot'?' selected':'') + '>Hot</option>' +
+            '<option value="warm"' + (lead.rank==='warm'?' selected':'') + '>Warm</option>' +
+            '<option value="cold"' + (lead.rank==='cold'?' selected':'') + '>Cold</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="lead-stage">' + stages + '</div>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:10px;">' + stageButtons + '</div>' +
+        '<div class="lead-details">' +
+          '<div class="lead-detail">Contact<span>' + (lead.contact || '—') + (lead.contactRole ? ' (' + lead.contactRole + ')' : '') + '</span></div>' +
+          '<div class="lead-detail">Phone<span>' + (lead.phone || '—') + '</span></div>' +
+          '<div class="lead-detail">Email<span>' + (lead.email || '—') + '</span></div>' +
+          '<div class="lead-detail">Industry<span>' + lead.industry + '</span></div>' +
+          (lead.address ? '<div class="lead-detail">Address<span>' + lead.address + '</span></div>' : '') +
+          (lead.website ? '<div class="lead-detail">Website<span>' + lead.website + '</span></div>' : '') +
+          (lead.rating ? '<div class="lead-detail">Rating<span>' + lead.rating + '</span></div>' : '') +
+          (lead.yearsInBiz ? '<div class="lead-detail">Years<span>' + lead.yearsInBiz + '</span></div>' : '') +
+          (lead.revenue ? '<div class="lead-detail">Revenue<span>' + lead.revenue + '</span></div>' : '') +
+          (lead.source ? '<div class="lead-detail">Source<span>' + lead.source + '</span></div>' : '') +
+          (lead.contactMethod ? '<div class="lead-detail">Prefers<span>' + lead.contactMethod + (lead.bestTime ? ' (' + lead.bestTime + ')' : '') + '</span></div>' : '') +
+        '</div>' +
+        '<div class="lead-notes">' +
+          '<textarea onchange="updateLeadNotes(' + lead.id + ',this.value,\'' + key + '\')" placeholder="Add notes...">' + (lead.notes || '') + '</textarea>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">' +
+          '<span style="font-size:.7rem;color:#334155;">Added ' + lead.created + '</span>' +
+          '<button onclick="deleteLead(' + lead.id + ',\'' + key + '\')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function renderLeads() {
+      LEADS_KEY = leadsKeyFor(currentUser || sessionStorage.getItem('pp_user'));
+      var container = document.getElementById('leadsList');
+      var empty = document.getElementById('leadsEmpty');
+
+      if (currentRole === 'senior') {
+        // Senior sees all employees' leads grouped by person
+        var allHtml = '';
+        var users = getUsers();
+        var usernames = Object.keys(users);
+        // Also include senior's own leads
+        var seniorUser = currentUser || sessionStorage.getItem('pp_user') || 'admin';
+        var seniorLeads = getLeads(leadsKeyFor(seniorUser));
+        if (seniorLeads.length) {
+          allHtml += '<h4 style="font-family:Outfit,sans-serif;color:#D4A853;font-size:.85rem;margin:16px 0 8px;">My Leads</h4>';
+          seniorLeads.forEach(function(lead) { allHtml += renderLeadCard(lead, leadsKeyFor(seniorUser), null); });
+        }
+        // Each employee
+        usernames.forEach(function(uname) {
+          var empLeads = getLeads(leadsKeyFor(uname));
+          if (!empLeads.length) return;
+          var displayName = users[uname].fullName || uname;
+          allHtml += '<h4 style="font-family:Outfit,sans-serif;color:#5B8DEF;font-size:.85rem;margin:20px 0 8px;">' + displayName + '\'s Leads</h4>';
+          empLeads.forEach(function(lead) { allHtml += renderLeadCard(lead, leadsKeyFor(uname), displayName); });
+        });
+        if (!allHtml) {
+          container.innerHTML = '';
+          empty.style.display = 'block';
+        } else {
+          empty.style.display = 'none';
+          container.innerHTML = allHtml;
+        }
+      } else {
+        // Junior sees only their own leads
+        var leads = getLeads();
+        if (!leads.length) {
+          container.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        container.innerHTML = leads.map(function(lead) { return renderLeadCard(lead); }).join('');
+      }
+    }
   </script>
   </div><!-- /adminContent -->
 </body>
