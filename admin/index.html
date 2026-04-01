@@ -2451,6 +2451,7 @@
       document.getElementById('intAboutText').value = place.name + ' has been serving ' + (city || 'the community') + ' with reliable, professional ' + template.toLowerCase() + ' services.' + (place.rating ? ' With a ' + place.rating + '-star rating from ' + (place.reviewCount || '') + ' customers, we take pride in quality work and honest pricing.' : '') + ' Every job is treated with care and respect.';
 
       // === REVIEWS ===
+      console.log('fillFromPlace reviews:', place.reviews ? place.reviews.length : 0);
       var rl = document.getElementById('reviewsList');
       if (place.reviews && place.reviews.length) {
         rl.innerHTML = '';
@@ -2462,6 +2463,9 @@
           last.querySelector('.rev-author').value = r.author || r.author_name || '';
           last.querySelector('.rev-location').value = r.location || r.time || city || '';
         });
+        console.log('Filled ' + place.reviews.length + ' reviews into form');
+      } else {
+        console.log('No reviews to fill');
       }
 
       // === SERVICE AREAS (from address city) ===
