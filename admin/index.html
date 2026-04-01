@@ -2841,6 +2841,8 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.error) throw new Error(data.error);
+        console.log('AI adjusted config starts with:', data.config.substring(0, 50));
+        console.log('AI adjusted config ends with:', data.config.substring(data.config.length - 30));
         window._generatedConfig = data.config;
         if (currentRole === 'senior') {
           document.getElementById('configCode').textContent = data.config;

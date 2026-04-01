@@ -29,10 +29,16 @@ module.exports = async function handler(req, res) {
         max_tokens: 8000,
         messages: [{
           role: 'user',
-          content: 'You are editing a website configuration file for a local business website. The user wants to make adjustments.\n\n' +
-            'CURRENT CONFIG:\n```\n' + body.config + '\n```\n\n' +
-            'USER REQUEST: ' + body.prompt + '\n\n' +
-            'Return ONLY the complete updated config.js file with the requested changes applied. Do not include markdown code fences, explanations, or anything else — just the raw JavaScript config code starting with "window.siteConfig". Keep all existing values intact unless the user specifically asked to change them.'
+          content: 'You are editing a JavaScript website configuration object. Apply the requested changes and return the COMPLETE updated file.\n\n' +
+            'RULES:\n' +
+            '- Return ONLY raw JavaScript. No markdown, no code fences, no explanations.\n' +
+            '- The output MUST start with exactly "window.siteConfig = {"\n' +
+            '- The output MUST end with "};"  \n' +
+            '- Keep ALL existing values unchanged unless the user specifically asked to modify them.\n' +
+            '- Only change the specific fields the user mentioned.\n' +
+            '- Preserve all formatting, quotes, and escape characters.\n\n' +
+            'CURRENT CONFIG:\n' + body.config + '\n\n' +
+            'REQUESTED CHANGES: ' + body.prompt
         }]
       })
     });
@@ -45,8 +51,32 @@ module.exports = async function handler(req, res) {
 
     var updatedConfig = data.content && data.content[0] ? data.content[0].text : '';
 
-    // Clean up any accidental markdown fences
-    updatedConfig = updatedConfig.replace(/^```[\w]*\n?/gm, '').replace(/\n?```$/gm, '').trim();
+    // Strip markdown fences if present
+    updatedConfig = updatedConfig
+      .replace(/^```[\w]*\s*\n?/gm, '')
+      .replace(/\n?\s*```\s*$/gm, '')
+      .trim();
+
+    // Validate: must start with window.siteConfig
+    if (!updatedConfig.startsWith('window.siteConfig')) {
+      // Try to find it in the output
+      var idx = updatedConfig.indexOf('window.siteConfig');
+      if (idx >= 0) {
+        updatedConfig = updatedConfig.substring(idx);
+      } else {
+        return res.status(500).json({ error: 'AI returned invalid config format. Try a simpler change.' });
+      }
+    }
+
+    // Validate: must end with };
+    if (!updatedConfig.trimEnd().endsWith('};')) {
+      var lastBrace = updatedConfig.lastIndexOf('};');
+      if (lastBrace > 0) {
+        updatedConfig = updatedConfig.substring(0, lastBrace + 2);
+      } else {
+        return res.status(500).json({ error: 'AI returned incomplete config. Try again.' });
+      }
+    }
 
     return res.status(200).json({ config: updatedConfig });
   } catch (err) {
