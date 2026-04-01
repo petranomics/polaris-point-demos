@@ -1357,6 +1357,14 @@
         <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:16px;margin-bottom:16px;">
           <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:12px;">+ New Lead</h4>
 
+          <div class="intake-field" style="margin-bottom:14px;">
+            <label>Quick Fill — Drop a Google Maps or Yelp Link</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="leadQuickUrl" placeholder="Paste a Google Maps or Yelp URL to auto-fill..." style="flex:1;">
+              <button class="btn-export" onclick="leadQuickFill()" style="white-space:nowrap;padding:9px 16px;font-size:.78rem;">Auto-Fill</button>
+            </div>
+          </div>
+
           <p style="font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:#5B8DEF;font-weight:600;margin-bottom:8px;">Business Info</p>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="intake-field">
@@ -3054,6 +3062,7 @@
         stage: 0,
         notes: document.getElementById('leadNotes').value.trim(),
         created: new Date().toISOString().split('T')[0],
+        listingUrl: (document.getElementById('leadQuickUrl').dataset.listingUrl || ''),
         owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown'
       };
       var leads = getLeads();
@@ -3062,9 +3071,10 @@
       // Reset form fields
       ['leadBizName','leadAddress','leadWebsite','leadRating','leadYears',
        'leadContact','leadRole','leadPhone','leadEmail','leadBestTime',
-       'leadRevenue','leadNotes'].forEach(function(id) {
+       'leadRevenue','leadNotes','leadQuickUrl'].forEach(function(id) {
         document.getElementById(id).value = '';
       });
+      document.getElementById('leadQuickUrl').dataset.listingUrl = '';
       renderLeads();
     }
 
@@ -3141,9 +3151,97 @@
         '</div>' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">' +
           '<span style="font-size:.7rem;color:#334155;">Added ' + lead.created + '</span>' +
-          '<button onclick="deleteLead(' + lead.id + ',\'' + key + '\')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Delete</button>' +
+          '<div style="display:flex;gap:8px;">' +
+            '<button onclick="buildSiteFromLead(' + lead.id + ',\'' + key + '\')" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:6px;color:#5B8DEF;font-size:.72rem;font-weight:600;cursor:pointer;padding:4px 12px;">Build Site &rarr;</button>' +
+            '<button onclick="deleteLead(' + lead.id + ',\'' + key + '\')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Delete</button>' +
+          '</div>' +
         '</div>' +
       '</div>';
+    }
+
+    function buildSiteFromLead(id, ownerKey) {
+      var leads = getLeads(ownerKey || LEADS_KEY);
+      var lead = leads.find(function(l) { return l.id === id; });
+      if (!lead) return;
+      // Pre-fill Site Builder fields from the lead
+      switchTab('intake');
+      setTimeout(function() {
+        if (lead.bizName) document.getElementById('intBizName').value = lead.bizName;
+        if (lead.bizName) document.getElementById('intBizShort').value = lead.bizName.split(' ').slice(0,2).join(' ');
+        if (lead.phone) {
+          document.getElementById('intPhone').value = lead.phone;
+          var digits = lead.phone.replace(/\D/g, '');
+          document.getElementById('intPhoneTel').value = '+1' + digits.slice(-10);
+        }
+        if (lead.email) document.getElementById('intEmail').value = lead.email;
+        if (lead.address) document.getElementById('intAddress').value = lead.address;
+        if (lead.website) document.getElementById('intWebsite').value = lead.website;
+        if (lead.yearsInBiz) document.getElementById('intFounded').value = String(new Date().getFullYear() - parseInt(lead.yearsInBiz));
+        // Set template based on industry
+        var templateMap = { plumber:'plumber', handyman:'handyman', cleaning:'cleaning', 'pest-control':'pest-control' };
+        if (templateMap[lead.industry]) document.getElementById('searchTemplate').value = templateMap[lead.industry];
+        // If they had a Yelp/Google URL, put it in the search field
+        if (lead.listingUrl) document.getElementById('searchUrl').value = lead.listingUrl;
+        else if (lead.bizName) document.getElementById('searchBizName').value = lead.bizName;
+      }, 100);
+    }
+
+    function leadQuickFill() {
+      var url = document.getElementById('leadQuickUrl').value.trim();
+      if (!url) return alert('Paste a Google Maps or Yelp URL');
+
+      var searchName = '';
+      var searchLocation = '';
+
+      if (url.includes('yelp.com')) {
+        var yelpSlug = url.match(/\/biz\/([\w-]+)/);
+        if (yelpSlug) {
+          var slugParts = yelpSlug[1].replace(/-\d+$/, '').split('-');
+          searchName = slugParts.join(' ');
+          if (slugParts.length > 1) searchLocation = slugParts[slugParts.length - 1];
+        }
+      } else if (url.includes('google.com/maps') || url.includes('goo.gl') || url.includes('maps.app')) {
+        var nameMatch = url.match(/place\/([^\/\?]+)/);
+        if (nameMatch) searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+      }
+
+      if (!searchName) { alert('Could not parse URL. Try pasting the full Google Maps or Yelp link.'); return; }
+
+      var btn = document.querySelector('#leadQuickUrl + button') || event.target;
+      btn.textContent = 'Searching...';
+      btn.disabled = true;
+
+      var yelpApiUrl = '/api/yelp?q=' + encodeURIComponent(searchName) + (searchLocation ? '&location=' + encodeURIComponent(searchLocation) : '');
+      var placesApiUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
+
+      Promise.allSettled([
+        fetch(yelpApiUrl).then(function(r) { return r.json(); }),
+        fetch(placesApiUrl).then(function(r) { return r.json(); })
+      ]).then(function(results) {
+        var yelp = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value : null;
+        var google = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value : null;
+        var place = yelp || google || {};
+
+        if (place.name) document.getElementById('leadBizName').value = place.name;
+        if (place.phone) document.getElementById('leadPhone').value = place.phone;
+        if (place.address) document.getElementById('leadAddress').value = place.address;
+        if (place.rating) document.getElementById('leadRating').value = place.rating + ' stars' + (place.reviewCount ? ', ' + place.reviewCount + ' reviews' : '');
+        if (place.website) document.getElementById('leadWebsite').value = place.website;
+
+        // Store the URL on the lead for later Site Builder use
+        document.getElementById('leadQuickUrl').dataset.listingUrl = url;
+
+        btn.textContent = place.name ? 'Filled!' : 'No results found';
+        btn.disabled = false;
+        setTimeout(function() { btn.textContent = 'Auto-Fill'; }, 2000);
+      }).catch(function() {
+        // Offline / local — just parse what we can from the URL
+        document.getElementById('leadBizName').value = searchName.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        document.getElementById('leadQuickUrl').dataset.listingUrl = url;
+        btn.textContent = 'Filled from URL';
+        btn.disabled = false;
+        setTimeout(function() { btn.textContent = 'Auto-Fill'; }, 2000);
+      });
     }
 
     function renderLeads() {
