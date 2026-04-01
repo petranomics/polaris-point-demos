@@ -2329,8 +2329,8 @@
             if (scraped.error) return;
             var updated = false;
 
-            // Import scraped reviews if we got more/better ones
-            if (scraped.reviews && scraped.reviews.length > (merged.reviews || []).length) {
+            // Import scraped reviews — prefer scraped over API (full text vs snippets)
+            if (scraped.reviews && scraped.reviews.length) {
               merged.reviews = scraped.reviews;
               // Re-fill reviews in the form
               var rl = document.getElementById('reviewsList');
@@ -2435,23 +2435,6 @@
           last.querySelector('.rev-text').value = r.text || '';
           last.querySelector('.rev-author').value = r.author || r.author_name || '';
           last.querySelector('.rev-location').value = r.location || r.time || city || '';
-        });
-      } else if (place.rating && place.reviewCount) {
-        // No API reviews available — generate placeholder reviews based on rating
-        // These should be replaced with real reviews before going live
-        rl.innerHTML = '';
-        var templates = [
-          { text: 'Excellent service from start to finish. ' + (place.name || 'They') + ' was professional, on time, and did quality work at a fair price. Highly recommend!', author: 'Recent Customer' },
-          { text: 'Called for an estimate and they were out the same day. Very thorough, explained everything clearly, and the pricing was honest. Will definitely use again.', author: 'Verified Client' },
-          { text: 'We\'ve used ' + shortName + ' multiple times now and they never disappoint. Reliable, courteous, and they stand behind their work. Our go-to for ' + template.toLowerCase() + ' needs.', author: 'Repeat Customer' }
-        ];
-        templates.forEach(function(t) {
-          addReviewRow(rl);
-          var items = rl.querySelectorAll('.dynamic-item');
-          var last = items[items.length - 1];
-          last.querySelector('.rev-text').value = t.text;
-          last.querySelector('.rev-author').value = t.author;
-          last.querySelector('.rev-location').value = city || '';
         });
       }
 
