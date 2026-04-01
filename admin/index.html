@@ -1516,6 +1516,8 @@
               <option value="handyman">Handyman / Contractor</option>
               <option value="cleaning">Cleaning Services</option>
               <option value="pest-control">Pest Control</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="salon">Salon / Barber</option>
             </select>
           </div>
           <div class="intake-field" style="display:flex;align-items:flex-end;">
@@ -1654,11 +1656,27 @@
           <input type="text" id="intServiceAreas" placeholder="Austin, Round Rock, Cedar Park, Pflugerville">
         </div>
 
+        <!-- Team Members -->
+        <div class="intake-field" style="margin-top:16px;">
+          <label>Team Members</label>
+          <div id="teamList" class="dynamic-list"></div>
+          <button class="add-item-btn" onclick="addTeamRow(document.getElementById('teamList'))" style="margin-top:8px;width:100%;">+ Add Team Member</button>
+        </div>
+
         <!-- FAQs -->
         <div class="intake-field" style="margin-top:16px;">
           <label>FAQs</label>
+          <button class="add-item-btn" onclick="prefillFaqs()" style="width:100%;margin-bottom:8px;background:rgba(91,141,239,.08);border-color:rgba(91,141,239,.2);color:#5B8DEF;">Auto-Fill Industry FAQs</button>
           <div id="faqsList" class="dynamic-list"></div>
           <button class="add-item-btn" onclick="addFaqRow(document.getElementById('faqsList'))" style="margin-top:8px;width:100%;">+ Add FAQ</button>
+        </div>
+
+        <!-- Blog Posts -->
+        <div class="intake-field" style="margin-top:16px;">
+          <label>Blog Posts (SEO)</label>
+          <button class="add-item-btn" onclick="prefillBlogPosts()" style="width:100%;margin-bottom:8px;background:rgba(212,168,83,.08);border-color:rgba(212,168,83,.2);color:#D4A853;">Auto-Fill Industry Blog Posts</button>
+          <div id="blogList" class="dynamic-list"></div>
+          <button class="add-item-btn" onclick="addBlogRow(document.getElementById('blogList'))" style="margin-top:8px;width:100%;">+ Add Blog Post</button>
         </div>
       </div>
 
@@ -1976,6 +1994,186 @@
         '</div>' +
         '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
       container.appendChild(div);
+    }
+
+    function addTeamRow(container) {
+      var div = document.createElement('div');
+      div.className = 'dynamic-item';
+      div.innerHTML = '<div class="item-fields">' +
+        '<div style="display:flex;gap:8px;align-items:center;">' +
+          '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#111827;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;font-size:.72rem;color:#5B8DEF;white-space:nowrap;">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>' +
+            'Photo' +
+            '<input type="file" accept="image/*" style="display:none;" onchange="handleTeamPhoto(this)">' +
+          '</label>' +
+          '<img class="team-photo-preview" style="display:none;width:36px;height:36px;border-radius:6px;object-fit:cover;">' +
+          '<input type="hidden" class="team-photo-data">' +
+          '<input type="text" placeholder="Name" class="team-name" style="flex:1;">' +
+        '</div>' +
+        '<input type="text" placeholder="Title / Role" class="team-role">' +
+        '<textarea placeholder="Short bio (optional)" class="team-bio" style="min-height:40px;"></textarea>' +
+        '</div>' +
+        '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
+      container.appendChild(div);
+    }
+
+    function handleTeamPhoto(input) {
+      var file = input.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var item = input.closest('.dynamic-item');
+        var preview = item.querySelector('.team-photo-preview');
+        var data = item.querySelector('.team-photo-data');
+        // Resize to 300px max for config size
+        var img = new Image();
+        img.onload = function() {
+          var max = 300;
+          var w = img.width, h = img.height;
+          if (w > max || h > max) {
+            if (w > h) { h = Math.round(h * max / w); w = max; }
+            else { w = Math.round(w * max / h); h = max; }
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          preview.src = dataUrl;
+          preview.style.display = 'block';
+          data.value = dataUrl;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addBlogRow(container) {
+      var div = document.createElement('div');
+      div.className = 'dynamic-item';
+      div.innerHTML = '<div class="item-fields">' +
+        '<input type="text" placeholder="Post title" class="blog-title">' +
+        '<textarea placeholder="Excerpt / summary (2-3 sentences)" class="blog-excerpt"></textarea>' +
+        '</div>' +
+        '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
+      container.appendChild(div);
+    }
+
+    // === INDUSTRY DEFAULTS ===
+    var DEFAULT_FAQS = {
+      plumber: [
+        { q: 'Do you offer free estimates?', a: 'Yes! We provide free, no-obligation estimates for all plumbing work. Call us or fill out our online form and we\'ll get back to you the same day.' },
+        { q: 'Are your plumbers licensed and insured?', a: 'Absolutely. Every technician on our team is fully licensed, bonded, and insured for your protection and peace of mind.' },
+        { q: 'Do you offer emergency plumbing services?', a: 'Yes, we offer 24/7 emergency plumbing services. Burst pipes, major leaks, and sewer backups can\'t wait — and neither do we.' },
+        { q: 'How quickly can you get to my home?', a: 'For most service calls, we can have a technician at your door within 1-2 hours. Emergency calls are prioritized for fastest response.' },
+        { q: 'What types of plumbing services do you offer?', a: 'We handle everything from simple repairs and drain cleaning to water heater installation, repiping, sewer line work, and full bathroom/kitchen remodels.' },
+        { q: 'Do you guarantee your work?', a: 'Yes. All of our work comes with a satisfaction guarantee. If something isn\'t right, we\'ll come back and fix it at no additional charge.' }
+      ],
+      handyman: [
+        { q: 'What types of jobs do you handle?', a: 'We handle a wide range of home repairs and improvements — from drywall patching and door installation to deck building, painting, and general maintenance.' },
+        { q: 'Do you offer free estimates?', a: 'Yes, we provide free estimates for all projects. We\'ll assess the work, explain what\'s needed, and give you a clear price before we start.' },
+        { q: 'Are you licensed and insured?', a: 'Yes, we are fully licensed and insured. Your home and property are protected on every job.' },
+        { q: 'How do I schedule a service?', a: 'Just give us a call or fill out the form on our website. We\'ll find a time that works for your schedule.' },
+        { q: 'Do you work on weekends?', a: 'Yes, we offer Saturday appointments for your convenience. Contact us to check availability.' },
+        { q: 'Can you handle multiple projects in one visit?', a: 'Absolutely. Many of our customers save time and money by bundling several small jobs into one appointment.' }
+      ],
+      cleaning: [
+        { q: 'What cleaning products do you use?', a: 'We use professional-grade, eco-friendly cleaning products that are safe for children, pets, and the environment.' },
+        { q: 'Do I need to be home during the cleaning?', a: 'Not at all. Many of our clients provide a key or access code. We\'re fully bonded and insured for your peace of mind.' },
+        { q: 'How do you price your services?', a: 'Pricing is based on the size of your home and the type of cleaning requested. We offer transparent quotes with no hidden fees.' },
+        { q: 'Do you bring your own supplies and equipment?', a: 'Yes, we bring everything needed — professional vacuums, microfiber cloths, and all cleaning solutions.' },
+        { q: 'Can I customize my cleaning plan?', a: 'Absolutely. We tailor every cleaning to your needs — whether you want focus on kitchens and bathrooms, or a full deep clean.' },
+        { q: 'What if I\'m not satisfied with the cleaning?', a: 'Your satisfaction is guaranteed. If something doesn\'t meet your expectations, let us know within 24 hours and we\'ll come back to make it right.' }
+      ],
+      'pest-control': [
+        { q: 'Are your treatments safe for kids and pets?', a: 'Yes. We use EPA-approved products and targeted application methods that are safe for your family and pets while being effective against pests.' },
+        { q: 'How quickly can you come out?', a: 'We offer same-day and next-day service for most pest issues. Emergency infestations are prioritized.' },
+        { q: 'Do you offer recurring treatment plans?', a: 'Yes, we offer monthly and quarterly plans that keep pests away year-round. Prevention is always more effective than reaction.' },
+        { q: 'What types of pests do you treat?', a: 'We handle ants, roaches, spiders, termites, mosquitoes, rodents, wasps, bed bugs, and more. If it\'s bugging you, we can handle it.' },
+        { q: 'Do I need to leave my home during treatment?', a: 'For most treatments, no. We\'ll let you know in advance if a specific treatment requires you to step out briefly.' },
+        { q: 'Do you guarantee your work?', a: 'Yes. If pests return between scheduled treatments, we\'ll come back at no extra charge.' }
+      ],
+      restaurant: [
+        { q: 'Do you take reservations?', a: 'Yes! You can reserve a table through our website or by calling us directly. Walk-ins are also welcome based on availability.' },
+        { q: 'Do you offer catering or private events?', a: 'Absolutely. We offer catering for events of all sizes and can host private parties in our dining room. Contact us for a custom menu.' },
+        { q: 'Do you have vegetarian or gluten-free options?', a: 'Yes, we have a variety of options to accommodate dietary needs. Just let your server know and we\'ll be happy to help.' },
+        { q: 'What are your hours?', a: 'Check our hours listed above. We recommend making a reservation for weekend dinners as we tend to fill up.' },
+        { q: 'Do you offer takeout or delivery?', a: 'Yes, we offer both takeout and delivery through our website and popular delivery apps.' },
+        { q: 'Is parking available?', a: 'Yes, we have a dedicated parking lot with free parking for all guests.' }
+      ],
+      salon: [
+        { q: 'Do I need an appointment?', a: 'Appointments are recommended to guarantee your preferred time and stylist, but we do accept walk-ins when availability allows.' },
+        { q: 'What services do you offer?', a: 'We offer haircuts, coloring, highlights, blowouts, treatments, styling for special events, and more. Check our services page for the full menu.' },
+        { q: 'How do I book an appointment?', a: 'You can book online through our website, call us, or send us a message. We\'ll confirm your appointment right away.' },
+        { q: 'What is your cancellation policy?', a: 'We ask for at least 24 hours notice for cancellations. Late cancellations or no-shows may be subject to a fee.' },
+        { q: 'Do you offer gift cards?', a: 'Yes! Gift cards are available in any amount and make a great gift. Ask at the front desk or purchase online.' },
+        { q: 'What products do you use?', a: 'We use professional-grade salon products from trusted brands. Your stylist can recommend the right products for your hair type.' }
+      ]
+    };
+
+    var DEFAULT_BLOG_POSTS = {
+      plumber: [
+        { title: '5 Signs You Need to Replace Your Water Heater', excerpt: 'Is your water heater making strange noises, producing rusty water, or taking forever to heat up? These are warning signs that replacement may be cheaper than another repair. Here\'s what to watch for.' },
+        { title: 'How to Prevent Frozen Pipes This Winter', excerpt: 'Frozen pipes can burst and cause thousands in water damage. A few simple steps — insulating exposed pipes, keeping faucets dripping, and knowing where your main shutoff is — can save you a major headache.' },
+        { title: 'Why Your Drains Keep Clogging (And How to Fix It)', excerpt: 'Recurring clogs aren\'t just annoying — they\'re a sign of a bigger problem. From grease buildup to tree root intrusion, here\'s what\'s really going on in your pipes and when to call a professional.' }
+      ],
+      handyman: [
+        { title: '10 Home Maintenance Tasks You Shouldn\'t Ignore', excerpt: 'Small problems become expensive repairs when you put them off. From caulking windows to checking your HVAC filters, here are the maintenance tasks that save you money in the long run.' },
+        { title: 'How to Know When a DIY Job Needs a Pro', excerpt: 'Some projects look simple until you\'re halfway in. Electrical work, load-bearing walls, and plumbing behind walls are jobs where calling a professional handyman saves time, money, and safety.' },
+        { title: 'Planning a Home Renovation? Start Here', excerpt: 'Before you swing a hammer, you need a plan. We break down budgeting, permits, timelines, and how to prioritize projects that add the most value to your home.' }
+      ],
+      cleaning: [
+        { title: 'The Deep Clean Checklist Most People Miss', excerpt: 'You vacuum and wipe counters, but when\'s the last time you cleaned behind your fridge, inside your vents, or under your couch cushions? Here\'s the deep clean checklist the pros use.' },
+        { title: 'How Often Should You Really Clean Everything?', excerpt: 'Daily, weekly, monthly, yearly — different surfaces and spaces need different cleaning frequencies. This guide breaks down the optimal schedule for every room in your home.' },
+        { title: 'Why Eco-Friendly Cleaning Products Actually Work Better', excerpt: 'Gone are the days when "green" meant weak. Modern eco-friendly cleaners are just as effective as harsh chemicals — and safer for your family, pets, and surfaces.' }
+      ],
+      'pest-control': [
+        { title: 'Why Pests Love Your Home (And How to Make Them Leave)', excerpt: 'Moisture, food crumbs, and entry points are an open invitation for pests. Learn the three things every homeowner should fix to make their home less attractive to unwanted visitors.' },
+        { title: 'Termite Season Is Here: What You Need to Know', excerpt: 'Termites cause billions in damage every year — and most homeowners don\'t know they have them until it\'s too late. Here\'s how to spot the signs early and protect your biggest investment.' },
+        { title: 'Are DIY Pest Sprays Actually Working?', excerpt: 'Store-bought sprays might kill what you can see, but they rarely solve the underlying infestation. Here\'s why professional treatment is more effective and often more affordable than you think.' }
+      ],
+      restaurant: [
+        { title: 'What Goes Into Our Menu: Farm to Table in Austin', excerpt: 'We partner with local farms and suppliers to bring you the freshest ingredients. Here\'s a look behind the scenes at how we source, select, and prepare what ends up on your plate.' },
+        { title: 'Planning a Private Event? Here\'s What to Expect', excerpt: 'From birthday dinners to corporate gatherings, we\'ve hosted hundreds of events. Here\'s how our private event process works and how to make yours unforgettable.' },
+        { title: 'The Story Behind Our Most Popular Dish', excerpt: 'Every great dish has a story. Our chef shares the inspiration, the failed experiments, and the moment it all came together for the item our regulars can\'t stop ordering.' }
+      ],
+      salon: [
+        { title: 'How to Maintain Your Color Between Appointments', excerpt: 'Color-treated hair needs extra love. From sulfate-free shampoos to cold water rinses, here are the tips our stylists swear by to keep your color vibrant longer.' },
+        { title: 'Finding the Right Hairstyle for Your Face Shape', excerpt: 'Not every trending cut works for every face. Our stylists break down which styles complement round, oval, square, and heart-shaped faces — and how to communicate what you want.' },
+        { title: 'Why a Consultation Matters More Than You Think', excerpt: 'The best haircuts start with a great conversation. Here\'s why we always recommend a consultation and what to bring (hint: reference photos help a lot).' }
+      ]
+    };
+
+    function prefillFaqs() {
+      var template = document.getElementById('searchTemplate').value;
+      var defaults = DEFAULT_FAQS[template];
+      if (!defaults) { alert('No default FAQs for this template.'); return; }
+      var fl = document.getElementById('faqsList');
+      if (fl.children.length && !confirm('Replace existing FAQs with industry defaults?')) return;
+      fl.innerHTML = '';
+      defaults.forEach(function(f) {
+        addFaqRow(fl);
+        var items = fl.querySelectorAll('.dynamic-item');
+        var last = items[items.length - 1];
+        last.querySelector('.faq-q').value = f.q;
+        last.querySelector('.faq-a').value = f.a;
+      });
+    }
+
+    function prefillBlogPosts() {
+      var template = document.getElementById('searchTemplate').value;
+      var defaults = DEFAULT_BLOG_POSTS[template];
+      if (!defaults) { alert('No default blog posts for this template.'); return; }
+      var bl = document.getElementById('blogList');
+      if (bl.children.length && !confirm('Replace existing blog posts with industry defaults?')) return;
+      bl.innerHTML = '';
+      var now = new Date();
+      defaults.forEach(function(p, i) {
+        addBlogRow(bl);
+        var items = bl.querySelectorAll('.dynamic-item');
+        var last = items[items.length - 1];
+        last.querySelector('.blog-title').value = p.title;
+        last.querySelector('.blog-excerpt').value = p.excerpt;
+      });
     }
 
     // Parse pasted reviews from Yelp/Google
@@ -2613,6 +2811,38 @@
       });
       faqLines += '  ],\n';
 
+      // Gather team members
+      var team = [];
+      document.querySelectorAll('#teamList .dynamic-item').forEach(function(item) {
+        var n = item.querySelector('.team-name').value.trim();
+        var r = item.querySelector('.team-role').value.trim();
+        var p = item.querySelector('.team-photo-data').value;
+        var b = item.querySelector('.team-bio').value.trim();
+        if (n) team.push({ name: n, role: r, image: p, bio: b });
+      });
+
+      // Build team array
+      var teamLines = '  team: [\n';
+      team.forEach(function(t, i) {
+        teamLines += '    { name: ' + JSON.stringify(t.name) + ', role: ' + JSON.stringify(t.role) + ', image: ' + JSON.stringify(t.image) + ', bio: ' + JSON.stringify(t.bio) + ' }' + (i < team.length - 1 ? ',' : '') + '\n';
+      });
+      teamLines += '  ],\n';
+
+      // Gather blog posts
+      var blogPosts = [];
+      document.querySelectorAll('#blogList .dynamic-item').forEach(function(item) {
+        var t = item.querySelector('.blog-title').value.trim();
+        var e = item.querySelector('.blog-excerpt').value.trim();
+        if (t) blogPosts.push({ title: t, excerpt: e, url: '#', date: new Date().toISOString().split('T')[0] });
+      });
+
+      // Build blog posts array
+      var blogLines = '  blogPosts: [\n';
+      blogPosts.forEach(function(p, i) {
+        blogLines += '    { title: ' + JSON.stringify(p.title) + ', excerpt: ' + JSON.stringify(p.excerpt) + ', image: "", url: "#", date: ' + JSON.stringify(p.date) + ' }' + (i < blogPosts.length - 1 ? ',' : '') + '\n';
+      });
+      blogLines += '  ],\n';
+
       // Build service areas
       var areaArrStr = JSON.stringify(areas);
 
@@ -2729,7 +2959,7 @@
         '    faqAccordion: true,\n' +
         '    serviceAreaMap: true,\n' +
         '    lightbox: true,\n' +
-        '    teamModals: false,\n' +
+        '    teamModals: ' + (team.length > 0 ? 'true' : 'false') + ',\n' +
         '    blogPreview: true,\n' +
         '    cookieConsent: true,\n' +
         '    trustBar: true,\n' +
@@ -2758,7 +2988,8 @@
         '  // === SERVICE AREA MAP ===\n' +
         '  googleMapsEmbed: ' + JSON.stringify(address ? 'https://www.google.com/maps?q=' + encodeURIComponent(address) + '&output=embed' : '') + ',\n\n' +
         '  // === BLOG POSTS ===\n' +
-        '  blogPosts: [],\n\n' +
+        blogLines + '\n' +
+        teamLines + '\n' +
         '  // === TRUST BAR LOGOS ===\n' +
         '  trustLogos: [\n' +
         '    { src: "", alt: "Licensed & Insured" },\n' +

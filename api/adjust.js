@@ -1,5 +1,5 @@
 // /api/adjust.js — AI-powered config adjustments via Claude API
-// Usage: POST /api/adjust { config: "...", prompt: "..." }
+// Returns a list of find/replace pairs instead of the full config
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,74 +26,60 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 8000,
+        max_tokens: 4000,
         messages: [{
           role: 'user',
-          content: 'You are editing a JavaScript website configuration object. Apply the requested changes and return the COMPLETE updated file.\n\n' +
-            'RULES:\n' +
-            '- Return ONLY raw JavaScript. No markdown, no code fences, no explanations.\n' +
-            '- The output MUST start exactly the same way the input starts (preserve the comment lines and window.SITE_CONFIG = { line).\n' +
-            '- The output MUST end with "};"  \n' +
-            '- Keep ALL existing values unchanged unless the user specifically asked to modify them.\n' +
-            '- Only change the specific fields the user mentioned.\n' +
-            '- Preserve all formatting, quotes, and escape characters.\n\n' +
-            'CURRENT CONFIG:\n' + body.config + '\n\n' +
-            'REQUESTED CHANGES: ' + body.prompt
+          content: 'You are editing a JavaScript website config file. The user wants changes applied.\n\n' +
+            'CONFIG:\n```\n' + body.config + '\n```\n\n' +
+            'REQUESTED CHANGES: ' + body.prompt + '\n\n' +
+            'Return ONLY a JSON array of find-and-replace operations. Each element should have "find" (the exact existing line or lines from the config) and "replace" (the replacement). Example:\n' +
+            '[{"find":"  heroHeadline: \\"Old Title\\",","replace":"  heroHeadline: \\"New Title\\","}]\n\n' +
+            'Rules:\n' +
+            '- "find" must be an EXACT substring that exists in the config above\n' +
+            '- Only change what the user asked for — nothing else\n' +
+            '- Return valid JSON array only — no markdown, no explanation, no code fences\n' +
+            '- For multi-line changes, include the full lines in both find and replace'
         }]
       })
     });
 
     var data = await response.json();
-
     if (data.error) {
       return res.status(500).json({ error: data.error.message || 'Claude API error' });
     }
 
-    var updatedConfig = data.content && data.content[0] ? data.content[0].text : '';
+    var text = data.content && data.content[0] ? data.content[0].text : '';
 
-    // Strip markdown fences if present
-    updatedConfig = updatedConfig
-      .replace(/^```[\w]*\s*\n?/gm, '')
-      .replace(/\n?\s*```\s*$/gm, '')
-      .trim();
+    // Clean markdown fences if present
+    text = text.replace(/^```[\w]*\s*\n?/gm, '').replace(/\n?\s*```\s*$/gm, '').trim();
 
-    // Validate: must contain window.SITE_CONFIG (or window.siteConfig for compat)
-    var configStart = updatedConfig.indexOf('window.SITE_CONFIG');
-    if (configStart < 0) configStart = updatedConfig.indexOf('window.siteConfig');
-    if (configStart < 0) {
-      return res.status(500).json({ error: 'AI returned invalid config format. Try a simpler change.' });
-    }
-    // Keep comment lines before the config if present
-    var commentStart = updatedConfig.lastIndexOf('//', configStart);
-    if (commentStart >= 0 && updatedConfig.substring(commentStart, configStart).indexOf('\n\n') < 0) {
-      // Comments are right before config, find the first // line
-      var lines = updatedConfig.substring(0, configStart).split('\n');
-      var firstComment = -1;
-      for (var li = lines.length - 1; li >= 0; li--) {
-        if (lines[li].trim().startsWith('//')) firstComment = li;
-        else if (lines[li].trim()) break;
-      }
-      if (firstComment >= 0) {
-        var charOffset = lines.slice(0, firstComment).join('\n').length + (firstComment > 0 ? 1 : 0);
-        updatedConfig = updatedConfig.substring(charOffset);
-      } else {
-        updatedConfig = updatedConfig.substring(configStart);
-      }
-    } else {
-      updatedConfig = updatedConfig.substring(configStart);
+    var patches;
+    try {
+      patches = JSON.parse(text);
+    } catch (e) {
+      return res.status(500).json({ error: 'AI returned invalid JSON. Try rephrasing your request.' });
     }
 
-    // Validate: must end with };
-    if (!updatedConfig.trimEnd().endsWith('};')) {
-      var lastBrace = updatedConfig.lastIndexOf('};');
-      if (lastBrace > 0) {
-        updatedConfig = updatedConfig.substring(0, lastBrace + 2);
-      } else {
-        return res.status(500).json({ error: 'AI returned incomplete config. Try again.' });
+    if (!Array.isArray(patches) || !patches.length) {
+      return res.status(500).json({ error: 'AI returned no changes. Try being more specific.' });
+    }
+
+    // Apply patches to the config
+    var updated = body.config;
+    var applied = 0;
+    for (var i = 0; i < patches.length; i++) {
+      var p = patches[i];
+      if (p.find && typeof p.replace === 'string' && updated.includes(p.find)) {
+        updated = updated.replace(p.find, p.replace);
+        applied++;
       }
     }
 
-    return res.status(200).json({ config: updatedConfig });
+    if (applied === 0) {
+      return res.status(500).json({ error: 'AI changes could not be matched to config. Try a simpler change.' });
+    }
+
+    return res.status(200).json({ config: updated, applied: applied });
   } catch (err) {
     return res.status(500).json({ error: 'AI adjustment failed: ' + err.message });
   }
