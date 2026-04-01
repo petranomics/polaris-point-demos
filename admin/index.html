@@ -379,6 +379,8 @@
     }
     .admin-tab.senior-only { display: none; }
     body.role-senior .admin-tab.senior-only { display: block; }
+    .senior-only-inline { display: none !important; }
+    body.role-senior .senior-only-inline { display: inline-flex !important; }
 
     /* Role badge */
     .role-badge {
@@ -1660,13 +1662,13 @@
         </div>
       </div>
 
-      <!-- Step 4: Generate -->
+      <!-- Step 4: Generate & Preview -->
       <div class="intake-section">
         <h3><span class="step-num">4</span> Generate</h3>
         <div class="btn-row" style="margin-top:0;">
           <button class="btn-export" onclick="generateConfig()">Generate config.js</button>
-          <button class="btn-export secondary" id="btnCopyConfig" onclick="copyConfig()" style="display:none;">Copy to Clipboard</button>
-          <button class="btn-export secondary" id="btnDownloadConfig" onclick="downloadConfig()" style="display:none;">Download as config.js</button>
+          <button class="btn-export secondary senior-only-inline" id="btnCopyConfig" onclick="copyConfig()" style="display:none;">Copy to Clipboard</button>
+          <button class="btn-export secondary senior-only-inline" id="btnDownloadConfig" onclick="downloadConfig()" style="display:none;">Download as config.js</button>
           <button class="btn-export" id="btnPreview" onclick="previewSite()" style="display:none;background:#16a34a;">Preview Live Site</button>
         </div>
         <div id="previewLink" style="display:none;margin-top:12px;padding:14px 18px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;">
@@ -1676,10 +1678,27 @@
             <button class="btn-export" onclick="navigator.clipboard.writeText(document.getElementById('previewUrl').value);this.textContent='Copied!';var b=this;setTimeout(function(){b.textContent='Copy'},1500)" style="padding:8px 14px;font-size:.75rem;">Copy</button>
           </div>
         </div>
+
+        <!-- AI Adjustments -->
+        <div id="aiAdjustBox" style="display:none;margin-top:16px;padding:16px;background:#0B1120;border:1px solid rgba(212,168,83,.2);border-radius:10px;">
+          <h4 style="font-family:'Outfit',sans-serif;color:#D4A853;font-size:.85rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4A853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            AI Adjustments
+          </h4>
+          <p style="font-size:.75rem;color:#64748b;margin-bottom:10px;">Describe what you want to change and AI will update the site config. Preview again to see the result.</p>
+          <textarea id="aiPrompt" placeholder="e.g. Make the headline more urgent, change the CTA button text to 'Book Now', add a trust badge about 24/7 service..." style="width:100%;min-height:70px;background:#111827;border:1px solid #1e293b;border-radius:8px;padding:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;resize:vertical;outline:none;"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn-export" id="btnAiAdjust" onclick="aiAdjust()" style="flex:1;background:linear-gradient(135deg,#D4A853,#c49a3f);color:#0B1120;">Apply Changes</button>
+            <button class="btn-export secondary" onclick="previewSite()" style="white-space:nowrap;">Re-Preview</button>
+          </div>
+          <div id="aiStatus" style="display:none;margin-top:8px;font-size:.78rem;padding:8px 10px;border-radius:6px;"></div>
+        </div>
+
+        <!-- Config code (senior only) -->
         <div id="configOutput" class="config-output" style="display:none;">
           <pre id="configCode"></pre>
         </div>
-        <p class="export-note" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder, or use the preview link above to share with prospects</p>
+        <p class="export-note senior-only-inline" style="margin-top:16px;">Save this file as <code style="color:#5B8DEF;">config.js</code> in the appropriate demo folder, or use the preview link above to share with prospects</p>
         <hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
         <div style="position:relative;">
           <div class="gated-overlay">
@@ -2766,13 +2785,64 @@
         '  }\n' +
         '};\n';
 
-      document.getElementById('configCode').textContent = config;
-      document.getElementById('configOutput').style.display = 'block';
-      document.getElementById('btnCopyConfig').style.display = 'inline-flex';
-      document.getElementById('btnDownloadConfig').style.display = 'inline-flex';
-      document.getElementById('btnPreview').style.display = 'inline-flex';
-      document.getElementById('btnDeploy').style.display = 'inline-flex';
       window._generatedConfig = config;
+      document.getElementById('btnPreview').style.display = 'inline-flex';
+      document.getElementById('aiAdjustBox').style.display = 'block';
+
+      if (currentRole === 'senior') {
+        document.getElementById('configCode').textContent = config;
+        document.getElementById('configOutput').style.display = 'block';
+        document.getElementById('btnCopyConfig').style.display = 'inline-flex';
+        document.getElementById('btnDownloadConfig').style.display = 'inline-flex';
+        document.getElementById('btnDeploy').style.display = 'inline-flex';
+      } else {
+        document.getElementById('configOutput').style.display = 'none';
+        document.getElementById('btnCopyConfig').style.display = 'none';
+        document.getElementById('btnDownloadConfig').style.display = 'none';
+        document.getElementById('btnDeploy').style.display = 'none';
+      }
+    }
+
+    function aiAdjust() {
+      var prompt = document.getElementById('aiPrompt').value.trim();
+      if (!prompt) return alert('Describe what you want to change');
+      if (!window._generatedConfig) return alert('Generate a config first');
+
+      var btn = document.getElementById('btnAiAdjust');
+      var status = document.getElementById('aiStatus');
+      btn.disabled = true;
+      btn.textContent = 'Thinking...';
+      status.style.display = 'block';
+      status.style.background = 'rgba(91,141,239,.08)';
+      status.style.color = '#5B8DEF';
+      status.textContent = 'AI is making adjustments...';
+
+      fetch('/api/adjust', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config: window._generatedConfig, prompt: prompt })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        window._generatedConfig = data.config;
+        if (currentRole === 'senior') {
+          document.getElementById('configCode').textContent = data.config;
+        }
+        status.style.background = 'rgba(22,163,74,.08)';
+        status.style.color = '#16a34a';
+        status.textContent = 'Changes applied. Hit "Re-Preview" to see the updated site.';
+        document.getElementById('aiPrompt').value = '';
+        btn.disabled = false;
+        btn.textContent = 'Apply Changes';
+      })
+      .catch(function(err) {
+        status.style.background = 'rgba(239,68,68,.08)';
+        status.style.color = '#ef4444';
+        status.textContent = 'Failed: ' + err.message;
+        btn.disabled = false;
+        btn.textContent = 'Apply Changes';
+      });
     }
 
     function copyConfig() {
