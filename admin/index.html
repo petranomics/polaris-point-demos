@@ -2527,16 +2527,10 @@
       window._placePhotos = place.photos || [];
       if (place.imageUrl && !window._placePhotos.length) window._placePhotos = [place.imageUrl];
 
-      // === AUTO-FILL LOGO from business photo ===
-      if (place.imageUrl) {
-        var logoPreview = document.getElementById('logoPreviewImg');
-        var logoHint = document.getElementById('logoPasteHint');
-        var logoUrlInput = document.getElementById('intLogoUrl');
-        logoPreview.src = place.imageUrl;
-        logoPreview.style.display = 'block';
-        if (logoHint) logoHint.style.display = 'none';
-        logoUrlInput.value = place.imageUrl;
-      }
+      // NOTE: Google/Yelp photos are NOT logos — they're job/storefront photos.
+      // Don't auto-fill the logo field. These photos are used for hero and about
+      // images in the config generator via window._placePhotos instead.
+      // The user should paste or upload an actual logo separately.
 
       // Scroll down to show the filled fields
       document.getElementById('searchResults').style.display = 'block';
