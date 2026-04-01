@@ -3195,6 +3195,9 @@
         // If they had a Yelp/Google URL, put it in the search field
         if (lead.listingUrl) document.getElementById('searchUrl').value = lead.listingUrl;
         else if (lead.bizName) document.getElementById('searchBizName').value = lead.bizName;
+
+        // Auto-trigger search so reviews get fetched automatically
+        setTimeout(function() { searchPlaces(); }, 200);
       }, 100);
     }
 
