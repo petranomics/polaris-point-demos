@@ -89,19 +89,12 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* --- 3D tilt cards --- */
-    .demo-card {
-      transform-style: preserve-3d;
-      transition: transform .4s ease, box-shadow .4s ease;
-    }
-    .demo-card:hover {
-      box-shadow: 0 25px 80px rgba(91,141,239,.25), 0 0 60px rgba(91,141,239,.12);
-    }
+    /* --- Demo cards --- */
     .demo-card .demo-thumb img {
       transition: transform .6s ease;
     }
     .demo-card:hover .demo-thumb img {
-      transform: scale(1.08);
+      transform: scale(1.05);
     }
 
     /* --- Typed cursor --- */
@@ -1439,63 +1432,37 @@
       document.querySelectorAll('.stat-card').forEach(function(el) { statObs.observe(el); });
     })();
 
-    // === 3D ORBIT CAROUSEL (sin/cos positioning, cards stay upright) ===
+    // === AUTO-ROTATING ORBIT CAROUSEL ===
     (function() {
-      var scene = document.getElementById('carouselScene');
       var ring = document.getElementById('carouselRing');
       if (!ring) return;
       var cards = ring.querySelectorAll('.carousel-card');
       var n = cards.length;
-      var currentAngle = 0;
-      var targetAngle = 0;
-      // Orbit radii
-      var radiusX = 340; // horizontal spread
-      var radiusZ = 120; // depth (front-back distance)
+      var angle = 0;
+      var radiusX = 340;
+      var radiusZ = 120;
+      var speed = 0.004; // radians per frame — slow and smooth
 
-      function updateOrbit() {
-        var rect = scene.getBoundingClientRect();
-        var viewH = window.innerHeight;
-        var center = rect.top + rect.height / 2;
-        var progress = 1 - center / viewH;
-        targetAngle = progress * Math.PI * 2; // one full orbit
-        currentAngle += (targetAngle - currentAngle) * 0.04;
-
+      function tick() {
+        angle += speed;
         cards.forEach(function(card, i) {
-          var angle = currentAngle + (i / n) * Math.PI * 2;
-          var x = Math.sin(angle) * radiusX;
-          var z = Math.cos(angle) * radiusZ;
-          // z goes from -radiusZ (back) to +radiusZ (front)
-          var depthNorm = (z + radiusZ) / (radiusZ * 2); // 0=back, 1=front
-          var scale = 0.7 + depthNorm * 0.35;
-          var opacity = 0.35 + depthNorm * 0.65;
-          var y = -depthNorm * 15; // front cards float up slightly
+          var a = angle + (i / n) * Math.PI * 2;
+          var x = Math.sin(a) * radiusX;
+          var z = Math.cos(a) * radiusZ;
+          var depth = (z + radiusZ) / (radiusZ * 2);
+          var scale = 0.75 + depth * 0.3;
+          var opacity = 0.4 + depth * 0.6;
 
-          card.style.transform = 'translate(-50%, -50%) translate(' + x + 'px, ' + y + 'px) scale(' + scale + ')';
+          card.style.transform = 'translate(-50%, -50%) translate(' + x + 'px, ' + (-depth * 12) + 'px) scale(' + scale + ')';
           card.style.opacity = opacity;
-          card.style.zIndex = Math.round(depthNorm * 10);
-          // Slight blur on far-back cards
-          card.style.filter = depthNorm < 0.3 ? 'blur(' + ((0.3 - depthNorm) * 4) + 'px)' : 'none';
+          card.style.zIndex = Math.round(depth * 10);
         });
-
-        requestAnimationFrame(updateOrbit);
+        requestAnimationFrame(tick);
       }
-      updateOrbit();
+      tick();
     })();
 
-    // === 3D TILT ON DEMO CARDS + ALL GLASS CARDS ===
-    document.querySelectorAll('.demo-card, .glass').forEach(function(card) {
-      card.addEventListener('mousemove', function(e) {
-        var rect = card.getBoundingClientRect();
-        var x = (e.clientX - rect.left) / rect.width - 0.5;
-        var y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = 'perspective(600px) rotateY(' + (x * 14) + 'deg) rotateX(' + (-y * 14) + 'deg) scale(1.04)';
-        card.style.boxShadow = '0 ' + (20 + y * 20) + 'px ' + (60 + Math.abs(x) * 30) + 'px rgba(91,141,239,' + (0.12 + Math.abs(x) * 0.1) + ')';
-      });
-      card.addEventListener('mouseleave', function() {
-        card.style.transform = 'perspective(600px) rotateY(0) rotateX(0) scale(1)';
-        card.style.boxShadow = '';
-      });
-    });
+    // (hover tilt removed — clean and non-interactive)
 
     // === TYPED HEADLINE ===
     (function() {
