@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
           content: 'You are editing a JavaScript website configuration object. Apply the requested changes and return the COMPLETE updated file.\n\n' +
             'RULES:\n' +
             '- Return ONLY raw JavaScript. No markdown, no code fences, no explanations.\n' +
-            '- The output MUST start with exactly "window.siteConfig = {"\n' +
+            '- The output MUST start exactly the same way the input starts (preserve the comment lines and window.SITE_CONFIG = { line).\n' +
             '- The output MUST end with "};"  \n' +
             '- Keep ALL existing values unchanged unless the user specifically asked to modify them.\n' +
             '- Only change the specific fields the user mentioned.\n' +
@@ -57,15 +57,30 @@ module.exports = async function handler(req, res) {
       .replace(/\n?\s*```\s*$/gm, '')
       .trim();
 
-    // Validate: must start with window.siteConfig
-    if (!updatedConfig.startsWith('window.siteConfig')) {
-      // Try to find it in the output
-      var idx = updatedConfig.indexOf('window.siteConfig');
-      if (idx >= 0) {
-        updatedConfig = updatedConfig.substring(idx);
-      } else {
-        return res.status(500).json({ error: 'AI returned invalid config format. Try a simpler change.' });
+    // Validate: must contain window.SITE_CONFIG (or window.siteConfig for compat)
+    var configStart = updatedConfig.indexOf('window.SITE_CONFIG');
+    if (configStart < 0) configStart = updatedConfig.indexOf('window.siteConfig');
+    if (configStart < 0) {
+      return res.status(500).json({ error: 'AI returned invalid config format. Try a simpler change.' });
+    }
+    // Keep comment lines before the config if present
+    var commentStart = updatedConfig.lastIndexOf('//', configStart);
+    if (commentStart >= 0 && updatedConfig.substring(commentStart, configStart).indexOf('\n\n') < 0) {
+      // Comments are right before config, find the first // line
+      var lines = updatedConfig.substring(0, configStart).split('\n');
+      var firstComment = -1;
+      for (var li = lines.length - 1; li >= 0; li--) {
+        if (lines[li].trim().startsWith('//')) firstComment = li;
+        else if (lines[li].trim()) break;
       }
+      if (firstComment >= 0) {
+        var charOffset = lines.slice(0, firstComment).join('\n').length + (firstComment > 0 ? 1 : 0);
+        updatedConfig = updatedConfig.substring(charOffset);
+      } else {
+        updatedConfig = updatedConfig.substring(configStart);
+      }
+    } else {
+      updatedConfig = updatedConfig.substring(configStart);
     }
 
     // Validate: must end with };
