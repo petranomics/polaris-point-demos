@@ -55,6 +55,14 @@ module.exports = async function handler(req, res) {
 
     var place = detailsData.result;
 
+    // Build photo URLs from photo references
+    var photos = [];
+    if (place.photos && place.photos.length) {
+      photos = place.photos.slice(0, 5).map(function(p) {
+        return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=' + p.photo_reference + '&key=' + apiKey;
+      });
+    }
+
     // Sanitize and return useful fields
     var result = {
       name: place.name || '',
@@ -77,6 +85,8 @@ module.exports = async function handler(req, res) {
           time: r.relative_time_description || ''
         };
       }),
+      photos: photos,
+      imageUrl: photos[0] || '',
       types: place.types || [],
       status: place.business_status || 'OPERATIONAL',
       placeId: placeId

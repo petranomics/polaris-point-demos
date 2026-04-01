@@ -2360,6 +2360,11 @@
             merged.reviews = googleReviews.concat(yelpOnly);
           }
           if (google.mapsUrl) merged.mapsUrl = google.mapsUrl;
+          // Use Google photos if Yelp didn't have any
+          if (google.photos && google.photos.length && !(merged.photos && merged.photos.length)) {
+            merged.photos = google.photos;
+          }
+          if (google.imageUrl && !merged.imageUrl) merged.imageUrl = google.imageUrl;
         }
 
         console.log('Merged reviews:', merged.reviews ? merged.reviews.length : 0, merged.reviews);
@@ -2521,6 +2526,17 @@
       window._placeImageUrl = place.imageUrl || '';
       window._placePhotos = place.photos || [];
       if (place.imageUrl && !window._placePhotos.length) window._placePhotos = [place.imageUrl];
+
+      // === AUTO-FILL LOGO from business photo ===
+      if (place.imageUrl) {
+        var logoPreview = document.getElementById('logoPreviewImg');
+        var logoHint = document.getElementById('logoPasteHint');
+        var logoUrlInput = document.getElementById('intLogoUrl');
+        logoPreview.src = place.imageUrl;
+        logoPreview.style.display = 'block';
+        if (logoHint) logoHint.style.display = 'none';
+        logoUrlInput.value = place.imageUrl;
+      }
 
       // Scroll down to show the filled fields
       document.getElementById('searchResults').style.display = 'block';
