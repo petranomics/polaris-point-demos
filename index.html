@@ -153,27 +153,21 @@
       100% { transform: translate(-30px, -40px) scale(1.05); }
     }
 
-    /* --- 3D Horizontal Wheel --- */
+    /* --- 3D Orbit Carousel --- */
     .carousel-scene {
-      perspective: 1200px;
-      height: 420px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative;
+      height: 340px;
       margin-top: 40px;
       overflow: visible;
-      position: relative;
     }
     .carousel-ring {
       position: relative;
-      width: 220px;
-      height: 160px;
-      transform-style: preserve-3d;
-      transition: transform .05s linear;
+      width: 100%;
+      height: 100%;
     }
     .carousel-card {
       position: absolute;
-      width: 220px;
+      width: 230px;
       padding: 24px 20px;
       border-radius: 16px;
       text-align: center;
@@ -181,9 +175,10 @@
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      left: 0;
-      top: 0;
-      transition: opacity .3s ease;
+      left: 50%;
+      top: 50%;
+      transition: none;
+      will-change: transform, opacity;
     }
     .carousel-card .stat-icon {
       width: 44px;
@@ -208,7 +203,7 @@
       margin-bottom: 4px;
     }
     .carousel-card p {
-      font-size: .8rem;
+      font-size: .82rem;
       color: var(--text-secondary);
       line-height: 1.45;
       margin: 0;
@@ -216,8 +211,7 @@
     .carousel-card p strong { color: var(--gold); font-weight: 600; }
 
     @media (max-width: 768px) {
-      .carousel-scene { height: 350px; perspective: 800px; }
-      .carousel-ring { width: 180px; height: 140px; }
+      .carousel-scene { height: 300px; }
       .carousel-card { width: 180px; padding: 18px 14px; }
       .carousel-card .stat-number { font-size: 1.6rem; }
     }
@@ -1445,48 +1439,47 @@
       document.querySelectorAll('.stat-card').forEach(function(el) { statObs.observe(el); });
     })();
 
-    // === 3D HORIZONTAL WHEEL (all cards visible, spins on scroll) ===
+    // === 3D ORBIT CAROUSEL (sin/cos positioning, cards stay upright) ===
     (function() {
       var scene = document.getElementById('carouselScene');
       var ring = document.getElementById('carouselRing');
       if (!ring) return;
       var cards = ring.querySelectorAll('.carousel-card');
       var n = cards.length;
-      var angleStep = 360 / n;
-      // Large radius so all cards are spread out and visible
-      var radius = 380;
-
-      cards.forEach(function(card, i) {
-        card.style.transform = 'rotateY(' + (i * angleStep) + 'deg) translateZ(' + radius + 'px)';
-      });
-
       var currentAngle = 0;
       var targetAngle = 0;
+      // Orbit radii
+      var radiusX = 340; // horizontal spread
+      var radiusZ = 120; // depth (front-back distance)
 
-      function updateWheel() {
+      function updateOrbit() {
         var rect = scene.getBoundingClientRect();
         var viewH = window.innerHeight;
         var center = rect.top + rect.height / 2;
         var progress = 1 - center / viewH;
-        // Slow spin — 1 full rotation across the scroll range
-        targetAngle = progress * 360;
-        // Very smooth lerp
+        targetAngle = progress * Math.PI * 2; // one full orbit
         currentAngle += (targetAngle - currentAngle) * 0.04;
-        // Add subtle tilt on X for depth
-        ring.style.transform = 'rotateX(-8deg) rotateY(' + currentAngle + 'deg)';
 
-        // Gentle opacity — front brighter, sides still very visible
         cards.forEach(function(card, i) {
-          var cardAngle = ((i * angleStep + currentAngle) % 360 + 360) % 360;
-          var facing = cardAngle > 180 ? 360 - cardAngle : cardAngle;
-          // Front: 1.0, sides: 0.7, back: 0.4
-          var opacity = 1 - facing / 320;
-          card.style.opacity = Math.max(0.4, Math.min(1, opacity));
+          var angle = currentAngle + (i / n) * Math.PI * 2;
+          var x = Math.sin(angle) * radiusX;
+          var z = Math.cos(angle) * radiusZ;
+          // z goes from -radiusZ (back) to +radiusZ (front)
+          var depthNorm = (z + radiusZ) / (radiusZ * 2); // 0=back, 1=front
+          var scale = 0.7 + depthNorm * 0.35;
+          var opacity = 0.35 + depthNorm * 0.65;
+          var y = -depthNorm * 15; // front cards float up slightly
+
+          card.style.transform = 'translate(-50%, -50%) translate(' + x + 'px, ' + y + 'px) scale(' + scale + ')';
+          card.style.opacity = opacity;
+          card.style.zIndex = Math.round(depthNorm * 10);
+          // Slight blur on far-back cards
+          card.style.filter = depthNorm < 0.3 ? 'blur(' + ((0.3 - depthNorm) * 4) + 'px)' : 'none';
         });
 
-        requestAnimationFrame(updateWheel);
+        requestAnimationFrame(updateOrbit);
       }
-      updateWheel();
+      updateOrbit();
     })();
 
     // === 3D TILT ON DEMO CARDS + ALL GLASS CARDS ===
