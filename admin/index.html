@@ -2252,7 +2252,28 @@
           }
         } else if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
           var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
-          if (nameMatch) searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+          if (nameMatch) {
+            searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+          } else {
+            // Short URL (maps.app.goo.gl/...) — resolve server-side first
+            listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Resolving short URL...</p>';
+            resultsDiv.style.display = 'block';
+            fetch('/api/resolve?url=' + encodeURIComponent(urlInput))
+              .then(function(r) { return r.json(); })
+              .then(function(data) {
+                var resolved = data.resolved || '';
+                var rMatch = resolved.match(/place\/([^\/\?]+)/);
+                if (rMatch) {
+                  document.getElementById('searchUrl').value = resolved;
+                  searchName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
+                  document.getElementById('searchBizName').value = searchName;
+                }
+                searchPlaces();
+              }).catch(function() {
+                listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t resolve short URL. Enter the business name manually and search again.</p>';
+              });
+            return;
+          }
         }
         if (!searchName) searchName = urlInput;
       } else if (biz) {
@@ -3189,7 +3210,24 @@
         }
       } else if (url.includes('google.com/maps') || url.includes('goo.gl') || url.includes('maps.app')) {
         var nameMatch = url.match(/place\/([^\/\?]+)/);
-        if (nameMatch) searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+        if (nameMatch) {
+          searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+        } else {
+          // Short URL — resolve server-side
+          var btn = document.querySelector('#leadQuickUrl + button') || event.target;
+          btn.textContent = 'Resolving...';
+          btn.disabled = true;
+          fetch('/api/resolve?url=' + encodeURIComponent(url))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              var rMatch = (data.resolved || '').match(/place\/([^\/\?]+)/);
+              if (rMatch) document.getElementById('leadQuickUrl').value = data.resolved;
+              btn.textContent = 'Auto-Fill';
+              btn.disabled = false;
+              leadQuickFill();
+            }).catch(function() { btn.textContent = 'Auto-Fill'; btn.disabled = false; alert('Could not resolve short URL.'); });
+          return;
+        }
       }
 
       if (!searchName) { alert('Could not parse URL. Try pasting the full Google Maps or Yelp link.'); return; }
