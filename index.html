@@ -153,39 +153,44 @@
       100% { transform: translate(-30px, -40px) scale(1.05); }
     }
 
-    /* --- 3D Carousel --- */
+    /* --- 3D Vertical Wheel --- */
     .carousel-scene {
-      perspective: 1000px;
-      height: 340px;
+      perspective: 900px;
+      height: 380px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-top: 40px;
-      overflow: visible;
+      overflow: hidden;
+      position: relative;
+      /* Fade edges so cards roll in/out smoothly */
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
     }
     .carousel-ring {
-      width: 280px;
-      height: 300px;
+      width: 420px;
+      height: 200px;
       position: relative;
       transform-style: preserve-3d;
-      /* rotation set by JS via scroll */
     }
     .carousel-card {
       position: absolute;
-      width: 280px;
-      padding: 28px 24px;
-      border-radius: 16px;
+      width: 420px;
+      padding: 32px 36px;
+      border-radius: 18px;
       text-align: center;
-      backface-visibility: hidden;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 12px;
+      gap: 24px;
+      left: 0;
+      top: 0;
     }
     .carousel-card .stat-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--blue-glow), var(--gold-dim));
       border: 1px solid var(--border);
       display: flex;
@@ -193,41 +198,29 @@
       justify-content: center;
       color: var(--blue);
     }
-    .carousel-card .stat-icon svg { width: 24px; height: 24px; }
+    .carousel-card .stat-icon svg { width: 26px; height: 26px; }
+    .carousel-card .card-text { text-align: left; }
     .carousel-card .stat-number {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       font-weight: 700;
       color: var(--text);
       line-height: 1;
+      margin-bottom: 6px;
     }
     .carousel-card p {
-      font-size: .88rem;
+      font-size: .9rem;
       color: var(--text-secondary);
       line-height: 1.5;
       margin: 0;
     }
     .carousel-card p strong { color: var(--gold); font-weight: 600; }
 
-    /* Reflection / glow under carousel */
-    .carousel-scene::after {
-      content: '';
-      position: absolute;
-      bottom: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      height: 80px;
-      background: radial-gradient(ellipse, rgba(91,141,239,.1) 0%, transparent 70%);
-      filter: blur(20px);
-      pointer-events: none;
-    }
-
     @media (max-width: 768px) {
-      .carousel-scene { height: 300px; perspective: 700px; }
-      .carousel-ring { width: 240px; height: 260px; }
-      .carousel-card { width: 240px; padding: 20px 18px; }
-      .carousel-card .stat-number { font-size: 2rem; }
+      .carousel-scene { height: 320px; }
+      .carousel-ring { width: 300px; }
+      .carousel-card { width: 300px; padding: 24px 20px; gap: 16px; }
+      .carousel-card .stat-number { font-size: 1.8rem; }
     }
 
     /* --- Staggered reveals --- */
@@ -980,43 +973,37 @@
               <div class="stat-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               </div>
-              <div class="stat-number">40%</div>
-              <p>of small businesses still have <strong>no website</strong> presence at all.</p>
+              <div class="card-text">
+                <div class="stat-number">40%</div>
+                <p>of small businesses still have <strong>no website</strong> presence at all.</p>
+              </div>
             </article>
             <article class="carousel-card glass">
               <div class="stat-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
               </div>
-              <div class="stat-number">76%</div>
-              <p>of nearby searches lead to a <strong>same-day</strong> business visit.</p>
+              <div class="card-text">
+                <div class="stat-number">76%</div>
+                <p>of nearby searches lead to a <strong>same-day</strong> business visit.</p>
+              </div>
             </article>
             <article class="carousel-card glass">
               <div class="stat-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34"/></svg>
               </div>
-              <div class="stat-number">88%</div>
-              <p>of customers check a business online <strong>before calling</strong>.</p>
-            </article>
-            <article class="carousel-card glass">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <div class="card-text">
+                <div class="stat-number">88%</div>
+                <p>of customers check a business online <strong>before calling</strong>.</p>
               </div>
-              <div class="stat-number">3 sec</div>
-              <p>is all it takes to form a <strong>first impression</strong> of your website.</p>
-            </article>
-            <article class="carousel-card glass">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-              </div>
-              <div class="stat-number">63%</div>
-              <p>of all web traffic comes from <strong>mobile devices</strong>.</p>
             </article>
             <article class="carousel-card glass">
               <div class="stat-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </div>
-              <div class="stat-number">97%</div>
-              <p>of consumers <strong>search online</strong> for local businesses.</p>
+              <div class="card-text">
+                <div class="stat-number">97%</div>
+                <p>of consumers <strong>search online</strong> for local businesses.</p>
+              </div>
             </article>
           </div>
         </div>
@@ -1459,7 +1446,7 @@
       document.querySelectorAll('.stat-card').forEach(function(el) { statObs.observe(el); });
     })();
 
-    // === 3D SCROLL CAROUSEL ===
+    // === 3D VERTICAL WHEEL (cards rotate on X axis like a turning wheel) ===
     (function() {
       var scene = document.getElementById('carouselScene');
       var ring = document.getElementById('carouselRing');
@@ -1467,44 +1454,35 @@
       var cards = ring.querySelectorAll('.carousel-card');
       var n = cards.length;
       var angleStep = 360 / n;
-      // Radius: enough so cards don't overlap. For 6 cards at 280px, ~400px works
-      var radius = Math.round((280 / 2) / Math.tan(Math.PI / n)) + 40;
+      var radius = 240;
 
-      // Position each card around the ring
+      // Position cards in a vertical ring (rotateX)
       cards.forEach(function(card, i) {
-        card.style.transform = 'rotateY(' + (i * angleStep) + 'deg) translateZ(' + radius + 'px)';
+        card.style.transform = 'rotateX(' + (i * angleStep) + 'deg) translateZ(' + radius + 'px)';
       });
 
-      // Scroll-driven rotation
       var currentAngle = 0;
       var targetAngle = 0;
 
-      function updateCarousel() {
+      function updateWheel() {
         var rect = scene.getBoundingClientRect();
         var viewH = window.innerHeight;
-        // How far through the viewport is the section? -1 to 1
-        var progress = 1 - (rect.top + rect.height / 2) / (viewH + rect.height);
-        // Map progress to full rotation(s) — 1.5 full spins across the scroll range
-        targetAngle = progress * 540;
-        // Smooth lerp
-        currentAngle += (targetAngle - currentAngle) * 0.08;
-        ring.style.transform = 'rotateY(' + currentAngle + 'deg)';
+        var center = rect.top + rect.height / 2;
+        var progress = 1 - center / viewH;
+        targetAngle = progress * 360;
+        currentAngle += (targetAngle - currentAngle) * 0.06;
+        ring.style.transform = 'rotateX(' + currentAngle + 'deg)';
 
-        // Fade cards based on their facing angle
         cards.forEach(function(card, i) {
-          var cardAngle = (i * angleStep + currentAngle) % 360;
-          if (cardAngle < 0) cardAngle += 360;
-          // Front-facing cards (angle near 0 or 360) are fully visible
-          var facing = Math.abs(cardAngle > 180 ? cardAngle - 360 : cardAngle);
-          var opacity = Math.max(0.15, 1 - facing / 120);
-          var scale = 0.85 + (1 - facing / 180) * 0.15;
-          card.style.opacity = opacity;
-          card.style.filter = facing > 90 ? 'blur(2px)' : 'none';
+          var cardAngle = ((i * angleStep + currentAngle) % 360 + 360) % 360;
+          var facing = cardAngle > 180 ? 360 - cardAngle : cardAngle;
+          var opacity = 1 - (facing / 220);
+          card.style.opacity = Math.max(0.15, Math.min(1, opacity));
         });
 
-        requestAnimationFrame(updateCarousel);
+        requestAnimationFrame(updateWheel);
       }
-      updateCarousel();
+      updateWheel();
     })();
 
     // === 3D TILT ON DEMO CARDS + ALL GLASS CARDS ===
