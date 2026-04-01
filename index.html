@@ -153,44 +153,43 @@
       100% { transform: translate(-30px, -40px) scale(1.05); }
     }
 
-    /* --- 3D Vertical Wheel --- */
+    /* --- 3D Horizontal Wheel --- */
     .carousel-scene {
-      perspective: 900px;
-      height: 380px;
+      perspective: 1200px;
+      height: 420px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-top: 40px;
-      overflow: hidden;
+      overflow: visible;
       position: relative;
-      /* Fade edges so cards roll in/out smoothly */
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
     }
     .carousel-ring {
-      width: 420px;
-      height: 200px;
       position: relative;
+      width: 220px;
+      height: 160px;
       transform-style: preserve-3d;
+      transition: transform .05s linear;
     }
     .carousel-card {
       position: absolute;
-      width: 420px;
-      padding: 32px 36px;
-      border-radius: 18px;
+      width: 220px;
+      padding: 24px 20px;
+      border-radius: 16px;
       text-align: center;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 10px;
       left: 0;
       top: 0;
+      transition: opacity .3s ease;
     }
     .carousel-card .stat-icon {
-      width: 56px;
-      height: 56px;
-      min-width: 56px;
-      border-radius: 14px;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
       background: linear-gradient(135deg, var(--blue-glow), var(--gold-dim));
       border: 1px solid var(--border);
       display: flex;
@@ -198,29 +197,29 @@
       justify-content: center;
       color: var(--blue);
     }
-    .carousel-card .stat-icon svg { width: 26px; height: 26px; }
-    .carousel-card .card-text { text-align: left; }
+    .carousel-card .stat-icon svg { width: 22px; height: 22px; }
+    .carousel-card .card-text { text-align: center; }
     .carousel-card .stat-number {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       font-weight: 700;
       color: var(--text);
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .carousel-card p {
-      font-size: .9rem;
+      font-size: .8rem;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.45;
       margin: 0;
     }
     .carousel-card p strong { color: var(--gold); font-weight: 600; }
 
     @media (max-width: 768px) {
-      .carousel-scene { height: 320px; }
-      .carousel-ring { width: 300px; }
-      .carousel-card { width: 300px; padding: 24px 20px; gap: 16px; }
-      .carousel-card .stat-number { font-size: 1.8rem; }
+      .carousel-scene { height: 350px; perspective: 800px; }
+      .carousel-ring { width: 180px; height: 140px; }
+      .carousel-card { width: 180px; padding: 18px 14px; }
+      .carousel-card .stat-number { font-size: 1.6rem; }
     }
 
     /* --- Staggered reveals --- */
@@ -1446,7 +1445,7 @@
       document.querySelectorAll('.stat-card').forEach(function(el) { statObs.observe(el); });
     })();
 
-    // === 3D VERTICAL WHEEL (cards rotate on X axis like a turning wheel) ===
+    // === 3D HORIZONTAL WHEEL (all cards visible, spins on scroll) ===
     (function() {
       var scene = document.getElementById('carouselScene');
       var ring = document.getElementById('carouselRing');
@@ -1454,11 +1453,11 @@
       var cards = ring.querySelectorAll('.carousel-card');
       var n = cards.length;
       var angleStep = 360 / n;
-      var radius = 240;
+      // Large radius so all cards are spread out and visible
+      var radius = 380;
 
-      // Position cards in a vertical ring (rotateX)
       cards.forEach(function(card, i) {
-        card.style.transform = 'rotateX(' + (i * angleStep) + 'deg) translateZ(' + radius + 'px)';
+        card.style.transform = 'rotateY(' + (i * angleStep) + 'deg) translateZ(' + radius + 'px)';
       });
 
       var currentAngle = 0;
@@ -1469,15 +1468,20 @@
         var viewH = window.innerHeight;
         var center = rect.top + rect.height / 2;
         var progress = 1 - center / viewH;
+        // Slow spin — 1 full rotation across the scroll range
         targetAngle = progress * 360;
-        currentAngle += (targetAngle - currentAngle) * 0.06;
-        ring.style.transform = 'rotateX(' + currentAngle + 'deg)';
+        // Very smooth lerp
+        currentAngle += (targetAngle - currentAngle) * 0.04;
+        // Add subtle tilt on X for depth
+        ring.style.transform = 'rotateX(-8deg) rotateY(' + currentAngle + 'deg)';
 
+        // Gentle opacity — front brighter, sides still very visible
         cards.forEach(function(card, i) {
           var cardAngle = ((i * angleStep + currentAngle) % 360 + 360) % 360;
           var facing = cardAngle > 180 ? 360 - cardAngle : cardAngle;
-          var opacity = 1 - (facing / 220);
-          card.style.opacity = Math.max(0.15, Math.min(1, opacity));
+          // Front: 1.0, sides: 0.7, back: 0.4
+          var opacity = 1 - facing / 320;
+          card.style.opacity = Math.max(0.4, Math.min(1, opacity));
         });
 
         requestAnimationFrame(updateWheel);
