@@ -339,12 +339,13 @@
       height: 2px;
       border-radius: 50%;
       background: #fff;
-      animation: twinkle var(--dur, 4s) ease-in-out infinite alternate;
+      animation: twinkle var(--dur, 5s) ease-in-out infinite alternate;
       animation-delay: var(--delay, 0s);
+      will-change: opacity;
     }
     @keyframes twinkle {
-      0% { opacity: var(--from, 0.15); }
-      100% { opacity: var(--to, 0.6); }
+      0% { opacity: var(--from, 0.1); }
+      100% { opacity: var(--to, 0.5); }
     }
 
     /* ============ HEADER ============ */
@@ -1269,21 +1270,20 @@
     // Divider glow animation
     document.querySelectorAll('.section-divider').forEach(function(el) { revealObs.observe(el); });
 
-    // === STAR FIELD (200 stars, brighter, varied sizes) ===
+    // === STAR FIELD (120 stars, smooth and gentle) ===
     (function() {
       var field = document.getElementById('starfield');
-      for (var i = 0; i < 200; i++) {
+      for (var i = 0; i < 120; i++) {
         var s = document.createElement('div');
         s.className = 'star';
         s.style.left = Math.random() * 100 + '%';
         s.style.top = Math.random() * 100 + '%';
-        s.style.setProperty('--dur', (1.5 + Math.random() * 4) + 's');
-        s.style.setProperty('--delay', (Math.random() * 3) + 's');
-        s.style.setProperty('--from', (0.05 + Math.random() * 0.15).toFixed(2));
-        s.style.setProperty('--to', (0.5 + Math.random() * 0.5).toFixed(2));
+        s.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
+        s.style.setProperty('--delay', (Math.random() * 6) + 's');
+        s.style.setProperty('--from', (0.05 + Math.random() * 0.1).toFixed(2));
+        s.style.setProperty('--to', (0.3 + Math.random() * 0.35).toFixed(2));
         var r = Math.random();
-        if (r > 0.9) { s.style.width = '4px'; s.style.height = '4px'; s.style.boxShadow = '0 0 6px rgba(91,141,239,.4)'; }
-        else if (r > 0.65) { s.style.width = '3px'; s.style.height = '3px'; }
+        if (r > 0.92) { s.style.width = '3px'; s.style.height = '3px'; }
         field.appendChild(s);
       }
     })();
