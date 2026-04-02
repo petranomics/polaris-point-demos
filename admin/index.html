@@ -1004,6 +1004,7 @@
   <div id="adminContent" style="display:none;">
   <h1>Polaris Point Admin <span id="roleBadge" class="role-badge"></span></h1>
   <p id="welcomeUser" style="text-align:center;color:#475569;font-size:.75rem;margin-bottom:4px;"></p>
+  <p style="text-align:center;margin-bottom:8px;"><button onclick="signOut()" style="background:none;border:none;color:#64748b;font-size:.7rem;cursor:pointer;text-decoration:underline;">Sign Out</button></p>
   <div class="admin-tabs">
     <button class="admin-tab active" onclick="switchTab('deck')">Sales Deck</button>
     <button class="admin-tab" onclick="switchTab('offers')">Offers</button>
@@ -3344,6 +3345,20 @@
         err.textContent = 'Incorrect username or password';
         err.style.display = 'block';
       });
+    }
+
+    function signOut() {
+      sessionStorage.removeItem('pp_admin');
+      sessionStorage.removeItem('pp_user');
+      sessionStorage.removeItem('pp_fullname');
+      document.getElementById('adminContent').style.display = 'none';
+      document.getElementById('loginGate').style.display = 'flex';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginError').style.display = 'none';
+      document.body.classList.remove('role-senior');
+      currentRole = null;
+      currentUser = '';
     }
 
     function showAdmin(role, displayName, username) {
