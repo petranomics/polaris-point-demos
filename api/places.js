@@ -55,11 +55,11 @@ module.exports = async function handler(req, res) {
 
     var place = detailsData.result;
 
-    // Build photo URLs from photo references
+    // Build photo URLs through our proxy (keeps API key server-side)
     var photos = [];
     if (place.photos && place.photos.length) {
       photos = place.photos.slice(0, 5).map(function(p) {
-        return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=' + p.photo_reference + '&key=' + apiKey;
+        return '/api/photo?ref=' + encodeURIComponent(p.photo_reference) + '&maxwidth=800';
       });
     }
 
