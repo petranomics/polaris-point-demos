@@ -1797,9 +1797,9 @@
     <div class="card-pair">
       <div class="side-label">Front</div>
       <div class="bcard bcard-front" id="cardFront">
-        <svg class="star-svg" viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
-        <span class="name">POLARIS POINT</span>
-        <span class="tagline">Digital Solutions</span>
+        <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlnb24gcG9pbnRzPSIxMiAxIDEyLjY5IDEwLjM0IDE1LjE4IDguODIgMTMuNjYgMTEuMzEgMjMgMTIgMTMuNjYgMTIuNjkgMTUuMTggMTUuMTggMTIuNjkgMTMuNjYgMTIgMjMgMTEuMzEgMTMuNjYgOC44MiAxNS4xOCAxMC4zNCAxMi42OSAxIDEyIDEwLjM0IDExLjMxIDguODIgOC44MiAxMS4zMSAxMC4zNCIgZmlsbD0iIzVCOERFRiIgc3Ryb2tlPSIjNUI4REVGIiBzdHJva2Utd2lkdGg9IjAuMyIvPjwvc3ZnPg==" style="width:40px;height:40px;margin-bottom:12px;" alt="Star">
+        <span class="name" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:.9rem;color:#fff;letter-spacing:4px;text-transform:uppercase;">POLARIS POINT</span>
+        <span class="tagline" style="font-size:.5rem;text-transform:uppercase;letter-spacing:3px;color:#D4A853;font-weight:600;margin-top:6px;">Digital Solutions</span>
       </div>
     </div>
     <div class="card-pair">
@@ -3618,33 +3618,66 @@
       });
     }
 
+    // Get all lead storage keys and their owner labels
+    function getAllLeadSources() {
+      var sources = [];
+      var seen = {};
+      // Scan all localStorage keys for pp_leads_*
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.startsWith('pp_leads_')) {
+          var owner = key.replace('pp_leads_', '');
+          if (seen[owner]) continue;
+          seen[owner] = true;
+          // Determine display name
+          var users = getUsers();
+          var displayName = owner;
+          if (users[owner] && users[owner].fullName) displayName = users[owner].fullName;
+          else if (SENIOR_ADMINS[owner]) displayName = SENIOR_ADMINS[owner].name;
+          sources.push({ key: key, owner: owner, displayName: displayName });
+        }
+      }
+      return sources;
+    }
+
     function renderLeads() {
       LEADS_KEY = leadsKeyFor(currentUser || sessionStorage.getItem('pp_user'));
       var container = document.getElementById('leadsList');
       var empty = document.getElementById('leadsEmpty');
 
       if (currentRole === 'senior') {
-        // Senior sees all employees' leads grouped by person
-        var allHtml = '';
-        var users = getUsers();
-        var usernames = Object.keys(users);
-        // Also include senior's own leads
-        var seniorUser = currentUser || sessionStorage.getItem('pp_user') || 'admin';
-        var seniorLeads = getLeads(leadsKeyFor(seniorUser));
-        if (seniorLeads.length) {
-          allHtml += '<h4 style="font-family:Outfit,sans-serif;color:#D4A853;font-size:.85rem;margin:16px 0 8px;">My Leads</h4>';
-          seniorLeads.forEach(function(lead) { allHtml += renderLeadCard(lead, leadsKeyFor(seniorUser), null); });
-        }
-        // Each employee
-        usernames.forEach(function(uname) {
-          var empLeads = getLeads(leadsKeyFor(uname));
-          if (!empLeads.length) return;
-          var displayName = users[uname].fullName || uname;
-          allHtml += '<h4 style="font-family:Outfit,sans-serif;color:#5B8DEF;font-size:.85rem;margin:20px 0 8px;">' + displayName + '\'s Leads</h4>';
-          empLeads.forEach(function(lead) { allHtml += renderLeadCard(lead, leadsKeyFor(uname), displayName); });
+        // Build filter dropdown
+        var sources = getAllLeadSources();
+        var filterVal = document.getElementById('leadFilter') ? document.getElementById('leadFilter').value : 'all';
+
+        var filterHtml = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
+          '<label style="font-size:.72rem;color:#475569;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Filter by:</label>' +
+          '<select id="leadFilter" onchange="renderLeads()" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.8rem;outline:none;">' +
+          '<option value="all"' + (filterVal === 'all' ? ' selected' : '') + '>All Team Members</option>';
+        sources.forEach(function(s) {
+          filterHtml += '<option value="' + s.owner + '"' + (filterVal === s.owner ? ' selected' : '') + '>' + s.displayName + '</option>';
         });
-        if (!allHtml) {
-          container.innerHTML = '';
+        filterHtml += '</select>' +
+          '<span style="font-size:.72rem;color:#334155;">' + sources.reduce(function(t, s) { return t + getLeads(s.key).length; }, 0) + ' total leads</span>' +
+          '</div>';
+
+        var allHtml = filterHtml;
+
+        // Render leads from selected sources
+        var showSources = filterVal === 'all' ? sources : sources.filter(function(s) { return s.owner === filterVal; });
+
+        showSources.forEach(function(s) {
+          var leads = getLeads(s.key);
+          if (!leads.length) return;
+          var isSelf = s.owner === (currentUser || sessionStorage.getItem('pp_user'));
+          var labelColor = isSelf ? '#D4A853' : '#5B8DEF';
+          var label = isSelf ? 'My Leads' : s.displayName + '\'s Leads';
+          allHtml += '<h4 style="font-family:Outfit,sans-serif;color:' + labelColor + ';font-size:.85rem;margin:16px 0 8px;">' + label + ' <span style="color:#334155;font-weight:400;">(' + leads.length + ')</span></h4>';
+          leads.forEach(function(lead) { allHtml += renderLeadCard(lead, s.key, isSelf ? null : s.displayName); });
+        });
+
+        if (showSources.length === 0 || showSources.every(function(s) { return getLeads(s.key).length === 0; })) {
+          container.innerHTML = filterHtml;
           empty.style.display = 'block';
         } else {
           empty.style.display = 'none';
