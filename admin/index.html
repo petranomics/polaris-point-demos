@@ -3268,7 +3268,10 @@
 
     // === LOGIN & USER REGISTRATION ===
     // Senior: hardcoded SHA-256 hash. Junior: user-created accounts stored in localStorage.
-    var SENIOR_HASH = '89b5785d7fac3b066e5676eccd6051ad41ac2c10ff536fc8600ada7c8ed9123b';
+    var SENIOR_ADMINS = {
+      'peter@polarispoint.io': { hash: '95f81a04b0c59efc5ee2a6e0a9883813d42f7ea6c158aaa44c61e1fd9b14d6bb', name: 'Pete' },
+      'michael@polarispoint.io': { hash: 'efc916351c52c40befb6072d73de47a2518a5c19dd966407452b2e6eac7ac857', name: 'Michael' }
+    };
 
     function hashPassword(pass) {
       return crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
@@ -3325,12 +3328,13 @@
       if (!username || !pass) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
 
       hashPassword(pass).then(function(hash) {
-        // Check senior admin first
-        if (hash === SENIOR_HASH) {
+        // Check senior admins
+        var senior = SENIOR_ADMINS[username];
+        if (senior && senior.hash === hash) {
           sessionStorage.setItem('pp_admin', 'senior');
           sessionStorage.setItem('pp_user', username);
-          sessionStorage.setItem('pp_fullname', username);
-          showAdmin('senior', username, username);
+          sessionStorage.setItem('pp_fullname', senior.name);
+          showAdmin('senior', senior.name, username);
           return;
         }
         // Check registered junior users
