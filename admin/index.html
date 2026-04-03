@@ -3379,149 +3379,134 @@
     if (storedRole === '1') { sessionStorage.setItem('pp_admin', 'senior'); storedRole = 'senior'; }
     if (storedRole) showAdmin();
 
-    // === LEAD MANAGEMENT ===
-    function leadsKeyFor(username) { return 'pp_leads_' + (username || 'default'); }
-    var LEADS_KEY = leadsKeyFor(sessionStorage.getItem('pp_user'));
-
-    function getLeads(key) {
-      try { return JSON.parse(localStorage.getItem(key || LEADS_KEY)) || []; } catch(e) { return []; }
-    }
-    function saveLeads(leads, key) {
-      localStorage.setItem(key || LEADS_KEY, JSON.stringify(leads));
-    }
-
+    // === LEAD MANAGEMENT (Neon DB backed) ===
+    var _leadsCache = [];
     var STAGE_LABELS = ['Researched', 'Contacted', 'Demo Shown', 'Proposal Sent', 'Closed'];
+
+    function fetchLeads() {
+      var url = currentRole === 'senior' ? '/api/leads?all=true' : '/api/leads?owner=' + encodeURIComponent(currentUser || sessionStorage.getItem('pp_user') || '');
+      return fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+        _leadsCache = data.leads || [];
+        return _leadsCache;
+      });
+    }
 
     function addLead() {
       var biz = document.getElementById('leadBizName').value.trim();
       if (!biz) return alert('Business name is required');
-      var lead = {
-        id: Date.now(),
-        bizName: biz,
+      var body = {
+        biz_name: biz,
         industry: document.getElementById('leadIndustry').value,
         address: document.getElementById('leadAddress').value.trim(),
         website: document.getElementById('leadWebsite').value.trim(),
         rating: document.getElementById('leadRating').value.trim(),
-        yearsInBiz: document.getElementById('leadYears').value.trim(),
+        years_in_biz: document.getElementById('leadYears').value.trim(),
         contact: document.getElementById('leadContact').value.trim(),
-        contactRole: document.getElementById('leadRole').value.trim(),
+        contact_role: document.getElementById('leadRole').value.trim(),
         phone: document.getElementById('leadPhone').value.trim(),
         email: document.getElementById('leadEmail').value.trim(),
-        contactMethod: document.getElementById('leadContactMethod').value,
-        bestTime: document.getElementById('leadBestTime').value.trim(),
+        contact_method: document.getElementById('leadContactMethod').value,
+        best_time: document.getElementById('leadBestTime').value.trim(),
         rank: document.getElementById('leadRank').value,
         tier: document.getElementById('leadTier').value,
         source: document.getElementById('leadSource').value,
         revenue: document.getElementById('leadRevenue').value.trim(),
-        stage: 0,
+        listing_url: (document.getElementById('leadQuickUrl').dataset.listingUrl || ''),
         notes: document.getElementById('leadNotes').value.trim(),
-        created: new Date().toISOString().split('T')[0],
-        listingUrl: (document.getElementById('leadQuickUrl').dataset.listingUrl || ''),
         owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown'
       };
-      var leads = getLeads();
-      leads.unshift(lead);
-      saveLeads(leads);
-      // Reset form fields
-      ['leadBizName','leadAddress','leadWebsite','leadRating','leadYears',
-       'leadContact','leadRole','leadPhone','leadEmail','leadBestTime',
-       'leadRevenue','leadNotes','leadQuickUrl'].forEach(function(id) {
-        document.getElementById(id).value = '';
-      });
-      document.getElementById('leadQuickUrl').dataset.listingUrl = '';
-      renderLeads();
+      fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(function(r) { return r.json(); })
+        .then(function() {
+          ['leadBizName','leadAddress','leadWebsite','leadRating','leadYears',
+           'leadContact','leadRole','leadPhone','leadEmail','leadBestTime',
+           'leadRevenue','leadNotes','leadQuickUrl'].forEach(function(id) { document.getElementById(id).value = ''; });
+          document.getElementById('leadQuickUrl').dataset.listingUrl = '';
+          renderLeads();
+        }).catch(function(e) { alert('Failed to save lead: ' + e.message); });
     }
 
-    function updateLeadStage(id, stage, ownerKey) {
-      var key = ownerKey || LEADS_KEY;
-      var leads = getLeads(key);
-      var lead = leads.find(function(l) { return l.id === id; });
-      if (lead) { lead.stage = stage; saveLeads(leads, key); renderLeads(); }
+    function updateLeadField(id, field, value) {
+      var body = {};
+      body[field] = value;
+      fetch('/api/leads?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(function() { renderLeads(); });
     }
 
-    function updateLeadRank(id, rank, ownerKey) {
-      var key = ownerKey || LEADS_KEY;
-      var leads = getLeads(key);
-      var lead = leads.find(function(l) { return l.id === id; });
-      if (lead) { lead.rank = rank; saveLeads(leads, key); renderLeads(); }
+    function updateLeadStage(id, stage) { updateLeadField(id, 'stage', stage); }
+    function updateLeadRank(id, rank) { updateLeadField(id, 'rank', rank); }
+    function updateLeadNotes(id, notes) {
+      fetch('/api/leads?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ notes: notes }) });
     }
 
-    function updateLeadNotes(id, notes, ownerKey) {
-      var key = ownerKey || LEADS_KEY;
-      var leads = getLeads(key);
-      var lead = leads.find(function(l) { return l.id === id; });
-      if (lead) { lead.notes = notes; saveLeads(leads, key); }
-    }
-
-    function deleteLead(id, ownerKey) {
+    function deleteLead(id) {
       if (!confirm('Delete this lead?')) return;
-      var key = ownerKey || LEADS_KEY;
-      var leads = getLeads(key).filter(function(l) { return l.id !== id; });
-      saveLeads(leads, key);
-      renderLeads();
+      fetch('/api/leads?id=' + id, { method: 'DELETE' }).then(function() { renderLeads(); });
     }
 
-    function renderLeadCard(lead, ownerKey, ownerLabel) {
-      var key = ownerKey || LEADS_KEY;
+    function renderLeadCard(lead) {
+      var L = lead;
+      var isSelf = L.owner === (currentUser || sessionStorage.getItem('pp_user'));
       var stages = STAGE_LABELS.map(function(label, i) {
-        var cls = i < lead.stage ? 'done' : (i === lead.stage ? 'active' : '');
+        var cls = i < L.stage ? 'done' : (i === L.stage ? 'active' : '');
         return '<div class="lead-stage-step ' + cls + '" title="' + label + '"></div>';
       }).join('');
 
       var stageButtons = STAGE_LABELS.map(function(label, i) {
-        var active = i === lead.stage ? 'color:#D4A853;font-weight:700;' : 'color:#475569;';
-        return '<button onclick="updateLeadStage(' + lead.id + ',' + i + ',\'' + key + '\')" style="background:none;border:none;font-size:.68rem;cursor:pointer;padding:2px 6px;border-radius:4px;' + active + '">' + label + '</button>';
+        var active = i === L.stage ? 'color:#D4A853;font-weight:700;' : 'color:#475569;';
+        return '<button onclick="updateLeadStage(' + L.id + ',' + i + ')" style="background:none;border:none;font-size:.68rem;cursor:pointer;padding:2px 6px;border-radius:4px;' + active + '">' + label + '</button>';
       }).join('');
 
-      var tierLabel = lead.tier && lead.tier !== 'undecided' ? ' — <span style="color:#D4A853;">' + lead.tier.charAt(0).toUpperCase() + lead.tier.slice(1) + '</span>' : '';
-      var ownerTag = ownerLabel ? '<span style="font-size:.65rem;background:rgba(91,141,239,.12);color:#5B8DEF;padding:2px 8px;border-radius:999px;margin-left:8px;">' + ownerLabel + '</span>' : '';
+      var ownerName = L.owner;
+      if (SENIOR_ADMINS[L.owner]) ownerName = SENIOR_ADMINS[L.owner].name;
+      var ownerTag = (!isSelf && currentRole === 'senior') ? '<span style="font-size:.65rem;background:rgba(91,141,239,.12);color:#5B8DEF;padding:2px 8px;border-radius:999px;margin-left:8px;">' + ownerName + '</span>' : '';
+      var tierLabel = L.tier && L.tier !== 'undecided' ? ' — <span style="color:#D4A853;">' + L.tier.charAt(0).toUpperCase() + L.tier.slice(1) + '</span>' : '';
+      var created = L.created_at ? L.created_at.split('T')[0] : '';
 
       return '<div class="lead-card">' +
         '<div class="lead-header">' +
-          '<span class="lead-name">' + lead.bizName + tierLabel + ownerTag + '</span>' +
-          '<select onchange="updateLeadRank(' + lead.id + ',this.value,\'' + key + '\')" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.72rem;outline:none;">' +
-            '<option value="hot"' + (lead.rank==='hot'?' selected':'') + '>Hot</option>' +
-            '<option value="warm"' + (lead.rank==='warm'?' selected':'') + '>Warm</option>' +
-            '<option value="cold"' + (lead.rank==='cold'?' selected':'') + '>Cold</option>' +
+          '<span class="lead-name">' + L.biz_name + tierLabel + ownerTag + '</span>' +
+          '<select onchange="updateLeadRank(' + L.id + ',this.value)" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.72rem;outline:none;">' +
+            '<option value="hot"' + (L.rank==='hot'?' selected':'') + '>Hot</option>' +
+            '<option value="warm"' + (L.rank==='warm'?' selected':'') + '>Warm</option>' +
+            '<option value="cold"' + (L.rank==='cold'?' selected':'') + '>Cold</option>' +
           '</select>' +
         '</div>' +
         '<div class="lead-stage">' + stages + '</div>' +
         '<div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:10px;">' + stageButtons + '</div>' +
         '<div class="lead-details">' +
-          '<div class="lead-detail">Contact<span>' + (lead.contact || '—') + (lead.contactRole ? ' (' + lead.contactRole + ')' : '') + '</span></div>' +
-          '<div class="lead-detail">Phone<span>' + (lead.phone || '—') + '</span></div>' +
-          '<div class="lead-detail">Email<span>' + (lead.email || '—') + '</span></div>' +
-          '<div class="lead-detail">Industry<span>' + lead.industry + '</span></div>' +
-          (lead.address ? '<div class="lead-detail">Address<span>' + lead.address + '</span></div>' : '') +
-          (lead.website ? '<div class="lead-detail">Website<span>' + lead.website + '</span></div>' : '') +
-          (lead.rating ? '<div class="lead-detail">Rating<span>' + lead.rating + '</span></div>' : '') +
-          (lead.yearsInBiz ? '<div class="lead-detail">Years<span>' + lead.yearsInBiz + '</span></div>' : '') +
-          (lead.revenue ? '<div class="lead-detail">Revenue<span>' + lead.revenue + '</span></div>' : '') +
-          (lead.source ? '<div class="lead-detail">Source<span>' + lead.source + '</span></div>' : '') +
-          (lead.contactMethod ? '<div class="lead-detail">Prefers<span>' + lead.contactMethod + (lead.bestTime ? ' (' + lead.bestTime + ')' : '') + '</span></div>' : '') +
+          '<div class="lead-detail">Contact<span>' + (L.contact || '—') + (L.contact_role ? ' (' + L.contact_role + ')' : '') + '</span></div>' +
+          '<div class="lead-detail">Phone<span>' + (L.phone || '—') + '</span></div>' +
+          '<div class="lead-detail">Email<span>' + (L.email || '—') + '</span></div>' +
+          '<div class="lead-detail">Industry<span>' + (L.industry || '—') + '</span></div>' +
+          (L.address ? '<div class="lead-detail">Address<span>' + L.address + '</span></div>' : '') +
+          (L.website ? '<div class="lead-detail">Website<span>' + L.website + '</span></div>' : '') +
+          (L.rating ? '<div class="lead-detail">Rating<span>' + L.rating + '</span></div>' : '') +
+          (L.years_in_biz ? '<div class="lead-detail">Years<span>' + L.years_in_biz + '</span></div>' : '') +
+          (L.revenue ? '<div class="lead-detail">Revenue<span>' + L.revenue + '</span></div>' : '') +
+          (L.source ? '<div class="lead-detail">Source<span>' + L.source + '</span></div>' : '') +
+          (L.contact_method ? '<div class="lead-detail">Prefers<span>' + L.contact_method + (L.best_time ? ' (' + L.best_time + ')' : '') + '</span></div>' : '') +
         '</div>' +
         '<div class="lead-notes">' +
-          '<textarea onchange="updateLeadNotes(' + lead.id + ',this.value,\'' + key + '\')" placeholder="Add notes...">' + (lead.notes || '') + '</textarea>' +
+          '<textarea onchange="updateLeadNotes(' + L.id + ',this.value)" placeholder="Add notes...">' + (L.notes || '') + '</textarea>' +
         '</div>' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">' +
-          '<span style="font-size:.7rem;color:#334155;">Added ' + lead.created + '</span>' +
+          '<span style="font-size:.7rem;color:#334155;">Added ' + created + '</span>' +
           '<div style="display:flex;gap:8px;">' +
-            '<button onclick="buildSiteFromLead(' + lead.id + ',\'' + key + '\')" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:6px;color:#5B8DEF;font-size:.72rem;font-weight:600;cursor:pointer;padding:4px 12px;">Build Site &rarr;</button>' +
-            '<button onclick="deleteLead(' + lead.id + ',\'' + key + '\')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Delete</button>' +
+            '<button onclick="buildSiteFromLead(' + L.id + ')" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:6px;color:#5B8DEF;font-size:.72rem;font-weight:600;cursor:pointer;padding:4px 12px;">Build Site &rarr;</button>' +
+            '<button onclick="deleteLead(' + L.id + ')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Delete</button>' +
           '</div>' +
         '</div>' +
       '</div>';
     }
 
-    function buildSiteFromLead(id, ownerKey) {
-      var leads = getLeads(ownerKey || LEADS_KEY);
-      var lead = leads.find(function(l) { return l.id === id; });
+    function buildSiteFromLead(id) {
+      var lead = _leadsCache.find(function(l) { return l.id === id; });
       if (!lead) return;
-      // Pre-fill Site Builder fields from the lead
       switchTab('intake');
       setTimeout(function() {
-        if (lead.bizName) document.getElementById('intBizName').value = lead.bizName;
-        if (lead.bizName) document.getElementById('intBizShort').value = lead.bizName.split(' ').slice(0,2).join(' ');
+        if (lead.biz_name) document.getElementById('intBizName').value = lead.biz_name;
+        if (lead.biz_name) document.getElementById('intBizShort').value = lead.biz_name.split(' ').slice(0,2).join(' ');
         if (lead.phone) {
           document.getElementById('intPhone').value = lead.phone;
           var digits = lead.phone.replace(/\D/g, '');
@@ -3530,15 +3515,11 @@
         if (lead.email) document.getElementById('intEmail').value = lead.email;
         if (lead.address) document.getElementById('intAddress').value = lead.address;
         if (lead.website) document.getElementById('intWebsite').value = lead.website;
-        if (lead.yearsInBiz) document.getElementById('intFounded').value = String(new Date().getFullYear() - parseInt(lead.yearsInBiz));
-        // Set template based on industry
+        if (lead.years_in_biz) document.getElementById('intFounded').value = String(new Date().getFullYear() - parseInt(lead.years_in_biz));
         var templateMap = { plumber:'plumber', handyman:'handyman', cleaning:'cleaning', 'pest-control':'pest-control' };
         if (templateMap[lead.industry]) document.getElementById('searchTemplate').value = templateMap[lead.industry];
-        // If they had a Yelp/Google URL, put it in the search field
-        if (lead.listingUrl) document.getElementById('searchUrl').value = lead.listingUrl;
-        else if (lead.bizName) document.getElementById('searchBizName').value = lead.bizName;
-
-        // Auto-trigger search so reviews get fetched automatically
+        if (lead.listing_url) document.getElementById('searchUrl').value = lead.listing_url;
+        else if (lead.biz_name) document.getElementById('searchBizName').value = lead.biz_name;
         setTimeout(function() { searchPlaces(); }, 200);
       }, 100);
     }
@@ -3618,82 +3599,80 @@
       });
     }
 
-    // Get all lead storage keys and their owner labels
-    function getAllLeadSources() {
-      var sources = [];
-      var seen = {};
-      // Scan all localStorage keys for pp_leads_*
-      for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key && key.startsWith('pp_leads_')) {
-          var owner = key.replace('pp_leads_', '');
-          if (seen[owner]) continue;
-          seen[owner] = true;
-          // Determine display name
-          var users = getUsers();
-          var displayName = owner;
-          if (users[owner] && users[owner].fullName) displayName = users[owner].fullName;
-          else if (SENIOR_ADMINS[owner]) displayName = SENIOR_ADMINS[owner].name;
-          sources.push({ key: key, owner: owner, displayName: displayName });
-        }
-      }
-      return sources;
-    }
-
     function renderLeads() {
-      LEADS_KEY = leadsKeyFor(currentUser || sessionStorage.getItem('pp_user'));
       var container = document.getElementById('leadsList');
       var empty = document.getElementById('leadsEmpty');
+      container.innerHTML = '<p style="color:#475569;font-size:.82rem;text-align:center;padding:16px;">Loading leads...</p>';
+      empty.style.display = 'none';
 
-      if (currentRole === 'senior') {
-        // Build filter dropdown
-        var sources = getAllLeadSources();
-        var filterVal = document.getElementById('leadFilter') ? document.getElementById('leadFilter').value : 'all';
-
-        var filterHtml = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
-          '<label style="font-size:.72rem;color:#475569;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Filter by:</label>' +
-          '<select id="leadFilter" onchange="renderLeads()" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.8rem;outline:none;">' +
-          '<option value="all"' + (filterVal === 'all' ? ' selected' : '') + '>All Team Members</option>';
-        sources.forEach(function(s) {
-          filterHtml += '<option value="' + s.owner + '"' + (filterVal === s.owner ? ' selected' : '') + '>' + s.displayName + '</option>';
-        });
-        filterHtml += '</select>' +
-          '<span style="font-size:.72rem;color:#334155;">' + sources.reduce(function(t, s) { return t + getLeads(s.key).length; }, 0) + ' total leads</span>' +
-          '</div>';
-
-        var allHtml = filterHtml;
-
-        // Render leads from selected sources
-        var showSources = filterVal === 'all' ? sources : sources.filter(function(s) { return s.owner === filterVal; });
-
-        showSources.forEach(function(s) {
-          var leads = getLeads(s.key);
-          if (!leads.length) return;
-          var isSelf = s.owner === (currentUser || sessionStorage.getItem('pp_user'));
-          var labelColor = isSelf ? '#D4A853' : '#5B8DEF';
-          var label = isSelf ? 'My Leads' : s.displayName + '\'s Leads';
-          allHtml += '<h4 style="font-family:Outfit,sans-serif;color:' + labelColor + ';font-size:.85rem;margin:16px 0 8px;">' + label + ' <span style="color:#334155;font-weight:400;">(' + leads.length + ')</span></h4>';
-          leads.forEach(function(lead) { allHtml += renderLeadCard(lead, s.key, isSelf ? null : s.displayName); });
-        });
-
-        if (showSources.length === 0 || showSources.every(function(s) { return getLeads(s.key).length === 0; })) {
-          container.innerHTML = filterHtml;
-          empty.style.display = 'block';
-        } else {
-          empty.style.display = 'none';
-          container.innerHTML = allHtml;
-        }
-      } else {
-        // Junior sees only their own leads
-        var leads = getLeads();
+      fetchLeads().then(function(leads) {
         if (!leads.length) {
           container.innerHTML = '';
           empty.style.display = 'block';
           return;
         }
-        empty.style.display = 'none';
-        container.innerHTML = leads.map(function(lead) { return renderLeadCard(lead); }).join('');
+
+        // Build owner filter for senior admins
+        var filterHtml = '';
+        if (currentRole === 'senior') {
+          var owners = {};
+          leads.forEach(function(l) {
+            if (!owners[l.owner]) {
+              var name = l.owner;
+              if (SENIOR_ADMINS[l.owner]) name = SENIOR_ADMINS[l.owner].name;
+              owners[l.owner] = name;
+            }
+          });
+          var filterVal = document.getElementById('leadFilter') ? document.getElementById('leadFilter').value : 'all';
+          filterHtml = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
+            '<label style="font-size:.72rem;color:#475569;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Filter by:</label>' +
+            '<select id="leadFilter" onchange="applyLeadFilter()" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.8rem;outline:none;">' +
+            '<option value="all"' + (filterVal === 'all' ? ' selected' : '') + '>All (' + leads.length + ')</option>';
+          Object.keys(owners).forEach(function(o) {
+            var count = leads.filter(function(l) { return l.owner === o; }).length;
+            filterHtml += '<option value="' + o + '"' + (filterVal === o ? ' selected' : '') + '>' + owners[o] + ' (' + count + ')</option>';
+          });
+          filterHtml += '</select></div>';
+
+          if (filterVal !== 'all') {
+            leads = leads.filter(function(l) { return l.owner === filterVal; });
+          }
+        }
+
+        container.innerHTML = filterHtml + leads.map(function(l) { return renderLeadCard(l); }).join('');
+      }).catch(function(e) {
+        container.innerHTML = '<p style="color:#f44336;font-size:.82rem;text-align:center;padding:16px;">Failed to load leads: ' + e.message + '</p>';
+      });
+    }
+
+    function applyLeadFilter() {
+      // Re-render with cached leads filtered
+      var container = document.getElementById('leadsList');
+      var filterVal = document.getElementById('leadFilter').value;
+      var leads = _leadsCache;
+      if (filterVal !== 'all') {
+        leads = leads.filter(function(l) { return l.owner === filterVal; });
       }
+
+      var owners = {};
+      _leadsCache.forEach(function(l) {
+        if (!owners[l.owner]) {
+          var name = l.owner;
+          if (SENIOR_ADMINS[l.owner]) name = SENIOR_ADMINS[l.owner].name;
+          owners[l.owner] = name;
+        }
+      });
+      var filterHtml = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
+        '<label style="font-size:.72rem;color:#475569;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Filter by:</label>' +
+        '<select id="leadFilter" onchange="applyLeadFilter()" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.8rem;outline:none;">' +
+        '<option value="all"' + (filterVal === 'all' ? ' selected' : '') + '>All (' + _leadsCache.length + ')</option>';
+      Object.keys(owners).forEach(function(o) {
+        var count = _leadsCache.filter(function(l) { return l.owner === o; }).length;
+        filterHtml += '<option value="' + o + '"' + (filterVal === o ? ' selected' : '') + '>' + owners[o] + ' (' + count + ')</option>';
+      });
+      filterHtml += '</select></div>';
+
+      container.innerHTML = filterHtml + leads.map(function(l) { return renderLeadCard(l); }).join('');
     }
   </script>
   </div><!-- /adminContent -->
