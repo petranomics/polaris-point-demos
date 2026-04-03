@@ -704,6 +704,47 @@
       initAnalyticsScripts();
     }
     // If consent feature is active, initAnalyticsScripts is called by consent handler
+
+    // === Polaris Point built-in tracking ===
+    try {
+      var siteName = C.businessName || location.hostname;
+      var sessionId = sessionStorage.getItem('pp_sid');
+      if (!sessionId) {
+        sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        sessionStorage.setItem('pp_sid', sessionId);
+      }
+
+      function ppTrack(event, meta) {
+        var data = { site: siteName, event: event, path: location.pathname, referrer: document.referrer, sessionId: sessionId };
+        if (meta) data.meta = meta;
+        try { navigator.sendBeacon('/api/track', JSON.stringify(data)); } catch(e) {
+          fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), keepalive: true }).catch(function(){});
+        }
+      }
+
+      // Track pageview
+      ppTrack('pageview');
+
+      // Track call clicks
+      document.querySelectorAll('a[href^="tel:"]').forEach(function(a) {
+        a.addEventListener('click', function() { ppTrack('call_click', { phone: a.href }); });
+      });
+
+      // Track form submissions
+      document.querySelectorAll('form').forEach(function(f) {
+        f.addEventListener('submit', function() { ppTrack('form_submit'); });
+      });
+
+      // Track booking/CTA clicks
+      document.querySelectorAll('a[href*="calendar"], a[href*="booking"], a[href*="#booking"], .btn-gold').forEach(function(a) {
+        a.addEventListener('click', function() { ppTrack('booking_click', { text: a.textContent.trim() }); });
+      });
+
+      // Track SMS clicks
+      document.querySelectorAll('a[href^="sms:"]').forEach(function(a) {
+        a.addEventListener('click', function() { ppTrack('sms_click'); });
+      });
+    } catch(e) { /* tracking should never break the site */ }
   }
 
   // ─── 19. Team Bio Modals ─────────────────────────────────────────────
