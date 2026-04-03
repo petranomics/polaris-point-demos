@@ -1011,6 +1011,7 @@
     <button class="admin-tab" onclick="switchTab('guide')">Sales Guide</button>
     <button class="admin-tab" onclick="switchTab('leads')">My Leads</button>
     <button class="admin-tab" onclick="switchTab('intake')">Site Builder</button>
+    <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
     <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
   </div>
 
@@ -1751,6 +1752,62 @@
     </div>
   </div>
 
+  <!-- ANALYTICS TAB (Senior Only) -->
+  <div id="tabAnalytics" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div class="sales-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+          <h3 style="margin:0;">Portfolio Analytics</h3>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <select id="analyticsRange" onchange="loadAnalytics()" style="background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.78rem;outline:none;">
+              <option value="7">Last 7 days</option>
+              <option value="14">Last 14 days</option>
+              <option value="30" selected>Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+            <select id="analyticsSite" onchange="loadAnalytics()" style="background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.78rem;outline:none;">
+              <option value="all">All Sites</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Summary stats -->
+        <div id="analyticsSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px;">
+          <div style="text-align:center;padding:16px;background:#0B1120;border-radius:10px;border:1px solid #1e293b;">
+            <div id="statPageviews" style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;color:#fff;">—</div>
+            <div style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;">Pageviews</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#0B1120;border-radius:10px;border:1px solid #1e293b;">
+            <div id="statVisitors" style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;color:#fff;">—</div>
+            <div style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;">Visitors</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#0B1120;border-radius:10px;border:1px solid #1e293b;">
+            <div id="statForms" style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;color:#5B8DEF;">—</div>
+            <div style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;">Form Submits</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#0B1120;border-radius:10px;border:1px solid #1e293b;">
+            <div id="statCalls" style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;color:#D4A853;">—</div>
+            <div style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;">Call Clicks</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#0B1120;border-radius:10px;border:1px solid #1e293b;">
+            <div id="statBookings" style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;color:#16a34a;">—</div>
+            <div style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;">Bookings</div>
+          </div>
+        </div>
+
+        <!-- Per-site breakdown -->
+        <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:10px;">By Site</h4>
+        <div id="analyticsSites" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- Daily chart -->
+      <div class="sales-card">
+        <h3>Daily Activity</h3>
+        <div id="analyticsChart" style="min-height:200px;"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- CARDS TAB -->
   <div id="tabCards" class="tab-content" style="display:none;">
 
@@ -1868,6 +1925,7 @@
       guide: 'tabGuide',
       leads: 'tabLeads',
       intake: 'tabIntake',
+      analytics: 'tabAnalytics',
       cards: 'tabCards'
     };
 
@@ -1934,7 +1992,7 @@
 
     function switchTab(tab) {
       // Senior-only tabs check
-      if (tab === 'cards' && currentRole !== 'senior') return;
+      if ((tab === 'cards' || tab === 'analytics') && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
       var targetId = TAB_MAP[tab];
@@ -1945,6 +2003,7 @@
       });
       // Load leads when switching to leads tab
       if (tab === 'leads') renderLeads();
+      if (tab === 'analytics') loadAnalytics();
     }
 
     function applyRole(role, userName) {
@@ -3378,6 +3437,94 @@
     var storedRole = sessionStorage.getItem('pp_admin');
     if (storedRole === '1') { sessionStorage.setItem('pp_admin', 'senior'); storedRole = 'senior'; }
     if (storedRole) showAdmin();
+
+    // === ANALYTICS DASHBOARD ===
+    function loadAnalytics() {
+      var range = document.getElementById('analyticsRange').value || 30;
+      var site = document.getElementById('analyticsSite').value || 'all';
+
+      fetch('/api/track?site=' + encodeURIComponent(site) + '&range=' + range + 'd')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var s = data.summary || {};
+          document.getElementById('statPageviews').textContent = Number(s.pageviews || 0).toLocaleString();
+          document.getElementById('statVisitors').textContent = Number(s.unique_ips || 0).toLocaleString();
+          document.getElementById('statForms').textContent = Number(s.form_submits || 0).toLocaleString();
+          document.getElementById('statCalls').textContent = Number(s.call_clicks || 0).toLocaleString();
+          document.getElementById('statBookings').textContent = Number(s.booking_clicks || 0).toLocaleString();
+
+          // Per-site breakdown
+          var sitesDiv = document.getElementById('analyticsSites');
+          var siteSelect = document.getElementById('analyticsSite');
+          var currentSiteVal = siteSelect.value;
+          // Update site filter dropdown
+          siteSelect.innerHTML = '<option value="all">All Sites</option>';
+          (data.sites || []).forEach(function(s) {
+            siteSelect.innerHTML += '<option value="' + s.site + '"' + (currentSiteVal === s.site ? ' selected' : '') + '>' + s.site + '</option>';
+          });
+
+          if (!data.sites || !data.sites.length) {
+            sitesDiv.innerHTML = '<p style="color:#334155;font-size:.82rem;text-align:center;padding:12px;">No data yet. Analytics start tracking once demo sites get traffic.</p>';
+          } else {
+            sitesDiv.innerHTML = data.sites.map(function(s) {
+              return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;">' +
+                '<div>' +
+                  '<span style="color:#fff;font-weight:600;font-size:.85rem;">' + s.site + '</span>' +
+                '</div>' +
+                '<div style="display:flex;gap:16px;">' +
+                  '<span style="font-size:.75rem;color:#94a3b8;"><strong style="color:#fff;">' + s.pageviews + '</strong> views</span>' +
+                  '<span style="font-size:.75rem;color:#94a3b8;"><strong style="color:#5B8DEF;">' + (s.forms || 0) + '</strong> forms</span>' +
+                  '<span style="font-size:.75rem;color:#94a3b8;"><strong style="color:#D4A853;">' + (s.calls || 0) + '</strong> calls</span>' +
+                '</div>' +
+              '</div>';
+            }).join('');
+          }
+
+          // Daily chart (simple bar chart)
+          var chartDiv = document.getElementById('analyticsChart');
+          var daily = data.daily || [];
+          if (!daily.length) {
+            chartDiv.innerHTML = '<p style="color:#334155;font-size:.82rem;text-align:center;padding:20px;">No daily data yet.</p>';
+            return;
+          }
+
+          // Group by day
+          var days = {};
+          daily.forEach(function(row) {
+            var d = row.day ? row.day.split('T')[0] : 'unknown';
+            if (!days[d]) days[d] = { pageviews: 0, forms: 0, calls: 0, bookings: 0 };
+            if (row.event === 'pageview') days[d].pageviews += Number(row.count);
+            else if (row.event === 'form_submit') days[d].forms += Number(row.count);
+            else if (row.event === 'call_click') days[d].calls += Number(row.count);
+            else if (row.event === 'booking_click') days[d].bookings += Number(row.count);
+          });
+
+          var dayKeys = Object.keys(days).sort();
+          var maxViews = Math.max.apply(null, dayKeys.map(function(d) { return days[d].pageviews; })) || 1;
+
+          chartDiv.innerHTML = '<div style="display:flex;align-items:flex-end;gap:4px;height:160px;padding-top:10px;">' +
+            dayKeys.map(function(d) {
+              var pv = days[d].pageviews;
+              var h = Math.max(4, Math.round((pv / maxViews) * 140));
+              var label = d.slice(5); // MM-DD
+              var hasActions = days[d].forms || days[d].calls || days[d].bookings;
+              var barColor = hasActions ? '#D4A853' : '#5B8DEF';
+              return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">' +
+                '<span style="font-size:.6rem;color:#475569;">' + pv + '</span>' +
+                '<div style="width:100%;max-width:32px;height:' + h + 'px;background:' + barColor + ';border-radius:4px 4px 0 0;opacity:.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7" title="' + d + ': ' + pv + ' views, ' + (days[d].forms||0) + ' forms, ' + (days[d].calls||0) + ' calls"></div>' +
+                '<span style="font-size:.55rem;color:#334155;transform:rotate(-45deg);white-space:nowrap;">' + label + '</span>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+          '<div style="display:flex;gap:16px;justify-content:center;margin-top:12px;">' +
+            '<span style="font-size:.7rem;color:#5B8DEF;">&#9632; Pageviews only</span>' +
+            '<span style="font-size:.7rem;color:#D4A853;">&#9632; Has conversions</span>' +
+          '</div>';
+        })
+        .catch(function(e) {
+          document.getElementById('analyticsSites').innerHTML = '<p style="color:#f44336;font-size:.82rem;">Failed to load analytics: ' + e.message + '</p>';
+        });
+    }
 
     // === LEAD MANAGEMENT (Neon DB backed) ===
     var _leadsCache = [];
