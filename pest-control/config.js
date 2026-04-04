@@ -63,16 +63,16 @@ window.SITE_CONFIG = {
   servicesCtaButton: "Request a Free Inspection",
 
   // === PHOTO BREAK ===
-  photoBreak1Src: "https://images.pexels.com/photos/5008399/pexels-photo-5008399.jpeg?auto=compress&cs=tinysrgb&w=600",
-  photoBreak1Alt: "Blue house with green lawn",
+  photoBreak1Src: "https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak1Alt: "Suburban neighborhood aerial view",
   photoBreak2Src: "https://images.pexels.com/photos/4176539/pexels-photo-4176539.jpeg?auto=compress&cs=tinysrgb&w=600",
   photoBreak2Alt: "Pest control technician in protective equipment",
-  photoBreak3Src: "https://images.pexels.com/photos/5587964/pexels-photo-5587964.jpeg?auto=compress&cs=tinysrgb&w=600",
-  photoBreak3Alt: "Suburban home under blue sky",
+  photoBreak3Src: "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak3Alt: "Home at twilight with warm lights",
 
   // === ABOUT ===
-  aboutImage: "https://images.pexels.com/photos/7577378/pexels-photo-7577378.jpeg?auto=compress&cs=tinysrgb&w=800",
-  aboutImageAlt: "Happy family standing outside their home",
+  aboutImage: "https://images.pexels.com/photos/8931665/pexels-photo-8931665.jpeg?auto=compress&cs=tinysrgb&w=800",
+  aboutImageAlt: "Friendly pest control technician with clipboard",
   aboutLabel: "About Us",
   aboutTitle: "Your Neighbors in Pest Control",
   aboutText1: "Pete\u2019s Termite & Pest Control was founded in 2005 by Pete Hernandez, a lifelong Austin resident and Board Certified Entomologist with a passion for protecting families and homes from unwanted pests.",
@@ -177,7 +177,7 @@ window.SITE_CONFIG = {
   footerLegal: "&copy; 2026 Pete's Termite & Pest Control. All rights reserved. | <a href=\"#\">Privacy Policy</a> | <a href=\"#\">Terms of Service</a> | TPCL #12345",
 
   // === CTA BANNER (not present in current design but reserved for future use) ===
-  heroImage: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  heroImage: "https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=1400",
 
   // === FEATURE FLAGS ===
   features: {
@@ -244,7 +244,7 @@ window.SITE_CONFIG = {
     {
       title: "How to Tell If You Have Termites: 7 Warning Signs",
       excerpt: "Termites cause billions in damage every year. Learn the early warning signs so you can catch an infestation before it becomes costly.",
-      image: "https://images.pexels.com/photos/5008399/pexels-photo-5008399.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
@@ -258,7 +258,7 @@ window.SITE_CONFIG = {
     {
       title: "Pet-Safe Pest Control: What Every Pet Owner Should Know",
       excerpt: "Worried about your furry friends? Here\u2019s how modern pest control keeps your home bug-free without putting pets at risk.",
-      image: "https://images.pexels.com/photos/5587964/pexels-photo-5587964.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
@@ -275,7 +275,7 @@ window.SITE_CONFIG = {
 
   // === SEO ===
   canonicalUrl: "",
-  ogImage: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ogImage: "https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=1200",
   geoRegion: "US-TX",
   geoPlacename: "Austin",
   geoPosition: "30.2672;-97.7431",
