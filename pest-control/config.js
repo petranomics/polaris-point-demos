@@ -63,11 +63,11 @@ window.SITE_CONFIG = {
   servicesCtaButton: "Request a Free Inspection",
 
   // === PHOTO BREAK ===
-  photoBreak1Src: "https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak1Src: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=600",
   photoBreak1Alt: "Suburban neighborhood aerial view",
-  photoBreak2Src: "https://images.pexels.com/photos/4176539/pexels-photo-4176539.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak2Src: "https://images.pexels.com/photos/5997993/pexels-photo-5997993.jpeg?auto=compress&cs=tinysrgb&w=600",
   photoBreak2Alt: "Pest control technician in protective equipment",
-  photoBreak3Src: "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=600",
+  photoBreak3Src: "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=600",
   photoBreak3Alt: "Home at twilight with warm lights",
 
   // === ABOUT ===
@@ -244,21 +244,21 @@ window.SITE_CONFIG = {
     {
       title: "How to Tell If You Have Termites: 7 Warning Signs",
       excerpt: "Termites cause billions in damage every year. Learn the early warning signs so you can catch an infestation before it becomes costly.",
-      image: "https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
     {
       title: "Why Mosquitoes Love Austin (and How to Fight Back)",
       excerpt: "Central Texas is prime mosquito territory. Discover what attracts them to your yard and the most effective prevention strategies.",
-      image: "https://images.pexels.com/photos/4176539/pexels-photo-4176539.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/5997993/pexels-photo-5997993.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },
     {
       title: "Pet-Safe Pest Control: What Every Pet Owner Should Know",
       excerpt: "Worried about your furry friends? Here\u2019s how modern pest control keeps your home bug-free without putting pets at risk.",
-      image: "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
