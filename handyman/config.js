@@ -191,21 +191,21 @@ window.SITE_CONFIG = {
     {
       title: "10 Home Repairs You Shouldn\u2019t Put Off This Spring",
       excerpt: "From caulking windows to fixing that wobbly railing, here are the spring maintenance tasks that save you money long-term.",
-      image: "https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
     {
       title: "DIY vs. Hiring a Pro: When to Call a Handyman",
       excerpt: "Some projects are weekend warriors material. Others need a licensed pro. Here\u2019s how to know the difference and avoid costly mistakes.",
-      image: "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/3637837/pexels-photo-3637837.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },
     {
       title: "How to Plan a Kitchen Remodel on a Budget",
       excerpt: "A kitchen upgrade doesn\u2019t have to break the bank. Our contractors share smart strategies for getting the most out of your remodel budget.",
-      image: "https://images.pexels.com/photos/6444260/pexels-photo-6444260.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/6585764/pexels-photo-6585764.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }

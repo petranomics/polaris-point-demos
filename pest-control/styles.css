@@ -369,7 +369,7 @@ img {
    ======================================== */
 .hero {
     position: relative;
-    min-height: 560px;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -377,24 +377,33 @@ img {
 
 .hero-bg {
     position: absolute;
-    inset: 0;
+    inset: -20px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    animation: heroZoom 20s ease-in-out infinite alternate;
+    filter: brightness(0.5) contrast(1.1);
+}
+
+@keyframes heroZoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); }
 }
 
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(15, 43, 31, 0.92) 0%, rgba(27, 67, 50, 0.85) 50%, rgba(27, 67, 50, 0.7) 100%);
+    background:
+        linear-gradient(90deg, rgba(8,20,14,.95) 25%, rgba(8,20,14,.7) 50%, rgba(8,20,14,.3) 80%, transparent 100%),
+        linear-gradient(180deg, rgba(8,20,14,.3) 0%, transparent 30%, transparent 80%, rgba(8,20,14,.5) 100%);
 }
 
 .hero-content {
     position: relative;
     z-index: 1;
     color: #fff;
-    max-width: 660px;
-    padding: 90px 0 80px;
+    max-width: 600px;
+    padding: 100px 0 90px;
 }
 
 .hero h1 {
