@@ -192,21 +192,21 @@ window.SITE_CONFIG = {
     {
       title: "5 Signs You Need to Replace Your Water Heater",
       excerpt: "Is your water heater on its last legs? Here are the warning signs every homeowner should know before it's too late.",
-      image: "https://images.pexels.com/photos/6419065/pexels-photo-6419065.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/6492411/pexels-photo-6492411.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
     {
       title: "How to Prevent Frozen Pipes This Winter",
       excerpt: "A few simple steps can save you thousands in burst pipe repairs. Our plumbers share their top prevention tips.",
-      image: "https://images.pexels.com/photos/6419071/pexels-photo-6419071.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/7859717/pexels-photo-7859717.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },
     {
       title: "When to Call a Plumber vs. DIY",
       excerpt: "Some fixes are easy enough to handle yourself. Others need a pro. Here's how to tell the difference.",
-      image: "https://images.pexels.com/photos/6419104/pexels-photo-6419104.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
