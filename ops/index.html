@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polaris Point Ops</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --blue: #5B8DEF; --gold: #D4A853; --dark: #0B1120; --bg: #080c16; --text: #94a3b8; --border: #1e293b; }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: #e2e8f0; }
+
+    /* Login */
+    .login-wrap { display:flex;align-items:center;justify-content:center;min-height:100vh; }
+    .login-box { background:#111827;border:1px solid rgba(91,141,239,.12);border-radius:14px;padding:36px;width:340px;text-align:center; }
+    .login-box input { width:100%;background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px; }
+    .login-box button { width:100%;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer; }
+
+    /* Layout */
+    .ops-header { display:flex;justify-content:space-between;align-items:center;padding:14px 24px;background:#111827;border-bottom:1px solid rgba(91,141,239,.08);position:sticky;top:0;z-index:100; }
+    .ops-header h1 { font-family:'Outfit',sans-serif;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px; }
+    .ops-header h1 svg { width:20px;height:20px;filter:drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .ops-header .links { display:flex;gap:12px;align-items:center; }
+    .ops-header .links a,.ops-header .links button { background:none;border:none;color:var(--text);font-size:.78rem;cursor:pointer;text-decoration:none; }
+    .ops-header .links a:hover,.ops-header .links button:hover { color:#fff; }
+
+    .ops-content { max-width:1200px;margin:0 auto;padding:24px; }
+
+    /* Tabs */
+    .ops-tabs { display:flex;gap:4px;background:#111827;border-radius:10px;padding:4px;margin-bottom:24px; }
+    .ops-tab { flex:1;padding:10px 16px;border:none;border-radius:8px;background:transparent;color:#64748b;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center; }
+    .ops-tab.active { background:var(--blue);color:#fff; }
+    .ops-tab:not(.active):hover { color:var(--text); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* KPI cards */
+    .kpi-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px; }
+    .kpi { background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;text-align:center; }
+    .kpi .num { font-family:'Outfit',sans-serif;font-size:2rem;font-weight:700;color:#fff; }
+    .kpi .num.blue { color:var(--blue); }
+    .kpi .num.gold { color:var(--gold); }
+    .kpi .num.green { color:#16a34a; }
+    .kpi .label { font-size:.68rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:4px; }
+
+    /* Tables */
+    .ops-table { width:100%;border-collapse:collapse; }
+    .ops-table th { font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;font-weight:600;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border); }
+    .ops-table td { padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);font-size:.82rem;color:#cbd5e1;vertical-align:middle; }
+    .ops-table tr:hover td { background:rgba(91,141,239,.03); }
+    .ops-table a { color:var(--blue);text-decoration:none; }
+    .ops-table a:hover { text-decoration:underline; }
+
+    /* Badges */
+    .badge { display:inline-block;padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
+    .badge.active { background:rgba(22,163,74,.12);color:#16a34a; }
+    .badge.paused { background:rgba(245,158,11,.12);color:#f59e0b; }
+    .badge.archived { background:rgba(100,116,139,.12);color:#64748b; }
+    .badge.senior { background:rgba(212,168,83,.12);color:var(--gold); }
+    .badge.junior { background:rgba(91,141,239,.12);color:var(--blue); }
+
+    /* Toggle */
+    .toggle { position:relative;width:36px;height:20px;display:inline-block;cursor:pointer; }
+    .toggle input { opacity:0;width:0;height:0; }
+    .toggle .slider { position:absolute;inset:0;background:#334155;border-radius:20px;transition:.2s; }
+    .toggle .slider::before { content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;left:2px;top:2px;transition:.2s; }
+    .toggle input:checked + .slider { background:var(--blue); }
+    .toggle input:checked + .slider::before { transform:translateX(16px); }
+
+    /* Cards */
+    .card { background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;margin-bottom:16px; }
+    .card h3 { font-family:'Outfit',sans-serif;font-size:.9rem;color:#fff;margin-bottom:12px; }
+
+    /* Form */
+    .ops-field { margin-bottom:10px; }
+    .ops-field label { display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;font-weight:600;margin-bottom:4px; }
+    .ops-field input,.ops-field select,.ops-field textarea { width:100%;background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none; }
+    .ops-field input:focus,.ops-field select:focus { border-color:var(--blue); }
+    .ops-btn { display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer; }
+    .ops-btn:hover { background:#4A7DE0; }
+    .ops-btn.secondary { background:transparent;border:1px solid var(--border);color:var(--text); }
+    .ops-btn.danger { background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444; }
+
+    @media (max-width:768px) {
+      .ops-tabs { flex-wrap:wrap; }
+      .kpi-row { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginGate" class="login-wrap">
+  <div class="login-box">
+    <svg viewBox="0 0 24 24" fill="none" style="width:32px;height:32px;margin-bottom:10px;filter:drop-shadow(0 0 6px rgba(91,141,239,.4));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1rem;color:#fff;margin-bottom:4px;">Operations</h2>
+    <p style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:#D4A853;margin-bottom:16px;">Senior Admin Only</p>
+    <input type="text" id="loginUser" placeholder="Username" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+    <input type="password" id="loginPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Sign In</button>
+    <p id="loginError" style="color:#f44336;font-size:.72rem;margin-top:10px;display:none;"></p>
+  </div>
+</div>
+
+<!-- OPS DASHBOARD -->
+<div id="opsContent" style="display:none;">
+
+<header class="ops-header">
+  <h1>
+    <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+    Polaris Point Ops
+  </h1>
+  <div class="links">
+    <span id="opsUser" style="color:#475569;font-size:.75rem;"></span>
+    <a href="/admin">Admin Portal</a>
+    <button onclick="signOut()">Sign Out</button>
+  </div>
+</header>
+
+<div class="ops-content">
+
+  <!-- KPIs -->
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi"><div class="num" id="kpiSites">—</div><div class="label">Active Sites</div></div>
+    <div class="kpi"><div class="num gold" id="kpiMRR">—</div><div class="label">Monthly Revenue</div></div>
+    <div class="kpi"><div class="num blue" id="kpiLeads">—</div><div class="label">Open Leads</div></div>
+    <div class="kpi"><div class="num green" id="kpiClosed">—</div><div class="label">Closed Deals</div></div>
+    <div class="kpi"><div class="num" id="kpiTeam">—</div><div class="label">Team Members</div></div>
+    <div class="kpi"><div class="num blue" id="kpiPageviews">—</div><div class="label">Pageviews (30d)</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="ops-tabs">
+    <button class="ops-tab active" onclick="opsTab('sites')">Sites</button>
+    <button class="ops-tab" onclick="opsTab('team')">Team</button>
+    <button class="ops-tab" onclick="opsTab('leads')">Leads</button>
+    <button class="ops-tab" onclick="opsTab('analytics')">Analytics</button>
+  </div>
+
+  <!-- SITES TAB -->
+  <div id="panelSites" class="tab-panel active">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;">Managed Sites</h3>
+        <button class="ops-btn" onclick="showAddSite()">+ Add Site</button>
+      </div>
+      <div id="addSiteForm" style="display:none;margin-bottom:16px;padding:16px;background:var(--dark);border:1px solid var(--border);border-radius:10px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="ops-field"><label>Site Name</label><input type="text" id="newSiteName" placeholder="Fast Plumbing LLC"></div>
+          <div class="ops-field"><label>Slug</label><input type="text" id="newSiteSlug" placeholder="pp-fast-plumbing"></div>
+          <div class="ops-field"><label>Template</label><select id="newSiteTemplate"><option value="plumber">Plumber</option><option value="handyman">Handyman</option><option value="cleaning">Cleaning</option><option value="pest-control">Pest Control</option><option value="restaurant">Restaurant</option><option value="salon">Salon</option></select></div>
+          <div class="ops-field"><label>Hosting Plan</label><select id="newSitePlan"><option value="starter">Starter ($699)</option><option value="growth">Growth ($1,299)</option><option value="pro">Pro ($2,499)</option></select></div>
+          <div class="ops-field"><label>Domain</label><input type="text" id="newSiteDomain" placeholder="fastplumbing.com"></div>
+          <div class="ops-field"><label>Monthly Revenue</label><input type="number" id="newSiteMRR" placeholder="0" step="1"></div>
+          <div class="ops-field"><label>Assigned To</label><select id="newSiteOwner"></select></div>
+          <div class="ops-field"><label>Notes</label><input type="text" id="newSiteNotes" placeholder=""></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="ops-btn" onclick="createSite()">Save Site</button>
+          <button class="ops-btn secondary" onclick="document.getElementById('addSiteForm').style.display='none'">Cancel</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="ops-table">
+          <thead><tr>
+            <th>Site</th><th>Template</th><th>Status</th><th>Analytics</th><th>Plan</th><th>MRR</th><th>Owner</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="sitesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM TAB -->
+  <div id="panelTeam" class="tab-panel">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;">Team Members</h3>
+        <button class="ops-btn" onclick="showInvite()">+ Invite Member</button>
+      </div>
+      <div id="inviteForm" style="display:none;margin-bottom:16px;padding:16px;background:var(--dark);border:1px solid var(--border);border-radius:10px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="ops-field"><label>Username</label><input type="text" id="invUsername" placeholder="email@polarispoint.io"></div>
+          <div class="ops-field"><label>Full Name</label><input type="text" id="invName" placeholder="Jane Doe"></div>
+          <div class="ops-field"><label>Temp Password</label><input type="text" id="invPass" placeholder="changeme123"></div>
+          <div class="ops-field"><label>Role</label><select id="invRole"><option value="junior">Junior</option><option value="senior">Senior</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="ops-btn" onclick="inviteUser()">Create Account</button>
+          <button class="ops-btn secondary" onclick="document.getElementById('inviteForm').style.display='none'">Cancel</button>
+        </div>
+      </div>
+      <table class="ops-table">
+        <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="teamBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LEADS TAB -->
+  <div id="panelLeads" class="tab-panel">
+    <div class="card">
+      <h3>Pipeline Overview</h3>
+      <div id="pipelineSummary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
+      <div style="overflow-x:auto;">
+        <table class="ops-table">
+          <thead><tr><th>Business</th><th>Contact</th><th>Rank</th><th>Stage</th><th>Tier</th><th>Owner</th><th>Added</th></tr></thead>
+          <tbody id="leadsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="panelAnalytics" class="tab-panel">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;">Portfolio Analytics</h3>
+        <select id="opsAnalyticsRange" onchange="loadOpsAnalytics()" style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:#e2e8f0;font-size:.78rem;outline:none;">
+          <option value="7">7 days</option><option value="14">14 days</option><option value="30" selected>30 days</option><option value="90">90 days</option>
+        </select>
+      </div>
+      <div id="opsAnalyticsSites"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+  // === AUTH ===
+  var currentUser = null;
+
+  function hashPw(pass) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
+      return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+    });
+  }
+
+  function doLogin() {
+    var user = document.getElementById('loginUser').value.trim().toLowerCase();
+    var pass = document.getElementById('loginPass').value;
+    var err = document.getElementById('loginError');
+    if (!user || !pass) { err.textContent = 'Enter credentials'; err.style.display = 'block'; return; }
+
+    hashPw(pass).then(function(hash) {
+      fetch('/api/users?action=login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password_hash: hash })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) { err.textContent = data.error; err.style.display = 'block'; return; }
+        if (data.role !== 'senior') { err.textContent = 'Ops is restricted to senior admins'; err.style.display = 'block'; return; }
+        currentUser = data;
+        sessionStorage.setItem('ops_user', JSON.stringify(data));
+        showOps();
+      });
+    });
+  }
+
+  function signOut() {
+    sessionStorage.removeItem('ops_user');
+    currentUser = null;
+    document.getElementById('opsContent').style.display = 'none';
+    document.getElementById('loginGate').style.display = 'flex';
+  }
+
+  function showOps() {
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('opsContent').style.display = 'block';
+    document.getElementById('opsUser').textContent = currentUser.full_name;
+    loadAll();
+  }
+
+  // Auto-login
+  try {
+    var saved = JSON.parse(sessionStorage.getItem('ops_user'));
+    if (saved && saved.role === 'senior') { currentUser = saved; showOps(); }
+  } catch(e) {}
+
+  // === TABS ===
+  function opsTab(tab) {
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.ops-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    event.target.classList.add('active');
+    if (tab === 'analytics') loadOpsAnalytics();
+  }
+
+  // === DATA ===
+  var _sites = [], _users = [], _leads = [];
+
+  function loadAll() {
+    Promise.all([
+      fetch('/api/sites').then(function(r) { return r.json(); }),
+      fetch('/api/users').then(function(r) { return r.json(); }),
+      fetch('/api/leads?all=true').then(function(r) { return r.json(); }),
+      fetch('/api/track?site=all&range=30d').then(function(r) { return r.json(); })
+    ]).then(function(results) {
+      _sites = results[0].sites || [];
+      _users = results[1].users || [];
+      _leads = results[2].leads || [];
+      var analytics = results[3];
+
+      // KPIs
+      var activeSites = _sites.filter(function(s) { return s.status === 'active'; });
+      var mrr = activeSites.reduce(function(t, s) { return t + Number(s.monthly_revenue || 0); }, 0);
+      var openLeads = _leads.filter(function(l) { return l.stage < 4; });
+      var closedLeads = _leads.filter(function(l) { return l.stage >= 4; });
+      var activeUsers = _users.filter(function(u) { return u.active; });
+
+      document.getElementById('kpiSites').textContent = activeSites.length;
+      document.getElementById('kpiMRR').textContent = '$' + mrr.toLocaleString();
+      document.getElementById('kpiLeads').textContent = openLeads.length;
+      document.getElementById('kpiClosed').textContent = closedLeads.length;
+      document.getElementById('kpiTeam').textContent = activeUsers.length;
+      document.getElementById('kpiPageviews').textContent = Number(analytics.summary ? analytics.summary.pageviews : 0).toLocaleString();
+
+      renderSites();
+      renderTeam();
+      renderLeads();
+    });
+  }
+
+  // === SITES ===
+  function renderSites() {
+    var body = document.getElementById('sitesBody');
+    if (!_sites.length) { body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#334155;">No sites registered yet.</td></tr>'; return; }
+    body.innerHTML = _sites.map(function(s) {
+      return '<tr>' +
+        '<td><strong style="color:#fff;">' + s.site_name + '</strong><br><span style="font-size:.7rem;color:#475569;">' + (s.domain || s.slug) + '</span></td>' +
+        '<td>' + s.template + '</td>' +
+        '<td><select onchange="updateSite(' + s.id + ',\'status\',this.value)" style="background:var(--dark);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:#e2e8f0;font-size:.72rem;outline:none;">' +
+          '<option value="active"' + (s.status==='active'?' selected':'') + '>Active</option>' +
+          '<option value="paused"' + (s.status==='paused'?' selected':'') + '>Paused</option>' +
+          '<option value="archived"' + (s.status==='archived'?' selected':'') + '>Archived</option>' +
+        '</select></td>' +
+        '<td><label class="toggle"><input type="checkbox"' + (s.analytics_enabled ? ' checked' : '') + ' onchange="updateSite(' + s.id + ',\'analytics_enabled\',this.checked)"><span class="slider"></span></label></td>' +
+        '<td>' + (s.hosting_plan || '—') + '</td>' +
+        '<td>$' + Number(s.monthly_revenue || 0).toLocaleString() + '</td>' +
+        '<td>' + (s.owner || '—') + '</td>' +
+        '<td style="white-space:nowrap;">' +
+          (s.vercel_url ? '<a href="' + s.vercel_url + '" target="_blank">Site</a> ' : '') +
+          (s.repo_url ? '<a href="' + s.repo_url + '" target="_blank">Repo</a> ' : '') +
+          '<button onclick="deleteSiteConfirm(' + s.id + ')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Del</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function updateSite(id, field, value) {
+    var body = {};
+    body[field] = value;
+    fetch('/api/sites?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function() { loadAll(); });
+  }
+
+  function deleteSiteConfirm(id) {
+    if (!confirm('Delete this site from the registry?')) return;
+    fetch('/api/sites?id=' + id, { method: 'DELETE' }).then(function() { loadAll(); });
+  }
+
+  function showAddSite() {
+    document.getElementById('addSiteForm').style.display = 'block';
+    var sel = document.getElementById('newSiteOwner');
+    sel.innerHTML = '<option value="">Unassigned</option>';
+    _users.filter(function(u) { return u.active; }).forEach(function(u) {
+      sel.innerHTML += '<option value="' + u.username + '">' + u.full_name + '</option>';
+    });
+  }
+
+  function createSite() {
+    var body = {
+      site_name: document.getElementById('newSiteName').value.trim(),
+      slug: document.getElementById('newSiteSlug').value.trim(),
+      template: document.getElementById('newSiteTemplate').value,
+      hosting_plan: document.getElementById('newSitePlan').value,
+      domain: document.getElementById('newSiteDomain').value.trim(),
+      monthly_revenue: Number(document.getElementById('newSiteMRR').value) || 0,
+      owner: document.getElementById('newSiteOwner').value,
+      notes: document.getElementById('newSiteNotes').value.trim()
+    };
+    if (!body.site_name || !body.slug) return alert('Name and slug are required');
+    fetch('/api/sites', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) return alert(data.error);
+        document.getElementById('addSiteForm').style.display = 'none';
+        loadAll();
+      });
+  }
+
+  // === TEAM ===
+  function renderTeam() {
+    var body = document.getElementById('teamBody');
+    body.innerHTML = _users.map(function(u) {
+      var siteCount = _sites.filter(function(s) { return s.owner === u.username; }).length;
+      var leadCount = _leads.filter(function(l) { return l.owner === u.username; }).length;
+      return '<tr>' +
+        '<td><strong style="color:#fff;">' + u.full_name + '</strong></td>' +
+        '<td style="font-size:.78rem;">' + u.username + '</td>' +
+        '<td><span class="badge ' + u.role + '">' + u.role + '</span></td>' +
+        '<td><label class="toggle"><input type="checkbox"' + (u.active ? ' checked' : '') + ' onchange="toggleUser(' + u.id + ',this.checked)"><span class="slider"></span></label></td>' +
+        '<td style="font-size:.75rem;color:#475569;">' + (u.created_at ? u.created_at.split('T')[0] : '') + '</td>' +
+        '<td style="font-size:.75rem;color:#475569;">' + siteCount + ' sites, ' + leadCount + ' leads</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function toggleUser(id, active) {
+    fetch('/api/users?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active: active }) })
+      .then(function() { loadAll(); });
+  }
+
+  function showInvite() { document.getElementById('inviteForm').style.display = 'block'; }
+
+  function inviteUser() {
+    var pass = document.getElementById('invPass').value;
+    if (!pass) return alert('Set a temporary password');
+    hashPw(pass).then(function(hash) {
+      fetch('/api/users', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('invUsername').value.trim().toLowerCase(),
+          password_hash: hash,
+          full_name: document.getElementById('invName').value.trim(),
+          role: document.getElementById('invRole').value
+        })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) return alert(data.error);
+        document.getElementById('inviteForm').style.display = 'none';
+        loadAll();
+      });
+    });
+  }
+
+  // === LEADS ===
+  var STAGES = ['Researched', 'Contacted', 'Demo Shown', 'Proposal Sent', 'Closed'];
+
+  function renderLeads() {
+    // Pipeline summary
+    var pipeline = document.getElementById('pipelineSummary');
+    pipeline.innerHTML = STAGES.map(function(label, i) {
+      var count = _leads.filter(function(l) { return l.stage === i; }).length;
+      var colors = ['#64748b', '#5B8DEF', '#D4A853', '#f59e0b', '#16a34a'];
+      return '<div style="text-align:center;padding:12px 20px;background:var(--dark);border-radius:8px;border:1px solid var(--border);flex:1;min-width:100px;">' +
+        '<div style="font-family:Outfit,sans-serif;font-size:1.4rem;font-weight:700;color:' + colors[i] + ';">' + count + '</div>' +
+        '<div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">' + label + '</div>' +
+      '</div>';
+    }).join('');
+
+    // Table
+    var body = document.getElementById('leadsBody');
+    if (!_leads.length) { body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#334155;">No leads.</td></tr>'; return; }
+    body.innerHTML = _leads.slice(0, 50).map(function(l) {
+      var rankColors = { hot: '#ef4444', warm: '#f59e0b', cold: '#64748b' };
+      return '<tr>' +
+        '<td><strong style="color:#fff;">' + l.biz_name + '</strong></td>' +
+        '<td style="font-size:.78rem;">' + (l.contact || '—') + '<br><span style="color:#475569;">' + (l.phone || '') + '</span></td>' +
+        '<td><span class="badge" style="background:' + rankColors[l.rank] + '22;color:' + rankColors[l.rank] + ';">' + l.rank + '</span></td>' +
+        '<td style="font-size:.78rem;">' + STAGES[l.stage || 0] + '</td>' +
+        '<td style="font-size:.78rem;">' + (l.tier || '—') + '</td>' +
+        '<td style="font-size:.78rem;">' + (l.owner || '—') + '</td>' +
+        '<td style="font-size:.75rem;color:#475569;">' + (l.created_at ? l.created_at.split('T')[0] : '') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  // === ANALYTICS ===
+  function loadOpsAnalytics() {
+    var range = document.getElementById('opsAnalyticsRange').value;
+    fetch('/api/track?site=all&range=' + range + 'd')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var div = document.getElementById('opsAnalyticsSites');
+        var sites = data.sites || [];
+        if (!sites.length) { div.innerHTML = '<p style="color:#334155;text-align:center;">No analytics data yet.</p>'; return; }
+        div.innerHTML = sites.map(function(s) {
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--dark);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">' +
+            '<span style="color:#fff;font-weight:600;font-size:.85rem;">' + s.site + '</span>' +
+            '<div style="display:flex;gap:20px;">' +
+              '<span style="font-size:.78rem;color:var(--text);"><strong style="color:#fff;">' + s.pageviews + '</strong> views</span>' +
+              '<span style="font-size:.78rem;color:var(--text);"><strong style="color:var(--blue);">' + (s.forms || 0) + '</strong> forms</span>' +
+              '<span style="font-size:.78rem;color:var(--text);"><strong style="color:var(--gold);">' + (s.calls || 0) + '</strong> calls</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      });
+  }
+</script>
+</body>
+</html>
