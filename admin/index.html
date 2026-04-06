@@ -3442,7 +3442,10 @@
       document.getElementById('loginGate').style.display = 'none';
       document.getElementById('adminContent').style.display = 'block';
       applyRole(role, displayName);
-      switchTab('deck');
+      // Check URL hash for deep link (e.g. #leads from ops dashboard)
+      var hashTab = location.hash.replace('#', '');
+      if (hashTab && TAB_MAP[hashTab]) switchTab(hashTab);
+      else switchTab('deck');
     }
     // Auto-login from session; treat old '1' value as senior
     var storedRole = sessionStorage.getItem('pp_admin');

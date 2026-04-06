@@ -457,7 +457,7 @@
     body.innerHTML = _leads.slice(0, 50).map(function(l) {
       var rankColors = { hot: '#ef4444', warm: '#f59e0b', cold: '#64748b' };
       return '<tr>' +
-        '<td><strong style="color:#fff;">' + l.biz_name + '</strong></td>' +
+        '<td><a href="/admin#leads" onclick="sessionStorage.setItem(\'pp_admin\',\'senior\');sessionStorage.setItem(\'pp_user\',currentUser.username);sessionStorage.setItem(\'pp_fullname\',currentUser.full_name);" style="color:#fff;font-weight:600;">' + l.biz_name + '</a></td>' +
         '<td style="font-size:.78rem;">' + (l.contact || '—') + '<br><span style="color:#475569;">' + (l.phone || '') + '</span></td>' +
         '<td><span class="badge" style="background:' + rankColors[l.rank] + '22;color:' + rankColors[l.rank] + ';">' + l.rank + '</span></td>' +
         '<td style="font-size:.78rem;">' + STAGES[l.stage || 0] + '</td>' +
