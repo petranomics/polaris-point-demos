@@ -1010,6 +1010,7 @@
     <button class="admin-tab" onclick="switchTab('offers')">Offers</button>
     <button class="admin-tab" onclick="switchTab('guide')">Sales Guide</button>
     <button class="admin-tab" onclick="switchTab('leads')">My Leads</button>
+    <button class="admin-tab" onclick="switchTab('materials')">Materials</button>
     <button class="admin-tab" onclick="switchTab('intake')">Site Builder</button>
     <a class="admin-tab senior-only" href="/ops" style="text-decoration:none;">Ops Dashboard</a>
     <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
@@ -1488,6 +1489,32 @@
     </div>
   </div>
 
+  <!-- MATERIALS TAB -->
+  <div id="tabMaterials" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div class="sales-card" style="text-align:center;">
+        <h3>Marketing Materials</h3>
+        <p style="margin-bottom:16px;">Print-ready flyers and assets for door-to-door and in-person sales.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <a href="/flyer" target="_blank" class="btn-export" style="text-decoration:none;padding:12px 24px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Sales Flyer
+          </a>
+          <a href="/business-cards" target="_blank" class="btn-export secondary" style="text-decoration:none;padding:12px 24px;">
+            Business Cards Page
+          </a>
+        </div>
+      </div>
+      <div class="sales-card">
+        <h3>Flyer Preview</h3>
+        <div style="border:1px solid #1e293b;border-radius:10px;overflow:hidden;margin-top:12px;">
+          <iframe src="/flyer" style="width:100%;height:600px;border:none;background:#050D1E;transform-origin:top left;" loading="lazy"></iframe>
+        </div>
+        <p style="font-size:.72rem;color:#475569;margin-top:8px;text-align:center;">Open the flyer and use the Print button to save as PDF</p>
+      </div>
+    </div>
+  </div>
+
   <!-- INTAKE TAB (Senior Only) -->
   <div id="tabIntake" class="tab-content" style="display:none;">
     <div class="intake-form">
@@ -1935,6 +1962,7 @@
       offers: 'tabOffers',
       guide: 'tabGuide',
       leads: 'tabLeads',
+      materials: 'tabMaterials',
       intake: 'tabIntake',
       analytics: 'tabAnalytics',
       cards: 'tabCards'
