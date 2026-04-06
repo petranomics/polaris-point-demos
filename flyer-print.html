@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polaris Point — Print Flyers (2-up)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    @page { size: letter portrait; margin: 0; }
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+    }
+    body { font-family: 'Inter', sans-serif; background: #e5e5e5; }
+
+    .print-bar { text-align: center; padding: 20px; }
+    .print-bar button { background: #5B8DEF; color: #fff; border: none; border-radius: 8px; padding: 12px 32px; font-family: 'Inter', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; }
+    .print-bar p { color: #666; font-size: .8rem; margin-top: 8px; }
+
+    /* Page container — 8.5 x 11, two flyers stacked */
+    .page {
+      width: 8.5in;
+      height: 11in;
+      margin: 20px auto;
+      background: #050D1E;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0,0,0,.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Each flyer is half the page */
+    .half {
+      width: 100%;
+      height: 5.5in;
+      position: relative;
+      overflow: hidden;
+    }
+    .half + .half { border-top: 1px dashed rgba(255,255,255,.1); }
+
+    /* Background effects per half */
+    .half::before {
+      content: '';
+      position: absolute;
+      top: -15%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(91,141,239,.12) 0%, transparent 70%);
+      filter: blur(40px);
+    }
+    .half::after {
+      content: '';
+      position: absolute;
+      bottom: 5%;
+      left: -8%;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,197,71,.07) 0%, transparent 70%);
+      filter: blur(30px);
+    }
+
+    /* Star field */
+    .stars {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        radial-gradient(2.5px 2.5px at 8% 12%, rgba(255,255,255,.8) 0%, transparent 100%),
+        radial-gradient(3px 3px at 35% 25%, rgba(91,141,239,.75) 0%, transparent 100%),
+        radial-gradient(2.5px 2.5px at 62% 15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(3px 3px at 82% 45%, rgba(91,141,239,.7) 0%, transparent 100%),
+        radial-gradient(2.5px 2.5px at 50% 8%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(2.5px 2.5px at 90% 75%, rgba(232,197,71,.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 22% 60%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 70% 80%, rgba(91,141,239,.55) 0%, transparent 100%),
+        radial-gradient(2px 2px at 15% 85%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(2px 2px at 45% 55%, rgba(232,197,71,.45) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 5% 40%, rgba(255,255,255,.35) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 28% 90%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 55% 35%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 20%, rgba(255,255,255,.35) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 95% 60%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 65% 50%, rgba(255,255,255,.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,.2) 0%, transparent 100%);
+    }
+
+    /* Nebula */
+    .neb { position: absolute; border-radius: 50%; filter: blur(40px); z-index: 0; }
+    .neb.n1 { width: 200px; height: 120px; top: 5%; right: 8%; background: radial-gradient(ellipse, rgba(91,141,239,.07) 0%, transparent 70%); }
+    .neb.n2 { width: 160px; height: 100px; bottom: 10%; left: 5%; background: radial-gradient(ellipse, rgba(140,100,200,.04) 0%, transparent 70%); }
+
+    /* Constellation */
+    .const-lines { position: absolute; inset: 0; z-index: 0; opacity: .15; }
+    .const-lines svg { width: 100%; height: 100%; }
+
+    /* Ribbon */
+    .ribbon {
+      position: absolute;
+      top: 0.35in;
+      right: 0;
+      z-index: 10;
+      background: rgba(255,255,255,.9);
+      color: #050D1E;
+      padding: 8px 12px;
+      border-radius: 8px 0 0 8px;
+      box-shadow: -3px 2px 12px rgba(0,0,0,.2);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .ribbon .amount { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: .75rem; display: block; }
+    .ribbon .code-label { font-size: .4rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: 2px; }
+    .ribbon .code { font-family: 'Space Grotesk', sans-serif; font-size: .6rem; font-weight: 800; color: #5B8DEF; display: block; letter-spacing: 2px; }
+
+    /* Content */
+    .inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 0.2in 0.35in 0.18in;
+    }
+
+    /* Header */
+    .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.12in; }
+    .logo { display: flex; align-items: center; gap: 6px; }
+    .logo svg { width: 16px; height: 16px; filter: drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .logo span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .7rem; color: #fff; }
+    .hdr-sub { font-size: .45rem; color: #6B82A8; text-transform: uppercase; letter-spacing: 1.5px; }
+
+    /* Headline */
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: .06in; }
+    h1 .gold { color: #E8C547; }
+    .sub { font-size: .52rem; color: #9BB0D4; line-height: 1.45; margin-bottom: .12in; max-width: 4.5in; }
+
+    /* Stats */
+    .stats { display: flex; gap: 1px; border-radius: 8px; overflow: hidden; margin-bottom: .12in; }
+    .st { flex: 1; background: rgba(15,25,55,.6); padding: 8px 6px; text-align: center; }
+    .st .n { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; line-height: 1; }
+    .st .n.gold { color: #E8C547; }
+    .st .n.blue { color: #5B8DEF; }
+    .st .d { font-size: .42rem; color: #9BB0D4; line-height: 1.3; margin-top: 3px; }
+    .st .s { font-size: .32rem; color: #475569; font-style: italic; margin-top: 1px; }
+
+    /* Services 2x2 */
+    .lbl { font-size: .4rem; text-transform: uppercase; letter-spacing: 2px; color: #5B8DEF; font-weight: 700; margin-bottom: 6px; }
+    .svcs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: .1in; }
+    .sc { background: rgba(15,25,55,.45); border: 1px solid rgba(91,141,239,.08); border-radius: 7px; padding: 7px 8px; }
+    .sc h3 { font-family: 'Space Grotesk', sans-serif; font-size: .52rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .sc p { font-size: .42rem; color: #9BB0D4; line-height: 1.4; }
+
+    /* 3 columns */
+    .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: .1in; }
+    .col { background: rgba(15,25,55,.4); border: 1px solid rgba(91,141,239,.06); border-radius: 7px; padding: 7px 8px; }
+    .col h4 { font-family: 'Space Grotesk', sans-serif; font-size: .5rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .col.gld h4 { color: #E8C547; }
+    .col ul { list-style: none; padding: 0; }
+    .col ul li { font-size: .4rem; color: #9BB0D4; line-height: 1.7; padding-left: 8px; position: relative; }
+    .col ul li::before { content: ''; position: absolute; left: 0; top: 4.5px; width: 3px; height: 3px; border-radius: 50%; background: rgba(91,141,239,.4); }
+    .col.gld ul li::before { background: rgba(232,197,71,.4); }
+
+    /* CTA */
+    .cta {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(91,141,239,.06);
+      border: 1px solid rgba(91,141,239,.1);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .cta h2 { font-family: 'Space Grotesk', sans-serif; font-size: .72rem; font-weight: 800; margin-bottom: 2px; }
+    .cta h2 .gold { color: #E8C547; }
+    .cta .contact { font-size: .42rem; color: #9BB0D4; line-height: 1.5; }
+    .cta .contact a { color: #5B8DEF; text-decoration: none; }
+    .cta .rt { display: flex; align-items: center; gap: 12px; }
+    .cta .price { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; text-align: right; }
+    .cta .price-lbl { font-size: .38rem; color: #6B82A8; text-transform: uppercase; letter-spacing: .5px; text-align: right; }
+    .qr { width: 48px; height: 48px; background: #fff; border-radius: 5px; padding: 3px; }
+    .qr img { width: 42px; height: 42px; }
+  </style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button onclick="window.print()">Print 2-Up Flyers</button>
+  <p>Prints two identical flyers on one 8.5 x 11" sheet — cut along the dashed line</p>
+</div>
+
+<div class="page">
+
+<!-- === FLYER 1 (top half) === -->
+<div class="half">
+  <div class="stars"></div>
+  <div class="neb n1"></div>
+  <div class="neb n2"></div>
+  <div class="const-lines"><svg viewBox="0 0 816 528" fill="none" stroke="rgba(91,141,239,.5)" stroke-width="0.4"><line x1="620" y1="40" x2="670" y2="70"/><line x1="670" y1="70" x2="710" y2="55"/><line x1="670" y1="70" x2="690" y2="110"/><line x1="60" y1="200" x2="100" y2="230"/><line x1="100" y1="230" x2="85" y2="270"/><line x1="380" y1="300" x2="420" y2="330"/><line x1="420" y1="330" x2="460" y2="315"/><line x1="600" y1="420" x2="650" y2="445"/><line x1="650" y1="445" x2="680" y2="430"/></svg></div>
+  <div class="ribbon"><span class="amount">$100 OFF</span><span class="code-label">Use code</span><span class="code">AUSTIN</span></div>
+  <div class="inner">
+    <div class="hdr">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg><span>Polaris Point</span></div>
+      <span class="hdr-sub">Websites &bull; SEO &bull; Advertising</span>
+    </div>
+    <h1>Your Customers Are Searching.<br><span class="gold">Are They Finding You?</span></h1>
+    <p class="sub">Every day, people in your area Google the exact service you offer — and hire whoever shows up first.</p>
+    <div class="stats">
+      <div class="st"><div class="n gold">97%</div><div class="d">search online before<br>choosing a local business</div><div class="s">BrightLocal 2024</div></div>
+      <div class="st"><div class="n blue">76%</div><div class="d">"near me" searches lead<br>to a visit within 24 hours</div><div class="s">Google</div></div>
+      <div class="st"><div class="n">46%</div><div class="d">of all Google searches<br>are looking for local info</div><div class="s">Search Engine Roundtable</div></div>
+    </div>
+    <div class="lbl">How We Get You Found</div>
+    <div class="svcs">
+      <div class="sc"><h3>Professional Websites</h3><p>Custom, mobile-first sites. Live in 48 hours.</p></div>
+      <div class="sc"><h3>SEO & Search Visibility</h3><p>Rank on Google, Yelp, and ChatGPT.</p></div>
+      <div class="sc"><h3>Leads & Advertising</h3><p>AI-powered campaigns driving real leads.</p></div>
+      <div class="sc"><h3>Content Creation</h3><p>Blogs, press releases, and social content.</p></div>
+    </div>
+    <div class="lbl">Pick What You Need</div>
+    <div class="cols">
+      <div class="col gld"><h4>Build</h4><ul><li>Custom website</li><li>Mobile-first</li><li>Domain & hosting</li><li>48-hour delivery</li></ul></div>
+      <div class="col"><h4>Grow</h4><ul><li>Google & Yelp SEO</li><li>AI search visibility</li><li>Blog & press releases</li><li>Google Business</li></ul></div>
+      <div class="col gld"><h4>Scale</h4><ul><li>Google & social ads</li><li>Content creation</li><li>Lead tracking</li><li>Ongoing support</li></ul></div>
+    </div>
+    <div class="cta">
+      <div><h2>Your <span class="gold">North Star</span> to Digital Success</h2><div class="contact">Free consultation — let us guide the way<br><a href="mailto:hello@polarispoint.io">hello@polarispoint.io</a> &bull; <a href="https://polarispoint.io">polarispoint.io</a></div></div>
+      <div class="rt"><div><div class="price-lbl">Starting at</div><div class="price">$699</div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://polarispoint.io&bgcolor=ffffff&color=050D1E&margin=1" alt="QR"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === FLYER 2 (bottom half — identical) === -->
+<div class="half">
+  <div class="stars"></div>
+  <div class="neb n1"></div>
+  <div class="neb n2"></div>
+  <div class="const-lines"><svg viewBox="0 0 816 528" fill="none" stroke="rgba(91,141,239,.5)" stroke-width="0.4"><line x1="620" y1="40" x2="670" y2="70"/><line x1="670" y1="70" x2="710" y2="55"/><line x1="670" y1="70" x2="690" y2="110"/><line x1="60" y1="200" x2="100" y2="230"/><line x1="100" y1="230" x2="85" y2="270"/><line x1="380" y1="300" x2="420" y2="330"/><line x1="420" y1="330" x2="460" y2="315"/><line x1="600" y1="420" x2="650" y2="445"/><line x1="650" y1="445" x2="680" y2="430"/></svg></div>
+  <div class="ribbon"><span class="amount">$100 OFF</span><span class="code-label">Use code</span><span class="code">AUSTIN</span></div>
+  <div class="inner">
+    <div class="hdr">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg><span>Polaris Point</span></div>
+      <span class="hdr-sub">Websites &bull; SEO &bull; Advertising</span>
+    </div>
+    <h1>Your Customers Are Searching.<br><span class="gold">Are They Finding You?</span></h1>
+    <p class="sub">Every day, people in your area Google the exact service you offer — and hire whoever shows up first.</p>
+    <div class="stats">
+      <div class="st"><div class="n gold">97%</div><div class="d">search online before<br>choosing a local business</div><div class="s">BrightLocal 2024</div></div>
+      <div class="st"><div class="n blue">76%</div><div class="d">"near me" searches lead<br>to a visit within 24 hours</div><div class="s">Google</div></div>
+      <div class="st"><div class="n">46%</div><div class="d">of all Google searches<br>are looking for local info</div><div class="s">Search Engine Roundtable</div></div>
+    </div>
+    <div class="lbl">How We Get You Found</div>
+    <div class="svcs">
+      <div class="sc"><h3>Professional Websites</h3><p>Custom, mobile-first sites. Live in 48 hours.</p></div>
+      <div class="sc"><h3>SEO & Search Visibility</h3><p>Rank on Google, Yelp, and ChatGPT.</p></div>
+      <div class="sc"><h3>Leads & Advertising</h3><p>AI-powered campaigns driving real leads.</p></div>
+      <div class="sc"><h3>Content Creation</h3><p>Blogs, press releases, and social content.</p></div>
+    </div>
+    <div class="lbl">Pick What You Need</div>
+    <div class="cols">
+      <div class="col gld"><h4>Build</h4><ul><li>Custom website</li><li>Mobile-first</li><li>Domain & hosting</li><li>48-hour delivery</li></ul></div>
+      <div class="col"><h4>Grow</h4><ul><li>Google & Yelp SEO</li><li>AI search visibility</li><li>Blog & press releases</li><li>Google Business</li></ul></div>
+      <div class="col gld"><h4>Scale</h4><ul><li>Google & social ads</li><li>Content creation</li><li>Lead tracking</li><li>Ongoing support</li></ul></div>
+    </div>
+    <div class="cta">
+      <div><h2>Your <span class="gold">North Star</span> to Digital Success</h2><div class="contact">Free consultation — let us guide the way<br><a href="mailto:hello@polarispoint.io">hello@polarispoint.io</a> &bull; <a href="https://polarispoint.io">polarispoint.io</a></div></div>
+      <div class="rt"><div><div class="price-lbl">Starting at</div><div class="price">$699</div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://polarispoint.io&bgcolor=ffffff&color=050D1E&margin=1" alt="QR"></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
