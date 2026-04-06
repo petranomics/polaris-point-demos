@@ -336,47 +336,52 @@
     /* CTA */
     .cta-bar {
       margin-top: auto;
+      flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      background: linear-gradient(135deg, rgba(91,141,239,.08), rgba(232,197,71,.06));
-      border: 1px solid rgba(91,141,239,.12);
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(91,141,239,.06), rgba(232,197,71,.04));
+      border: 1px solid rgba(91,141,239,.1);
       border-radius: 14px;
-      padding: 22px 26px;
+      padding: 28px 30px;
+      gap: 14px;
     }
+    .cta-left { text-align: center; }
     .cta-left h2 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.3rem;
+      font-size: 1.6rem;
       font-weight: 800;
       line-height: 1.15;
       color: #fff;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .cta-left h2 .gold { color: #E8C547; }
     .cta-left .contact {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       color: #9BB0D4;
-      line-height: 1.6;
+      line-height: 1.7;
     }
     .cta-left .contact strong { color: #fff; }
-    .cta-left .contact a { color: #5B8DEF; text-decoration: none; }
+    .cta-left .contact a { color: #5B8DEF; text-decoration: none; font-weight: 600; }
     .cta-right {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
     }
     .cta-price {
-      text-align: right;
+      text-align: center;
     }
     .cta-price .from {
-      font-size: 0.58rem;
+      font-size: 0.6rem;
       color: #6B82A8;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
     .cta-price .amount {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2rem;
+      font-size: 2.4rem;
       font-weight: 800;
       color: #fff;
       line-height: 1;
