@@ -1805,6 +1805,16 @@
         <h3>Daily Activity</h3>
         <div id="analyticsChart" style="min-height:200px;"></div>
       </div>
+
+      <!-- Preview management -->
+      <div class="sales-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;">Preview Sites</h3>
+          <button class="btn-export secondary" onclick="loadPreviews()" style="padding:6px 14px;font-size:.72rem;">Refresh</button>
+        </div>
+        <p style="font-size:.78rem;color:#64748b;margin-bottom:12px;">Each preview is a JSON file stored in the repo. Delete old ones to keep things clean.</p>
+        <div id="previewList"></div>
+      </div>
     </div>
   </div>
 
@@ -2003,7 +2013,7 @@
       });
       // Load leads when switching to leads tab
       if (tab === 'leads') renderLeads();
-      if (tab === 'analytics') loadAnalytics();
+      if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
     }
 
     function applyRole(role, userName) {
@@ -3524,6 +3534,50 @@
         .catch(function(e) {
           document.getElementById('analyticsSites').innerHTML = '<p style="color:#f44336;font-size:.82rem;">Failed to load analytics: ' + e.message + '</p>';
         });
+    }
+
+    // === PREVIEW MANAGEMENT ===
+    function loadPreviews() {
+      var container = document.getElementById('previewList');
+      container.innerHTML = '<p style="color:#475569;font-size:.82rem;text-align:center;padding:12px;">Loading previews...</p>';
+
+      fetch('/api/preview?list=true')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var previews = data.previews || [];
+          if (!previews.length) {
+            container.innerHTML = '<p style="color:#334155;font-size:.82rem;text-align:center;padding:12px;">No preview sites.</p>';
+            return;
+          }
+          container.innerHTML = previews.map(function(p) {
+            var date = p.created ? p.created.split('T')[0] : '—';
+            var sizeKb = p.size ? Math.round(p.size / 1024) + 'KB' : '—';
+            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#0B1120;border:1px solid #1e293b;border-radius:8px;margin-bottom:6px;">' +
+              '<div style="min-width:0;flex:1;">' +
+                '<div style="color:#fff;font-weight:600;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (p.name || p.id) + '</div>' +
+                '<div style="font-size:.7rem;color:#475569;">' + p.template + ' &middot; ' + date + ' &middot; ' + sizeKb + '</div>' +
+              '</div>' +
+              '<div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;">' +
+                '<a href="/' + p.template + '?p=' + p.id + '" target="_blank" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:6px;color:#5B8DEF;font-size:.7rem;font-weight:600;padding:4px 10px;text-decoration:none;">View</a>' +
+                '<button onclick="deletePreview(\'' + p.id + '\')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:6px;color:#ef4444;font-size:.7rem;font-weight:600;cursor:pointer;padding:4px 10px;">Delete</button>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+        })
+        .catch(function(e) {
+          container.innerHTML = '<p style="color:#f44336;font-size:.82rem;">Failed to load previews: ' + e.message + '</p>';
+        });
+    }
+
+    function deletePreview(id) {
+      if (!confirm('Delete preview "' + id + '"? This cannot be undone.')) return;
+      fetch('/api/preview?id=' + id, { method: 'DELETE' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) throw new Error(data.error);
+          loadPreviews();
+        })
+        .catch(function(e) { alert('Delete failed: ' + e.message); });
     }
 
     // === LEAD MANAGEMENT (Neon DB backed) ===
