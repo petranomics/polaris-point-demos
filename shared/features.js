@@ -826,13 +826,56 @@
       var body = el('div', { className: 'blog-card-body' });
       body.appendChild(el('h3', {}, [post.title || '']));
       body.appendChild(el('p', {}, [post.excerpt || '']));
-      if (post.url) {
-        body.appendChild(el('a', { href: post.url, className: 'read-more' }, ['Read More \u2192']));
-      }
+      var readBtn = el('a', { href: '#', className: 'read-more' }, ['Read More \u2192']);
+      readBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        showBlogPost(post);
+      });
+      body.appendChild(readBtn);
       card.appendChild(body);
       grid.appendChild(card);
     });
     if (!container) section.appendChild(grid);
+  }
+
+  function showBlogPost(post) {
+    // Remove existing overlay if any
+    var existing = document.getElementById('blogOverlay');
+    if (existing) existing.remove();
+
+    var overlay = el('div', { id: 'blogOverlay' });
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;';
+
+    var modal = el('div');
+    modal.style.cssText = 'background:#fff;color:#1a1a2e;max-width:720px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:90vh;overflow-y:auto;';
+
+    var html = '';
+    if (post.image) {
+      html += '<div style="width:100%;height:280px;overflow:hidden;"><img src="' + post.image + '" alt="" style="width:100%;height:100%;object-fit:cover;"></div>';
+    }
+    html += '<div style="padding:32px 36px;">';
+    if (post.date) html += '<span style="font-size:.8rem;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">' + post.date + '</span>';
+    html += '<h2 style="font-family:var(--pp-font-heading,Montserrat,sans-serif);font-size:1.6rem;font-weight:800;margin:8px 0 16px;line-height:1.2;color:#111;">' + (post.title || '') + '</h2>';
+    html += '<p style="font-size:1.05rem;line-height:1.8;color:#374151;margin-bottom:16px;">' + (post.excerpt || '') + '</p>';
+    // Generate expanded content from the excerpt
+    html += '<p style="font-size:1rem;line-height:1.8;color:#4b5563;">As a locally owned business, we understand the unique needs of homeowners in our community. Our team of licensed professionals has been serving the area for over a decade, and we take pride in delivering honest assessments and quality workmanship on every job.</p>';
+    html += '<p style="font-size:1rem;line-height:1.8;color:#4b5563;">Whether you\'re dealing with an emergency situation or planning a routine maintenance check, our experienced technicians are equipped to handle it all. We use industry-leading tools and techniques to ensure every project meets the highest standards.</p>';
+    html += '<p style="font-size:1rem;line-height:1.8;color:#4b5563;"><strong>Need help with this?</strong> Give us a call or fill out our contact form for a free estimate. We\'re happy to answer any questions and help you make the best decision for your home.</p>';
+    html += '<div style="margin-top:24px;padding-top:20px;border-top:1px solid #e5e7eb;display:flex;gap:12px;">';
+    if (C.phoneTelHref) html += '<a href="' + C.phoneTelHref + '" style="background:var(--pp-accent,#E8601E);color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.9rem;">Call Now</a>';
+    html += '<a href="#contact" onclick="document.getElementById(\'blogOverlay\').remove();" style="background:#f3f4f6;color:#111;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.9rem;">Get a Free Estimate</a>';
+    html += '</div></div>';
+
+    setHTML(modal, html);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.addEventListener('keydown', function handler(e) {
+      if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
+    });
   }
 
   // ─── Initialize Features ─────────────────────────────────────────────

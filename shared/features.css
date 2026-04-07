@@ -267,14 +267,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pp-white);
+  color: #fff;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .25);
   transition: transform .25s cubic-bezier(.4, 0, .2, 1),
               box-shadow .25s;
   text-decoration: none;
   opacity: 0;
   transform: translateY(16px) scale(.85);
+  background: #1a1a2e;
 }
 
 .fab-btn.visible {
@@ -293,19 +294,19 @@
 }
 
 .fab-btn.phone {
-  background: #16a34a;
+  background: #111827;
 }
 
 .fab-btn.sms {
-  background: var(--pp-primary);
+  background: #1e293b;
 }
 
 .fab-btn.email {
-  background: var(--pp-accent);
+  background: #111827;
 }
 
 .fab-btn.whatsapp {
-  background: #25D366;
+  background: #1e293b;
 }
 
 /* Stagger animation */

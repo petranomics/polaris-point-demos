@@ -456,5 +456,12 @@
   <script src="/shared/config-engine.js"></script>
   <script src="/shared/features.js"></script>
   <script src="/shared/schema-generator.js"></script>
+  <script>
+    // Transparent → solid header on scroll
+    var hdr = document.getElementById('header');
+    window.addEventListener('scroll', function() {
+      hdr.classList.toggle('scrolled', window.scrollY > 80);
+    }, { passive: true });
+  </script>
 </body>
 </html>

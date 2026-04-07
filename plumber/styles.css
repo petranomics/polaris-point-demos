@@ -82,12 +82,21 @@ section { padding: 64px 0; }
 .topbar a svg { flex-shrink: 0; }
 
 .site-header {
-  position: sticky;
+  position: absolute;
   top: 44px;
+  left: 0;
+  right: 0;
   z-index: 900;
-  background: rgba(27, 58, 107, 0.97);
-  border-bottom: 1px solid rgba(255,255,255,.1);
-  backdrop-filter: blur(10px);
+  background: transparent;
+  border-bottom: none;
+  transition: background .3s, backdrop-filter .3s;
+}
+.site-header.scrolled {
+  position: fixed;
+  top: 0;
+  background: rgba(10, 14, 23, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .nav {
   display: flex;

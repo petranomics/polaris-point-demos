@@ -4,8 +4,8 @@
 window.SITE_CONFIG = {
 
   // === PAGE META ===
-  pageTitle: "Lone Star Plumbing Co. | Austin Plumbers 24/7",
-  metaDescription: "Lone Star Plumbing Co. offers fast, reliable plumbing in Austin, TX. Licensed and insured with same-day service available.",
+  pageTitle: "Lone Star Plumbing Co. | #1 Austin Plumber | 24/7 Emergency Service",
+  metaDescription: "Austin's top-rated plumbing company. Same-day drain cleaning, water heater repair, leak detection, and emergency plumbing. Licensed, insured, 15+ years experience. Call (512) 555-0190.",
 
   // === IDENTITY ===
   businessName: "Lone Star Plumbing Co.",
@@ -67,8 +67,8 @@ window.SITE_CONFIG = {
   aboutImage: "https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800",
   aboutImageAlt: "Professional plumber with tools ready for service",
   aboutLabel: "Why Choose Us",
-  aboutTitle: "Austin Trusts Lone Star",
-  aboutText: "For over 15 years, we\u2019ve been the call Austin homeowners make when the water won\u2019t stop running, the drain won\u2019t clear, or the heater goes cold. Every technician is background-checked, state-licensed, and treats your home with respect.",
+  aboutTitle: "Austin's Most Trusted Plumbing Company",
+  aboutText: "For over 15 years, Lone Star Plumbing has been the first call Austin homeowners make for reliable plumbing repair, drain cleaning, water heater installation, and emergency plumbing service. Every technician on our team is state-licensed, background-checked, and committed to honest pricing with no hidden fees. We serve Austin, Round Rock, Cedar Park, Pflugerville, and the surrounding area with same-day service and a 100% satisfaction guarantee.",
 
   // === FAMILY / TEAM PHOTO ===
   familyLabel: "Our Team",
@@ -190,22 +190,22 @@ window.SITE_CONFIG = {
   // === BLOG POSTS ===
   blogPosts: [
     {
-      title: "5 Signs You Need to Replace Your Water Heater",
-      excerpt: "Is your water heater on its last legs? Here are the warning signs every homeowner should know before it's too late.",
+      title: "5 Signs You Need Water Heater Replacement in Austin",
+      excerpt: "Rusty water, strange noises, or lukewarm showers? These are the top warning signs Austin homeowners should watch for before their water heater fails completely.",
       image: "https://images.pexels.com/photos/6492411/pexels-photo-6492411.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
     {
-      title: "How to Prevent Frozen Pipes This Winter",
-      excerpt: "A few simple steps can save you thousands in burst pipe repairs. Our plumbers share their top prevention tips.",
+      title: "How to Prevent Frozen Pipes in Austin: Plumber's Guide",
+      excerpt: "Central Texas winters can still freeze your pipes. Our licensed plumbers share the essential steps to protect your home from burst pipes and costly water damage.",
       image: "https://images.pexels.com/photos/7859717/pexels-photo-7859717.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },
     {
-      title: "When to Call a Plumber vs. DIY",
-      excerpt: "Some fixes are easy enough to handle yourself. Others need a pro. Here's how to tell the difference.",
+      title: "Plumbing Emergency vs. DIY Fix: When to Call a Licensed Plumber",
+      excerpt: "Dripping faucets and running toilets might be DIY-friendly, but sewer line backups and gas leaks need a licensed professional. Here's how to know when to call a plumber in Austin.",
       image: "https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
