@@ -738,15 +738,17 @@ img {
 .photo-break {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-    height: 280px;
+    gap: 4px;
+    height: 320px;
     overflow: hidden;
+    background: #0a1a10;
 }
 
 .photo-break img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 40%;
 }
 
 /* ========================================
