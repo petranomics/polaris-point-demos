@@ -63,12 +63,12 @@ window.SITE_CONFIG = {
   servicesCtaButton: "Request a Free Inspection",
 
   // === PHOTO BREAK ===
-  photoBreak1Src: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800",
-  photoBreak1Alt: "Beautiful home with landscaped yard",
-  photoBreak2Src: "https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg?auto=compress&cs=tinysrgb&w=800",
-  photoBreak2Alt: "Modern house exterior with clean lawn",
-  photoBreak3Src: "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
-  photoBreak3Alt: "Suburban home with well-maintained landscaping",
+  photoBreak1Src: "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800",
+  photoBreak1Alt: "Charming home with front porch and yard",
+  photoBreak2Src: "https://images.pexels.com/photos/1643384/pexels-photo-1643384.jpeg?auto=compress&cs=tinysrgb&w=800",
+  photoBreak2Alt: "Family standing together in front of their home",
+  photoBreak3Src: "https://images.pexels.com/photos/164558/pexels-photo-164558.jpeg?auto=compress&cs=tinysrgb&w=800",
+  photoBreak3Alt: "Beautiful suburban home with green lawn",
 
   // === ABOUT ===
   aboutImage: "https://images.pexels.com/photos/8931665/pexels-photo-8931665.jpeg?auto=compress&cs=tinysrgb&w=800",
