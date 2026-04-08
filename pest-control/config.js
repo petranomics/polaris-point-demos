@@ -63,12 +63,12 @@ window.SITE_CONFIG = {
   servicesCtaButton: "Request a Free Inspection",
 
   // === PHOTO BREAK ===
-  photoBreak1Src: "https://images.pexels.com/photos/4176412/pexels-photo-4176412.jpeg?auto=compress&cs=tinysrgb&w=600",
-  photoBreak1Alt: "Pest control technician fogging indoor treatment",
-  photoBreak2Src: "https://images.pexels.com/photos/4097848/pexels-photo-4097848.jpeg?auto=compress&cs=tinysrgb&w=600",
-  photoBreak2Alt: "Close-up of technician in PPE with spray equipment",
-  photoBreak3Src: "https://images.pexels.com/photos/7790344/pexels-photo-7790344.jpeg?auto=compress&cs=tinysrgb&w=600",
-  photoBreak3Alt: "Happy family playing outdoors at sunset",
+  photoBreak1Src: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800",
+  photoBreak1Alt: "Beautiful home with landscaped yard",
+  photoBreak2Src: "https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg?auto=compress&cs=tinysrgb&w=800",
+  photoBreak2Alt: "Modern house exterior with clean lawn",
+  photoBreak3Src: "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
+  photoBreak3Alt: "Suburban home with well-maintained landscaping",
 
   // === ABOUT ===
   aboutImage: "https://images.pexels.com/photos/8931665/pexels-photo-8931665.jpeg?auto=compress&cs=tinysrgb&w=800",
