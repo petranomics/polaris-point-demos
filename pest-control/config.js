@@ -258,7 +258,7 @@ window.SITE_CONFIG = {
     {
       title: "Pet-Safe Pest Control: What Every Pet Owner Should Know",
       excerpt: "Worried about your furry friends? Here\u2019s how modern pest control keeps your home bug-free without putting pets at risk.",
-      image: "https://images.pexels.com/photos/7790344/pexels-photo-7790344.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
