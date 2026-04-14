@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
   var template = body.template;
   var domain = body.domain ? body.domain.trim().toLowerCase() : null;
 
-  var validTemplates = ['plumber', 'salon', 'restaurant', 'pest-control'];
+  var validTemplates = ['plumber', 'salon', 'restaurant', 'pest-control', 'cafe'];
   if (validTemplates.indexOf(template) === -1) {
     return res.status(400).json({ error: 'Invalid template: ' + template });
   }
