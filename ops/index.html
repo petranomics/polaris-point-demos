@@ -130,6 +130,7 @@
     <div class="kpi"><div class="num green" id="kpiClosed">—</div><div class="label">Closed Deals</div></div>
     <div class="kpi"><div class="num" id="kpiTeam">—</div><div class="label">Team Members</div></div>
     <div class="kpi"><div class="num blue" id="kpiPageviews">—</div><div class="label">Pageviews (30d)</div></div>
+    <div class="kpi"><div class="num" id="kpiVps" style="font-size:1rem;">—</div><div class="label">VPS Status</div></div>
   </div>
 
   <!-- Tabs -->
@@ -138,6 +139,7 @@
     <button class="ops-tab" onclick="opsTab('team')">Team</button>
     <button class="ops-tab" onclick="opsTab('leads')">Leads</button>
     <button class="ops-tab" onclick="opsTab('analytics')">Analytics</button>
+    <button class="ops-tab" onclick="opsTab('infra')">Infrastructure</button>
   </div>
 
   <!-- SITES TAB -->
@@ -227,6 +229,67 @@
     </div>
   </div>
 
+  <!-- INFRASTRUCTURE TAB -->
+  <div id="panelInfra" class="tab-panel">
+    <div class="card">
+      <h3>Infrastructure Status</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+        <div style="padding:20px;background:var(--dark);border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h4 style="color:#fff;font-size:.85rem;margin:0;">VPS (Hostinger)</h4>
+            <span id="vpsStatusBadge" class="badge" style="background:rgba(100,116,139,.12);color:#64748b;">Checking...</span>
+          </div>
+          <div id="vpsDetails" style="font-size:.78rem;color:var(--text);line-height:1.8;"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="ops-btn" onclick="checkVps()" style="font-size:.72rem;padding:6px 12px;">Refresh</button>
+            <button class="ops-btn secondary" onclick="testVpsGenerate()" style="font-size:.72rem;padding:6px 12px;">Test Generate</button>
+          </div>
+          <div id="vpsTestResult" style="margin-top:8px;font-size:.75rem;color:var(--text);display:none;"></div>
+        </div>
+        <div style="padding:20px;background:var(--dark);border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h4 style="color:#fff;font-size:.85rem;margin:0;">Services</h4>
+          </div>
+          <div style="font-size:.78rem;color:var(--text);line-height:2;">
+            <div style="display:flex;justify-content:space-between;"><span>Vercel (Frontend)</span><span class="badge active">Active</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Neon (Database)</span><span class="badge active">Active</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Google Workspace (Email)</span><span class="badge active">Active</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Anthropic API (Fallback AI)</span><span class="badge active">Active</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Cost Overview</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;">
+        <div style="padding:14px;background:var(--dark);border-radius:8px;text-align:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$20</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Vercel Pro/mo</div>
+        </div>
+        <div style="padding:14px;background:var(--dark);border-radius:8px;text-align:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$9</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Hostinger VPS/mo</div>
+        </div>
+        <div style="padding:14px;background:var(--dark);border-radius:8px;text-align:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$19</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Neon DB/mo</div>
+        </div>
+        <div style="padding:14px;background:var(--dark);border-radius:8px;text-align:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$7</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Google WS/mo</div>
+        </div>
+        <div style="padding:14px;background:var(--dark);border-radius:8px;text-align:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold);">$55</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Total/mo</div>
+        </div>
+        <div style="padding:14px;background:var(--dark);border-radius:8px;text-align:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#5B8DEF;">$0</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">LLM per call (VPS)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -287,12 +350,16 @@
     document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
     event.target.classList.add('active');
     if (tab === 'analytics') loadOpsAnalytics();
+    if (tab === 'infra') checkVps();
   }
 
   // === DATA ===
   var _sites = [], _users = [], _leads = [];
 
   function loadAll() {
+    // Check VPS status in parallel
+    checkVps();
+
     Promise.all([
       fetch('/api/sites').then(function(r) { return r.json(); }),
       fetch('/api/users').then(function(r) { return r.json(); }),
@@ -469,6 +536,62 @@
   }
 
   // === ANALYTICS ===
+  // === VPS HEALTH CHECK ===
+  function checkVps() {
+    var badge = document.getElementById('vpsStatusBadge');
+    var details = document.getElementById('vpsDetails');
+    badge.textContent = 'Checking...';
+    badge.style.background = 'rgba(100,116,139,.12)';
+    badge.style.color = '#64748b';
+
+    fetch('/api/vps?action=health')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        badge.textContent = 'Online';
+        badge.style.background = 'rgba(22,163,74,.12)';
+        badge.style.color = '#16a34a';
+        document.getElementById('kpiVps').textContent = 'Online';
+        document.getElementById('kpiVps').style.color = '#16a34a';
+        details.innerHTML =
+          '<div>IP: <strong>72.60.120.245</strong></div>' +
+          '<div>Model: <strong>' + (data.model || 'mistral') + '</strong></div>' +
+          '<div>Uptime: <strong>' + (data.uptime || 'N/A') + '</strong></div>' +
+          '<div>Memory: <strong>' + (data.memory || 'N/A') + '</strong></div>';
+      })
+      .catch(function(e) {
+        badge.textContent = 'Offline';
+        badge.style.background = 'rgba(239,68,68,.12)';
+        badge.style.color = '#ef4444';
+        document.getElementById('kpiVps').textContent = 'Offline';
+        document.getElementById('kpiVps').style.color = '#ef4444';
+        details.innerHTML = '<div style="color:#ef4444;">' + e.message + '</div>';
+      });
+  }
+
+  function testVpsGenerate() {
+    var result = document.getElementById('vpsTestResult');
+    result.style.display = 'block';
+    result.textContent = 'Generating test content...';
+    result.style.color = 'var(--text)';
+
+    fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'meta_desc', context: { businessName: 'Test Plumbing', industry: 'plumber', city: 'Austin' } })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      result.innerHTML = '<strong>Source:</strong> ' + data.source + '<br><strong>Output:</strong> ' + (data.content || '').substring(0, 200);
+      result.style.color = '#16a34a';
+    })
+    .catch(function(e) {
+      result.textContent = 'Failed: ' + e.message;
+      result.style.color = '#ef4444';
+    });
+  }
+
   function loadOpsAnalytics() {
     var range = document.getElementById('opsAnalyticsRange').value;
     fetch('/api/track?site=all&range=' + range + 'd')
