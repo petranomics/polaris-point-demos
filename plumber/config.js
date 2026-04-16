@@ -140,7 +140,7 @@ window.SITE_CONFIG = {
     floatingButtons: true,
     stickyBottomCta: true,
     exitIntent: true,
-    urgencyBanner: true,
+    urgencyBanner: false,
     faqAccordion: true,
     serviceAreaMap: true,
     lightbox: true,
