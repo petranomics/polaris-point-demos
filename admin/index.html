@@ -2055,7 +2055,7 @@
               <option value="cleaning">Cleaning Services</option><option value="pest-control">Pest Control</option>
               <option value="hvac">HVAC</option><option value="roofing">Roofing</option>
               <option value="landscaping">Landscaping</option><option value="electrician">Electrician</option>
-              <option value="salon">Salon / Barber</option><option value="restaurant">Restaurant</option>
+              <option value="salon">Salon / Barber</option><option value="restaurant">Restaurant</option><option value="cafe">Cafe / Coffee Shop</option>
             </select>
           </div>
           <div class="intake-field"><label>State</label>
@@ -4546,7 +4546,8 @@
         landscaping: ['GreenScape '+city,'Precision Lawn Care',city+' Landscape Design','EverGreen Services','NatureCraft Landscaping','TurfMaster'],
         electrician: [city+' Electric Pro','BrightWire Electrical','SafeCircuit Solutions','PowerUp Electric','Reliable Wiring Co','SparkTech Electric'],
         salon: ['The Style Lounge '+city,'Scissors & Co','Fresh Cuts Studio','Luxe Hair '+city,'The Groom Room','Radiance Salon'],
-        restaurant: [city+' Kitchen & Bar','The Local Plate','Fireside Grill','Urban Eats '+city,'The Corner Table','Harvest Table']
+        restaurant: [city+' Kitchen & Bar','The Local Plate','Fireside Grill','Urban Eats '+city,'The Corner Table','Harvest Table'],
+        cafe: ['The Daily Grind '+city,'Sidecar Coffee','Ember Roasters','Copper Cup Coffee','Bean & Leaf '+city,'Morning Light Cafe']
       };
       return (names[ind] || names.handyman).map(function(n, i) {
         return { name: n, phone: '(555) ' + (100+Math.floor(Math.random()*900)) + '-' + (1000+Math.floor(Math.random()*9000)),
