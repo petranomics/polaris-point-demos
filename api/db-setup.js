@@ -91,6 +91,11 @@ module.exports = async function handler(req, res) {
       )
     `;
 
+    // Outreach columns (added for outreach pipeline)
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS outreach_status TEXT`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_contacted TIMESTAMP`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS next_followup DATE`;
+
     // Indexes
     await sql`CREATE INDEX IF NOT EXISTS idx_leads_owner ON leads(owner)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_leads_stage ON leads(stage)`;

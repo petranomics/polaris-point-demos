@@ -85,6 +85,9 @@ module.exports = async function handler(req, res) {
           listing_url = COALESCE(${b.listing_url || null}, listing_url),
           stage = COALESCE(${b.stage != null ? b.stage : null}, stage),
           notes = COALESCE(${b.notes != null ? b.notes : null}, notes),
+          outreach_status = COALESCE(${b.outreach_status || null}, outreach_status),
+          last_contacted = COALESCE(${b.last_contacted || null}, last_contacted),
+          next_followup = COALESCE(${b.next_followup || null}, next_followup),
           updated_at = NOW()
         WHERE id = ${id}
         RETURNING *

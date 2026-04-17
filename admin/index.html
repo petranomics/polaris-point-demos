@@ -771,6 +771,74 @@
     }
     .lead-notes textarea:focus { border-color: #5B8DEF; }
 
+    /* Outreach tools (senior) */
+    .outreach-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; vertical-align:middle; margin-left:6px; }
+    .outreach-badge.no-site { background:rgba(245,158,11,.15); color:#f59e0b; }
+    .outreach-badge.status-email_sent { background:rgba(212,168,83,.15); color:#D4A853; }
+    .outreach-badge.status-called, .outreach-badge.status-interested { background:rgba(91,141,239,.15); color:#5B8DEF; }
+    .outreach-badge.status-follow_up { background:rgba(168,85,247,.15); color:#a855f7; }
+    .outreach-badge.follow-due { background:rgba(239,68,68,.15); color:#ef4444; }
+    .outreach-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px solid #1e293b; }
+    .outreach-btn { display:inline-flex; align-items:center; gap:5px; background:rgba(91,141,239,.08); border:1px solid rgba(91,141,239,.2); border-radius:6px; color:#5B8DEF; font-family:'Inter',sans-serif; font-size:.7rem; font-weight:600; padding:5px 12px; cursor:pointer; transition:background .2s; }
+    .outreach-btn:hover { background:rgba(91,141,239,.15); }
+    .outreach-btn.generating { opacity:.6; pointer-events:none; }
+    .outreach-btn.call-btn { background:rgba(34,197,94,.08); border-color:rgba(34,197,94,.2); color:#22c55e; }
+    .outreach-btn.call-btn:hover { background:rgba(34,197,94,.15); }
+    .outreach-btn.audit-btn { background:rgba(212,168,83,.08); border-color:rgba(212,168,83,.2); color:#D4A853; }
+    .outreach-btn.audit-btn:hover { background:rgba(212,168,83,.15); }
+    .outreach-btn.enrich-btn { background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.25); color:#3b82f6; font-weight:700; }
+    .outreach-btn.enrich-btn:hover { background:rgba(59,130,246,.15); }
+    .intel-card { background:#0B1120; border:1px solid #1e293b; border-radius:8px; padding:12px; margin-bottom:8px; }
+    .intel-card h6 { font-size:.68rem; text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:6px; }
+    .intel-card h6.green { color:#22c55e; } .intel-card h6.red { color:#ef4444; } .intel-card h6.blue { color:#5B8DEF; } .intel-card h6.gold { color:#D4A853; }
+    .intel-tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.68rem; margin:2px; }
+    .intel-tag.pos { background:rgba(34,197,94,.1); color:#22c55e; }
+    .intel-tag.neg { background:rgba(239,68,68,.1); color:#ef4444; }
+    .intel-tag.neutral { background:rgba(91,141,239,.1); color:#5B8DEF; }
+    .intel-quote { font-style:italic; font-size:.75rem; color:#94a3b8; padding:6px 10px; border-left:2px solid #ef4444; margin:6px 0; }
+    .intel-score-ring { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:700; flex-shrink:0; }
+    .intel-summary { font-size:.78rem; color:#94a3b8; line-height:1.5; margin-bottom:10px; }
+    .outreach-drawer { margin-top:10px; background:#111827; border:1px solid #1e293b; border-radius:8px; padding:14px; display:none; }
+    .outreach-drawer.open { display:block; }
+    .outreach-drawer h5 { font-family:'Outfit',sans-serif; font-size:.78rem; color:#fff; margin-bottom:8px; }
+    .email-subject { width:100%; background:#0B1120; border:1px solid #1e293b; border-radius:6px; padding:8px 10px; color:#D4A853; font-family:'Inter',sans-serif; font-size:.82rem; font-weight:600; outline:none; margin-bottom:6px; }
+    .email-body { width:100%; background:#0B1120; border:1px solid #1e293b; border-radius:6px; padding:10px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:.78rem; line-height:1.5; min-height:120px; resize:vertical; outline:none; }
+    .email-body:focus, .email-subject:focus { border-color:#5B8DEF; }
+    .drawer-actions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .drawer-btn { padding:6px 14px; border-radius:6px; font-size:.72rem; font-weight:600; cursor:pointer; border:none; font-family:'Inter',sans-serif; transition:background .2s; }
+    .drawer-btn.primary { background:#5B8DEF; color:#fff; }
+    .drawer-btn.primary:hover { background:#4A7DE0; }
+    .drawer-btn.secondary { background:transparent; border:1px solid #1e293b; color:#94a3b8; }
+    .drawer-btn.secondary:hover { border-color:#334155; color:#fff; }
+    .drawer-btn.success { background:rgba(34,197,94,.15); color:#22c55e; border:1px solid rgba(34,197,94,.2); }
+    .call-prep { background:#0B1120; border:1px solid #1e293b; border-radius:8px; padding:12px; margin-bottom:8px; }
+    .call-prep h6 { font-size:.68rem; text-transform:uppercase; letter-spacing:1px; color:#22c55e; margin-bottom:6px; font-weight:700; }
+    .call-prep ul { list-style:none; padding:0; }
+    .call-prep li { font-size:.78rem; color:#94a3b8; padding:3px 0 3px 14px; position:relative; }
+    .call-prep li::before { content:"›"; position:absolute; left:0; color:#22c55e; font-weight:700; }
+    .call-outcomes { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+    .call-outcome-btn { padding:5px 12px; border-radius:999px; font-size:.68rem; font-weight:600; cursor:pointer; border:1px solid #1e293b; background:transparent; color:#94a3b8; font-family:'Inter',sans-serif; transition:all .2s; }
+    .call-outcome-btn:hover { border-color:#5B8DEF; color:#5B8DEF; }
+    .call-outcome-btn.selected { background:rgba(91,141,239,.15); border-color:#5B8DEF; color:#5B8DEF; }
+    .audit-result { display:grid; grid-template-columns:auto 1fr; gap:6px 12px; align-items:center; }
+    .audit-score { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:700; grid-row:span 2; }
+    .audit-score.low { background:rgba(239,68,68,.15); color:#ef4444; border:2px solid rgba(239,68,68,.3); }
+    .audit-score.mid { background:rgba(245,158,11,.15); color:#f59e0b; border:2px solid rgba(245,158,11,.3); }
+    .audit-score.high { background:rgba(34,197,94,.15); color:#22c55e; border:2px solid rgba(34,197,94,.3); }
+    .audit-issues { list-style:none; padding:0; margin-top:4px; }
+    .audit-issues li { font-size:.72rem; padding:2px 0 2px 16px; position:relative; }
+    .audit-issues li::before { content:"✗"; position:absolute; left:0; }
+    .outreach-filter-row { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+    .outreach-filter { padding:6px 14px; border-radius:999px; font-size:.72rem; font-weight:600; cursor:pointer; border:1px solid #1e293b; background:transparent; color:#64748b; font-family:'Inter',sans-serif; transition:all .2s; }
+    .outreach-filter:hover { border-color:#5B8DEF; color:#e2e8f0; }
+    .outreach-filter.active { background:rgba(91,141,239,.15); border-color:#5B8DEF; color:#5B8DEF; }
+    .scrape-results { margin-top:16px; max-height:400px; overflow-y:auto; }
+    .scrape-result-item { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:#0B1120; border:1px solid #1e293b; border-radius:8px; margin-bottom:6px; }
+    .scrape-result-item .biz-name { font-weight:600; color:#fff; font-size:.82rem; }
+    .scrape-result-item .biz-meta { font-size:.72rem; color:#64748b; margin-top:2px; }
+    .outreach-spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(91,141,239,.2); border-top-color:#5B8DEF; border-radius:50%; animation:outreach-spin .6s linear infinite; vertical-align:middle; }
+    @keyframes outreach-spin { to { transform:rotate(360deg); } }
+
     /* Sales step cards */
     .step-card {
       display: flex;
@@ -1012,6 +1080,7 @@
     <button class="admin-tab" onclick="switchTab('leads')">My Leads</button>
     <button class="admin-tab" onclick="switchTab('materials')">Materials</button>
     <button class="admin-tab" onclick="switchTab('intake')">Site Builder</button>
+    <button class="admin-tab senior-only" onclick="switchTab('outreach')">Outreach</button>
     <a class="admin-tab senior-only" href="/ops" style="text-decoration:none;">Ops Dashboard</a>
     <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
     <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
@@ -1956,6 +2025,104 @@
 
   </div><!-- /tabCards -->
 
+  <!-- OUTREACH TAB (Senior Only) -->
+  <div id="tabOutreach" class="tab-content" style="display:none;">
+    <div class="sales-section">
+
+      <!-- Agent Config -->
+      <div class="sales-card" style="padding:16px 20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="var b=this.parentElement.querySelector('.agent-cfg-body');b.style.display=b.style.display==='none'?'block':'none'">
+          <h3 style="margin:0;font-size:.85rem;">Agent API</h3>
+          <span style="font-size:.72rem;" id="agentStatusInline"></span>
+        </div>
+        <div class="agent-cfg-body" style="display:none;margin-top:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="intake-field"><label>API URL</label><input type="text" id="agentApiUrl" placeholder="https://your-vps.com:3000"></div>
+            <div class="intake-field"><label>API Key</label><input type="password" id="agentApiKey" placeholder="Your API key"></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn-export" onclick="saveAgentConfig()" style="font-size:.75rem;padding:8px 16px;">Save</button>
+            <button class="btn-export secondary" onclick="testAgentConnection()" style="font-size:.75rem;padding:8px 16px;">Test Connection</button>
+            <span id="agentStatus" style="font-size:.72rem;color:#475569;display:flex;align-items:center;gap:6px;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Scraper -->
+      <div class="sales-card">
+        <h3>Batch Lead Scraper</h3>
+        <p style="margin-bottom:14px;">Scrape business directories for prospects. Select a state and cities, or scrape the entire state.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="intake-field"><label>Industry</label>
+            <select id="scrapeIndustry">
+              <option value="plumber">Plumber</option><option value="handyman">Handyman / Contractor</option>
+              <option value="cleaning">Cleaning Services</option><option value="pest-control">Pest Control</option>
+              <option value="hvac">HVAC</option><option value="roofing">Roofing</option>
+              <option value="landscaping">Landscaping</option><option value="electrician">Electrician</option>
+              <option value="salon">Salon / Barber</option><option value="restaurant">Restaurant</option>
+            </select>
+          </div>
+          <div class="intake-field"><label>State</label>
+            <select id="scrapeState" onchange="populateScrapeCities()">
+              <option value="">Select a state...</option>
+            </select>
+          </div>
+        </div>
+        <div id="scrapeCityWrap" style="margin-top:10px;display:none;">
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:6px;">
+            <span>Cities</span>
+            <span style="display:flex;gap:8px;">
+              <button onclick="toggleAllScrapeCities(true)" style="background:none;border:none;color:#5B8DEF;font-size:.65rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px;">Select All</button>
+              <button onclick="toggleAllScrapeCities(false)" style="background:none;border:none;color:#64748b;font-size:.65rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px;">None</button>
+            </span>
+          </label>
+          <div id="scrapeCities" style="display:flex;flex-wrap:wrap;gap:6px;max-height:120px;overflow-y:auto;padding:2px;"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;align-items:center;">
+          <button class="btn-export" onclick="batchScrape()" id="scrapeBtn" style="white-space:nowrap;">Scrape Selected Cities</button>
+          <button class="btn-export secondary" onclick="batchScrapeState()" id="scrapeStateBtn" style="white-space:nowrap;">Scrape Entire State</button>
+          <span id="scrapeProgress" style="font-size:.72rem;color:#475569;"></span>
+        </div>
+        <div id="scrapeResults"></div>
+      </div>
+
+      <!-- Outreach Queue -->
+      <div class="sales-card">
+        <h3>Outreach Queue</h3>
+        <p style="margin-bottom:14px;">Select leads, generate emails, prep call scripts, and track outreach.</p>
+        <div class="outreach-filter-row">
+          <button class="outreach-filter active" onclick="filterOutreach('all',this)">All</button>
+          <button class="outreach-filter" onclick="filterOutreach('no_website',this)">No Website</button>
+          <button class="outreach-filter" onclick="filterOutreach('needs_outreach',this)">Needs Outreach</button>
+          <button class="outreach-filter" onclick="filterOutreach('email_sent',this)">Email Sent</button>
+          <button class="outreach-filter" onclick="filterOutreach('called',this)">Called</button>
+          <button class="outreach-filter" onclick="filterOutreach('follow_up',this)">Follow Up</button>
+        </div>
+        <!-- Batch actions bar -->
+        <div id="batchBar" style="display:none;background:#0B1120;border:1px solid rgba(91,141,239,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.75rem;color:#94a3b8;">
+                <input type="checkbox" id="selectAllLeads" onchange="toggleSelectAllLeads(this.checked)" style="accent-color:#5B8DEF;width:16px;height:16px;">
+                <span id="selectedCount">0 selected</span>
+              </label>
+              <button onclick="selectLeadsByFilter('no_website')" style="background:none;border:none;color:#f59e0b;font-size:.68rem;cursor:pointer;text-decoration:underline;">Select no-site</button>
+              <button onclick="selectLeadsByFilter('has_email')" style="background:none;border:none;color:#5B8DEF;font-size:.68rem;cursor:pointer;text-decoration:underline;">Select with email</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="outreach-btn" onclick="batchGenerateEmails()">&#9993; Generate Emails</button>
+              <button class="outreach-btn call-btn" onclick="batchGenerateCallPreps()">&#9742; Generate Scripts</button>
+              <button class="outreach-btn" onclick="batchSendViaMailto()" style="background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:#a855f7;">&#9993; Open in Mail App</button>
+              <button class="outreach-btn audit-btn" onclick="batchAuditSites()">&#9889; Audit Sites</button>
+            </div>
+          </div>
+        </div>
+        <div id="outreachQueue"><p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">Loading outreach queue...</p></div>
+      </div>
+
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script>
     // === ROLE MANAGEMENT ===
@@ -1970,7 +2137,8 @@
       materials: 'tabMaterials',
       intake: 'tabIntake',
       analytics: 'tabAnalytics',
-      cards: 'tabCards'
+      cards: 'tabCards',
+      outreach: 'tabOutreach'
     };
 
     // === SLIDE DECK ===
@@ -2036,7 +2204,7 @@
 
     function switchTab(tab) {
       // Senior-only tabs check
-      if ((tab === 'cards' || tab === 'analytics') && currentRole !== 'senior') return;
+      if ((tab === 'cards' || tab === 'analytics' || tab === 'outreach') && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
       var targetId = TAB_MAP[tab];
@@ -2048,6 +2216,7 @@
       // Load leads when switching to leads tab
       if (tab === 'leads') renderLeads();
       if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
+      if (tab === 'outreach') loadOutreachQueue();
     }
 
     function applyRole(role, userName) {
@@ -3700,10 +3869,14 @@
       var ownerTag = (!isSelf && currentRole === 'senior') ? '<span style="font-size:.65rem;background:rgba(91,141,239,.12);color:#5B8DEF;padding:2px 8px;border-radius:999px;margin-left:8px;">' + ownerName + '</span>' : '';
       var tierLabel = L.tier && L.tier !== 'undecided' ? ' — <span style="color:#D4A853;">' + L.tier.charAt(0).toUpperCase() + L.tier.slice(1) + '</span>' : '';
       var created = L.created_at ? L.created_at.split('T')[0] : '';
+      var noSiteBadge = (currentRole === 'senior' && (!L.website || L.website.toLowerCase() === 'none' || !L.website.trim())) ? '<span class="outreach-badge no-site">No Site</span>' : '';
+      var oStatusBadge = (currentRole === 'senior' && L.outreach_status) ? '<span class="outreach-badge status-' + L.outreach_status + '">' + L.outreach_status.replace(/_/g,' ') + '</span>' : '';
+      var followDueBadge = '';
+      if (currentRole === 'senior' && L.next_followup) { var today = new Date().toISOString().split('T')[0]; if (L.next_followup <= today) followDueBadge = '<span class="outreach-badge follow-due">Follow up due</span>'; }
 
       return '<div class="lead-card">' +
         '<div class="lead-header">' +
-          '<span class="lead-name">' + L.biz_name + tierLabel + ownerTag + '</span>' +
+          '<span class="lead-name">' + L.biz_name + tierLabel + ownerTag + noSiteBadge + oStatusBadge + followDueBadge + '</span>' +
           '<select onchange="updateLeadRank(' + L.id + ',this.value)" style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.72rem;outline:none;">' +
             '<option value="hot"' + (L.rank==='hot'?' selected':'') + '>Hot</option>' +
             '<option value="warm"' + (L.rank==='warm'?' selected':'') + '>Warm</option>' +
@@ -3731,6 +3904,7 @@
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">' +
           '<span style="font-size:.7rem;color:#334155;">Added ' + created + '</span>' +
           '<div style="display:flex;gap:8px;">' +
+            (currentRole === 'senior' ? '<button onclick="switchTab(\'outreach\')" style="background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.2);border-radius:6px;color:#D4A853;font-size:.72rem;font-weight:600;cursor:pointer;padding:4px 12px;">Outreach</button>' : '') +
             '<button onclick="buildSiteFromLead(' + L.id + ')" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:6px;color:#5B8DEF;font-size:.72rem;font-weight:600;cursor:pointer;padding:4px 12px;">Build Site &rarr;</button>' +
             '<button onclick="deleteLead(' + L.id + ')" style="background:none;border:none;color:#64748b;font-size:.72rem;cursor:pointer;">Delete</button>' +
           '</div>' +
@@ -3912,6 +4086,843 @@
 
       container.innerHTML = filterHtml + leads.map(function(l) { return renderLeadCard(l); }).join('');
     }
+
+    // === OUTREACH TOOLS (Senior Only) ===
+    var AGENT_API_URL = localStorage.getItem('pp_agent_url') || 'http://72.60.120.245:3000';
+    var AGENT_API_KEY = localStorage.getItem('pp_agent_key') || 'armadillo-agent-2026';
+    var _outreachData = {};
+    var _scrapeResults = [];
+    var _outreachFilter = 'all';
+    var _selectedLeadIds = {};
+
+    var US_STATES = {
+      'AL':{ name:'Alabama', cities:['Birmingham','Montgomery','Huntsville','Mobile','Tuscaloosa','Hoover','Dothan','Auburn','Decatur','Madison'] },
+      'AK':{ name:'Alaska', cities:['Anchorage','Fairbanks','Juneau','Sitka','Ketchikan','Wasilla','Kenai','Kodiak','Bethel','Palmer'] },
+      'AZ':{ name:'Arizona', cities:['Phoenix','Tucson','Mesa','Chandler','Scottsdale','Glendale','Gilbert','Tempe','Peoria','Surprise'] },
+      'AR':{ name:'Arkansas', cities:['Little Rock','Fort Smith','Fayetteville','Springdale','Jonesboro','Rogers','Conway','North Little Rock','Bentonville','Pine Bluff'] },
+      'CA':{ name:'California', cities:['Los Angeles','San Diego','San Jose','San Francisco','Fresno','Sacramento','Long Beach','Oakland','Bakersfield','Anaheim'] },
+      'CO':{ name:'Colorado', cities:['Denver','Colorado Springs','Aurora','Fort Collins','Lakewood','Thornton','Arvada','Westminster','Pueblo','Boulder'] },
+      'CT':{ name:'Connecticut', cities:['Bridgeport','New Haven','Stamford','Hartford','Waterbury','Norwalk','Danbury','New Britain','Bristol','Meriden'] },
+      'DE':{ name:'Delaware', cities:['Wilmington','Dover','Newark','Middletown','Smyrna','Milford','Seaford','Georgetown','Elsmere','New Castle'] },
+      'FL':{ name:'Florida', cities:['Jacksonville','Miami','Tampa','Orlando','St. Petersburg','Hialeah','Tallahassee','Fort Lauderdale','Cape Coral','Pembroke Pines'] },
+      'GA':{ name:'Georgia', cities:['Atlanta','Augusta','Columbus','Macon','Savannah','Athens','Sandy Springs','Roswell','Johns Creek','Albany'] },
+      'HI':{ name:'Hawaii', cities:['Honolulu','Pearl City','Hilo','Kailua','Waipahu','Kaneohe','Mililani','Kahului','Ewa Gentry','Kihei'] },
+      'ID':{ name:'Idaho', cities:['Boise','Meridian','Nampa','Idaho Falls','Caldwell','Pocatello','Coeur d\'Alene','Twin Falls','Lewiston','Post Falls'] },
+      'IL':{ name:'Illinois', cities:['Chicago','Aurora','Naperville','Joliet','Rockford','Springfield','Elgin','Peoria','Champaign','Waukegan'] },
+      'IN':{ name:'Indiana', cities:['Indianapolis','Fort Wayne','Evansville','South Bend','Carmel','Fishers','Bloomington','Hammond','Gary','Lafayette'] },
+      'IA':{ name:'Iowa', cities:['Des Moines','Cedar Rapids','Davenport','Sioux City','Iowa City','Waterloo','Ames','West Des Moines','Council Bluffs','Ankeny'] },
+      'KS':{ name:'Kansas', cities:['Wichita','Overland Park','Kansas City','Olathe','Topeka','Lawrence','Shawnee','Manhattan','Lenexa','Salina'] },
+      'KY':{ name:'Kentucky', cities:['Louisville','Lexington','Bowling Green','Owensboro','Covington','Richmond','Georgetown','Florence','Hopkinsville','Nicholasville'] },
+      'LA':{ name:'Louisiana', cities:['New Orleans','Baton Rouge','Shreveport','Lafayette','Lake Charles','Kenner','Bossier City','Monroe','Alexandria','Houma'] },
+      'ME':{ name:'Maine', cities:['Portland','Lewiston','Bangor','South Portland','Auburn','Biddeford','Sanford','Brunswick','Augusta','Saco'] },
+      'MD':{ name:'Maryland', cities:['Baltimore','Columbia','Germantown','Silver Spring','Waldorf','Frederick','Ellicott City','Glen Burnie','Rockville','Dundalk'] },
+      'MA':{ name:'Massachusetts', cities:['Boston','Worcester','Springfield','Cambridge','Lowell','Brockton','New Bedford','Quincy','Lynn','Fall River'] },
+      'MI':{ name:'Michigan', cities:['Detroit','Grand Rapids','Warren','Sterling Heights','Ann Arbor','Lansing','Flint','Dearborn','Livonia','Troy'] },
+      'MN':{ name:'Minnesota', cities:['Minneapolis','St. Paul','Rochester','Duluth','Bloomington','Brooklyn Park','Plymouth','St. Cloud','Eagan','Woodbury'] },
+      'MS':{ name:'Mississippi', cities:['Jackson','Gulfport','Southaven','Hattiesburg','Biloxi','Meridian','Tupelo','Olive Branch','Greenville','Horn Lake'] },
+      'MO':{ name:'Missouri', cities:['Kansas City','St. Louis','Springfield','Columbia','Independence','Lee\'s Summit','O\'Fallon','St. Joseph','St. Charles','St. Peters'] },
+      'MT':{ name:'Montana', cities:['Billings','Missoula','Great Falls','Bozeman','Butte','Helena','Kalispell','Havre','Anaconda','Miles City'] },
+      'NE':{ name:'Nebraska', cities:['Omaha','Lincoln','Bellevue','Grand Island','Kearney','Fremont','Hastings','Norfolk','Columbus','North Platte'] },
+      'NV':{ name:'Nevada', cities:['Las Vegas','Henderson','Reno','North Las Vegas','Sparks','Carson City','Fernley','Elko','Mesquite','Boulder City'] },
+      'NH':{ name:'New Hampshire', cities:['Manchester','Nashua','Concord','Derry','Dover','Rochester','Salem','Merrimack','Hudson','Londonderry'] },
+      'NJ':{ name:'New Jersey', cities:['Newark','Jersey City','Paterson','Elizabeth','Lakewood','Edison','Woodbridge','Toms River','Hamilton','Trenton'] },
+      'NM':{ name:'New Mexico', cities:['Albuquerque','Las Cruces','Rio Rancho','Santa Fe','Roswell','Farmington','Clovis','Hobbs','Alamogordo','Carlsbad'] },
+      'NY':{ name:'New York', cities:['New York City','Buffalo','Rochester','Yonkers','Syracuse','Albany','New Rochelle','Mount Vernon','Schenectady','Utica'] },
+      'NC':{ name:'North Carolina', cities:['Charlotte','Raleigh','Greensboro','Durham','Winston-Salem','Fayetteville','Cary','Wilmington','High Point','Asheville'] },
+      'ND':{ name:'North Dakota', cities:['Fargo','Bismarck','Grand Forks','Minot','West Fargo','Williston','Dickinson','Mandan','Jamestown','Wahpeton'] },
+      'OH':{ name:'Ohio', cities:['Columbus','Cleveland','Cincinnati','Toledo','Akron','Dayton','Parma','Canton','Youngstown','Lorain'] },
+      'OK':{ name:'Oklahoma', cities:['Oklahoma City','Tulsa','Norman','Broken Arrow','Edmond','Lawton','Moore','Midwest City','Enid','Stillwater'] },
+      'OR':{ name:'Oregon', cities:['Portland','Salem','Eugene','Gresham','Hillsboro','Beaverton','Bend','Medford','Springfield','Corvallis'] },
+      'PA':{ name:'Pennsylvania', cities:['Philadelphia','Pittsburgh','Allentown','Reading','Scranton','Bethlehem','Lancaster','Harrisburg','York','Erie'] },
+      'RI':{ name:'Rhode Island', cities:['Providence','Warwick','Cranston','Pawtucket','East Providence','Woonsocket','Coventry','Cumberland','North Providence','South Kingstown'] },
+      'SC':{ name:'South Carolina', cities:['Charleston','Columbia','North Charleston','Mount Pleasant','Rock Hill','Greenville','Summerville','Goose Creek','Hilton Head','Spartanburg'] },
+      'SD':{ name:'South Dakota', cities:['Sioux Falls','Rapid City','Aberdeen','Brookings','Watertown','Mitchell','Yankton','Pierre','Huron','Vermillion'] },
+      'TN':{ name:'Tennessee', cities:['Nashville','Memphis','Knoxville','Chattanooga','Clarksville','Murfreesboro','Franklin','Jackson','Johnson City','Bartlett'] },
+      'TX':{ name:'Texas', cities:['Houston','San Antonio','Dallas','Austin','Fort Worth','El Paso','Arlington','Corpus Christi','Plano','Lubbock'] },
+      'UT':{ name:'Utah', cities:['Salt Lake City','West Valley City','Provo','West Jordan','Orem','Sandy','Ogden','St. George','Layton','Taylorsville'] },
+      'VT':{ name:'Vermont', cities:['Burlington','Essex','South Burlington','Colchester','Rutland','Bennington','Brattleboro','Hartford','Milton','Barre'] },
+      'VA':{ name:'Virginia', cities:['Virginia Beach','Norfolk','Chesapeake','Richmond','Newport News','Alexandria','Hampton','Roanoke','Portsmouth','Suffolk'] },
+      'WA':{ name:'Washington', cities:['Seattle','Spokane','Tacoma','Vancouver','Bellevue','Kent','Everett','Renton','Spokane Valley','Federal Way'] },
+      'WV':{ name:'West Virginia', cities:['Charleston','Huntington','Morgantown','Parkersburg','Wheeling','Weirton','Fairmont','Martinsburg','Beckley','Clarksburg'] },
+      'WI':{ name:'Wisconsin', cities:['Milwaukee','Madison','Green Bay','Kenosha','Racine','Appleton','Waukesha','Oshkosh','Eau Claire','Janesville'] },
+      'WY':{ name:'Wyoming', cities:['Cheyenne','Casper','Laramie','Gillette','Rock Springs','Sheridan','Green River','Evanston','Riverton','Jackson'] }
+    };
+
+    (function initStateDropdown() {
+      var sel = document.getElementById('scrapeState');
+      if (!sel) return;
+      Object.keys(US_STATES).sort(function(a,b) { return US_STATES[a].name.localeCompare(US_STATES[b].name); }).forEach(function(k) {
+        var o = document.createElement('option'); o.value = k; o.textContent = US_STATES[k].name + ' (' + k + ')'; sel.appendChild(o);
+      });
+    })();
+
+    function populateScrapeCities() {
+      var st = document.getElementById('scrapeState').value;
+      var wrap = document.getElementById('scrapeCityWrap');
+      var div = document.getElementById('scrapeCities');
+      if (!st || !US_STATES[st]) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'block'; div.innerHTML = '';
+      US_STATES[st].cities.forEach(function(c) {
+        var lbl = document.createElement('label');
+        lbl.style.cssText = 'display:flex;align-items:center;gap:5px;padding:4px 10px;background:#0B1120;border:1px solid #1e293b;border-radius:6px;cursor:pointer;font-size:.75rem;color:#94a3b8;transition:all .2s;';
+        lbl.innerHTML = '<input type="checkbox" value="' + c + '" checked style="accent-color:#5B8DEF;width:14px;height:14px;"> ' + c;
+        lbl.onmouseenter = function() { lbl.style.borderColor = '#5B8DEF'; };
+        lbl.onmouseleave = function() { lbl.style.borderColor = '#1e293b'; };
+        div.appendChild(lbl);
+      });
+    }
+    function toggleAllScrapeCities(on) {
+      document.querySelectorAll('#scrapeCities input[type="checkbox"]').forEach(function(c) { c.checked = on; });
+    }
+    function getSelectedCities() {
+      var st = document.getElementById('scrapeState').value;
+      var cities = [];
+      document.querySelectorAll('#scrapeCities input[type="checkbox"]:checked').forEach(function(c) { cities.push(c.value + ', ' + st); });
+      return cities;
+    }
+
+    function saveAgentConfig() {
+      AGENT_API_URL = document.getElementById('agentApiUrl').value.trim();
+      AGENT_API_KEY = document.getElementById('agentApiKey').value.trim();
+      localStorage.setItem('pp_agent_url', AGENT_API_URL);
+      localStorage.setItem('pp_agent_key', AGENT_API_KEY);
+      document.getElementById('agentStatus').innerHTML = '<span style="color:#22c55e;">Saved</span>';
+      var il = document.getElementById('agentStatusInline');
+      if (il) { il.textContent = 'Connected'; il.style.color = '#22c55e'; }
+      setTimeout(function() { document.getElementById('agentStatus').textContent = ''; }, 2000);
+    }
+
+    function testAgentConnection() {
+      var s = document.getElementById('agentStatus');
+      if (!AGENT_API_URL) { s.innerHTML = '<span style="color:#ef4444;">No URL configured</span>'; return; }
+      s.innerHTML = '<span class="outreach-spinner"></span> Testing...';
+      fetch(AGENT_API_URL + '/agent/outreach-email/health', { headers: { 'x-api-key': AGENT_API_KEY } })
+        .then(function(r) { s.innerHTML = r.ok ? '<span style="color:#22c55e;">Connected</span>' : '<span style="color:#ef4444;">Error ' + r.status + '</span>'; })
+        .catch(function() { s.innerHTML = '<span style="color:#ef4444;">Cannot reach server</span>'; });
+    }
+
+    function getOutreachData(id) {
+      if (!_outreachData[id]) {
+        try { var s = localStorage.getItem('pp_outreach_' + id); _outreachData[id] = s ? JSON.parse(s) : { emails: [], callPrep: null, audit: null, enrichment: null, log: [] }; }
+        catch(e) { _outreachData[id] = { emails: [], callPrep: null, audit: null, enrichment: null, log: [] }; }
+      }
+      return _outreachData[id];
+    }
+    function saveOutreachData(id) { localStorage.setItem('pp_outreach_' + id, JSON.stringify(_outreachData[id])); }
+    function addOutreachLog(id, action, detail) {
+      var d = getOutreachData(id); d.log.unshift({ time: new Date().toISOString(), action: action, detail: detail || '' });
+      if (d.log.length > 50) d.log = d.log.slice(0, 50); saveOutreachData(id);
+    }
+
+    function toggleOrGenerate(leadId, type) {
+      var drawer = document.getElementById('outreach-' + type + '-' + leadId);
+      if (!drawer) return;
+      if (drawer.classList.contains('open')) { drawer.classList.remove('open'); return; }
+      ['enrich','email','call','audit'].forEach(function(t) { var d = document.getElementById('outreach-' + t + '-' + leadId); if (d) d.classList.remove('open'); });
+      var data = getOutreachData(leadId);
+      if (type === 'enrich') {
+        if (data.enrichment) { drawer.innerHTML = renderEnrichDrawer(leadId, data.enrichment); drawer.classList.add('open'); }
+        else { drawer.classList.add('open'); enrichProspect(leadId); }
+      } else if (type === 'email') {
+        if (data.emails.length) { drawer.innerHTML = renderEmailDrawer(leadId, data.emails[0]); drawer.classList.add('open'); }
+        else { drawer.classList.add('open'); generateEmail(leadId); }
+      } else if (type === 'call') {
+        if (data.callPrep) { drawer.innerHTML = renderCallDrawer(leadId, data.callPrep); drawer.classList.add('open'); }
+        else { drawer.classList.add('open'); generateCallPrep(leadId); }
+      } else if (type === 'audit') {
+        if (data.audit) { drawer.innerHTML = renderAuditDrawer(leadId, data.audit); drawer.classList.add('open'); }
+        else { drawer.classList.add('open'); auditSite(leadId); }
+      }
+    }
+
+    // --- Email Generation ---
+    function generateEmail(leadId) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      if (!lead) return;
+      var btn = document.getElementById('emailBtn-' + leadId);
+      if (btn) { btn.classList.add('generating'); btn.innerHTML = '<span class="outreach-spinner"></span> Generating...'; }
+      var hasWeb = lead.website && lead.website.toLowerCase() !== 'none' && lead.website.trim() !== '';
+      var oData = getOutreachData(leadId);
+      if (AGENT_API_URL) {
+        var payload = { lead: lead, demo_url: 'https://polaris-point-demos.com/' + (lead.industry || 'handyman') };
+        if (oData.enrichment) payload.enrichment = oData.enrichment;
+        fetch(AGENT_API_URL + '/agent/outreach-email', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+          body: JSON.stringify(payload)
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.success && d.result) applyGeneratedEmail(leadId, d.result);
+          else applyGeneratedEmail(leadId, generateTemplateEmail(lead, hasWeb));
+        }).catch(function() { applyGeneratedEmail(leadId, generateTemplateEmail(lead, hasWeb)); });
+      } else {
+        setTimeout(function() { applyGeneratedEmail(leadId, generateTemplateEmail(lead, hasWeb)); }, 600);
+      }
+    }
+
+    function generateTemplateEmail(lead, hasWeb) {
+      var name = lead.contact || 'there', biz = lead.biz_name || 'your business', ind = lead.industry || 'business';
+      var demo = 'https://polaris-point-demos.com/' + (lead.industry || 'handyman');
+      if (!hasWeb) {
+        return { subject: 'Quick question about ' + biz,
+          body: 'Hi ' + name + ',\n\nI came across ' + biz + ' and noticed you don\'t currently have a website. With 97% of customers searching online before making a call, that\'s a lot of potential business going to competitors who show up.\n\nI built a quick preview of what a professional site could look like for a ' + ind + ' business like yours:\n' + demo + '\n\nThis isn\'t a sales pitch \u2014 just wanted to show you what\'s possible. Would you be open to a 5-minute chat?\n\nBest,\nPete\nPolaris Point',
+          follow_up: 'Hi ' + name + ',\n\nJust following up on my note last week about ' + biz + '. Wanted to make sure you saw the demo I put together:\n' + demo + '\n\nHappy to answer any questions.\n\nBest,\nPete' };
+      } else {
+        return { subject: 'Idea for ' + biz + '\'s website',
+          body: 'Hi ' + name + ',\n\nI was looking at ' + (lead.website || 'your website') + ' and had a few ideas:\n\n\u2022 Mobile optimization \u2014 60%+ of local searches happen on phones\n\u2022 Clear calls-to-action to convert visitors into leads\n\u2022 SEO improvements to rank higher in "' + ind + ' near me" searches\n\nI put together a demo of what a refreshed version could look like:\n' + demo + '\n\nWould you be open to a free 10-minute audit? No strings attached.\n\nBest,\nPete\nPolaris Point',
+          follow_up: 'Hi ' + name + ',\n\nJust checking in \u2014 I reached out last week about some improvements for ' + (lead.website || 'your website') + '. I\'d love to do a free audit showing opportunities to bring in more customers.\n\nLet me know if you have 10 minutes this week.\n\nBest,\nPete' };
+      }
+    }
+
+    function applyGeneratedEmail(leadId, email) {
+      var data = getOutreachData(leadId); data.emails.unshift(email); saveOutreachData(leadId);
+      addOutreachLog(leadId, 'email_generated', 'Subject: ' + email.subject);
+      var btn = document.getElementById('emailBtn-' + leadId);
+      if (btn) { btn.classList.remove('generating'); btn.innerHTML = '\u2709 View Email'; }
+      var drawer = document.getElementById('outreach-email-' + leadId);
+      if (drawer) { drawer.innerHTML = renderEmailDrawer(leadId, email); drawer.classList.add('open'); }
+    }
+
+    function renderEmailDrawer(leadId, email) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      var hasLeadEmail = lead && lead.email && lead.email.includes('@');
+      return '<h5>Generated Email' + (hasLeadEmail ? ' <span style="font-size:.68rem;color:#22c55e;">to: ' + lead.email + '</span>' : ' <span style="font-size:.68rem;color:#f59e0b;">no email on file</span>') + '</h5>' +
+        '<input class="email-subject" id="emailSubject-' + leadId + '" value="' + (email.subject || '').replace(/"/g, '&quot;') + '">' +
+        '<textarea class="email-body" id="emailBody-' + leadId + '">' + (email.body || '') + '</textarea>' +
+        '<div class="drawer-actions">' +
+          (hasLeadEmail ? '<button class="drawer-btn primary" onclick="sendViaMailto(' + leadId + ')" title="Opens your email client pre-filled">Open in Mail App</button>' : '') +
+          (hasLeadEmail && AGENT_API_URL ? '<button class="drawer-btn success" onclick="sendViaAgent(' + leadId + ')" title="Send through agent SMTP">Send via Agent</button>' : '') +
+          '<button class="drawer-btn' + (hasLeadEmail ? ' secondary' : ' primary') + '" onclick="copyEmail(' + leadId + ')">Copy to Clipboard</button>' +
+          '<button class="drawer-btn success" onclick="markEmailSent(' + leadId + ')">Mark as Sent</button>' +
+          '<button class="drawer-btn secondary" onclick="showFollowUp(' + leadId + ')">Follow-Up Version</button>' +
+          '<button class="drawer-btn secondary" onclick="generateEmail(' + leadId + ')">Regenerate</button>' +
+        '</div>' +
+        '<div id="followUp-' + leadId + '" style="display:none;margin-top:10px;">' +
+          '<h5 style="color:#D4A853;">Follow-Up Email (5 days later)</h5>' +
+          '<textarea class="email-body" id="followUpBody-' + leadId + '">' + (email.follow_up || '') + '</textarea>' +
+          '<div class="drawer-actions"><button class="drawer-btn primary" onclick="copyFollowUp(' + leadId + ')">Copy Follow-Up</button></div>' +
+        '</div>';
+    }
+
+    function copyEmail(id) {
+      var s = document.getElementById('emailSubject-' + id).value;
+      var b = document.getElementById('emailBody-' + id).value;
+      navigator.clipboard.writeText('Subject: ' + s + '\n\n' + b).then(function() {
+        var btn = document.querySelector('#outreach-email-' + id + ' .drawer-btn.primary');
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy to Clipboard'; }, 2000); }
+      });
+    }
+    function copyFollowUp(id) {
+      var b = document.getElementById('followUpBody-' + id).value;
+      navigator.clipboard.writeText(b).then(function() {
+        var btn = document.querySelector('#followUp-' + id + ' .drawer-btn.primary');
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy Follow-Up'; }, 2000); }
+      });
+    }
+    function showFollowUp(id) { var el = document.getElementById('followUp-' + id); if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
+
+    function markEmailSent(leadId) {
+      addOutreachLog(leadId, 'email_sent', 'Email marked as sent');
+      updateLeadField(leadId, 'outreach_status', 'email_sent');
+      updateLeadField(leadId, 'last_contacted', new Date().toISOString());
+      var fu = new Date(); fu.setDate(fu.getDate() + 5);
+      updateLeadField(leadId, 'next_followup', fu.toISOString().split('T')[0]);
+      var btn = document.querySelector('#outreach-email-' + leadId + ' .drawer-btn.success');
+      if (btn) { btn.textContent = 'Marked Sent'; btn.disabled = true; }
+    }
+
+    // --- Call Prep ---
+    function generateCallPrep(leadId) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      if (!lead) return;
+      var btn = document.getElementById('callBtn-' + leadId);
+      if (btn) { btn.classList.add('generating'); btn.innerHTML = '<span class="outreach-spinner"></span> Preparing...'; }
+      var hasWeb = lead.website && lead.website.toLowerCase() !== 'none' && lead.website.trim() !== '';
+      if (AGENT_API_URL) {
+        fetch(AGENT_API_URL + '/agent/outreach-callprep', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+          body: JSON.stringify({ lead: lead })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.success && d.result) applyCallPrep(leadId, d.result);
+          else applyCallPrep(leadId, generateTemplateCallPrep(lead, hasWeb));
+        }).catch(function() { applyCallPrep(leadId, generateTemplateCallPrep(lead, hasWeb)); });
+      } else {
+        setTimeout(function() { applyCallPrep(leadId, generateTemplateCallPrep(lead, hasWeb)); }, 500);
+      }
+    }
+
+    function generateTemplateCallPrep(lead, hasWeb) {
+      var biz = lead.biz_name || 'the business', name = lead.contact || 'the owner', ind = lead.industry || 'service';
+      return {
+        opening: hasWeb ?
+          'Hi ' + name + ', this is Pete from Polaris Point. I was looking at ' + biz + '\'s website and had a couple ideas that could help you get more calls from Google. Do you have two minutes?' :
+          'Hi ' + name + ', this is Pete from Polaris Point. I work with local ' + ind + ' businesses to help them get found online. I noticed ' + biz + ' doesn\'t have a website yet \u2014 do you have two minutes?',
+        talking_points: [
+          '97% of customers search online before calling a local business',
+          'Competitors in the area ARE showing up online and getting those calls',
+          hasWeb ? 'Their current site may not be mobile-friendly or ranking well on Google' : 'Even a simple professional site can generate 3-5 new leads per week',
+          'We have a ' + ind + ' demo site they can see right now',
+          'Rating: ' + (lead.rating || 'check before call') + ' \u2014 great reviews deserve a great website to match'
+        ],
+        objections: [
+          { objection: 'I get enough business from word of mouth', response: 'That\'s great \u2014 imagine how much more you\'d get if the 97% searching online could find you too. A website captures customers who don\'t know anyone to ask.' },
+          { objection: 'I can\'t afford a website', response: 'Totally understand \u2014 that\'s why our plans start at $699 one-time. No monthly fees. It pays for itself with one or two new customers.' },
+          { objection: 'I have a Facebook page', response: 'Facebook is great for existing customers, but it barely shows up in Google searches. When someone searches "' + ind + ' near me", a website ranks. Facebook pages rarely do.' },
+          { objection: 'I\'m too busy right now', response: 'I hear you. The good news is we handle everything \u2014 you answer a few questions, we build it. About 15 minutes of your time total.' }
+        ],
+        closing: 'Would it help if I sent you a link to a demo site we built for a ' + ind + ' business? You can see exactly what yours would look like, no commitment.'
+      };
+    }
+
+    function applyCallPrep(leadId, prep) {
+      var data = getOutreachData(leadId); data.callPrep = prep; saveOutreachData(leadId);
+      addOutreachLog(leadId, 'call_prep', 'Call script prepared');
+      var btn = document.getElementById('callBtn-' + leadId);
+      if (btn) { btn.classList.remove('generating'); btn.innerHTML = '\u260E View Call Prep'; }
+      var drawer = document.getElementById('outreach-call-' + leadId);
+      if (drawer) { drawer.innerHTML = renderCallDrawer(leadId, prep); drawer.classList.add('open'); }
+    }
+
+    function renderCallDrawer(leadId, prep) {
+      var pts = prep.talking_points.map(function(p) { return '<li>' + p + '</li>'; }).join('');
+      var objs = prep.objections.map(function(o) {
+        return '<div class="call-prep" style="border-color:rgba(239,68,68,.15);"><h6 style="color:#ef4444;">Objection: "' + o.objection + '"</h6><p style="font-size:.78rem;color:#94a3b8;">' + o.response + '</p></div>';
+      }).join('');
+      return '<h5>Call Preparation</h5>' +
+        '<div class="call-prep"><h6>Opening Line</h6><p style="font-size:.82rem;color:#e2e8f0;">"' + prep.opening + '"</p></div>' +
+        '<div class="call-prep"><h6>Talking Points</h6><ul>' + pts + '</ul></div>' + objs +
+        '<div class="call-prep"><h6 style="color:#D4A853;">Closing / CTA</h6><p style="font-size:.82rem;color:#e2e8f0;">"' + prep.closing + '"</p></div>' +
+        '<div style="margin-top:12px;"><p style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:8px;">Log Call Outcome</p>' +
+        '<div class="call-outcomes">' +
+          '<button class="call-outcome-btn" onclick="logCallOutcome(' + leadId + ',\'no_answer\',this)">No Answer</button>' +
+          '<button class="call-outcome-btn" onclick="logCallOutcome(' + leadId + ',\'voicemail\',this)">Left Voicemail</button>' +
+          '<button class="call-outcome-btn" onclick="logCallOutcome(' + leadId + ',\'callback\',this)">Callback Scheduled</button>' +
+          '<button class="call-outcome-btn" onclick="logCallOutcome(' + leadId + ',\'interested\',this)">Interested</button>' +
+          '<button class="call-outcome-btn" onclick="logCallOutcome(' + leadId + ',\'not_interested\',this)">Not Interested</button>' +
+        '</div>' +
+        '<input type="text" id="callNotes-' + leadId + '" placeholder="Quick call notes..." style="width:100%;margin-top:8px;background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:8px 10px;color:#e2e8f0;font-family:Inter,sans-serif;font-size:.78rem;outline:none;">' +
+        '</div>';
+    }
+
+    function logCallOutcome(leadId, outcome, btnEl) {
+      var notes = document.getElementById('callNotes-' + leadId);
+      var noteText = notes ? notes.value.trim() : '';
+      var labels = { no_answer:'No Answer', callback:'Callback Scheduled', interested:'Interested', not_interested:'Not Interested', voicemail:'Left Voicemail' };
+      addOutreachLog(leadId, 'call_' + outcome, noteText || labels[outcome]);
+      updateLeadField(leadId, 'outreach_status', outcome === 'interested' ? 'interested' : outcome === 'callback' ? 'follow_up' : 'called');
+      updateLeadField(leadId, 'last_contacted', new Date().toISOString());
+      if (outcome === 'callback' || outcome === 'interested') {
+        var fu = new Date(); fu.setDate(fu.getDate() + (outcome === 'callback' ? 2 : 1));
+        updateLeadField(leadId, 'next_followup', fu.toISOString().split('T')[0]);
+      }
+      var btns = btnEl.parentElement.querySelectorAll('.call-outcome-btn');
+      btns.forEach(function(b) { b.classList.remove('selected'); });
+      btnEl.classList.add('selected');
+      if (notes) notes.value = '';
+      var msg = document.createElement('div'); msg.style.cssText = 'color:#22c55e;font-size:.72rem;margin-top:6px;';
+      msg.textContent = 'Logged: ' + labels[outcome] + (noteText ? ' \u2014 ' + noteText : '');
+      btnEl.parentElement.parentElement.appendChild(msg);
+      setTimeout(function() { msg.remove(); }, 3000);
+    }
+
+    // --- Site Audit ---
+    function auditSite(leadId) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      if (!lead || !lead.website || lead.website.toLowerCase() === 'none') return;
+      var btn = document.getElementById('auditBtn-' + leadId);
+      if (btn) { btn.classList.add('generating'); btn.innerHTML = '<span class="outreach-spinner"></span> Auditing...'; }
+      if (AGENT_API_URL) {
+        fetch(AGENT_API_URL + '/agent/outreach-audit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+          body: JSON.stringify({ url: lead.website })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.success && d.result) applyAudit(leadId, d.result);
+          else applyAudit(leadId, generateTemplateAudit(lead));
+        }).catch(function() { applyAudit(leadId, generateTemplateAudit(lead)); });
+      } else {
+        setTimeout(function() { applyAudit(leadId, generateTemplateAudit(lead)); }, 800);
+      }
+    }
+
+    function generateTemplateAudit(lead) {
+      var hasHttps = (lead.website || '').startsWith('https');
+      return { score: hasHttps ? 5 : 3, https: hasHttps, mobile_ready: false, estimated_age: 'Connect agent API for live audit',
+        has_cta: false, design_quality: 'template',
+        issues: [!hasHttps ? 'No HTTPS \u2014 browsers show security warning' : null, 'Mobile responsiveness unknown', 'CTA effectiveness unknown', 'SEO analysis requires agent'].filter(Boolean),
+        positives: ['Has a web presence', hasHttps ? 'Using HTTPS' : null].filter(Boolean), _demo: true };
+    }
+
+    function applyAudit(leadId, audit) {
+      var data = getOutreachData(leadId); data.audit = audit; saveOutreachData(leadId);
+      addOutreachLog(leadId, 'site_audited', 'Score: ' + audit.score + '/10');
+      var btn = document.getElementById('auditBtn-' + leadId);
+      if (btn) { btn.classList.remove('generating'); btn.innerHTML = '\u26A1 View Audit'; }
+      var drawer = document.getElementById('outreach-audit-' + leadId);
+      if (drawer) { drawer.innerHTML = renderAuditDrawer(leadId, audit); drawer.classList.add('open'); }
+    }
+
+    function renderAuditDrawer(leadId, audit) {
+      var sc = audit.score <= 3 ? 'low' : (audit.score <= 6 ? 'mid' : 'high');
+      var issues = (audit.issues || []).map(function(i) { return '<li style="color:#ef4444;">' + i + '</li>'; }).join('');
+      var pos = (audit.positives || []).map(function(p) { return '<li style="color:#22c55e;">' + p + '</li>'; }).join('');
+      return '<h5>Site Audit' + (audit._demo ? ' <span style="font-size:.65rem;color:#f59e0b;">(demo \u2014 connect agent for live)</span>' : '') + '</h5>' +
+        '<div class="audit-result"><div class="audit-score ' + sc + '">' + audit.score + '</div><div>' +
+          '<div style="font-size:.82rem;color:#fff;font-weight:600;">' + (audit.design_quality || 'Unknown') + '</div>' +
+          '<div style="font-size:.72rem;color:#64748b;">' + (audit.estimated_age || '') + '</div></div></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:12px 0;">' +
+          '<div style="font-size:.72rem;padding:4px 8px;border-radius:4px;text-align:center;background:' + (audit.https ? 'rgba(34,197,94,.1);color:#22c55e' : 'rgba(239,68,68,.1);color:#ef4444') + ';">' + (audit.https ? '\u2713' : '\u2717') + ' HTTPS</div>' +
+          '<div style="font-size:.72rem;padding:4px 8px;border-radius:4px;text-align:center;background:' + (audit.mobile_ready ? 'rgba(34,197,94,.1);color:#22c55e' : 'rgba(239,68,68,.1);color:#ef4444') + ';">' + (audit.mobile_ready ? '\u2713' : '\u2717') + ' Mobile</div>' +
+          '<div style="font-size:.72rem;padding:4px 8px;border-radius:4px;text-align:center;background:' + (audit.has_cta ? 'rgba(34,197,94,.1);color:#22c55e' : 'rgba(239,68,68,.1);color:#ef4444') + ';">' + (audit.has_cta ? '\u2713' : '\u2717') + ' CTA</div></div>' +
+        (issues ? '<p style="font-size:.68rem;color:#ef4444;font-weight:600;margin-bottom:4px;">Issues:</p><ul class="audit-issues">' + issues + '</ul>' : '') +
+        (pos ? '<p style="font-size:.68rem;color:#22c55e;font-weight:600;margin:8px 0 4px;">Positives:</p><ul class="audit-issues">' + pos + '</ul>' : '') +
+        '<div class="drawer-actions" style="margin-top:12px;"><button class="drawer-btn primary" onclick="generateEmail(' + leadId + ')">Generate Email Using Audit</button></div>';
+    }
+
+    // --- Batch Scraper ---
+    function batchScrape() {
+      var ind = document.getElementById('scrapeIndustry').value;
+      var cities = getSelectedCities();
+      if (!cities.length) { alert('Select a state and at least one city'); return; }
+      var btn = document.getElementById('scrapeBtn');
+      btn.innerHTML = '<span class="outreach-spinner"></span> Scraping...'; btn.disabled = true;
+      document.getElementById('scrapeStateBtn').disabled = true;
+      _scrapeResults = [];
+      var prog = document.getElementById('scrapeProgress');
+      var done = 0;
+      prog.textContent = '0/' + cities.length + ' cities...';
+      document.getElementById('scrapeResults').innerHTML = '';
+
+      var queue = cities.slice();
+      function next() {
+        if (!queue.length) { finish(); return; }
+        var cs = queue.shift();
+        done++;
+        prog.textContent = done + '/' + cities.length + ' — ' + cs.split(',')[0] + '...';
+        scrapeOneCity(ind, cs, function(results) {
+          _scrapeResults = _scrapeResults.concat(results);
+          renderScrapeResults(_scrapeResults, ind);
+          next();
+        });
+      }
+      function finish() {
+        btn.textContent = 'Scrape Selected Cities'; btn.disabled = false;
+        document.getElementById('scrapeStateBtn').disabled = false;
+        prog.textContent = 'Done — ' + _scrapeResults.length + ' total';
+      }
+      next();
+    }
+
+    function batchScrapeState() {
+      var st = document.getElementById('scrapeState').value;
+      if (!st || !US_STATES[st]) { alert('Select a state first'); return; }
+      toggleAllScrapeCities(true);
+      batchScrape();
+    }
+
+    function scrapeOneCity(ind, cs, cb) {
+      if (AGENT_API_URL) {
+        // Use Yelp/Places API via Vercel proxy for real scraping
+        var city = cs.split(',')[0].trim();
+        fetch('/api/yelp?q=' + encodeURIComponent(ind) + '&location=' + encodeURIComponent(cs) + '&limit=10')
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d.error || !d.businesses) { cb(generateDemoScrapeResults(ind, cs)); return; }
+            var arr = d.businesses.map(function(b) {
+              return { name: b.name, phone: b.phone || null, email: null,
+                website: b.url || null, address: (b.location ? [b.location.address1, b.location.city, b.location.state].filter(Boolean).join(', ') : cs),
+                rating: b.rating ? b.rating + ' stars (' + (b.review_count || 0) + ' reviews)' : null, _city: cs };
+            });
+            cb(arr);
+          }).catch(function() { cb(generateDemoScrapeResults(ind, cs)); });
+      } else { setTimeout(function() { cb(generateDemoScrapeResults(ind, cs)); }, 300); }
+    }
+
+    function showDemoScrape(ind, cs, btn) {
+      _scrapeResults = generateDemoScrapeResults(ind, cs);
+      renderScrapeResults(_scrapeResults, ind); btn.textContent = 'Scrape Selected Cities'; btn.disabled = false;
+    }
+
+    function generateDemoScrapeResults(ind, cs) {
+      var city = cs.split(',')[0].trim();
+      var names = {
+        plumber: ['Blue River Plumbing','Pro Drain Solutions',city+' Plumbing Co','Reliable Pipe Works','AquaFlow Services','Premier Plumbing'],
+        handyman: [city+' Handyman Pros','FixIt Right Services','AllTask Home Repair','Reliable Handyman Co','QuickFix Solutions','HandyPro '+city],
+        cleaning: ['Sparkle Clean '+city,'Fresh Start Cleaning','ProShine Services',city+' Maid Team','Crystal Clear Cleaning','Spotless Solutions'],
+        'pest-control': [city+' Pest Defense','BugShield Exterminators','Green Guard Pest','SafeHome Pest Solutions','Critter Control '+city,'TrueShield Pest'],
+        hvac: [city+' Air Comfort','CoolBreeze HVAC','AllSeason Heating','ProTemp Services','Arctic Air Solutions','Climate Masters'],
+        roofing: [city+' Top Roofing','StormShield Roofing','Apex Roof Solutions','TrustRoof Co','Peak Performance Roofing','SkyHigh Roofing'],
+        landscaping: ['GreenScape '+city,'Precision Lawn Care',city+' Landscape Design','EverGreen Services','NatureCraft Landscaping','TurfMaster'],
+        electrician: [city+' Electric Pro','BrightWire Electrical','SafeCircuit Solutions','PowerUp Electric','Reliable Wiring Co','SparkTech Electric'],
+        salon: ['The Style Lounge '+city,'Scissors & Co','Fresh Cuts Studio','Luxe Hair '+city,'The Groom Room','Radiance Salon'],
+        restaurant: [city+' Kitchen & Bar','The Local Plate','Fireside Grill','Urban Eats '+city,'The Corner Table','Harvest Table']
+      };
+      return (names[ind] || names.handyman).map(function(n, i) {
+        return { name: n, phone: '(555) ' + (100+Math.floor(Math.random()*900)) + '-' + (1000+Math.floor(Math.random()*9000)),
+          email: i % 3 === 0 ? n.toLowerCase().replace(/[^a-z]/g,'').substring(0,10) + '@email.com' : null,
+          website: i < 2 ? 'www.' + n.toLowerCase().replace(/[^a-z]/g,'') + '.com' : null,
+          address: (100+i*37) + ' ' + ['Main St','Oak Ave','Elm Blvd','Cedar Ln','Pine Dr','Maple Way'][i % 6] + ', ' + cs, _demo: true };
+      });
+    }
+
+    function renderScrapeResults(results, ind) {
+      var div = document.getElementById('scrapeResults');
+      if (!results.length) { div.innerHTML = '<p style="color:#64748b;text-align:center;padding:16px;">No results found.</p>'; return; }
+      var noSite = results.filter(function(r) { return !r.website; }).length;
+      var html = '<div style="display:flex;gap:12px;margin:14px 0;align-items:center;">' +
+        '<span style="font-size:.78rem;color:#e2e8f0;font-weight:600;">' + results.length + ' found</span>' +
+        '<span class="outreach-badge no-site">' + noSite + ' no website</span>' +
+        '<span style="font-size:.72rem;color:#64748b;">' + (results.length - noSite) + ' with website</span>' +
+        (results[0]._demo ? '<span style="font-size:.62rem;color:#f59e0b;margin-left:auto;">Demo data \u2014 connect agent for real results</span>' : '') + '</div>';
+      html += '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+        '<button class="btn-export" onclick="importAllScraped(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;">Import All</button>' +
+        '<button class="btn-export secondary" onclick="importNoWebsite(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;">Import No-Website Only (' + noSite + ')</button></div>';
+      html += '<div class="scrape-results">';
+      results.forEach(function(r, i) {
+        html += '<div class="scrape-result-item"><div style="flex:1;">' +
+          '<div class="biz-name">' + r.name + (!r.website ? ' <span class="outreach-badge no-site">No Site</span>' : '') + '</div>' +
+          '<div class="biz-meta">' + [r.phone, r.email, r.address].filter(Boolean).join(' \u00B7 ') + '</div>' +
+          (r.website ? '<div class="biz-meta" style="color:#5B8DEF;">' + r.website + '</div>' : '') +
+          '</div><button class="btn-export" onclick="importSingleScraped(' + i + ',\'' + ind + '\',this)" style="font-size:.68rem;padding:5px 12px;white-space:nowrap;">+ Import</button></div>';
+      });
+      div.innerHTML = html + '</div>';
+    }
+
+    function importSingleScraped(i, ind, btnEl) {
+      var r = _scrapeResults[i]; if (!r) return;
+      fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
+          phone: r.phone || '', email: r.email || '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
+          notes: 'Imported via batch scraper' + (r._demo ? ' (demo data)' : ''), owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
+      }).then(function(res) { return res.json(); }).then(function() {
+        btnEl.textContent = 'Imported'; btnEl.disabled = true;
+        btnEl.style.cssText += 'background:rgba(34,197,94,.15);color:#22c55e;border-color:rgba(34,197,94,.2);';
+      }).catch(function(e) { alert('Failed: ' + e.message); });
+    }
+    function importAllScraped(ind) { _scrapeResults.forEach(function(r, i) { var btn = document.querySelectorAll('.scrape-result-item')[i]; if (btn) importSingleScraped(i, ind, btn.querySelector('button')); }); }
+    function importNoWebsite(ind) { _scrapeResults.forEach(function(r, i) { if (!r.website) { var btn = document.querySelectorAll('.scrape-result-item')[i]; if (btn) importSingleScraped(i, ind, btn.querySelector('button')); } }); }
+
+    // --- Outreach Queue ---
+    function loadOutreachQueue() {
+      var urlInput = document.getElementById('agentApiUrl');
+      var keyInput = document.getElementById('agentApiKey');
+      if (urlInput && AGENT_API_URL) urlInput.value = AGENT_API_URL;
+      if (keyInput && AGENT_API_KEY) keyInput.value = AGENT_API_KEY;
+      var il = document.getElementById('agentStatusInline');
+      if (il) { il.textContent = AGENT_API_URL ? 'Connected' : 'Not configured'; il.style.color = AGENT_API_URL ? '#22c55e' : '#64748b'; }
+      fetchLeads().then(function(leads) { renderOutreachQueue(leads); });
+    }
+
+    function filterOutreach(filter, btn) {
+      _outreachFilter = filter;
+      document.querySelectorAll('.outreach-filter').forEach(function(f) { f.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      renderOutreachQueue(_leadsCache);
+    }
+
+    function renderOutreachQueue(leads) {
+      var c = document.getElementById('outreachQueue');
+      if (!leads.length) { c.innerHTML = '<p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads yet. Add leads in My Leads tab or use the Batch Scraper above.</p>'; return; }
+      var f = leads;
+      if (_outreachFilter === 'no_website') f = leads.filter(function(l) { return !l.website || l.website.toLowerCase() === 'none' || !l.website.trim(); });
+      else if (_outreachFilter === 'needs_outreach') f = leads.filter(function(l) { return !l.outreach_status || l.outreach_status === 'new'; });
+      else if (_outreachFilter === 'email_sent') f = leads.filter(function(l) { return l.outreach_status === 'email_sent'; });
+      else if (_outreachFilter === 'called') f = leads.filter(function(l) { return l.outreach_status === 'called' || l.outreach_status === 'interested'; });
+      else if (_outreachFilter === 'follow_up') f = leads.filter(function(l) { return l.outreach_status === 'follow_up' || l.next_followup; });
+      c.innerHTML = f.map(function(l) { return renderOutreachCard(l); }).join('') ||
+        '<p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads match this filter.</p>';
+    }
+
+    function renderOutreachCard(lead) {
+      var L = lead;
+      var hasWeb = L.website && L.website.toLowerCase() !== 'none' && L.website.trim() !== '';
+      var noSite = !hasWeb ? '<span class="outreach-badge no-site">No Site</span> ' : '';
+      var hasEmail = L.email && L.email.includes('@');
+      var emailTag = hasEmail ? '<span style="font-size:.6rem;background:rgba(91,141,239,.12);color:#5B8DEF;padding:1px 6px;border-radius:999px;">' + L.email + '</span> ' : '';
+      var sBadge = L.outreach_status ? '<span class="outreach-badge status-' + L.outreach_status + '">' + L.outreach_status.replace(/_/g,' ') + '</span> ' : '';
+      var fBadge = ''; if (L.next_followup) { var today = new Date().toISOString().split('T')[0]; fBadge = L.next_followup <= today ? '<span class="outreach-badge follow-due">Follow up due!</span> ' : '<span style="font-size:.62rem;color:#a855f7;">Follow up: ' + L.next_followup + '</span> '; }
+      var lastC = L.last_contacted ? '<span style="font-size:.65rem;color:#334155;">Last: ' + L.last_contacted.split('T')[0] + '</span>' : '';
+      var oData = getOutreachData(L.id);
+      var checked = _selectedLeadIds[L.id] ? ' checked' : '';
+      return '<div class="lead-card" style="margin-bottom:8px;">' +
+        '<div class="lead-header">' +
+          '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;min-width:0;">' +
+            '<input type="checkbox" class="outreach-select" data-lead-id="' + L.id + '" onchange="toggleLeadSelection(' + L.id + ',this.checked)" style="accent-color:#5B8DEF;width:16px;height:16px;flex-shrink:0;"' + checked + '>' +
+            '<span class="lead-name" style="overflow:hidden;text-overflow:ellipsis;">' + L.biz_name + ' ' + noSite + emailTag + sBadge + fBadge + '</span>' +
+          '</label>' + lastC +
+        '</div>' +
+        '<div class="lead-details" style="margin-bottom:8px;">' +
+          '<div class="lead-detail">Contact<span>' + (L.contact || '\u2014') + '</span></div>' +
+          '<div class="lead-detail">Phone<span>' + (L.phone || '\u2014') + '</span></div>' +
+          '<div class="lead-detail">Email<span>' + (L.email || '\u2014') + '</span></div>' +
+          '<div class="lead-detail">Industry<span>' + (L.industry || '\u2014') + '</span></div></div>' +
+        '<div class="outreach-actions">' +
+          '<button class="outreach-btn enrich-btn" id="enrichBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'enrich\')">' + (oData.enrichment ? '\uD83D\uDD0D View Intel' : '\uD83D\uDD0D Analyze Prospect') + '</button>' +
+          '<button class="outreach-btn" id="emailBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'email\')">' + (oData.emails.length ? '\u2709 View Email' : '\u2709 Generate Email') + '</button>' +
+          '<button class="outreach-btn call-btn" id="callBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'call\')">' + (oData.callPrep ? '\u260E View Script' : '\u260E Call Prep') + '</button>' +
+          (hasWeb ? '<button class="outreach-btn audit-btn" id="auditBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'audit\')">' + (oData.audit ? '\u26A1 View Audit' : '\u26A1 Audit Site') + '</button>' : '') +
+          (hasEmail ? '<a href="mailto:' + L.email + '" class="outreach-btn" style="text-decoration:none;background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:#a855f7;">Direct Email</a>' : '') +
+        '</div>' +
+        '<div class="outreach-drawer" id="outreach-enrich-' + L.id + '"></div>' +
+        '<div class="outreach-drawer" id="outreach-email-' + L.id + '"></div>' +
+        '<div class="outreach-drawer" id="outreach-call-' + L.id + '"></div>' +
+        (hasWeb ? '<div class="outreach-drawer" id="outreach-audit-' + L.id + '"></div>' : '') +
+        (oData.log.length ? '<div style="font-size:.68rem;color:#475569;margin-top:8px;padding-top:8px;border-top:1px solid rgba(30,41,59,.5);">Last: ' + oData.log[0].action.replace(/_/g,' ') + ' \u2014 ' + new Date(oData.log[0].time).toLocaleDateString() + '</div>' : '') +
+      '</div>';
+    }
+
+    // --- Prospect Enrichment ---
+    function enrichProspect(leadId) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      if (!lead) return;
+      var btn = document.getElementById('enrichBtn-' + leadId);
+      if (btn) { btn.classList.add('generating'); btn.innerHTML = '<span class="outreach-spinner"></span> Analyzing...'; }
+      var drawer = document.getElementById('outreach-enrich-' + leadId);
+      if (drawer) drawer.innerHTML = '<div style="text-align:center;padding:20px;color:#475569;"><span class="outreach-spinner"></span><p style="margin-top:10px;font-size:.78rem;">Scraping reviews, analyzing site, building prospect intel...</p><p style="font-size:.68rem;color:#334155;margin-top:4px;">This can take 30-60 seconds</p></div>';
+      if (AGENT_API_URL) {
+        fetch(AGENT_API_URL + '/agent/outreach-enrich', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+          body: JSON.stringify({ lead: lead, vercel_host: window.location.origin })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.success && d.result) applyEnrichment(leadId, d.result);
+          else { if (drawer) drawer.innerHTML = '<p style="color:#ef4444;font-size:.78rem;padding:10px;">Analysis failed: ' + (d.error || 'unknown error') + '</p>'; }
+        }).catch(function(e) { if (drawer) drawer.innerHTML = '<p style="color:#ef4444;font-size:.78rem;padding:10px;">Could not reach agent: ' + e.message + '</p>'; });
+      } else {
+        setTimeout(function() { if (drawer) drawer.innerHTML = '<p style="color:#f59e0b;font-size:.78rem;padding:10px;">Agent API not configured. Go to Agent API section above and enter your VPS URL.</p>'; }, 500);
+      }
+    }
+
+    function applyEnrichment(leadId, enrichment) {
+      var data = getOutreachData(leadId); data.enrichment = enrichment; saveOutreachData(leadId);
+      addOutreachLog(leadId, 'prospect_analyzed', 'Enrichment complete');
+      var btn = document.getElementById('enrichBtn-' + leadId);
+      if (btn) { btn.classList.remove('generating'); btn.innerHTML = '\uD83D\uDD0D View Intel'; }
+      var drawer = document.getElementById('outreach-enrich-' + leadId);
+      if (drawer) { drawer.innerHTML = renderEnrichDrawer(leadId, enrichment); drawer.classList.add('open'); }
+    }
+
+    function renderEnrichDrawer(leadId, e) {
+      var html = '<h5 style="margin-bottom:10px;">Prospect Intelligence</h5>';
+      if (e.summary) html += '<p class="intel-summary">' + e.summary + '</p>';
+
+      // Outreach angle
+      if (e.outreach_angle) html += '<div class="intel-card"><h6 class="gold">Best Outreach Angle</h6><p style="font-size:.8rem;color:#e2e8f0;">' + e.outreach_angle + '</p></div>';
+
+      // Review analysis
+      if (e.review_analysis) {
+        var ra = e.review_analysis;
+        var sentColor = ra.overall_sentiment === 'positive' ? '#22c55e' : (ra.overall_sentiment === 'negative' ? '#ef4444' : '#f59e0b');
+        html += '<div class="intel-card"><h6 style="color:' + sentColor + ';">Reviews — ' + (ra.overall_sentiment || 'unknown') + ' (' + (ra.avg_rating || '?') + ' stars, ' + (ra.total_reviews || 0) + ' reviews)</h6>';
+        if (ra.positive_themes && ra.positive_themes.length) {
+          html += '<div style="margin-bottom:6px;">';
+          ra.positive_themes.forEach(function(t) { html += '<span class="intel-tag pos">' + t + '</span>'; });
+          html += '</div>';
+        }
+        if (ra.negative_themes && ra.negative_themes.length) {
+          html += '<div style="margin-bottom:6px;">';
+          ra.negative_themes.forEach(function(t) { html += '<span class="intel-tag neg">' + t + '</span>'; });
+          html += '</div>';
+        }
+        if (ra.worst_review_quote) html += '<div class="intel-quote">"' + ra.worst_review_quote + '"</div>';
+        html += '</div>';
+      }
+
+      // Site analysis
+      if (e.site_analysis) {
+        var sa = e.site_analysis;
+        if (sa.has_site) {
+          var sc = sa.score || 0; var scClass = sc <= 3 ? 'background:rgba(239,68,68,.15);color:#ef4444;border:2px solid rgba(239,68,68,.3)' : (sc <= 6 ? 'background:rgba(245,158,11,.15);color:#f59e0b;border:2px solid rgba(245,158,11,.3)' : 'background:rgba(34,197,94,.15);color:#22c55e;border:2px solid rgba(34,197,94,.3)');
+          html += '<div class="intel-card"><h6 class="blue">Site Analysis — ' + (sa.design_quality || 'unknown') + '</h6>';
+          html += '<div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;"><div class="intel-score-ring" style="' + scClass + '">' + sc + '</div>';
+          html += '<div style="flex:1;">';
+          if (sa.specific_issues && sa.specific_issues.length) { sa.specific_issues.forEach(function(i) { html += '<span class="intel-tag neg">' + i + '</span>'; }); }
+          html += '</div></div>';
+          if (sa.seo_issues && sa.seo_issues.length) { html += '<p style="font-size:.68rem;color:#ef4444;font-weight:600;margin-bottom:4px;">SEO Issues:</p>'; sa.seo_issues.forEach(function(i) { html += '<span class="intel-tag neg">' + i + '</span>'; }); }
+          if (sa.missing_features && sa.missing_features.length) { html += '<p style="font-size:.68rem;color:#f59e0b;font-weight:600;margin:6px 0 4px;">Missing Features:</p>'; sa.missing_features.forEach(function(i) { html += '<span class="intel-tag neutral">' + i + '</span>'; }); }
+          html += '</div>';
+        } else {
+          html += '<div class="intel-card"><h6 class="red">No Website</h6><p style="font-size:.78rem;color:#94a3b8;">This business has no web presence — strong opportunity.</p></div>';
+        }
+      }
+
+      // Personalization hooks
+      if (e.personalization_hooks && e.personalization_hooks.length) {
+        html += '<div class="intel-card"><h6 class="green">Personalization Hooks</h6><ul style="list-style:none;padding:0;">';
+        e.personalization_hooks.forEach(function(h) { html += '<li style="font-size:.78rem;color:#94a3b8;padding:2px 0 2px 14px;position:relative;"><span style="position:absolute;left:0;color:#22c55e;">›</span> ' + h + '</li>'; });
+        html += '</ul></div>';
+      }
+
+      // Strengths & weaknesses
+      if ((e.strengths && e.strengths.length) || (e.weaknesses && e.weaknesses.length)) {
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+        if (e.strengths && e.strengths.length) {
+          html += '<div class="intel-card"><h6 class="green">Strengths</h6>';
+          e.strengths.forEach(function(s) { html += '<p style="font-size:.72rem;color:#94a3b8;padding:2px 0;">+ ' + s + '</p>'; });
+          html += '</div>';
+        }
+        if (e.weaknesses && e.weaknesses.length) {
+          html += '<div class="intel-card"><h6 class="red">Weaknesses</h6>';
+          e.weaknesses.forEach(function(w) { html += '<p style="font-size:.72rem;color:#94a3b8;padding:2px 0;">- ' + w + '</p>'; });
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+
+      // Risk factors
+      if (e.risk_factors && e.risk_factors.length) {
+        html += '<div class="intel-card"><h6 style="color:#64748b;">Risk Factors</h6>';
+        e.risk_factors.forEach(function(r) { html += '<p style="font-size:.72rem;color:#64748b;padding:2px 0;">\u26A0 ' + r + '</p>'; });
+        html += '</div>';
+      }
+
+      // Recommended approach
+      if (e.recommended_approach) html += '<p style="font-size:.72rem;color:#475569;margin-top:8px;">Recommended: <span style="color:#D4A853;font-weight:600;">' + e.recommended_approach + '</span></p>';
+
+      // Action buttons
+      html += '<div class="drawer-actions" style="margin-top:12px;">' +
+        '<button class="drawer-btn primary" onclick="generateEmail(' + leadId + ')">Generate Email Using Intel</button>' +
+        '<button class="drawer-btn secondary" onclick="generateCallPrep(' + leadId + ')">Generate Call Script Using Intel</button>' +
+        '<button class="drawer-btn secondary" onclick="enrichProspect(' + leadId + ')">Re-analyze</button>' +
+      '</div>';
+      return html;
+    }
+
+    // --- Selection & Batch ---
+    function toggleLeadSelection(id, on) {
+      if (on) _selectedLeadIds[id] = true; else delete _selectedLeadIds[id];
+      updateBatchBar();
+    }
+    function updateBatchBar() {
+      var count = Object.keys(_selectedLeadIds).length;
+      var bar = document.getElementById('batchBar');
+      var label = document.getElementById('selectedCount');
+      if (bar) bar.style.display = count > 0 ? 'block' : 'none';
+      if (label) label.textContent = count + ' selected';
+      var sa = document.getElementById('selectAllLeads');
+      if (sa) sa.checked = count > 0 && count === document.querySelectorAll('.outreach-select').length;
+    }
+    function toggleSelectAllLeads(on) {
+      document.querySelectorAll('.outreach-select').forEach(function(cb) {
+        cb.checked = on;
+        var id = parseInt(cb.dataset.leadId);
+        if (on) _selectedLeadIds[id] = true; else delete _selectedLeadIds[id];
+      });
+      updateBatchBar();
+    }
+    function selectLeadsByFilter(filter) {
+      _selectedLeadIds = {};
+      document.querySelectorAll('.outreach-select').forEach(function(cb) { cb.checked = false; });
+      _leadsCache.forEach(function(l) {
+        var match = false;
+        if (filter === 'no_website') match = !l.website || l.website.toLowerCase() === 'none' || !l.website.trim();
+        else if (filter === 'has_email') match = l.email && l.email.includes('@');
+        if (match) {
+          _selectedLeadIds[l.id] = true;
+          var cb = document.querySelector('.outreach-select[data-lead-id="' + l.id + '"]');
+          if (cb) cb.checked = true;
+        }
+      });
+      updateBatchBar();
+    }
+    function getSelectedLeads() {
+      var ids = Object.keys(_selectedLeadIds).map(Number);
+      return _leadsCache.filter(function(l) { return ids.indexOf(l.id) !== -1; });
+    }
+
+    // --- Batch Actions ---
+    function batchGenerateEmails() {
+      var leads = getSelectedLeads();
+      if (!leads.length) return;
+      var prog = document.getElementById('scrapeProgress');
+      var done = 0;
+      leads.forEach(function(l, i) {
+        setTimeout(function() {
+          generateEmail(l.id);
+          done++;
+          if (prog) prog.textContent = 'Emails: ' + done + '/' + leads.length;
+          if (done === leads.length && prog) setTimeout(function() { prog.textContent = ''; }, 3000);
+        }, i * 800);
+      });
+    }
+    function batchGenerateCallPreps() {
+      var leads = getSelectedLeads();
+      if (!leads.length) return;
+      var prog = document.getElementById('scrapeProgress');
+      var done = 0;
+      leads.forEach(function(l, i) {
+        setTimeout(function() {
+          generateCallPrep(l.id);
+          done++;
+          if (prog) prog.textContent = 'Scripts: ' + done + '/' + leads.length;
+          if (done === leads.length && prog) setTimeout(function() { prog.textContent = ''; }, 3000);
+        }, i * 600);
+      });
+    }
+    function batchAuditSites() {
+      var leads = getSelectedLeads().filter(function(l) { return l.website && l.website.toLowerCase() !== 'none' && l.website.trim(); });
+      if (!leads.length) { alert('No selected leads have websites to audit'); return; }
+      var prog = document.getElementById('scrapeProgress');
+      var done = 0;
+      leads.forEach(function(l, i) {
+        setTimeout(function() {
+          auditSite(l.id);
+          done++;
+          if (prog) prog.textContent = 'Audits: ' + done + '/' + leads.length;
+          if (done === leads.length && prog) setTimeout(function() { prog.textContent = ''; }, 3000);
+        }, i * 1000);
+      });
+    }
+
+    // --- Send Functions ---
+    function sendViaMailto(leadId) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      if (!lead || !lead.email) return;
+      var subj = document.getElementById('emailSubject-' + leadId);
+      var body = document.getElementById('emailBody-' + leadId);
+      if (!subj || !body) return;
+      var mailto = 'mailto:' + encodeURIComponent(lead.email) +
+        '?subject=' + encodeURIComponent(subj.value) +
+        '&body=' + encodeURIComponent(body.value);
+      window.open(mailto, '_blank');
+      markEmailSent(leadId);
+    }
+
+    function batchSendViaMailto() {
+      var leads = getSelectedLeads().filter(function(l) { return l.email && l.email.includes('@'); });
+      if (!leads.length) { alert('No selected leads have email addresses'); return; }
+      if (!confirm('Open ' + leads.length + ' email(s) in your mail app?')) return;
+      var opened = 0;
+      leads.forEach(function(l, i) {
+        setTimeout(function() {
+          var oData = getOutreachData(l.id);
+          var email = oData.emails.length ? oData.emails[0] : generateTemplateEmail(l, !!(l.website && l.website.toLowerCase() !== 'none'));
+          if (!oData.emails.length) { oData.emails.unshift(email); saveOutreachData(l.id); }
+          var mailto = 'mailto:' + encodeURIComponent(l.email) +
+            '?subject=' + encodeURIComponent(email.subject) +
+            '&body=' + encodeURIComponent(email.body);
+          window.open(mailto, '_blank');
+          opened++;
+          addOutreachLog(l.id, 'email_opened_in_client', 'Opened in mail app');
+        }, i * 500);
+      });
+    }
+
+    function sendViaAgent(leadId) {
+      var lead = _leadsCache.find(function(l) { return l.id === leadId; });
+      if (!lead || !lead.email || !AGENT_API_URL) return;
+      var subj = document.getElementById('emailSubject-' + leadId);
+      var body = document.getElementById('emailBody-' + leadId);
+      if (!subj || !body) return;
+      var btn = document.querySelector('#outreach-email-' + leadId + ' .drawer-btn.success');
+      if (btn) { btn.innerHTML = '<span class="outreach-spinner"></span> Sending...'; btn.disabled = true; }
+      fetch(AGENT_API_URL + '/agent/email_sender', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+        body: JSON.stringify({ job: 'send', to: lead.email, subject: subj.value, body: body.value,
+          from_name: 'Pete — Polaris Point', reply_to: 'peter@polarispoint.io' })
+      }).then(function(r) {
+        if (r.ok) { markEmailSent(leadId); addOutreachLog(leadId, 'email_sent_via_agent', 'Sent to ' + lead.email);
+          if (btn) { btn.textContent = 'Sent!'; }
+        } else { if (btn) { btn.textContent = 'Failed — ' + r.status; btn.disabled = false; } }
+      }).catch(function(e) { if (btn) { btn.textContent = 'Error: ' + e.message; btn.disabled = false; } });
+    }
+
   </script>
   </div><!-- /adminContent -->
 </body>
