@@ -4512,21 +4512,18 @@
     }
 
     function scrapeOneCity(ind, cs, cb) {
-      if (AGENT_API_URL) {
-        // Use Yelp/Places API via Vercel proxy for real scraping
-        var city = cs.split(',')[0].trim();
-        fetch('/api/yelp?q=' + encodeURIComponent(ind) + '&location=' + encodeURIComponent(cs) + '&limit=10')
-          .then(function(r) { return r.json(); })
-          .then(function(d) {
-            if (d.error || !d.businesses) { cb(generateDemoScrapeResults(ind, cs)); return; }
-            var arr = d.businesses.map(function(b) {
-              return { name: b.name, phone: b.phone || null, email: null,
-                website: b.url || null, address: (b.location ? [b.location.address1, b.location.city, b.location.state].filter(Boolean).join(', ') : cs),
-                rating: b.rating ? b.rating + ' stars (' + (b.review_count || 0) + ' reviews)' : null, _city: cs };
-            });
-            cb(arr);
-          }).catch(function() { cb(generateDemoScrapeResults(ind, cs)); });
-      } else { setTimeout(function() { cb(generateDemoScrapeResults(ind, cs)); }, 300); }
+      // Use Yelp search mode via Vercel proxy for real scraping
+      fetch('/api/yelp?q=' + encodeURIComponent(ind) + '&location=' + encodeURIComponent(cs) + '&limit=10&mode=search')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.error || !d.businesses || !d.businesses.length) { cb(generateDemoScrapeResults(ind, cs)); return; }
+          var arr = d.businesses.map(function(b) {
+            return { name: b.name, phone: b.phone || null, email: b.email || null,
+              website: b.website || null, address: b.address || cs,
+              rating: b.rating || null, _city: cs };
+          });
+          cb(arr);
+        }).catch(function() { cb(generateDemoScrapeResults(ind, cs)); });
     }
 
     function showDemoScrape(ind, cs, btn) {
@@ -4584,7 +4581,7 @@
       var r = _scrapeResults[i]; if (!r) return;
       fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
-          phone: r.phone || '', email: r.email || '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
+          phone: r.phone || '', email: r.email || '', rating: r.rating || '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
           notes: 'Imported via batch scraper' + (r._demo ? ' (demo data)' : ''), owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
       }).then(function(res) { return res.json(); }).then(function() {
         btnEl.textContent = 'Imported'; btnEl.disabled = true;

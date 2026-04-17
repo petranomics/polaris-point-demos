@@ -19,12 +19,15 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Yelp API key not configured' });
   }
 
+  var mode = req.query.mode || 'detail';
+  var limit = Math.min(parseInt(req.query.limit) || 3, 20);
+
   try {
-    // Search for the business
+    // Search for businesses
     var searchUrl = 'https://api.yelp.com/v3/businesses/search'
       + '?term=' + encodeURIComponent(query)
       + (location ? '&location=' + encodeURIComponent(location) : '')
-      + '&limit=3';
+      + '&limit=' + limit;
 
     var searchResp = await fetch(searchUrl, {
       headers: { 'Authorization': 'Bearer ' + apiKey }
@@ -35,6 +38,27 @@ module.exports = async function handler(req, res) {
       return res.status(404).json({ error: 'No Yelp results found', query: query });
     }
 
+    // Search mode: return multiple results for batch scraping
+    if (mode === 'search') {
+      var results = searchData.businesses.map(function(b) {
+        return {
+          name: b.name || '',
+          phone: b.display_phone || '',
+          email: null,
+          website: null,
+          address: b.location ? [b.location.address1, b.location.city, b.location.state, b.location.zip_code].filter(Boolean).join(', ') : '',
+          city: b.location ? b.location.city : '',
+          state: b.location ? b.location.state : '',
+          rating: b.rating ? b.rating + ' stars (' + (b.review_count || 0) + ' reviews)' : null,
+          categories: (b.categories || []).map(function(c) { return c.title; }),
+          yelpUrl: b.url || '',
+          imageUrl: b.image_url || ''
+        };
+      });
+      return res.status(200).json({ businesses: results, total: searchData.total || results.length });
+    }
+
+    // Detail mode (default): return enriched single result
     var biz = searchData.businesses[0];
 
     // Get reviews (Yelp v3 returns up to 3)
