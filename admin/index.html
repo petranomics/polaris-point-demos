@@ -4090,6 +4090,12 @@
     // === OUTREACH TOOLS (Senior Only) ===
     var AGENT_API_URL = localStorage.getItem('pp_agent_url') || 'http://72.60.120.245:3000';
     var AGENT_API_KEY = localStorage.getItem('pp_agent_key') || 'armadillo-agent-2026';
+
+    // Route agent calls through Vercel proxy to avoid mixed-content (HTTPS page -> HTTP VPS)
+    function agentFetch(agentPath, options) {
+      // agentPath like "agent/outreach-email" or "agent/outreach-email/health"
+      return fetch('/api/vps?action=' + encodeURIComponent(agentPath), options);
+    }
     var _outreachData = {};
     var _scrapeResults = [];
     var _outreachFilter = 'all';
@@ -4196,7 +4202,7 @@
       var s = document.getElementById('agentStatus');
       if (!AGENT_API_URL) { s.innerHTML = '<span style="color:#ef4444;">No URL configured</span>'; return; }
       s.innerHTML = '<span class="outreach-spinner"></span> Testing...';
-      fetch(AGENT_API_URL + '/agent/outreach-email/health', { headers: { 'x-api-key': AGENT_API_KEY } })
+      agentFetch('agent/outreach-email/health', {})
         .then(function(r) { s.innerHTML = r.ok ? '<span style="color:#22c55e;">Connected</span>' : '<span style="color:#ef4444;">Error ' + r.status + '</span>'; })
         .catch(function() { s.innerHTML = '<span style="color:#ef4444;">Cannot reach server</span>'; });
     }
@@ -4246,8 +4252,8 @@
       if (AGENT_API_URL) {
         var payload = { lead: lead, demo_url: 'https://polaris-point-demos.com/' + (lead.industry || 'handyman') };
         if (oData.enrichment) payload.enrichment = oData.enrichment;
-        fetch(AGENT_API_URL + '/agent/outreach-email', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+        agentFetch('agent/outreach-email', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).then(function(r) { return r.json(); }).then(function(d) {
           if (d.success && d.result) applyGeneratedEmail(leadId, d.result);
@@ -4337,8 +4343,8 @@
       if (btn) { btn.classList.add('generating'); btn.innerHTML = '<span class="outreach-spinner"></span> Preparing...'; }
       var hasWeb = lead.website && lead.website.toLowerCase() !== 'none' && lead.website.trim() !== '';
       if (AGENT_API_URL) {
-        fetch(AGENT_API_URL + '/agent/outreach-callprep', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+        agentFetch('agent/outreach-callprep', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lead: lead })
         }).then(function(r) { return r.json(); }).then(function(d) {
           if (d.success && d.result) applyCallPrep(leadId, d.result);
@@ -4430,8 +4436,8 @@
       var btn = document.getElementById('auditBtn-' + leadId);
       if (btn) { btn.classList.add('generating'); btn.innerHTML = '<span class="outreach-spinner"></span> Auditing...'; }
       if (AGENT_API_URL) {
-        fetch(AGENT_API_URL + '/agent/outreach-audit', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+        agentFetch('agent/outreach-audit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: lead.website })
         }).then(function(r) { return r.json(); }).then(function(d) {
           if (d.success && d.result) applyAudit(leadId, d.result);
@@ -4677,8 +4683,8 @@
       var drawer = document.getElementById('outreach-enrich-' + leadId);
       if (drawer) drawer.innerHTML = '<div style="text-align:center;padding:20px;color:#475569;"><span class="outreach-spinner"></span><p style="margin-top:10px;font-size:.78rem;">Scraping reviews, analyzing site, building prospect intel...</p><p style="font-size:.68rem;color:#334155;margin-top:4px;">This can take 30-60 seconds</p></div>';
       if (AGENT_API_URL) {
-        fetch(AGENT_API_URL + '/agent/outreach-enrich', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+        agentFetch('agent/outreach-enrich', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lead: lead, vercel_host: window.location.origin })
         }).then(function(r) { return r.json(); }).then(function(d) {
           if (d.success && d.result) applyEnrichment(leadId, d.result);
@@ -4912,8 +4918,8 @@
       if (!subj || !body) return;
       var btn = document.querySelector('#outreach-email-' + leadId + ' .drawer-btn.success');
       if (btn) { btn.innerHTML = '<span class="outreach-spinner"></span> Sending...'; btn.disabled = true; }
-      fetch(AGENT_API_URL + '/agent/email_sender', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': AGENT_API_KEY },
+      agentFetch('agent/email_sender', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job: 'send', to: lead.email, subject: subj.value, body: body.value,
           from_name: 'Pete — Polaris Point', reply_to: 'peter@polarispoint.io' })
       }).then(function(r) {
