@@ -24,6 +24,20 @@ module.exports = async function handler(req, res) {
 
   var action = req.query.action || 'health';
 
+  // Allowlist of valid actions to prevent open relay
+  var allowed = [
+    'health', 'generate',
+    'agent/outreach-email', 'agent/outreach-email/health',
+    'agent/outreach-callprep', 'agent/outreach-callprep/health',
+    'agent/outreach-audit', 'agent/outreach-audit/health',
+    'agent/outreach-enrich', 'agent/outreach-enrich/health',
+    'agent/analyze', 'agent/health',
+    'api/monitoring/summary', 'api/monitoring/agents'
+  ];
+  if (!allowed.includes(action)) {
+    return res.status(403).json({ error: 'Action not allowed: ' + action });
+  }
+
   try {
     var endpoint = baseUrl + '/' + action;
     var options = {

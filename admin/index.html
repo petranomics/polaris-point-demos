@@ -2036,12 +2036,8 @@
           <span style="font-size:.72rem;" id="agentStatusInline"></span>
         </div>
         <div class="agent-cfg-body" style="display:none;margin-top:14px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div class="intake-field"><label>API URL</label><input type="text" id="agentApiUrl" placeholder="https://your-vps.com:3000"></div>
-            <div class="intake-field"><label>API Key</label><input type="password" id="agentApiKey" placeholder="Your API key"></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:10px;">
-            <button class="btn-export" onclick="saveAgentConfig()" style="font-size:.75rem;padding:8px 16px;">Save</button>
+          <p style="font-size:.75rem;color:#475569;margin-bottom:10px;">Agent calls route through the Vercel proxy. API key is managed server-side and never exposed to the browser.</p>
+          <div style="display:flex;gap:10px;">
             <button class="btn-export secondary" onclick="testAgentConnection()" style="font-size:.75rem;padding:8px 16px;">Test Connection</button>
             <span id="agentStatus" style="font-size:.72rem;color:#475569;display:flex;align-items:center;gap:6px;"></span>
           </div>
@@ -4088,12 +4084,11 @@
     }
 
     // === OUTREACH TOOLS (Senior Only) ===
-    var AGENT_API_URL = localStorage.getItem('pp_agent_url') || 'http://72.60.120.245:3000';
-    var AGENT_API_KEY = localStorage.getItem('pp_agent_key') || 'armadillo-agent-2026';
+    var AGENT_API_URL = 'proxy'; // Agent calls route through /api/vps (server-side auth, no secrets in browser)
+    var AGENT_API_KEY = '';
 
-    // Route agent calls through Vercel proxy to avoid mixed-content (HTTPS page -> HTTP VPS)
+    // Route agent calls through Vercel proxy — API key is added server-side, never exposed to browser
     function agentFetch(agentPath, options) {
-      // agentPath like "agent/outreach-email" or "agent/outreach-email/health"
       return fetch('/api/vps?action=' + encodeURIComponent(agentPath), options);
     }
     var _outreachData = {};
@@ -4188,19 +4183,12 @@
     }
 
     function saveAgentConfig() {
-      AGENT_API_URL = document.getElementById('agentApiUrl').value.trim();
-      AGENT_API_KEY = document.getElementById('agentApiKey').value.trim();
-      localStorage.setItem('pp_agent_url', AGENT_API_URL);
-      localStorage.setItem('pp_agent_key', AGENT_API_KEY);
-      document.getElementById('agentStatus').innerHTML = '<span style="color:#22c55e;">Saved</span>';
-      var il = document.getElementById('agentStatusInline');
-      if (il) { il.textContent = 'Connected'; il.style.color = '#22c55e'; }
+      document.getElementById('agentStatus').innerHTML = '<span style="color:#22c55e;">Config managed server-side</span>';
       setTimeout(function() { document.getElementById('agentStatus').textContent = ''; }, 2000);
     }
 
     function testAgentConnection() {
       var s = document.getElementById('agentStatus');
-      if (!AGENT_API_URL) { s.innerHTML = '<span style="color:#ef4444;">No URL configured</span>'; return; }
       s.innerHTML = '<span class="outreach-spinner"></span> Testing...';
       agentFetch('agent/outreach-email/health', {})
         .then(function(r) { s.innerHTML = r.ok ? '<span style="color:#22c55e;">Connected</span>' : '<span style="color:#ef4444;">Error ' + r.status + '</span>'; })
@@ -4607,12 +4595,8 @@
 
     // --- Outreach Queue ---
     function loadOutreachQueue() {
-      var urlInput = document.getElementById('agentApiUrl');
-      var keyInput = document.getElementById('agentApiKey');
-      if (urlInput && AGENT_API_URL) urlInput.value = AGENT_API_URL;
-      if (keyInput && AGENT_API_KEY) keyInput.value = AGENT_API_KEY;
       var il = document.getElementById('agentStatusInline');
-      if (il) { il.textContent = AGENT_API_URL ? 'Connected' : 'Not configured'; il.style.color = AGENT_API_URL ? '#22c55e' : '#64748b'; }
+      if (il) { il.textContent = 'Via proxy'; il.style.color = '#22c55e'; }
       fetchLeads().then(function(leads) { renderOutreachQueue(leads); });
     }
 
