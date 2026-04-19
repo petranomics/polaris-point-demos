@@ -199,7 +199,7 @@ window.SITE_CONFIG = {
     {
       title: "How to Prevent Frozen Pipes in Austin: Plumber's Guide",
       excerpt: "Central Texas winters can still freeze your pipes. Our licensed plumbers share the essential steps to protect your home from burst pipes and costly water damage.",
-      image: "https://images.pexels.com/photos/7859717/pexels-photo-7859717.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },

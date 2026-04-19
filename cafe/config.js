@@ -66,7 +66,7 @@ window.SITE_CONFIG = {
   service5Image: "https://images.pexels.com/photos/2615323/pexels-photo-2615323.jpeg?auto=compress&cs=tinysrgb&w=600",
   service6Name: "Catering & Events",
   service6Desc: "Coffee bars for weddings, office events, and private parties.",
-  service6Image: "https://images.pexels.com/photos/1040157/pexels-photo-1040157.jpeg?auto=compress&cs=tinysrgb&w=600",
+  service6Image: "https://images.pexels.com/photos/5409015/pexels-photo-5409015.jpeg?auto=compress&cs=tinysrgb&w=600",
 
   // === ABOUT ===
   aboutImage: "https://images.pexels.com/photos/3020919/pexels-photo-3020919.jpeg?auto=compress&cs=tinysrgb&w=800",
@@ -220,7 +220,7 @@ window.SITE_CONFIG = {
     {
       title: "5 South Congress Spots to Visit After Your Morning Coffee",
       excerpt: "Grab your cortado and explore. From vintage shops to live music, here are our favorite neighbors on S Congress Ave that make this block special.",
-      image: "https://images.pexels.com/photos/1437318/pexels-photo-1437318.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/2901209/pexels-photo-2901209.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }

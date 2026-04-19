@@ -1306,3 +1306,17 @@ img {
         aspect-ratio: 16/9;
     }
 }
+
+/* Compact blog cards for pest control */
+.blog-card img {
+    aspect-ratio: 16/9;
+}
+.blog-card-body {
+    padding: 14px 16px;
+}
+.blog-card h3 {
+    font-size: .9rem;
+}
+.blog-card p {
+    font-size: .82rem;
+}

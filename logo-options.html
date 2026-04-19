@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polaris Point Logo Options — Circle Ring Variations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #5B8DEF;
+      --blue-light: #7DA6F5;
+      --blue-dim: rgba(91,141,239,.15);
+      --gold: #D4A853;
+      --gold-dim: rgba(212,168,83,.15);
+      --dark: #0B1120;
+      --dark2: #111827;
+      --text: #94a3b8;
+      --star: "12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34";
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Inter', sans-serif; background: #080c16; color: #e2e8f0; padding: 40px 20px; }
+    h1 { text-align: center; font-size: 1.1rem; color: var(--text); margin-bottom: 8px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
+    .subtitle { text-align: center; color: #475569; font-size: .8rem; margin-bottom: 48px; }
+    .section-title { text-align: center; font-size: .7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--blue); font-weight: 600; margin: 48px 0 24px; }
+    .grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .card {
+      background: var(--dark);
+      border: 1px solid rgba(91,141,239,.1);
+      border-radius: 16px;
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: rgba(91,141,239,.25); }
+    .card-label { font-size: .65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 600; }
+    .card-desc { font-size: .75rem; color: #475569; text-align: center; line-height: 1.5; max-width: 280px; }
+    .logo-preview { display: flex; align-items: center; justify-content: center; min-height: 70px; }
+    hr { width: 100%; border: none; border-top: 1px solid rgba(255,255,255,.05); }
+    .variants { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+    .variant { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .variant-label { font-size: .6rem; color: #374151; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+    .on-light { background: #f1f5f9; border-radius: 10px; padding: 20px 28px; }
+
+    /* === BASE LOGO SYSTEM === */
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+    .star-ring {
+      width: 42px; height: 42px;
+      border: 1.5px solid rgba(91,141,239,.35);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .star-ring svg { width: 24px; height: 24px; filter: drop-shadow(0 0 5px rgba(91,141,239,.35)); }
+    .text-group { display: flex; flex-direction: column; }
+    .name { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; color: #fff; letter-spacing: .3px; line-height: 1.2; }
+    .sub { font-size: .55rem; text-transform: uppercase; letter-spacing: 2.5px; color: var(--gold); font-weight: 600; line-height: 1; margin-top: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Circle Ring Logo Variations</h1>
+  <p class="subtitle">Option 6 expanded — pick a direction to refine further</p>
+
+  <p class="section-title">Font Variations</p>
+  <div class="grid">
+
+    <!-- 6A: Montserrat Bold -->
+    <div class="card">
+      <span class="card-label">6A — Montserrat</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Montserrat',sans-serif;font-weight:700;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Bold, geometric. Strong agency feel. Current direction.</p>
+    </div>
+
+    <!-- 6B: Montserrat 800 -->
+    <div class="card">
+      <span class="card-label">6B — Montserrat ExtraBold</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.15rem;letter-spacing:-.02em;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Heavier weight. More impact, more presence.</p>
+    </div>
+
+    <!-- 6C: Outfit -->
+    <div class="card">
+      <span class="card-label">6C — Outfit</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;font-weight:700;letter-spacing:-.01em;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Rounded, modern geometric. Friendly but professional.</p>
+    </div>
+
+    <!-- 6D: Space Grotesk -->
+    <div class="card">
+      <span class="card-label">6D — Space Grotesk</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.3px;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Techy, sharp. Good for dev-forward positioning.</p>
+    </div>
+
+    <!-- 6E: DM Sans -->
+    <div class="card">
+      <span class="card-label">6E — DM Sans</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:.2px;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Clean, balanced. Versatile across print and web.</p>
+    </div>
+
+    <!-- 6F: Sora -->
+    <div class="card">
+      <span class="card-label">6F — Sora</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Sora',sans-serif;font-weight:700;letter-spacing:-.01em;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Contemporary, slightly soft. Startup/SaaS energy.</p>
+    </div>
+
+    <!-- 6G: Plus Jakarta Sans -->
+    <div class="card">
+      <span class="card-label">6G — Plus Jakarta Sans</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.02em;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Modern, slightly rounded. Premium SaaS/agency feel.</p>
+    </div>
+
+    <!-- 6H: Inter Bold -->
+    <div class="card">
+      <span class="card-label">6H — Inter</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Inter',sans-serif;font-weight:700;letter-spacing:.1px;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">Neutral, ultra-legible. Never distracting, always clear.</p>
+    </div>
+  </div>
+
+  <p class="section-title">Color Variations</p>
+  <div class="grid">
+
+    <!-- Blue ring / Blue star -->
+    <div class="card">
+      <span class="card-label">Blue on Blue</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gold ring / Gold star -->
+    <div class="card">
+      <span class="card-label">Full Gold</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border-color:rgba(212,168,83,.4);">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#D4A853" stroke="#D4A853" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub" style="color:var(--blue);">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gold ring / Blue star -->
+    <div class="card">
+      <span class="card-label">Gold Ring + Blue Star</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border-color:rgba(212,168,83,.35);">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- White ring / Blue star / Gold sub -->
+    <div class="card">
+      <span class="card-label">White Ring + Gold Sub</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border-color:rgba(255,255,255,.2);">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blue gradient ring -->
+    <div class="card">
+      <span class="card-label">Gradient Ring</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border:none;background:conic-gradient(from 180deg, rgba(91,141,239,.4), rgba(212,168,83,.4), rgba(91,141,239,.4));padding:1.5px;border-radius:50%;">
+            <span style="background:var(--dark);border-radius:50%;width:100%;height:100%;display:grid;place-items:center;">
+              <svg viewBox="0 0 24 24" fill="none" style="width:24px;height:24px;filter:drop-shadow(0 0 5px rgba(91,141,239,.35));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+            </span>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filled circle -->
+    <div class="card">
+      <span class="card-label">Filled Circle</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border:none;background:linear-gradient(135deg,rgba(91,141,239,.12),rgba(91,141,239,.06));">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">Tagline Variations</p>
+  <div class="grid">
+    <div class="card">
+      <span class="card-label">Digital Solutions</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg></span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-label">Web Design Studio</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg></span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Web Design Studio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-label">No Tagline</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg></span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;font-size:1.15rem;">Polaris Point</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-label">Creative Agency</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg></span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Creative Agency</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">On Light Backgrounds</p>
+  <div class="grid">
+    <div class="card" style="background:#f8fafc;border-color:#e2e8f0;">
+      <span class="card-label" style="color:#1e293b;">On White</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border-color:rgba(91,141,239,.3);">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;color:#0f172a;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background:#fff;border-color:#e2e8f0;">
+      <span class="card-label" style="color:#1e293b;">On White — Gold</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring" style="border-color:rgba(212,168,83,.35);">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#D4A853" stroke="#D4A853" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;color:#0f172a;">Polaris Point</span>
+            <span class="sub" style="color:var(--blue);">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background:#1e293b;border-color:#334155;">
+      <span class="card-label">On Slate</span>
+      <div class="logo-preview">
+        <div class="logo">
+          <span class="star-ring">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+          </span>
+          <div class="text-group">
+            <span class="name" style="font-family:'Outfit',sans-serif;">Polaris Point</span>
+            <span class="sub">Digital Solutions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

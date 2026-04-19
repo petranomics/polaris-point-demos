@@ -205,7 +205,7 @@ window.SITE_CONFIG = {
     {
       title: "How to Plan a Kitchen Remodel on a Budget",
       excerpt: "A kitchen upgrade doesn\u2019t have to break the bank. Our contractors share smart strategies for getting the most out of your remodel budget.",
-      image: "https://images.pexels.com/photos/6585764/pexels-photo-6585764.jpeg?auto=compress&cs=tinysrgb&w=600",
+      image: "https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
