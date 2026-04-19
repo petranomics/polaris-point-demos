@@ -31,6 +31,7 @@ module.exports = async function handler(req, res) {
     'agent/outreach-callprep', 'agent/outreach-callprep/health',
     'agent/outreach-audit', 'agent/outreach-audit/health',
     'agent/outreach-enrich', 'agent/outreach-enrich/health',
+    'agent/outreach-draft', 'agent/outreach-draft/health',
     'agent/analyze', 'agent/health',
     'api/monitoring/summary', 'api/monitoring/agents'
   ];
