@@ -1,136 +1,131 @@
-// Cleaning Services Demo — Site Configuration
+// Restaurant Demo — Site Configuration
 // Edit this file to customize the site for a new prospect.
 // All business-specific content is defined here.
 window.SITE_CONFIG = {
 
   // === PAGE META ===
-  pageTitle: "Crystal Clear Cleaning Co. | Austin House Cleaning",
-  metaDescription: "Crystal Clear Cleaning Co. provides professional house cleaning, deep cleaning, and maid services in Austin, TX. Eco-friendly products, background-checked staff.",
+  pageTitle: "Iron & Oak BBQ | Austin Craft Barbecue & Live Music",
+  metaDescription: "Iron & Oak BBQ in Austin, TX — slow-smoked brisket, handmade sides, and live music on the patio. East Austin's favorite neighborhood BBQ joint.",
 
   // === IDENTITY ===
-  businessName: "Crystal Clear Cleaning Co.",
-  businessNameShort: "Crystal Clear",
-  businessNameHtml: "Crystal Clear Cleaning Co.",
+  businessName: "Iron & Oak BBQ",
+  businessNameShort: "Iron & Oak",
+  licenseNumber: "",
 
   // === CONTACT ===
-  phone: "(512) 555-0275",
-  phoneTelHref: "tel:+15125550275",
-  email: "hello@crystalclearcleaning.com",
-  emailHref: "mailto:hello@crystalclearcleaning.com",
-  address: "4200 S Lamar Blvd, Austin TX 78745",
-  hours: "Mon\u2013Sat 7am\u20136pm",
+  phone: "(512) 555-0463",
+  phoneTelHref: "tel:+15125550463",
+  email: "hello@ironandoakbbq.com",
+  emailHref: "mailto:hello@ironandoakbbq.com",
+  address: "2015 E 7th St, Austin TX 78702",
+  hours: "Wed\u2013Sun 11am\u20139pm \u00b7 Closed Mon\u2013Tue",
 
   // === TOPBAR ===
-  topbarText: "Book Online & Get 15% Off Your First Clean",
+  topbarText: "Live Music Fridays \u00b7 Patio Open Year-Round",
 
   // === HERO ===
-  heroHeadline: "A Spotless Home Without Lifting a Finger",
-  heroSubtext: "Professional cleaning services in Austin, TX. Background-checked teams, eco-friendly products, and a satisfaction guarantee on every visit.",
-  heroImage: "https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  heroImageAlt: "Professional cleaner wiping down a bright kitchen counter",
-  heroCta1: "Call (512) 555-0275",
-  heroCta2: "Get a Free Quote",
+  heroHeadline: "Slow-Smoked. <span class=\"accent\">Austin-Made.</span>",
+  heroSubtext: "14-hour brisket, handmade sides, and cold beer on the patio. East Austin\u2019s neighborhood BBQ joint \u2014 open Wednesday through Sunday.",
+  heroImage: "https://images.pexels.com/photos/2491273/pexels-photo-2491273.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  heroImageAlt: "Smoked brisket and ribs on a cutting board",
+  heroCta1: "Call (512) 555-0463",
+  heroCta2: "See the Menu",
 
   // === TRUST BADGES ===
-  trustBadge1: "Licensed & Insured",
-  trustBadge2: "Background Checked",
-  trustBadge3: "Eco-Friendly Products",
-  trustBadge4: "Satisfaction Guaranteed",
+  trustBadge1: "Smoked Fresh Daily",
+  trustBadge2: "4.8-Star Rated",
+  trustBadge3: "East Austin",
+  trustBadge4: "Live Music Fridays",
 
   // === STATS BAR ===
-  stat1Number: "1,800+",
-  stat1Label: "Homes Cleaned",
-  stat2Number: "10+",
-  stat2Label: "Years Experience",
-  stat3Number: "4.8",
-  stat3Label: "Google Rating",
-  stat4Number: "100%",
-  stat4Label: "Satisfaction",
+  stat1Number: "14",
+  stat1Label: "Hours Smoked",
+  stat2Number: "4.8",
+  stat2Label: "Star Rating",
+  stat3Number: "500+",
+  stat3Label: "Daily Customers",
+  stat4Number: "2019",
+  stat4Label: "Est.",
 
   // === SERVICES ===
-  servicesLabel: "What We Do",
-  servicesTitle: "Our Cleaning Services",
-  service1Name: "House Cleaning",
-  service1Desc: "Thorough top-to-bottom cleaning of your entire home — kitchens, bathrooms, bedrooms, and living areas.",
-  service2Name: "Deep Cleaning",
-  service2Desc: "Intensive scrub-down that tackles grease, grime, and buildup in every corner of your home.",
-  service3Name: "Move-In/Move-Out Cleaning",
-  service3Desc: "Get your deposit back or start fresh. We leave the space spotless for the next chapter.",
-  service4Name: "Office Cleaning",
-  service4Desc: "Keep your workspace professional and hygienic with scheduled commercial cleaning services.",
-  service5Name: "Post-Construction Cleanup",
-  service5Desc: "Dust, debris, and residue removed after renovations so your new space is move-in ready.",
-  service6Name: "Recurring Maid Service",
-  service6Desc: "Weekly, biweekly, or monthly visits tailored to your schedule. Consistent team, consistent results.",
+  servicesLabel: "The Menu",
+  servicesTitle: "What We\u2019re Smoking",
+  service1Name: "Brisket",
+  service1Desc: "Post oak-smoked for 14 hours. Sliced to order with a peppercorn bark that\u2019s earned us a spot on Austin\u2019s best-of lists.",
+  service2Name: "Pork Ribs",
+  service2Desc: "St. Louis-style spare ribs with our house dry rub. Fall-off-the-bone tender with a tangy vinegar mop sauce on the side.",
+  service3Name: "Pulled Pork",
+  service3Desc: "Slow-smoked pork shoulder pulled by hand. Served on a bun or by the half-pound with your choice of sauce.",
+  service4Name: "Smoked Turkey",
+  service4Desc: "Brined overnight and smoked over pecan wood. Juicy, flavorful, and the healthier option that doesn\u2019t compromise on taste.",
+  service5Name: "Handmade Sides",
+  service5Desc: "Mac & cheese, coleslaw, loaded baked beans, potato salad, and jalape\u00f1o cornbread \u2014 all made from scratch daily.",
+  service6Name: "Catering & Events",
+  service6Desc: "We cater everything from backyard parties to corporate events. Full-service BBQ catering with setup, serving, and cleanup included.",
 
   // === ABOUT ===
-  aboutImage: "https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800",
-  aboutImageAlt: "Professional cleaner in a bright modern home",
-  aboutLabel: "Why Choose Us",
-  aboutTitle: "Austin\u2019s Most Trusted Cleaning Team",
-  aboutText: "For over a decade, Crystal Clear has been the cleaning company Austin homeowners call when they want it done right. Every team member is background-checked, trained to our standards, and equipped with eco-friendly products that are safe for kids, pets, and the planet.",
+  aboutImage: "https://images.pexels.com/photos/8753647/pexels-photo-8753647.jpeg?auto=compress&cs=tinysrgb&w=800",
+  aboutImageAlt: "Pitmaster tending the smoker",
+  aboutLabel: "Our Story",
+  aboutTitle: "Built on Smoke & Community",
+  aboutText: "Iron & Oak started as a backyard hobby that got out of hand. In 2019, pitmaster Marcus Cole quit his day job, bought a 500-gallon offset smoker, and started selling brisket from a trailer on East 7th. Five years and a brick-and-mortar later, we\u2019re still doing it the only way we know how: post oak, salt, pepper, and patience. No shortcuts. No gas assist. Just honest Texas barbecue.",
 
   // === FAMILY / TEAM PHOTO ===
-  familyLabel: "Our Team",
-  familyTitle: "Meet the Family Behind the Clean",
-  familyText: "We\u2019re a family-owned business built on trust, attention to detail, and treating every home like our own. When you book with us, you get real people who take pride in their work \u2014 not a faceless franchise.",
-  familyPhoto: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800",
-  familyPhotoAlt: "Our cleaning team",
+  familyLabel: "The Crew",
+  familyTitle: "Meet the People Behind the Pit",
+  familyText: "Every cut is hand-trimmed, every fire is hand-built, and every plate is served with pride. Our crew treats barbecue like a craft \u2014 because it is.",
+  familyPhoto: "https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800",
+  familyPhotoAlt: "The Iron & Oak BBQ team",
 
   // === WHY CARDS ===
-  why1Title: "Same-Week Booking",
-  why1Text: "Need a cleaning fast? Most first-time appointments are available within the week.",
-  why2Title: "Transparent Pricing",
-  why2Text: "Flat-rate quotes upfront based on home size. No hidden fees, no surprises.",
-  why3Title: "100% Satisfaction Guarantee",
-  why3Text: "Not happy? We\u2019ll come back and re-clean the area at no extra charge.",
+  why1Title: "Smoked Fresh Daily",
+  why1Text: "We fire up the smokers at 4 AM. When it\u2019s gone, it\u2019s gone.",
+  why2Title: "All Scratch Kitchen",
+  why2Text: "Every side, sauce, and dessert is made in-house from scratch. No shortcuts.",
+  why3Title: "Dog-Friendly Patio",
+  why3Text: "Bring your pup, grab a picnic table, and enjoy live music on Friday nights.",
 
   // === REVIEWS ===
-  reviewsLabel: "Testimonials",
-  reviewsTitle: "What Our Clients Say",
+  reviewsLabel: "What Folks Say",
+  reviewsTitle: "Reviews from the Patio",
   reviews: [
     {
-      text: "Crystal Clear has been cleaning our home biweekly for over a year. They\u2019re thorough, on time, and the same team shows up every visit. Our house has never looked better.",
-      attribution: "Sarah K. &middot; Cedar Park &middot; Feb 2026"
+      text: "Best brisket in Austin, and I don\u2019t say that lightly. The bark is perfect and the meat is incredibly juicy. We drive 30 minutes to eat here at least twice a month.",
+      attribution: "Marcus P. &middot; Round Rock &middot; Feb 2026"
     },
     {
-      text: "We hired them for a move-out clean and got our full deposit back. They cleaned things I didn\u2019t even think to ask about. Highly recommend.",
-      attribution: "David R. &middot; Round Rock &middot; Jan 2026"
+      text: "The pulled pork sandwich is unreal. And the jalape\u00f1o cornbread? I dream about it. Chill vibe, great music on Fridays, and the staff is super friendly.",
+      attribution: "Ashley & Tom R. &middot; South Austin &middot; Jan 2026"
     },
     {
-      text: "I was nervous about letting strangers into my home, but the background-check policy and the eco-friendly products gave me peace of mind. The results speak for themselves.",
-      attribution: "Michelle T. &middot; Lakeway &middot; Dec 2025"
+      text: "They catered our company holiday party and it was a hit. 50 people, no leftovers. Professional setup, great communication, and the food was outstanding.",
+      attribution: "Jennifer L. &middot; Downtown &middot; Dec 2025"
     }
   ],
 
   // === SERVICE AREA ===
-  serviceAreaLabel: "Coverage Area",
-  serviceAreaTitle: "Serving Austin & Surrounding Communities",
-  serviceAreaText: "From downtown condos to suburban homes, our cleaning teams cover all of Greater Austin. Fully equipped, fully insured, and always on time.",
-  serviceAreaImage: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800",
-  serviceAreaImageAlt: "Beautiful Austin neighborhood we serve",
-  serviceAreas: ["Austin", "Round Rock", "Cedar Park", "Pflugerville", "Georgetown", "Lakeway"],
+  serviceAreaLabel: "Find Us",
+  serviceAreaTitle: "East Austin \u2014 Right Off 7th Street",
+  serviceAreaText: "We\u2019re on East 7th between Chicon and Comal, with plenty of street parking and a big covered patio out back.",
+  serviceAreaImage: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800",
+  serviceAreaImageAlt: "East Austin neighborhood",
+  serviceAreas: ["East Austin", "Downtown", "South Austin", "North Austin", "Round Rock", "Cedar Park"],
 
   // === CONTACT FORM ===
   contactLabel: "Get In Touch",
-  contactTitle: "Request Your Free Quote",
-  contactText: "Fill out the form and we\u2019ll send you a customized quote within 2 hours during business hours \u2014 or call us directly to book your first clean.",
-  formServiceOptions: ["House Cleaning", "Deep Cleaning", "Move-In/Move-Out Cleaning", "Office Cleaning", "Post-Construction Cleanup", "Recurring Maid Service", "Other"],
+  contactTitle: "Catering Inquiry or Feedback",
+  contactText: "Planning an event? Have feedback? Drop us a line and we\u2019ll get back to you within a day.",
+  formServiceOptions: ["Catering Inquiry", "Private Event", "Feedback", "Press / Media", "Other"],
 
   // === CTA BANNER ===
-  ctaTitle: "Ready for a Cleaner Home?",
-  ctaText: "Book your first cleaning today and see why 1,800+ Austin homes trust Crystal Clear.",
-  ctaButton: "Call (512) 555-0275",
-
-  // === DARK PHOTO CTA ===
-  darkCtaHeadline: "Spotless Homes. Happy Families. Every Time.",
-  darkCtaText: "We treat every home like it\u2019s our own. That\u2019s been our standard since day one.",
-  darkCtaCta: "Book Your Clean",
+  ctaTitle: "Hungry Yet?",
+  ctaText: "We\u2019re open Wednesday through Sunday, 11 to 9. Come hungry, leave happy.",
+  ctaButton: "Call (512) 555-0463",
 
   // === FOOTER ===
-  footerDescription: "Austin\u2019s trusted cleaning company for over 10 years. Licensed, insured, and committed to a spotless finish every time.",
-  footerLegal: "&copy; 2026 Crystal Clear Cleaning Co. All rights reserved.",
-  footerServices: ["House Cleaning", "Deep Cleaning", "Move-In/Out Cleaning", "Office Cleaning", "Recurring Maid Service"],
+  footerDescription: "Iron & Oak BBQ \u2014 slow-smoked barbecue, handmade sides, and live music on East 7th Street. Austin\u2019s neighborhood BBQ joint since 2019.",
+  footerLegal: "&copy; 2026 Iron & Oak BBQ. All rights reserved.",
+  footerServices: ["Brisket", "Pork Ribs", "Pulled Pork", "Smoked Turkey", "Sides", "Catering"],
 
   // === FEATURE FLAGS ===
   features: {
@@ -144,12 +139,11 @@ window.SITE_CONFIG = {
     googleReviewsBadge: true,
     floatingButtons: true,
     stickyBottomCta: true,
-    exitIntent: true,
-    urgencyBanner: true,
+    exitIntent: false,
+    urgencyBanner: false,
     faqAccordion: true,
     serviceAreaMap: true,
     lightbox: true,
-    beforeAfterGallery: false,
     teamModals: false,
     blogPreview: true,
     cookieConsent: true,
@@ -160,34 +154,34 @@ window.SITE_CONFIG = {
 
   // === GOOGLE REVIEWS ===
   googleReviewsRating: "4.8",
-  googleReviewsCount: "247",
+  googleReviewsCount: "612",
   googleReviewsUrl: "",
 
   // === ENGAGEMENT ===
-  smsNumber: "5125550275",
+  smsNumber: "5125550463",
   whatsappNumber: "",
   calcomUrl: "",
 
   exitIntent: {
-    headline: "Wait \u2014 Get 15% Off Your First Clean",
-    text: "Book your first cleaning service today and save. New customers only.",
-    cta: "Claim My Discount",
+    headline: "Wait \u2014 Free Side with Your First Order",
+    text: "Show this on your phone when you order. New customers only.",
+    cta: "Claim My Free Side",
     ctaUrl: "#contact"
   },
 
   urgencyBanner: {
-    text: "\u2728 Spring Cleaning Special: 20% off deep cleaning services \u2014 limited time only",
-    endDate: "2026-06-30"
+    text: "\ud83d\udd25 Friday Night Live Music: Cold beer, hot brisket, local bands on the patio",
+    endDate: "2026-12-31"
   },
 
   // === FAQ ===
   faqs: [
-    { question: "How much does a cleaning cost?", answer: "Pricing is based on your home\u2019s size and the type of cleaning. A standard 3-bedroom house cleaning starts around $150. We provide a free, no-obligation quote before scheduling." },
-    { question: "Do I need to provide cleaning supplies?", answer: "No. Our teams arrive fully equipped with professional-grade, eco-friendly cleaning products and all necessary tools. If you have a preferred product, we\u2019re happy to use it." },
-    { question: "How often should I schedule a cleaning?", answer: "Most clients choose biweekly service to maintain a consistently clean home. We also offer weekly and monthly plans depending on your needs and budget." },
-    { question: "Can I trust your cleaners in my home?", answer: "Absolutely. Every team member passes a thorough background check, is fully insured, and is trained to our quality standards. Many clients give us a key or code for access while they\u2019re away." },
-    { question: "What is your cancellation policy?", answer: "We ask for 24 hours\u2019 notice for cancellations or rescheduling. Cancellations within 24 hours may be subject to a $50 fee to cover the reserved time slot." },
-    { question: "What\u2019s included in a standard house cleaning?", answer: "A standard clean covers all rooms: dusting, vacuuming, mopping, bathroom sanitizing, kitchen surface cleaning, and tidying. Deep cleaning adds ovens, baseboards, inside cabinets, and more." }
+    { question: "Do you take reservations?", answer: "We\u2019re first-come, first-served. The line moves fast and patio seating usually opens up quickly. For groups of 10+, call ahead and we\u2019ll try to set aside space." },
+    { question: "Do you sell out?", answer: "Sometimes. We smoke a set amount each day and when it\u2019s gone, it\u2019s gone. For the best selection, come before 2 PM on weekends." },
+    { question: "Do you cater?", answer: "Yes \u2014 we cater events from 20 to 500 people. Full-service includes setup, serving, and cleanup. Fill out our catering form or call for a custom quote." },
+    { question: "Is the patio dog-friendly?", answer: "Absolutely. Dogs are welcome on the patio. We\u2019ll even bring a water bowl." },
+    { question: "Do you have vegetarian options?", answer: "Our sides are the star for non-meat eaters: mac & cheese, loaded beans, coleslaw, potato salad, and jalape\u00f1o cornbread are all available as a plate." },
+    { question: "What kind of wood do you smoke with?", answer: "Post oak, exclusively. It\u2019s the traditional Central Texas wood and gives the cleanest, most consistent smoke flavor." }
   ],
 
   // === SERVICE AREA MAP ===
@@ -196,23 +190,23 @@ window.SITE_CONFIG = {
   // === BLOG POSTS ===
   blogPosts: [
     {
-      title: "10 Spots You\u2019re Forgetting to Clean",
-      excerpt: "From light switches to baseboards, these overlooked areas collect more dust and germs than you\u2019d think. Here\u2019s what our pros never skip.",
-      image: "https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=600",
+      title: "The Science of Brisket: Why Low and Slow Wins Every Time",
+      excerpt: "14 hours at 250\u00b0F breaks down collagen into gelatin, turning tough meat into butter. Here\u2019s why patience is the secret ingredient.",
+      image: "https://images.pexels.com/photos/1105325/pexels-photo-1105325.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Mar 2026"
     },
     {
-      title: "How Often Should You Deep Clean Your Home?",
-      excerpt: "Regular tidying is great, but deep cleaning hits the grime that builds up over time. Here\u2019s a realistic schedule for busy households.",
-      image: "https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=600",
+      title: "Austin\u2019s BBQ Scene: What Makes East Side Joints Different",
+      excerpt: "East Austin\u2019s BBQ culture is built on community, not competition. We break down what makes this neighborhood\u2019s food scene unique.",
+      image: "https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Feb 2026"
     },
     {
-      title: "Eco-Friendly Cleaning: What It Means and Why It Matters",
-      excerpt: "We switched to green products years ago. Here\u2019s what we learned about effectiveness, safety, and why our clients love it.",
-      image: "https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=600",
+      title: "How to Host a Backyard BBQ That Actually Impresses",
+      excerpt: "Our pitmaster shares the 5 things most backyard cooks get wrong \u2014 and how to fix them without buying a $3,000 smoker.",
+      image: "https://images.pexels.com/photos/1309778/pexels-photo-1309778.jpeg?auto=compress&cs=tinysrgb&w=600",
       url: "#",
       date: "Jan 2026"
     }
@@ -220,32 +214,40 @@ window.SITE_CONFIG = {
 
   // === TRUST BAR LOGOS ===
   trustLogos: [
-    { src: "", alt: "Licensed & Insured" },
-    { src: "", alt: "Background Checked Staff" },
-    { src: "", alt: "Eco-Friendly Products" },
-    { src: "", alt: "Google 4.8 Stars" },
-    { src: "", alt: "Satisfaction Guaranteed" }
+    { src: "", alt: "Austin Chronicle Best Of" },
+    { src: "", alt: "Eater Austin" },
+    { src: "", alt: "Google 5-Star" },
+    { src: "", alt: "Yelp Top Rated" }
   ],
 
   // === THEME ===
   theme: {
-    primary: "#1e293b",
-    accent: "#3b82f6"
+    primary: "#1C1410",
+    primaryDark: "#0E0A07",
+    accent: "#D4752E",
+    accentLight: "#E8944A",
+    bg: "#FAF8F5",
+    text: "#1C1410",
+    muted: "rgba(28,20,16,.55)",
+    fontHeading: "'Montserrat', sans-serif",
+    fontBody: "'Source Sans 3', sans-serif",
+    logoUrl: ""
   },
 
   // === SEO ===
   canonicalUrl: "",
-  ogImage: "https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ogImage: "https://images.pexels.com/photos/2491273/pexels-photo-2491273.jpeg?auto=compress&cs=tinysrgb&w=1200",
   geoRegion: "US-TX",
   geoPlacename: "Austin",
   geoPosition: "30.2672;-97.7431",
   schema: {
-    type: "LocalBusiness",
-    additionalType: "HousekeepingService",
+    type: "Restaurant",
+    additionalType: "BarOrPub",
     priceRange: "$$",
-    foundingDate: "2016",
-    areaServed: ["Austin, TX", "Round Rock, TX", "Cedar Park, TX", "Pflugerville, TX", "Georgetown, TX", "Lakeway, TX"],
-    openingHours: ["Mo-Sa 07:00-18:00"]
+    foundingDate: "2019",
+    areaServed: ["Austin, TX"],
+    openingHours: ["We-Su 11:00-21:00"],
+    servesCuisine: "Barbecue"
   },
 
   // === ANALYTICS (empty = disabled) ===
