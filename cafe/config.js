@@ -23,7 +23,7 @@ window.SITE_CONFIG = {
   topbarText: "Mon\u2013Fri 6am\u20136pm \u00b7 Sat\u2013Sun 7am\u20135pm",
 
   // === HERO ===
-  heroHeadline: "Craft Coffee. Good People.",
+  heroHeadline: "Craft Coffee.<br><span class=\"accent\">Good People.</span>",
   heroSubtext: "Handcrafted espresso, single-origin pour overs, and fresh pastries on South Congress Ave. Locally roasted beans, made with care.",
   heroImage: "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=1600",
   heroImageAlt: "Latte art in a ceramic cup at a warm coffee shop",

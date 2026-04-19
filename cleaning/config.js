@@ -24,7 +24,7 @@ window.SITE_CONFIG = {
   topbarText: "Book Online & Get 15% Off Your First Clean",
 
   // === HERO ===
-  heroHeadline: "A Spotless Home Without Lifting a Finger",
+  heroHeadline: "A <span class=\"accent\">Spotless</span> Home Without Lifting a Finger",
   heroSubtext: "Professional cleaning services in Austin, TX. Background-checked teams, eco-friendly products, and a satisfaction guarantee on every visit.",
   heroImage: "https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=1600",
   heroImageAlt: "Professional cleaner wiping down a bright kitchen counter",

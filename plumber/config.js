@@ -24,7 +24,7 @@ window.SITE_CONFIG = {
   topbarText: "24/7 Emergency Service Available",
 
   // === HERO ===
-  heroHeadline: "Fast, Reliable Plumbing in Austin, TX",
+  heroHeadline: "Austin's <span class=\"accent\">Trusted</span> Plumbers",
   heroSubtext: "Licensed & insured plumbers available same-day. From drain cleaning to full re-pipes, we do it right the first time.",
   heroImage: "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1600",
   heroImageAlt: "Professional plumber installing pipe fittings",

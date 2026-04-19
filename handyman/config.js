@@ -23,7 +23,7 @@ window.SITE_CONFIG = {
   topbarText: "Free Estimates \u00b7 Licensed & Insured",
 
   // === HERO ===
-  heroHeadline: "Your Trusted Austin Handyman & Contractor",
+  heroHeadline: "Your Trusted <span class=\"accent\">Handyman</span>",
   heroSubtext: "From small repairs to full remodels, we handle every project with care. Licensed, insured, and backed by 12+ years of experience.",
   heroImage: "https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1600",
   heroImageAlt: "Handyman performing home repair work",
