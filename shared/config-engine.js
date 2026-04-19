@@ -1,11 +1,28 @@
 // Polaris Point — Config Engine
 // Reads window.SITE_CONFIG and injects values into elements with data-cfg attributes.
-// Supports ?preview= URL param for live previewing from admin intake form.
+// Priority: DB config (PP_CLIENT_SLUG) → localStorage override → URL preview → config.js file
 // Fails silently if no config is found (HTML defaults remain visible).
 (function() {
   'use strict';
 
-  // Check for localStorage config override (from per-site admin editor)
+  // ── Step 0: If PP_CLIENT_SLUG is set, fetch config from database ──
+  // This is for deployed client sites — their config lives in Neon, not in a file.
+  try {
+    var clientSlug = window.PP_CLIENT_SLUG;
+    if (clientSlug) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/config?slug=' + encodeURIComponent(clientSlug), false); // synchronous
+      xhr.send();
+      if (xhr.status === 200) {
+        var dbData = JSON.parse(xhr.responseText);
+        if (dbData.config) {
+          window.SITE_CONFIG = typeof dbData.config === 'string' ? JSON.parse(dbData.config) : dbData.config;
+        }
+      }
+    }
+  } catch(e) { /* fall back to localStorage / config.js */ }
+
+  // ── Step 1: Check for localStorage config override (from per-site admin editor) ──
   // Version check: clear stale overrides when template is updated
   try {
     var _v = localStorage.getItem('pp_config_version');
@@ -16,28 +33,27 @@
       localStorage.setItem('pp_config_version', '3');
     }
   } catch(e) {}
-  try {
-    // Determine the storage key: use path segment (for polarispoint.io/plumber)
-    // or PP_DEMO (for standalone sites at root like pp-geronimoandsons.vercel.app)
-    // or hostname prefix (fallback)
-    var demoPath = location.pathname.split('/').filter(Boolean)[0] || '';
-    var storageKey = '';
-    if (demoPath && demoPath !== 'admin') {
-      storageKey = demoPath;
-    } else if (window.PP_DEMO) {
-      storageKey = window.PP_DEMO;
-    } else {
-      // For standalone deploys: extract from hostname (pp-geronimoandsons.vercel.app → geronimoandsons)
-      var host = location.hostname.replace('.vercel.app', '').replace(/^pp-/, '');
-      if (host && host !== 'polarispoint' && host !== 'localhost') storageKey = host;
-    }
-    if (storageKey) {
-      var stored = localStorage.getItem('pp_config_' + storageKey);
-      if (stored) {
-        window.SITE_CONFIG = JSON.parse(stored);
+  // Only use localStorage if we didn't already load from DB
+  if (!window.PP_CLIENT_SLUG) {
+    try {
+      var demoPath = location.pathname.split('/').filter(Boolean)[0] || '';
+      var storageKey = '';
+      if (demoPath && demoPath !== 'admin') {
+        storageKey = demoPath;
+      } else if (window.PP_DEMO) {
+        storageKey = window.PP_DEMO;
+      } else {
+        var host = location.hostname.replace('.vercel.app', '').replace(/^pp-/, '');
+        if (host && host !== 'polarispoint' && host !== 'localhost') storageKey = host;
       }
-    }
-  } catch(e) { /* fall back to config.js */ }
+      if (storageKey) {
+        var stored = localStorage.getItem('pp_config_' + storageKey);
+        if (stored) {
+          window.SITE_CONFIG = JSON.parse(stored);
+        }
+      }
+    } catch(e) { /* fall back to config.js */ }
+  }
 
   // Check for preview config in URL
   try {

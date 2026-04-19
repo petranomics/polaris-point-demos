@@ -7,15 +7,23 @@
 
   var PASS_HASH = '89b5785d7fac3b066e5676eccd6051ad41ac2c10ff536fc8600ada7c8ed9123b';
   var demoName = window.PP_DEMO || 'demo';
+  var clientSlug = window.PP_CLIENT_SLUG || '';  // Set on deployed client sites
+  var useDbConfig = !!clientSlug;                // DB mode vs localStorage mode
+  var authHash = '';                             // Stored after successful login
   var STORAGE_KEY = 'pp_config_' + demoName;
   var originalConfig = JSON.parse(JSON.stringify(window.SITE_CONFIG || {}));
   var config = Object.assign({}, originalConfig);
 
-  // Merge localStorage overrides
-  try {
-    var stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) Object.assign(config, JSON.parse(stored));
-  } catch(e) {}
+  // Restore auth hash from session (persists across page reloads within tab)
+  try { authHash = sessionStorage.getItem('pp_auth_hash') || ''; } catch(e) {}
+
+  // Merge localStorage overrides (demo mode only)
+  if (!useDbConfig) {
+    try {
+      var stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) Object.assign(config, JSON.parse(stored));
+    } catch(e) {}
+  }
 
   var THEMES = [
     { id: 'navy-orange', name: 'Professional', desc: 'Navy & Orange', primary: '#1B3A6B', accent: '#E8601E' },
@@ -81,6 +89,27 @@
   function doLogin(pass, errEl) {
     crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
       var hash = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+
+      // If deployed client site, verify against DB
+      if (useDbConfig) {
+        fetch('/api/config?action=login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug: clientSlug, hash: hash })
+        }).then(function(r) { return r.json(); }).then(function(data) {
+          if (data.valid) {
+            authHash = hash;
+            sessionStorage.setItem('pp_site_admin', '1');
+            sessionStorage.setItem('pp_auth_hash', hash);
+            showEditor();
+          } else {
+            errEl.style.display = 'block';
+          }
+        }).catch(function() { errEl.style.display = 'block'; });
+        return;
+      }
+
+      // Demo mode: check hardcoded hash
       if (hash === PASS_HASH) {
         sessionStorage.setItem('pp_site_admin', '1');
         showEditor();
@@ -336,6 +365,27 @@
   // ── Save / Export / Reset ──
   function doSave() {
     var data = collectConfig();
+
+    // If deployed client site, save to DB
+    if (useDbConfig) {
+      var hash = authHash || sessionStorage.getItem('pp_auth_hash') || '';
+      fetch('/api/config?slug=' + encodeURIComponent(clientSlug), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config: data, hash: hash })
+      }).then(function(r) { return r.json(); }).then(function(result) {
+        if (result.success) {
+          notify('Saved! Changes are live.', 'success');
+        } else {
+          notify('Save failed: ' + (result.error || 'unknown error'), 'error');
+        }
+      }).catch(function(err) {
+        notify('Save failed: ' + err.message, 'error');
+      });
+      return;
+    }
+
+    // Demo mode: save to localStorage
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       notify('Saved! Reload the demo site to see changes.', 'success');

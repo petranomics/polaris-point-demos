@@ -96,6 +96,11 @@ module.exports = async function handler(req, res) {
     await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_contacted TIMESTAMP`;
     await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS next_followup DATE`;
 
+    // Client admin columns (Phase 1: per-client passwords + DB-backed config)
+    await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS admin_password_hash TEXT`;
+    await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS site_config JSONB`;
+    await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS config_updated_at TIMESTAMP DEFAULT NOW()`;
+
     // Indexes
     await sql`CREATE INDEX IF NOT EXISTS idx_leads_owner ON leads(owner)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_leads_stage ON leads(stage)`;
