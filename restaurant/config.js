@@ -64,8 +64,8 @@ window.SITE_CONFIG = {
   service6Desc: "We cater everything from backyard parties to corporate events. Full-service BBQ catering with setup, serving, and cleanup included.",
 
   // === ABOUT ===
-  aboutImage: "https://images.pexels.com/photos/8753647/pexels-photo-8753647.jpeg?auto=compress&cs=tinysrgb&w=800",
-  aboutImageAlt: "Pitmaster tending the smoker",
+  aboutImage: "https://images.pexels.com/photos/36169156/pexels-photo-36169156.jpeg?auto=compress&cs=tinysrgb&w=800",
+  aboutImageAlt: "Grill master working a live-fire smoker in rustic kitchen",
   aboutLabel: "Our Story",
   aboutTitle: "Built on Smoke & Community",
   aboutText: "Iron & Oak started as a backyard hobby that got out of hand. In 2019, pitmaster Marcus Cole quit his day job, bought a 500-gallon offset smoker, and started selling brisket from a trailer on East 7th. Five years and a brick-and-mortar later, we\u2019re still doing it the only way we know how: post oak, salt, pepper, and patience. No shortcuts. No gas assist. Just honest Texas barbecue.",
