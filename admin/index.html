@@ -4744,38 +4744,119 @@
       var div = document.getElementById('scrapeResults');
       if (!results.length) { div.innerHTML = '<p style="color:#64748b;text-align:center;padding:16px;">No results found.</p>'; return; }
       var noSite = results.filter(function(r) { return !r.website; }).length;
-      var html = '<div style="display:flex;gap:12px;margin:14px 0;align-items:center;">' +
+      var html = '<div style="display:flex;gap:12px;margin:14px 0;align-items:center;flex-wrap:wrap;">' +
         '<span style="font-size:.78rem;color:#e2e8f0;font-weight:600;">' + results.length + ' found</span>' +
         '<span class="outreach-badge no-site">' + noSite + ' no website</span>' +
         '<span style="font-size:.72rem;color:#64748b;">' + (results.length - noSite) + ' with website</span>' +
         (results[0]._demo ? '<span style="font-size:.62rem;color:#f59e0b;margin-left:auto;">Demo data \u2014 connect agent for real results</span>' : '') + '</div>';
-      html += '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
-        '<button class="btn-export" onclick="importAllScraped(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;">Import All</button>' +
-        '<button class="btn-export secondary" onclick="importNoWebsite(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;">Import No-Website Only (' + noSite + ')</button></div>';
+      html += '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">' +
+        '<button class="btn-export" onclick="importSelectedScraped(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;">Import Selected</button>' +
+        '<button class="btn-export secondary" onclick="selectScrapeFilter(\'no_website\')" style="font-size:.72rem;padding:6px 14px;">Select No-Website (' + noSite + ')</button>' +
+        '<button class="btn-export secondary" onclick="selectScrapeFilter(\'all\')" style="font-size:.72rem;padding:6px 14px;">Select All</button>' +
+        '<button class="btn-export secondary" onclick="selectScrapeFilter(\'none\')" style="font-size:.72rem;padding:6px 14px;">Deselect All</button>' +
+        '<button class="btn-export" onclick="enrichSelectedScraped()" style="font-size:.72rem;padding:6px 14px;background:#D4A853;">Enrich Selected</button>' +
+        '</div>';
       html += '<div class="scrape-results">';
       results.forEach(function(r, i) {
-        html += '<div class="scrape-result-item"><div style="flex:1;">' +
-          '<div class="biz-name">' + r.name + (!r.website ? ' <span class="outreach-badge no-site">No Site</span>' : '') + '</div>' +
+        var enrichedBadges = '';
+        if (r._enriched) enrichedBadges = ' <span style="font-size:.58rem;color:#22c55e;background:rgba(34,197,94,.1);padding:1px 6px;border-radius:4px;">Enriched</span>';
+        html += '<div class="scrape-result-item">' +
+          '<input type="checkbox" class="scrape-select" data-idx="' + i + '" style="accent-color:#5B8DEF;width:16px;height:16px;flex-shrink:0;margin-right:8px;">' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div class="biz-name">' + r.name + (!r.website ? ' <span class="outreach-badge no-site">No Site</span>' : '') + enrichedBadges + '</div>' +
           '<div class="biz-meta">' + [r.phone, r.email, r.address].filter(Boolean).join(' \u00B7 ') + '</div>' +
           (r.website ? '<div class="biz-meta" style="color:#5B8DEF;">' + r.website + '</div>' : '') +
-          '</div><button class="btn-export" onclick="importSingleScraped(' + i + ',\'' + ind + '\',this)" style="font-size:.68rem;padding:5px 12px;white-space:nowrap;">+ Import</button></div>';
+          (r.rating ? '<div class="biz-meta" style="color:#f59e0b;">\u2605 ' + r.rating + (r.reviewCount ? ' (' + r.reviewCount + ' reviews)' : '') + '</div>' : '') +
+          '</div></div>';
       });
       div.innerHTML = html + '</div>';
     }
 
-    function importSingleScraped(i, ind, btnEl) {
-      var r = _scrapeResults[i]; if (!r) return;
-      fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
-          phone: r.phone || '', email: r.email || '', rating: r.rating || '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
-          notes: 'Imported via batch scraper' + (r._demo ? ' (demo data)' : ''), owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
-      }).then(function(res) { return res.json(); }).then(function() {
-        btnEl.textContent = 'Imported'; btnEl.disabled = true;
-        btnEl.style.cssText += 'background:rgba(34,197,94,.15);color:#22c55e;border-color:rgba(34,197,94,.2);';
-      }).catch(function(e) { alert('Failed: ' + e.message); });
+    function selectScrapeFilter(filter) {
+      document.querySelectorAll('.scrape-select').forEach(function(cb) {
+        var idx = parseInt(cb.dataset.idx);
+        var r = _scrapeResults[idx];
+        if (filter === 'all') cb.checked = true;
+        else if (filter === 'none') cb.checked = false;
+        else if (filter === 'no_website') cb.checked = !r.website;
+      });
     }
-    function importAllScraped(ind) { _scrapeResults.forEach(function(r, i) { var btn = document.querySelectorAll('.scrape-result-item')[i]; if (btn) importSingleScraped(i, ind, btn.querySelector('button')); }); }
-    function importNoWebsite(ind) { _scrapeResults.forEach(function(r, i) { if (!r.website) { var btn = document.querySelectorAll('.scrape-result-item')[i]; if (btn) importSingleScraped(i, ind, btn.querySelector('button')); } }); }
+
+    function getSelectedScrapeIdxs() {
+      var idxs = [];
+      document.querySelectorAll('.scrape-select:checked').forEach(function(cb) { idxs.push(parseInt(cb.dataset.idx)); });
+      return idxs;
+    }
+
+    async function enrichSelectedScraped() {
+      var idxs = getSelectedScrapeIdxs();
+      if (!idxs.length) { alert('Select businesses to enrich first.'); return; }
+      var prog = document.getElementById('scrapeProgress');
+      if (prog) prog.textContent = 'Enriching 0/' + idxs.length + '...';
+      for (var i = 0; i < idxs.length; i++) {
+        var r = _scrapeResults[idxs[i]];
+        if (prog) prog.textContent = 'Enriching ' + (i + 1) + '/' + idxs.length + ': ' + r.name + '...';
+        try {
+          // Try Google Places
+          var q = encodeURIComponent(r.name + ' ' + (r.address || ''));
+          var placesResp = await fetch('/api/places?q=' + q);
+          if (placesResp.ok) {
+            var places = await placesResp.json();
+            if (places.name && !places.error) {
+              if (places.phone && !r.phone) r.phone = places.phone;
+              if (places.address && !r.address) r.address = places.address;
+              if (places.website) r.website = places.website;
+              if (places.rating) r.rating = places.rating;
+              if (places.reviewCount) r.reviewCount = places.reviewCount;
+              if (places.mapsUrl) r.mapsUrl = places.mapsUrl;
+              if (places.hours && places.hours.length) r.hours = places.hours;
+            }
+          }
+          // Try Yelp
+          var yelpQ = encodeURIComponent(r.name);
+          var yelpLoc = encodeURIComponent(r.address || 'Austin TX');
+          var yelpResp = await fetch('/api/yelp?q=' + yelpQ + '&location=' + yelpLoc);
+          if (yelpResp.ok) {
+            var yelp = await yelpResp.json();
+            if (yelp.name && !yelp.error) {
+              if (yelp.phone && !r.phone) r.phone = yelp.phone;
+              if (yelp.address && !r.address) r.address = yelp.address;
+              if (yelp.rating && (!r.rating || yelp.rating > r.rating)) { r.yelpRating = yelp.rating; r.yelpReviewCount = yelp.reviewCount; }
+              if (yelp.yelpUrl) r.yelpUrl = yelp.yelpUrl;
+              if (yelp.categories && yelp.categories.length) r.categories = yelp.categories;
+            }
+          }
+          r._enriched = true;
+        } catch (e) { /* skip enrichment errors */ }
+      }
+      if (prog) prog.textContent = 'Enriched ' + idxs.length + ' businesses';
+      var ind = document.getElementById('scrapeIndustry') ? document.getElementById('scrapeIndustry').value : '';
+      renderScrapeResults(_scrapeResults, ind);
+      // Re-check the ones that were selected
+      idxs.forEach(function(idx) {
+        var cb = document.querySelector('.scrape-select[data-idx="' + idx + '"]');
+        if (cb) cb.checked = true;
+      });
+    }
+
+    function importSelectedScraped(ind) {
+      var idxs = getSelectedScrapeIdxs();
+      if (!idxs.length) { alert('Select businesses to import first.'); return; }
+      idxs.forEach(function(idx) {
+        var r = _scrapeResults[idx];
+        if (!r) return;
+        var notes = 'Imported via batch scraper' + (r._demo ? ' (demo data)' : '') + (r._enriched ? ' (enriched)' : '');
+        if (r.yelpUrl) notes += '\nYelp: ' + r.yelpUrl;
+        if (r.mapsUrl) notes += '\nMaps: ' + r.mapsUrl;
+        if (r.hours) notes += '\nHours: ' + (Array.isArray(r.hours) ? r.hours.join(', ') : r.hours);
+        fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
+            phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
+            notes: notes, listing_url: r.yelpUrl || r.mapsUrl || '', owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
+        });
+      });
+      alert(idxs.length + ' leads imported.');
+    }
 
     // --- Outreach Queue ---
     function loadOutreachQueue() {
