@@ -346,18 +346,19 @@
     .admin-tabs {
       display: flex;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
+      row-gap: 4px;
       margin: 12px 0 24px;
       background: #111827;
       border-radius: 10px;
-      padding: 3px;
-      max-width: 900px;
+      padding: 5px;
+      max-width: 720px;
       margin-left: auto;
       margin-right: auto;
       flex-wrap: wrap;
     }
     .admin-tab {
-      padding: 8px 10px;
+      padding: 9px 14px;
       border: none;
       border-radius: 7px;
       background: transparent;
@@ -2126,29 +2127,29 @@
       <!-- Section A: Create / Manage Subscriptions -->
       <div class="sales-card" style="padding:20px 24px;">
         <h3 style="margin-bottom:14px;">Create Beacon Subscription</h3>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px;">
-          <div style="flex:1;min-width:180px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+          <div>
             <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Site</label>
             <select id="beaconSiteSelect" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
               <option value="">Loading sites...</option>
             </select>
           </div>
-          <div style="flex:2;min-width:260px;">
+          <div>
             <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Plan</label>
-            <div style="display:flex;gap:14px;align-items:center;padding-top:4px;">
-              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:#e2e8f0;cursor:pointer;">
-                <input type="radio" name="beaconPlan" value="lite" style="accent-color:#5B8DEF;"> Lite <span style="color:#64748b;font-size:.72rem;">$149/mo</span>
+            <div style="display:flex;gap:16px;align-items:center;height:38px;">
+              <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:#e2e8f0;cursor:pointer;">
+                <input type="radio" name="beaconPlan" value="lite" style="accent-color:#5B8DEF;"> Lite <span style="color:#64748b;font-size:.68rem;">$149</span>
               </label>
-              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:#e2e8f0;cursor:pointer;">
-                <input type="radio" name="beaconPlan" value="beacon" checked style="accent-color:#5B8DEF;"> Beacon <span style="color:#D4A853;font-size:.72rem;">$299/mo</span>
+              <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:#e2e8f0;cursor:pointer;">
+                <input type="radio" name="beaconPlan" value="beacon" checked style="accent-color:#5B8DEF;"> Beacon <span style="color:#D4A853;font-size:.68rem;">$299</span>
               </label>
-              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:#e2e8f0;cursor:pointer;">
-                <input type="radio" name="beaconPlan" value="pro" style="accent-color:#5B8DEF;"> Pro <span style="color:#64748b;font-size:.72rem;">$499/mo</span>
+              <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:#e2e8f0;cursor:pointer;">
+                <input type="radio" name="beaconPlan" value="pro" style="accent-color:#5B8DEF;"> Pro <span style="color:#64748b;font-size:.68rem;">$499</span>
               </label>
             </div>
           </div>
-          <button class="btn-export" onclick="createBeaconSub()" style="white-space:nowrap;">Create Beacon Subscription</button>
         </div>
+        <button class="btn-export" onclick="createBeaconSub()" style="width:100%;justify-content:center;margin-bottom:18px;">Create Beacon Subscription</button>
 
         <h3 style="margin-bottom:10px;">Active Subscriptions</h3>
         <div style="overflow-x:auto;">
