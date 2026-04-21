@@ -634,3 +634,416 @@
     init();
   }
 })();
+
+// ── BEACON AI CHAT ──────────────────────────────────────────────────────────
+(function beaconInit() {
+  'use strict';
+
+  var slug = window.PP_DEMO || window.PP_CLIENT_SLUG;
+  if (!slug) return;
+
+  var subscription = null; // populated after fetch
+  var contextDocs = [];    // list of {id, title} from API
+  var chatHistory = [];    // {role, content} for display
+
+  // ── Inject styles ──
+  var style = document.createElement('style');
+  style.textContent = [
+    '.bcn-panel{position:fixed;bottom:0;right:24px;width:420px;max-width:calc(100vw - 48px);z-index:90000;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 -4px 24px rgba(0,0,0,.45);transition:transform .25s ease,opacity .2s ease;transform:translateY(calc(100% - 48px))}',
+    '.bcn-panel.bcn-open{transform:translateY(0)}',
+    '.bcn-panel.bcn-hidden{display:none}',
+
+    '.bcn-header{display:flex;align-items:center;justify-content:space-between;background:#111827;padding:12px 16px;cursor:pointer;user-select:none;border-bottom:1px solid #1e293b}',
+    '.bcn-header-left{display:flex;align-items:center;gap:10px}',
+    '.bcn-header h3{margin:0;font-size:.85rem;font-weight:600;color:#e2e8f0}',
+    '.bcn-badge{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:9999px;background:#5B8DEF;color:#fff;text-transform:uppercase;letter-spacing:.04em}',
+    '.bcn-toggle-icon{color:#94a3b8;font-size:1.1rem;transition:transform .2s}',
+    '.bcn-open .bcn-toggle-icon{transform:rotate(180deg)}',
+
+    '.bcn-body{background:#111827;display:flex;flex-direction:column;max-height:0;transition:max-height .25s ease}',
+    '.bcn-open .bcn-body{max-height:700px}',
+
+    /* Token bar */
+    '.bcn-token-bar{padding:8px 16px;background:#111827;border-bottom:1px solid #1e293b}',
+    '.bcn-token-label{font-size:.65rem;color:#94a3b8;margin-bottom:4px;display:flex;justify-content:space-between}',
+    '.bcn-token-track{height:6px;background:#1e293b;border-radius:3px;overflow:hidden}',
+    '.bcn-token-fill{height:100%;background:#5B8DEF;border-radius:3px;transition:width .3s}',
+
+    /* Quick actions */
+    '.bcn-actions{display:flex;gap:6px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid #1e293b}',
+    '.bcn-action-btn{font-size:.68rem;padding:5px 10px;border:1px solid #2d3748;border-radius:6px;background:#1a1f2e;color:#e2e8f0;cursor:pointer;transition:background .15s,border-color .15s;font-family:inherit}',
+    '.bcn-action-btn:hover{background:#5B8DEF;border-color:#5B8DEF;color:#fff}',
+
+    /* Context panel */
+    '.bcn-ctx-toggle{font-size:.68rem;padding:6px 16px;color:#5B8DEF;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;width:100%}',
+    '.bcn-ctx-toggle:hover{text-decoration:underline}',
+    '.bcn-ctx-panel{padding:0 16px 10px;display:none}',
+    '.bcn-ctx-panel.bcn-ctx-open{display:block}',
+    '.bcn-ctx-list{list-style:none;margin:0 0 8px;padding:0}',
+    '.bcn-ctx-list li{display:flex;align-items:center;justify-content:space-between;font-size:.68rem;color:#cbd5e1;padding:3px 0}',
+    '.bcn-ctx-del{background:none;border:none;color:#ef4444;cursor:pointer;font-size:.72rem;padding:0 4px;font-family:inherit}',
+    '.bcn-ctx-del:hover{color:#f87171}',
+    '.bcn-ctx-row{display:flex;gap:6px}',
+    '.bcn-ctx-input{flex:1;background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:6px 8px;color:#e2e8f0;font-size:.72rem;font-family:inherit;resize:vertical;min-height:48px}',
+    '.bcn-ctx-add{padding:6px 12px;border:none;border-radius:6px;background:#5B8DEF;color:#fff;font-size:.68rem;cursor:pointer;font-family:inherit;align-self:flex-end}',
+    '.bcn-ctx-add:hover{background:#4a7de0}',
+
+    /* Chat thread */
+    '.bcn-thread{flex:1;overflow-y:auto;padding:12px 16px;background:#0B1120;display:flex;flex-direction:column;gap:10px;max-height:400px;min-height:120px}',
+    '.bcn-msg{max-width:85%;padding:8px 12px;border-radius:10px;font-size:.78rem;line-height:1.45;color:#e2e8f0;word-wrap:break-word;white-space:pre-wrap}',
+    '.bcn-msg-user{align-self:flex-end;background:#1e3a5f;border-bottom-right-radius:3px}',
+    '.bcn-msg-assistant{align-self:flex-start;background:#1a1f2e;border-bottom-left-radius:3px}',
+    '.bcn-msg-error{align-self:center;background:#7f1d1d;font-size:.7rem;color:#fca5a5}',
+
+    /* Typing indicator */
+    '.bcn-typing{align-self:flex-start;display:flex;gap:4px;padding:10px 14px;background:#1a1f2e;border-radius:10px;border-bottom-left-radius:3px}',
+    '.bcn-dot{width:6px;height:6px;border-radius:50%;background:#5B8DEF;animation:bcnBounce .9s infinite}',
+    '.bcn-dot:nth-child(2){animation-delay:.15s}',
+    '.bcn-dot:nth-child(3){animation-delay:.3s}',
+    '@keyframes bcnBounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}',
+
+    /* Input row */
+    '.bcn-input-row{display:flex;gap:6px;padding:10px 16px;background:#111827;border-top:1px solid #1e293b}',
+    '.bcn-input{flex:1;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:.78rem;font-family:inherit;outline:none;resize:none;max-height:80px}',
+    '.bcn-input:focus{border-color:#5B8DEF}',
+    '.bcn-send{padding:8px 14px;border:none;border-radius:8px;background:#5B8DEF;color:#fff;font-size:.78rem;cursor:pointer;font-family:inherit;font-weight:600;transition:background .15s}',
+    '.bcn-send:hover{background:#4a7de0}',
+    '.bcn-send:disabled{opacity:.5;cursor:not-allowed}'
+  ].join('\n');
+  document.head.appendChild(style);
+
+  // ── Helpers ──
+  function bel(tag, cls, attrs) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (attrs) Object.keys(attrs).forEach(function(k) {
+      if (k === 'text') e.textContent = attrs[k];
+      else if (k === 'html') e.innerHTML = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    });
+    return e;
+  }
+
+  // ── Build the Beacon panel ──
+  function buildPanel(sub) {
+    subscription = sub;
+
+    var panel = bel('div', 'bcn-panel bcn-hidden');
+    panel.id = 'beaconPanel';
+
+    // Header
+    var header = bel('div', 'bcn-header');
+    var hLeft = bel('div', 'bcn-header-left');
+    hLeft.appendChild(bel('h3', '', { text: 'Beacon AI' }));
+    var planName = (sub.plan_name || sub.plan || 'Lite');
+    hLeft.appendChild(bel('span', 'bcn-badge', { text: planName }));
+    header.appendChild(hLeft);
+    header.appendChild(bel('span', 'bcn-toggle-icon', { html: '&#9660;' }));
+    header.onclick = function() { panel.classList.toggle('bcn-open'); };
+    panel.appendChild(header);
+
+    // Body wrapper
+    var body = bel('div', 'bcn-body');
+
+    // Token usage bar
+    var tokenBar = bel('div', 'bcn-token-bar');
+    var tokenLabel = bel('div', 'bcn-token-label');
+    var used = sub.tokens_used || 0;
+    var limit = sub.tokens_limit || 1;
+    var pct = Math.min(100, Math.round((used / limit) * 100));
+    tokenLabel.innerHTML = '<span>Token Usage</span><span>' + used.toLocaleString() + ' / ' + limit.toLocaleString() + ' (' + pct + '%)</span>';
+    tokenBar.appendChild(tokenLabel);
+    var track = bel('div', 'bcn-token-track');
+    var fill = bel('div', 'bcn-token-fill');
+    fill.style.width = pct + '%';
+    if (pct > 80) fill.style.background = '#f59e0b';
+    if (pct > 95) fill.style.background = '#ef4444';
+    track.appendChild(fill);
+    tokenBar.appendChild(track);
+    body.appendChild(tokenBar);
+
+    // Quick actions
+    var actions = bel('div', 'bcn-actions');
+    var quickTypes = [
+      { label: 'Generate Social Posts', type: 'social_post' },
+      { label: 'Draft Newsletter', type: 'newsletter' },
+      { label: 'Write Blog Post', type: 'blog' }
+    ];
+    quickTypes.forEach(function(qt) {
+      var btn = bel('button', 'bcn-action-btn', { text: qt.label });
+      btn.onclick = function() { doGenerate(qt.type, qt.label); };
+      actions.appendChild(btn);
+    });
+    body.appendChild(actions);
+
+    // Context panel (collapsible)
+    var ctxToggle = bel('button', 'bcn-ctx-toggle', { text: '+ Add Context Info' });
+    body.appendChild(ctxToggle);
+    var ctxPanel = bel('div', 'bcn-ctx-panel');
+    var ctxList = bel('ul', 'bcn-ctx-list');
+    ctxPanel.appendChild(ctxList);
+    var ctxRow = bel('div', 'bcn-ctx-row');
+    var ctxInput = bel('textarea', 'bcn-ctx-input', { placeholder: 'Paste additional info about your business (hours, promos, tone notes, etc.)...' });
+    ctxRow.appendChild(ctxInput);
+    var ctxAddBtn = bel('button', 'bcn-ctx-add', { text: 'Add' });
+    ctxRow.appendChild(ctxAddBtn);
+    ctxPanel.appendChild(ctxRow);
+    body.appendChild(ctxPanel);
+
+    ctxToggle.onclick = function() {
+      ctxPanel.classList.toggle('bcn-ctx-open');
+      ctxToggle.textContent = ctxPanel.classList.contains('bcn-ctx-open') ? '− Hide Context Info' : '+ Add Context Info';
+    };
+
+    ctxAddBtn.onclick = function() {
+      var text = ctxInput.value.trim();
+      if (!text) return;
+      ctxAddBtn.disabled = true;
+      fetch('/api/beacon/context', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription_id: subscription.id, content: text })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.id) {
+          contextDocs.push({ id: data.id, title: text.substring(0, 60) + (text.length > 60 ? '...' : '') });
+          renderContextList(ctxList);
+          ctxInput.value = '';
+        }
+      })
+      .catch(function() { /* silently fail */ })
+      .finally(function() { ctxAddBtn.disabled = false; });
+    };
+
+    // Chat thread
+    var thread = bel('div', 'bcn-thread');
+    thread.id = 'beaconThread';
+    body.appendChild(thread);
+
+    // Input row
+    var inputRow = bel('div', 'bcn-input-row');
+    var chatInput = bel('textarea', 'bcn-input', { placeholder: 'Ask Beacon anything...', rows: '1' });
+    chatInput.id = 'beaconInput';
+    var sendBtn = bel('button', 'bcn-send', { text: 'Send' });
+    sendBtn.id = 'beaconSend';
+    inputRow.appendChild(chatInput);
+    inputRow.appendChild(sendBtn);
+    body.appendChild(inputRow);
+
+    panel.appendChild(body);
+    document.body.appendChild(panel);
+
+    // Wire up send
+    sendBtn.onclick = function() { doSendMessage(); };
+    chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        doSendMessage();
+      }
+    });
+
+    // Auto-resize the input
+    chatInput.addEventListener('input', function() {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 80) + 'px';
+    });
+
+    // Show the panel (collapsed by default)
+    panel.classList.remove('bcn-hidden');
+
+    // Load existing context docs
+    loadContextDocs(ctxList);
+
+    // Greeting
+    appendMessage('assistant', 'Hi! I\'m Beacon AI — your content assistant for this site. Ask me anything or use the quick actions above.');
+  }
+
+  // ── Render context list ──
+  function renderContextList(listEl) {
+    listEl.innerHTML = '';
+    contextDocs.forEach(function(doc) {
+      var li = bel('li', '');
+      li.appendChild(bel('span', '', { text: doc.title }));
+      var del = bel('button', 'bcn-ctx-del', { text: 'x' });
+      del.onclick = function() { deleteContext(doc.id, listEl); };
+      li.appendChild(del);
+      listEl.appendChild(li);
+    });
+  }
+
+  // ── Load context docs ──
+  function loadContextDocs(listEl) {
+    fetch('/api/beacon/context?subscription_id=' + subscription.id)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (Array.isArray(data)) {
+          contextDocs = data.map(function(d) {
+            return { id: d.id, title: (d.content || d.title || '').substring(0, 60) };
+          });
+          renderContextList(listEl);
+        }
+      })
+      .catch(function() { /* context endpoint not available */ });
+  }
+
+  // ── Delete context doc ──
+  function deleteContext(docId, listEl) {
+    fetch('/api/beacon/context/' + docId, { method: 'DELETE' })
+      .then(function() {
+        contextDocs = contextDocs.filter(function(d) { return d.id !== docId; });
+        renderContextList(listEl);
+      })
+      .catch(function() { /* silently fail */ });
+  }
+
+  // ── Append a message to the thread ──
+  function appendMessage(role, content) {
+    var thread = document.getElementById('beaconThread');
+    if (!thread) return;
+    var cls = role === 'user' ? 'bcn-msg bcn-msg-user'
+            : role === 'error' ? 'bcn-msg bcn-msg-error'
+            : 'bcn-msg bcn-msg-assistant';
+    var msg = bel('div', cls, { text: content });
+    thread.appendChild(msg);
+    thread.scrollTop = thread.scrollHeight;
+    chatHistory.push({ role: role, content: content });
+    return msg;
+  }
+
+  // ── Typing indicator ──
+  function showTyping() {
+    var thread = document.getElementById('beaconThread');
+    if (!thread) return null;
+    var indicator = bel('div', 'bcn-typing');
+    indicator.id = 'beaconTyping';
+    indicator.appendChild(bel('span', 'bcn-dot'));
+    indicator.appendChild(bel('span', 'bcn-dot'));
+    indicator.appendChild(bel('span', 'bcn-dot'));
+    thread.appendChild(indicator);
+    thread.scrollTop = thread.scrollHeight;
+    return indicator;
+  }
+
+  function hideTyping() {
+    var ind = document.getElementById('beaconTyping');
+    if (ind) ind.remove();
+  }
+
+  // ── Send chat message ──
+  function doSendMessage() {
+    var input = document.getElementById('beaconInput');
+    var sendBtn = document.getElementById('beaconSend');
+    if (!input || !sendBtn) return;
+    var text = input.value.trim();
+    if (!text) return;
+
+    appendMessage('user', text);
+    input.value = '';
+    input.style.height = 'auto';
+    sendBtn.disabled = true;
+    var typing = showTyping();
+
+    fetch('/api/beacon/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription_id: subscription.id,
+        message: text
+      })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      hideTyping();
+      appendMessage('assistant', data.reply || data.message || data.content || 'No response received.');
+      updateTokenUsage(data);
+    })
+    .catch(function(err) {
+      hideTyping();
+      appendMessage('error', 'Failed to send: ' + err.message);
+    })
+    .finally(function() {
+      sendBtn.disabled = false;
+      input.focus();
+    });
+  }
+
+  // ── Quick generate ──
+  function doGenerate(type, label) {
+    appendMessage('user', label);
+    var sendBtn = document.getElementById('beaconSend');
+    if (sendBtn) sendBtn.disabled = true;
+    var typing = showTyping();
+
+    fetch('/api/beacon/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription_id: subscription.id,
+        type: type
+      })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      hideTyping();
+      appendMessage('assistant', data.reply || data.content || data.message || 'Content generated (check your dashboard).');
+      updateTokenUsage(data);
+    })
+    .catch(function(err) {
+      hideTyping();
+      appendMessage('error', 'Generation failed: ' + err.message);
+    })
+    .finally(function() {
+      if (sendBtn) sendBtn.disabled = false;
+    });
+  }
+
+  // ── Update token bar after response ──
+  function updateTokenUsage(data) {
+    if (!data) return;
+    var used = data.tokens_used != null ? data.tokens_used : (subscription.tokens_used || 0);
+    var limit = data.tokens_limit != null ? data.tokens_limit : (subscription.tokens_limit || 1);
+    subscription.tokens_used = used;
+    subscription.tokens_limit = limit;
+    var pct = Math.min(100, Math.round((used / limit) * 100));
+    var label = document.querySelector('.bcn-token-label');
+    var fill = document.querySelector('.bcn-token-fill');
+    if (label) label.innerHTML = '<span>Token Usage</span><span>' + used.toLocaleString() + ' / ' + limit.toLocaleString() + ' (' + pct + '%)</span>';
+    if (fill) {
+      fill.style.width = pct + '%';
+      fill.style.background = pct > 95 ? '#ef4444' : pct > 80 ? '#f59e0b' : '#5B8DEF';
+    }
+  }
+
+  // ── Bootstrap: check for subscription ──
+  function checkSubscription() {
+    fetch('/api/beacon/subscriptions?site_slug=' + encodeURIComponent(slug))
+      .then(function(r) {
+        if (!r.ok) throw new Error('not found');
+        return r.json();
+      })
+      .then(function(data) {
+        // Accept an object or first item in an array
+        var sub = Array.isArray(data) ? data[0] : data;
+        if (sub && (sub.status === 'active' || sub.active)) {
+          buildPanel(sub);
+        }
+        // else: no active subscription — do nothing
+      })
+      .catch(function() {
+        // API unavailable or no subscription — silently bail
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkSubscription);
+  } else {
+    checkSubscription();
+  }
+})();

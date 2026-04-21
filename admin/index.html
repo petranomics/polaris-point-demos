@@ -1084,6 +1084,7 @@
     <a class="admin-tab senior-only" href="/ops" style="text-decoration:none;">Ops Dashboard</a>
     <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
     <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
+    <button class="admin-tab senior-only" onclick="switchTab('beacon')">Beacon</button>
   </div>
 
   <!-- SALES DECK TAB -->
@@ -2119,6 +2120,127 @@
     </div>
   </div>
 
+  <!-- BEACON TAB (Senior Only) -->
+  <div id="tabBeacon" class="tab-content" style="display:none;">
+    <div class="sales-section">
+
+      <!-- Section A: Create / Manage Subscriptions -->
+      <div class="sales-card" style="padding:20px 24px;">
+        <h3 style="margin-bottom:14px;">Create Beacon Subscription</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px;">
+          <div style="flex:1;min-width:180px;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Site</label>
+            <select id="beaconSiteSelect" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+              <option value="">Loading sites...</option>
+            </select>
+          </div>
+          <div style="flex:2;min-width:260px;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Plan</label>
+            <div style="display:flex;gap:14px;align-items:center;padding-top:4px;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:#e2e8f0;cursor:pointer;">
+                <input type="radio" name="beaconPlan" value="lite" style="accent-color:#5B8DEF;"> Lite <span style="color:#64748b;font-size:.72rem;">$149/mo</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:#e2e8f0;cursor:pointer;">
+                <input type="radio" name="beaconPlan" value="beacon" checked style="accent-color:#5B8DEF;"> Beacon <span style="color:#D4A853;font-size:.72rem;">$299/mo</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:#e2e8f0;cursor:pointer;">
+                <input type="radio" name="beaconPlan" value="pro" style="accent-color:#5B8DEF;"> Pro <span style="color:#64748b;font-size:.72rem;">$499/mo</span>
+              </label>
+            </div>
+          </div>
+          <button class="btn-export" onclick="createBeaconSub()" style="white-space:nowrap;">Create Beacon Subscription</button>
+        </div>
+
+        <h3 style="margin-bottom:10px;">Active Subscriptions</h3>
+        <div style="overflow-x:auto;">
+          <table id="beaconSubsTable" style="width:100%;border-collapse:collapse;font-size:.78rem;">
+            <thead>
+              <tr style="border-bottom:1px solid #1e293b;color:#64748b;text-align:left;">
+                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Site</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Plan</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Status</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Token Usage</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="beaconSubsBody">
+              <tr><td colspan="5" style="padding:20px;text-align:center;color:#334155;">Loading subscriptions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section B: Context Seeding (visible when subscription selected) -->
+      <div id="beaconContextSection" class="sales-card" style="padding:20px 24px;display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <h3 style="margin:0;">Context Seeding</h3>
+          <span id="beaconContextSubLabel" style="font-size:.72rem;color:#64748b;"></span>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Paste business documents, marketing materials, or brand guidelines</label>
+          <textarea id="beaconContextText" rows="5" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.8rem;resize:vertical;outline:none;"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Website URL to Scrape</label>
+            <input id="beaconScrapeUrl" type="url" placeholder="https://example.com" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <button class="btn-export secondary" onclick="scrapeBeaconUrl()" style="font-size:.75rem;padding:8px 16px;white-space:nowrap;">Scrape Website</button>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Brand Voice Instructions</label>
+          <textarea id="beaconBrandVoice" rows="3" placeholder="e.g. Friendly and professional, avoid jargon, always mention our guarantee..." style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.8rem;resize:vertical;outline:none;"></textarea>
+        </div>
+        <button class="btn-export" onclick="addBeaconContext()" style="font-size:.78rem;padding:8px 20px;">Add Context</button>
+
+        <div id="beaconContextList" style="margin-top:18px;"></div>
+      </div>
+
+      <!-- Section C: Chat Preview (visible when subscription selected) -->
+      <div id="beaconChatSection" class="sales-card" style="padding:20px 24px;display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <h3 style="margin:0;">Chat Preview</h3>
+          <span id="beaconChatSubLabel" style="font-size:.72rem;color:#64748b;"></span>
+        </div>
+        <div id="beaconChatMessages" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;height:320px;overflow-y:auto;padding:14px;margin-bottom:12px;">
+          <p style="text-align:center;color:#334155;font-size:.8rem;">Select a subscription to view chat history</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <input id="beaconTestMsg" type="text" placeholder="Send a test message..." style="flex:1;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          <button class="btn-export" onclick="sendBeaconTestMessage()" style="font-size:.78rem;padding:8px 18px;">Send</button>
+        </div>
+      </div>
+
+      <!-- Section D: Content Queue (visible when subscription selected) -->
+      <div id="beaconTasksSection" class="sales-card" style="padding:20px 24px;display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <h3 style="margin:0;">Content Queue</h3>
+          <span id="beaconTasksSubLabel" style="font-size:.72rem;color:#64748b;"></span>
+        </div>
+        <div id="beaconTasksList" style="display:flex;flex-direction:column;gap:10px;">
+          <p style="text-align:center;color:#334155;font-size:.8rem;">Select a subscription to view scheduled tasks</p>
+        </div>
+      </div>
+
+      <!-- Section E: Token Usage (visible when subscription selected) -->
+      <div id="beaconUsageSection" class="sales-card" style="padding:20px 24px;display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <h3 style="margin:0;">Token Usage</h3>
+          <span id="beaconUsageSubLabel" style="font-size:.72rem;color:#64748b;"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
+          <div id="beaconPlanBadge" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;background:rgba(91,141,239,.15);color:#5B8DEF;">--</div>
+          <span id="beaconUsageText" style="font-size:.8rem;color:#64748b;">-- / -- tokens</span>
+        </div>
+        <div style="width:100%;height:14px;background:#1e293b;border-radius:7px;overflow:hidden;">
+          <div id="beaconUsageBar" style="width:0%;height:100%;border-radius:7px;background:linear-gradient(90deg,#5B8DEF,#D4A853);transition:width .4s ease;"></div>
+        </div>
+        <p id="beaconResetDate" style="font-size:.72rem;color:#475569;margin-top:8px;">Monthly reset: --</p>
+      </div>
+
+    </div>
+  </div><!-- /tabBeacon -->
+
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script>
     // === ROLE MANAGEMENT ===
@@ -2134,7 +2256,8 @@
       intake: 'tabIntake',
       analytics: 'tabAnalytics',
       cards: 'tabCards',
-      outreach: 'tabOutreach'
+      outreach: 'tabOutreach',
+      beacon: 'tabBeacon'
     };
 
     // === SLIDE DECK ===
@@ -2200,7 +2323,7 @@
 
     function switchTab(tab) {
       // Senior-only tabs check
-      if ((tab === 'cards' || tab === 'analytics' || tab === 'outreach') && currentRole !== 'senior') return;
+      if ((tab === 'cards' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon') && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
       var targetId = TAB_MAP[tab];
@@ -2213,6 +2336,7 @@
       if (tab === 'leads') renderLeads();
       if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
       if (tab === 'outreach') loadOutreachQueue();
+      if (tab === 'beacon') loadBeaconSubs();
     }
 
     function applyRole(role, userName) {
@@ -4909,6 +5033,367 @@
           if (btn) { btn.textContent = 'Sent!'; }
         } else { if (btn) { btn.textContent = 'Failed — ' + r.status; btn.disabled = false; } }
       }).catch(function(e) { if (btn) { btn.textContent = 'Error: ' + e.message; btn.disabled = false; } });
+    }
+
+    // === BEACON TAB ===
+    var currentBeaconSub = null;
+    var _beaconSubsCache = [];
+
+    async function loadBeaconSubs() {
+      try {
+        // Populate site dropdown
+        var siteSelect = document.getElementById('beaconSiteSelect');
+        fetch('/api/sites').then(function(r) { return r.json(); }).then(function(sites) {
+          siteSelect.innerHTML = '<option value="">-- Select a site --</option>';
+          (sites || []).forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s.id || s.slug || s.name;
+            opt.textContent = s.name || s.slug || s.id;
+            siteSelect.appendChild(opt);
+          });
+        }).catch(function() {
+          siteSelect.innerHTML = '<option value="">Failed to load sites</option>';
+        });
+
+        // Fetch subscriptions
+        var res = await fetch('/api/beacon/subscriptions');
+        var data = await res.json();
+        _beaconSubsCache = data.subscriptions || data || [];
+        renderBeaconSubs();
+      } catch (e) {
+        document.getElementById('beaconSubsBody').innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:#ef4444;">Failed to load subscriptions: ' + e.message + '</td></tr>';
+      }
+    }
+
+    function renderBeaconSubs() {
+      var tbody = document.getElementById('beaconSubsBody');
+      if (!_beaconSubsCache.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:#334155;">No active subscriptions</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '';
+      _beaconSubsCache.forEach(function(sub) {
+        var pct = sub.tokens_limit ? Math.min(100, Math.round((sub.tokens_used || 0) / sub.tokens_limit * 100)) : 0;
+        var statusColor = sub.status === 'active' ? '#22c55e' : sub.status === 'paused' ? '#f59e0b' : '#64748b';
+        var isSelected = currentBeaconSub && currentBeaconSub.id === sub.id;
+        var tr = document.createElement('tr');
+        tr.style.cssText = 'border-bottom:1px solid #1e293b;cursor:pointer;' + (isSelected ? 'background:rgba(91,141,239,.08);' : '');
+        tr.onclick = function() { selectBeaconSub(sub.id); };
+        tr.innerHTML =
+          '<td style="padding:10px;color:#e2e8f0;">' + (sub.site_name || sub.site_id || '--') + '</td>' +
+          '<td style="padding:10px;"><span style="padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;' +
+            (sub.plan === 'pro' ? 'background:rgba(212,168,83,.15);color:#D4A853;' : sub.plan === 'beacon' ? 'background:rgba(91,141,239,.15);color:#5B8DEF;' : 'background:rgba(100,116,139,.15);color:#94a3b8;') +
+            '">' + (sub.plan || '--') + '</span></td>' +
+          '<td style="padding:10px;"><span style="color:' + statusColor + ';font-size:.78rem;font-weight:500;">' + (sub.status || '--') + '</span></td>' +
+          '<td style="padding:10px;min-width:120px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<div style="flex:1;height:8px;background:#1e293b;border-radius:4px;overflow:hidden;">' +
+                '<div style="width:' + pct + '%;height:100%;border-radius:4px;background:linear-gradient(90deg,#5B8DEF,#D4A853);"></div>' +
+              '</div>' +
+              '<span style="font-size:.68rem;color:#64748b;white-space:nowrap;">' + pct + '%</span>' +
+            '</div>' +
+          '</td>' +
+          '<td style="padding:10px;">' +
+            '<div style="display:flex;gap:6px;">' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();selectBeaconSub(\'' + sub.id + '\')" style="font-size:.68rem;padding:4px 10px;">View Chat</button>' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();toggleBeaconSub(\'' + sub.id + '\',\'' + (sub.status === 'paused' ? 'resume' : 'pause') + '\')" style="font-size:.68rem;padding:4px 10px;">' + (sub.status === 'paused' ? 'Resume' : 'Pause') + '</button>' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();cancelBeaconSub(\'' + sub.id + '\')" style="font-size:.68rem;padding:4px 10px;color:#ef4444;border-color:#ef4444;">Cancel</button>' +
+            '</div>' +
+          '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function createBeaconSub() {
+      var siteId = document.getElementById('beaconSiteSelect').value;
+      if (!siteId) { alert('Please select a site.'); return; }
+      var planEl = document.querySelector('input[name="beaconPlan"]:checked');
+      if (!planEl) { alert('Please select a plan.'); return; }
+      try {
+        var res = await fetch('/api/beacon/subscriptions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ site_id: siteId, plan: planEl.value })
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        await loadBeaconSubs();
+      } catch (e) {
+        alert('Failed to create subscription: ' + e.message);
+      }
+    }
+
+    async function selectBeaconSub(subId) {
+      var sub = _beaconSubsCache.find(function(s) { return s.id === subId; });
+      if (!sub) return;
+      currentBeaconSub = sub;
+
+      // Show dependent sections
+      document.getElementById('beaconContextSection').style.display = 'block';
+      document.getElementById('beaconChatSection').style.display = 'block';
+      document.getElementById('beaconTasksSection').style.display = 'block';
+      document.getElementById('beaconUsageSection').style.display = 'block';
+
+      // Update sub labels
+      var label = (sub.site_name || sub.site_id || subId) + ' — ' + (sub.plan || '').toUpperCase();
+      document.getElementById('beaconContextSubLabel').textContent = label;
+      document.getElementById('beaconChatSubLabel').textContent = label;
+      document.getElementById('beaconTasksSubLabel').textContent = label;
+      document.getElementById('beaconUsageSubLabel').textContent = label;
+
+      // Highlight selected row
+      renderBeaconSubs();
+
+      // Load sub-sections
+      loadBeaconContext(subId);
+      loadBeaconChat(subId);
+      loadBeaconTasks(subId);
+      updateBeaconUsage(sub);
+    }
+
+    function updateBeaconUsage(sub) {
+      var used = sub.tokens_used || 0;
+      var limit = sub.tokens_limit || 0;
+      var pct = limit ? Math.min(100, Math.round(used / limit * 100)) : 0;
+
+      var planColors = { pro: 'background:rgba(212,168,83,.15);color:#D4A853;', beacon: 'background:rgba(91,141,239,.15);color:#5B8DEF;', lite: 'background:rgba(100,116,139,.15);color:#94a3b8;' };
+      document.getElementById('beaconPlanBadge').style.cssText = 'display:inline-block;padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;' + (planColors[sub.plan] || planColors.lite);
+      document.getElementById('beaconPlanBadge').textContent = sub.plan || '--';
+      document.getElementById('beaconUsageText').textContent = Number(used).toLocaleString() + ' / ' + Number(limit).toLocaleString() + ' tokens';
+      document.getElementById('beaconUsageBar').style.width = pct + '%';
+      document.getElementById('beaconResetDate').textContent = 'Monthly reset: ' + (sub.reset_date || '--');
+    }
+
+    async function addBeaconContext() {
+      if (!currentBeaconSub) { alert('Select a subscription first.'); return; }
+      var textEl = document.getElementById('beaconContextText');
+      var voiceEl = document.getElementById('beaconBrandVoice');
+      var text = textEl.value.trim();
+      var voice = voiceEl.value.trim();
+      if (!text && !voice) { alert('Please enter context text or brand voice instructions.'); return; }
+      try {
+        var payload = { subscription_id: currentBeaconSub.id };
+        if (text) payload.content = text;
+        if (voice) payload.brand_voice = voice;
+        var res = await fetch('/api/beacon/context', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        textEl.value = '';
+        voiceEl.value = '';
+        loadBeaconContext(currentBeaconSub.id);
+      } catch (e) {
+        alert('Failed to add context: ' + e.message);
+      }
+    }
+
+    async function scrapeBeaconUrl() {
+      if (!currentBeaconSub) { alert('Select a subscription first.'); return; }
+      var urlEl = document.getElementById('beaconScrapeUrl');
+      var url = urlEl.value.trim();
+      if (!url) { alert('Please enter a URL to scrape.'); return; }
+      try {
+        var res = await fetch('/api/beacon/context', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subscription_id: currentBeaconSub.id, type: 'website', url: url })
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        urlEl.value = '';
+        loadBeaconContext(currentBeaconSub.id);
+      } catch (e) {
+        alert('Failed to scrape URL: ' + e.message);
+      }
+    }
+
+    async function loadBeaconContext(subId) {
+      var container = document.getElementById('beaconContextList');
+      try {
+        var res = await fetch('/api/beacon/context?subscription_id=' + encodeURIComponent(subId));
+        var data = await res.json();
+        var docs = data.documents || data || [];
+        if (!docs.length) {
+          container.innerHTML = '<p style="color:#334155;font-size:.78rem;">No context documents yet.</p>';
+          return;
+        }
+        container.innerHTML = '';
+        docs.forEach(function(doc) {
+          var div = document.createElement('div');
+          div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0B1120;border:1px solid #1e293b;border-radius:8px;margin-bottom:6px;';
+          var typeLabel = doc.type === 'website' ? 'Website Scrape' : doc.type === 'brand_voice' ? 'Brand Voice' : 'Document';
+          var preview = (doc.content || doc.url || '').substring(0, 80);
+          div.innerHTML =
+            '<div style="flex:1;min-width:0;">' +
+              '<span style="font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#5B8DEF;margin-right:8px;">' + typeLabel + '</span>' +
+              '<span style="font-size:.78rem;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + preview + (preview.length >= 80 ? '...' : '') + '</span>' +
+            '</div>' +
+            '<button onclick="deleteBeaconContext(\'' + doc.id + '\')" style="background:none;border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:6px;padding:3px 10px;font-size:.68rem;cursor:pointer;white-space:nowrap;margin-left:10px;">Delete</button>';
+          container.appendChild(div);
+        });
+      } catch (e) {
+        container.innerHTML = '<p style="color:#ef4444;font-size:.78rem;">Failed to load context: ' + e.message + '</p>';
+      }
+    }
+
+    async function deleteBeaconContext(docId) {
+      if (!confirm('Delete this context document?')) return;
+      try {
+        var res = await fetch('/api/beacon/context/' + encodeURIComponent(docId), { method: 'DELETE' });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        if (currentBeaconSub) loadBeaconContext(currentBeaconSub.id);
+      } catch (e) {
+        alert('Failed to delete: ' + e.message);
+      }
+    }
+
+    async function loadBeaconChat(subId) {
+      var container = document.getElementById('beaconChatMessages');
+      try {
+        var res = await fetch('/api/beacon/chat?subscription_id=' + encodeURIComponent(subId));
+        var data = await res.json();
+        var messages = data.messages || data || [];
+        if (!messages.length) {
+          container.innerHTML = '<p style="text-align:center;color:#334155;font-size:.8rem;padding:40px 0;">No chat messages yet</p>';
+          return;
+        }
+        container.innerHTML = '';
+        messages.forEach(function(msg) {
+          var isUser = msg.role === 'user';
+          var div = document.createElement('div');
+          div.style.cssText = 'padding:10px 14px;border-radius:8px;margin-bottom:8px;max-width:85%;font-size:.8rem;line-height:1.5;' +
+            (isUser
+              ? 'background:rgba(91,141,239,.12);color:#e2e8f0;margin-left:auto;border-bottom-right-radius:2px;'
+              : 'background:#1e293b;color:#cbd5e1;margin-right:auto;border-bottom-left-radius:2px;');
+          div.innerHTML =
+            '<div style="font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:4px;font-weight:600;">' + (isUser ? 'User' : 'Beacon') + '</div>' +
+            '<div>' + (msg.content || '') + '</div>' +
+            (msg.timestamp ? '<div style="font-size:.6rem;color:#475569;margin-top:4px;">' + new Date(msg.timestamp).toLocaleString() + '</div>' : '');
+          container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+      } catch (e) {
+        container.innerHTML = '<p style="text-align:center;color:#ef4444;font-size:.8rem;">Failed to load chat: ' + e.message + '</p>';
+      }
+    }
+
+    async function sendBeaconTestMessage() {
+      if (!currentBeaconSub) { alert('Select a subscription first.'); return; }
+      var inputEl = document.getElementById('beaconTestMsg');
+      var message = inputEl.value.trim();
+      if (!message) return;
+      // Optimistically add user message to chat
+      var container = document.getElementById('beaconChatMessages');
+      var userDiv = document.createElement('div');
+      userDiv.style.cssText = 'padding:10px 14px;border-radius:8px;margin-bottom:8px;max-width:85%;font-size:.8rem;line-height:1.5;background:rgba(91,141,239,.12);color:#e2e8f0;margin-left:auto;border-bottom-right-radius:2px;';
+      userDiv.innerHTML = '<div style="font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:4px;font-weight:600;">You (Admin Test)</div><div>' + message.replace(/</g, '&lt;') + '</div>';
+      container.appendChild(userDiv);
+      container.scrollTop = container.scrollHeight;
+      inputEl.value = '';
+      try {
+        var res = await fetch('/api/beacon/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subscription_id: currentBeaconSub.id, message: message, role: 'admin_test' })
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        var data = await res.json();
+        if (data.reply) {
+          var botDiv = document.createElement('div');
+          botDiv.style.cssText = 'padding:10px 14px;border-radius:8px;margin-bottom:8px;max-width:85%;font-size:.8rem;line-height:1.5;background:#1e293b;color:#cbd5e1;margin-right:auto;border-bottom-left-radius:2px;';
+          botDiv.innerHTML = '<div style="font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:4px;font-weight:600;">Beacon</div><div>' + data.reply + '</div>';
+          container.appendChild(botDiv);
+          container.scrollTop = container.scrollHeight;
+        }
+      } catch (e) {
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'padding:8px 14px;border-radius:8px;margin-bottom:8px;font-size:.75rem;color:#ef4444;background:rgba(239,68,68,.08);';
+        errDiv.textContent = 'Failed to send: ' + e.message;
+        container.appendChild(errDiv);
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    async function loadBeaconTasks(subId) {
+      var container = document.getElementById('beaconTasksList');
+      try {
+        var res = await fetch('/api/beacon/tasks?subscription_id=' + encodeURIComponent(subId));
+        var data = await res.json();
+        var tasks = data.tasks || data || [];
+        if (!tasks.length) {
+          container.innerHTML = '<p style="text-align:center;color:#334155;font-size:.8rem;">No scheduled tasks</p>';
+          return;
+        }
+        container.innerHTML = '';
+        tasks.forEach(function(task) {
+          var statusColor = task.status === 'completed' ? '#22c55e' : task.status === 'running' ? '#5B8DEF' : task.status === 'failed' ? '#ef4444' : '#64748b';
+          var div = document.createElement('div');
+          div.style.cssText = 'background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:14px 16px;';
+          div.innerHTML =
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+              '<div style="display:flex;align-items:center;gap:10px;">' +
+                '<span style="font-size:.82rem;color:#e2e8f0;font-weight:500;">' + (task.type || task.name || 'Task') + '</span>' +
+                '<span style="font-size:.68rem;color:#64748b;">' + (task.frequency || '') + '</span>' +
+              '</div>' +
+              '<div style="display:flex;align-items:center;gap:10px;">' +
+                '<span style="font-size:.7rem;color:' + statusColor + ';font-weight:500;">' + (task.status || 'pending') + '</span>' +
+                '<button class="btn-export secondary" onclick="regenerateTask(\'' + task.id + '\',\'' + subId + '\')" style="font-size:.66rem;padding:3px 10px;">Regenerate</button>' +
+              '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:16px;font-size:.72rem;color:#475569;margin-bottom:8px;">' +
+              '<span>Last run: ' + (task.last_run ? new Date(task.last_run).toLocaleString() : '--') + '</span>' +
+              '<span>Next run: ' + (task.next_run ? new Date(task.next_run).toLocaleString() : '--') + '</span>' +
+            '</div>' +
+            (task.last_output
+              ? '<div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:6px;padding:10px 12px;font-size:.76rem;color:#94a3b8;max-height:120px;overflow-y:auto;line-height:1.5;white-space:pre-wrap;">' + (task.last_output || '').substring(0, 500) + '</div>'
+              : '<p style="font-size:.72rem;color:#334155;font-style:italic;">No output yet</p>');
+          container.appendChild(div);
+        });
+      } catch (e) {
+        container.innerHTML = '<p style="text-align:center;color:#ef4444;font-size:.8rem;">Failed to load tasks: ' + e.message + '</p>';
+      }
+    }
+
+    async function regenerateTask(taskId, subId) {
+      try {
+        var res = await fetch('/api/beacon/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_id: taskId, subscription_id: subId })
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        loadBeaconTasks(subId);
+      } catch (e) {
+        alert('Regeneration failed: ' + e.message);
+      }
+    }
+
+    async function toggleBeaconSub(subId, action) {
+      try {
+        var res = await fetch('/api/beacon/subscriptions/' + encodeURIComponent(subId) + '/' + action, { method: 'POST' });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        loadBeaconSubs();
+      } catch (e) {
+        alert('Failed to ' + action + ' subscription: ' + e.message);
+      }
+    }
+
+    async function cancelBeaconSub(subId) {
+      if (!confirm('Cancel this Beacon subscription? This cannot be undone.')) return;
+      try {
+        var res = await fetch('/api/beacon/subscriptions/' + encodeURIComponent(subId), { method: 'DELETE' });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        if (currentBeaconSub && currentBeaconSub.id === subId) {
+          currentBeaconSub = null;
+          document.getElementById('beaconContextSection').style.display = 'none';
+          document.getElementById('beaconChatSection').style.display = 'none';
+          document.getElementById('beaconTasksSection').style.display = 'none';
+          document.getElementById('beaconUsageSection').style.display = 'none';
+        }
+        loadBeaconSubs();
+      } catch (e) {
+        alert('Failed to cancel subscription: ' + e.message);
+      }
     }
 
   </script>

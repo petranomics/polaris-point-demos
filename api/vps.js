@@ -33,7 +33,11 @@ module.exports = async function handler(req, res) {
     'agent/outreach-enrich', 'agent/outreach-enrich/health',
     'agent/outreach-draft', 'agent/outreach-draft/health',
     'agent/analyze', 'agent/health',
-    'api/monitoring/summary', 'api/monitoring/agents'
+    'api/monitoring/summary', 'api/monitoring/agents',
+    'agent/beacon-chat', 'agent/beacon-chat/health',
+    'agent/beacon-content', 'agent/beacon-content/health',
+    'agent/beacon-monitor', 'agent/beacon-monitor/health',
+    'agent/beacon-leads', 'agent/beacon-leads/health'
   ];
   if (!allowed.includes(action)) {
     return res.status(403).json({ error: 'Action not allowed: ' + action });
