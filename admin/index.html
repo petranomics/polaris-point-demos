@@ -16,7 +16,7 @@
       --text: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; }
-    body { font-family: 'Inter', sans-serif; background: #080c16; color: #e2e8f0; padding: 40px 20px; }
+    body { font-family: 'Inter', sans-serif; background: #080c16; color: #e2e8f0; padding: 20px 20px; }
     h1 { text-align: center; font-size: 1rem; color: var(--text); margin-bottom: 6px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
     .subtitle { text-align: center; color: #475569; font-size: .78rem; margin-bottom: 40px; }
 
@@ -346,25 +346,24 @@
     .admin-tabs {
       display: flex;
       justify-content: center;
-      gap: 4px;
-      margin: 16px 0 32px;
+      gap: 3px;
+      margin: 12px 0 24px;
       background: #111827;
       border-radius: 10px;
-      padding: 4px;
-      max-width: 680px;
+      padding: 3px;
+      max-width: 900px;
       margin-left: auto;
       margin-right: auto;
       flex-wrap: wrap;
     }
     .admin-tab {
-      flex: 1;
-      padding: 10px 14px;
+      padding: 8px 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 7px;
       background: transparent;
       color: #64748b;
       font-family: 'Inter', sans-serif;
-      font-size: .75rem;
+      font-size: .68rem;
       font-weight: 600;
       cursor: pointer;
       transition: all .2s;
@@ -5043,16 +5042,20 @@
       try {
         // Populate site dropdown
         var siteSelect = document.getElementById('beaconSiteSelect');
-        fetch('/api/sites').then(function(r) { return r.json(); }).then(function(sites) {
+        fetch('/api/sites').then(function(r) { return r.json(); }).then(function(data) {
+          var sites = data.sites || data || [];
           siteSelect.innerHTML = '<option value="">-- Select a site --</option>';
-          (sites || []).forEach(function(s) {
+          if (!sites.length) {
+            siteSelect.innerHTML = '<option value="">No sites deployed yet</option>';
+          }
+          sites.forEach(function(s) {
             var opt = document.createElement('option');
-            opt.value = s.id || s.slug || s.name;
-            opt.textContent = s.name || s.slug || s.id;
+            opt.value = s.id;
+            opt.textContent = (s.site_name || s.slug) + ' (' + (s.slug || '') + ')';
             siteSelect.appendChild(opt);
           });
         }).catch(function() {
-          siteSelect.innerHTML = '<option value="">Failed to load sites</option>';
+          siteSelect.innerHTML = '<option value="">No sites deployed yet</option>';
         });
 
         // Fetch subscriptions
