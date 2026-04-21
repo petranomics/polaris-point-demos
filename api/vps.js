@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
       options.body = JSON.stringify(req.body);
     }
 
-    var response = await fetch(endpoint, options);
+    var response = await fetch(endpoint, Object.assign(options, { signal: AbortSignal.timeout(55000) }));
     var data = await response.json();
 
     return res.status(response.status).json(data);
