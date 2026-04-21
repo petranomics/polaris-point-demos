@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Careers — Polaris Point</title>
+  <meta name="description" content="Join the Polaris Point team. We're looking for driven people who want to help small businesses grow online.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space: #050D1E;
+      --blue: #5B8DEF;
+      --gold: #E8C547;
+      --text: #e2e8f0;
+      --muted: #8494a7;
+      --dim: #475569;
+      --border: rgba(91,141,239,.12);
+      --surface: rgba(15,25,55,.55);
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--space);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; color: #fff; line-height: 1.15; }
+    a { color: var(--blue); }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5,13,30,.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+    .logo { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .95rem; }
+    .logo svg { width: 20px; height: 20px; filter: drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .nav-link { color: var(--muted); text-decoration: none; font-size: .85rem; font-weight: 500; transition: color .2s; }
+    .nav-link:hover { color: #fff; }
+
+    /* Hero */
+    .hero { padding: 80px 0 48px; border-bottom: 1px solid var(--border); }
+    .hero h1 { font-size: 2rem; margin-bottom: 12px; letter-spacing: -.02em; }
+    .hero h1 .accent { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 1rem; max-width: 52ch; }
+
+    /* Section */
+    .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+    .section:last-of-type { border-bottom: none; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--blue); font-size: .65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;
+    }
+    .section-label::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+    .section h2 { font-size: 1.3rem; margin-bottom: 6px; }
+    .section .desc { color: var(--muted); font-size: .9rem; margin-bottom: 24px; max-width: 50ch; }
+
+    /* Perks */
+    .perks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .perk {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px 16px;
+    }
+    .perk h3 { font-size: .88rem; margin-bottom: 4px; }
+    .perk p { color: var(--muted); font-size: .78rem; margin: 0; line-height: 1.5; }
+
+    /* Form */
+    .form-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px 24px;
+    }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: .68rem; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--dim); font-weight: 600; margin-bottom: 5px;
+    }
+    .field label .req { color: #ef4444; }
+    .field input, .field select, .field textarea {
+      width: 100%; background: #0B1120; border: 1px solid #1e293b;
+      border-radius: 8px; padding: 10px 14px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: .85rem; outline: none;
+      transition: border-color .2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); }
+    .field textarea { min-height: 100px; resize: vertical; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* File upload */
+    .file-drop {
+      border: 2px dashed #1e293b; border-radius: 10px; padding: 24px;
+      text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+    }
+    .file-drop:hover, .file-drop.dragover { border-color: var(--blue); background: rgba(91,141,239,.04); }
+    .file-drop p { color: var(--dim); font-size: .82rem; margin: 0; }
+    .file-drop .file-name { color: var(--blue); font-weight: 600; margin-top: 6px; }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px;
+      background: var(--blue); color: #fff; font-family: 'Inter', sans-serif;
+      font-size: .92rem; font-weight: 700; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .submit-btn:hover { background: #4A7DE0; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* Success */
+    .success-msg {
+      text-align: center; padding: 40px 20px;
+      background: rgba(34,197,94,.06); border: 1px solid rgba(34,197,94,.15);
+      border-radius: 16px; display: none;
+    }
+    .success-msg h2 { color: #22c55e; margin-bottom: 8px; }
+    .success-msg p { color: var(--muted); }
+
+    /* Footer */
+    .footer { border-top: 1px solid var(--border); padding: 20px 0; margin-top: 48px; }
+    .footer-inner { display: flex; justify-content: space-between; font-size: .75rem; color: var(--dim); }
+    .footer-inner a { color: var(--blue); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.5rem; }
+      .perks-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav-bar">
+    <div class="nav-inner">
+      <a class="logo" href="/">
+        <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+        Polaris Point
+      </a>
+      <a class="nav-link" href="/">Back to Home</a>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <div class="hero">
+      <h1>Join the <span class="accent">Team</span></h1>
+      <p>We're building the fastest way for small businesses to get online. If you're hungry, resourceful, and want to make a real impact — we want to hear from you.</p>
+    </div>
+
+    <!-- WHY -->
+    <div class="section">
+      <p class="section-label">Why Polaris Point</p>
+      <h2>What We're About</h2>
+      <p class="desc">We help local businesses get found online. Our team moves fast, thinks creatively, and ships work that matters.</p>
+      <div class="perks-grid">
+        <div class="perk">
+          <h3>Remote-First</h3>
+          <p>Work from anywhere. We care about output, not hours in a seat.</p>
+        </div>
+        <div class="perk">
+          <h3>Real Impact</h3>
+          <p>Every site you build directly helps a small business owner grow.</p>
+        </div>
+        <div class="perk">
+          <h3>Commission + Base</h3>
+          <p>Earn a base plus commission on every deal you close or site you build.</p>
+        </div>
+        <div class="perk">
+          <h3>Growth Path</h3>
+          <p>We're early. High performers get more responsibility and equity fast.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLICATION -->
+    <div class="section">
+      <p class="section-label">Apply Now</p>
+      <h2>Tell Us About Yourself</h2>
+      <p class="desc">Fill out the form below. We'll review your application and get back to you within a few days.</p>
+
+      <div class="form-card" id="applicationForm">
+        <form id="applyForm" onsubmit="submitApplication(event)">
+          <div class="field-row">
+            <div class="field">
+              <label>First Name <span class="req">*</span></label>
+              <input type="text" id="applyFirst" required placeholder="Jane">
+            </div>
+            <div class="field">
+              <label>Last Name <span class="req">*</span></label>
+              <input type="text" id="applyLast" required placeholder="Smith">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Email <span class="req">*</span></label>
+              <input type="email" id="applyEmail" required placeholder="jane@email.com">
+            </div>
+            <div class="field">
+              <label>Phone</label>
+              <input type="tel" id="applyPhone" placeholder="(512) 555-0000">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Location</label>
+            <input type="text" id="applyLocation" placeholder="City, State">
+          </div>
+
+          <div class="field">
+            <label>Role You're Interested In <span class="req">*</span></label>
+            <select id="applyRole" required>
+              <option value="">Select a role...</option>
+              <option value="sales">Sales Rep (commission-based)</option>
+              <option value="web-builder">Web Builder / Designer</option>
+              <option value="marketing">Marketing & Content</option>
+              <option value="ops">Operations & Account Management</option>
+              <option value="other">Other / General Interest</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Why do you want to work with Polaris Point? <span class="req">*</span></label>
+            <textarea id="applyWhy" required placeholder="What interests you about what we're building? What relevant experience do you have?"></textarea>
+          </div>
+
+          <div class="field">
+            <label>What's your superpower?</label>
+            <textarea id="applySuperpower" placeholder="What are you best at? What would you bring to the team?" style="min-height:70px;"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Resume / CV</label>
+            <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click();">
+              <p>Drag & drop your resume here, or click to browse</p>
+              <p style="font-size:.7rem;color:#334155;margin-top:4px;">PDF, DOC, or DOCX (max 5MB)</p>
+              <p class="file-name" id="fileName"></p>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display:none;" onchange="handleFile(this)">
+          </div>
+
+          <div class="field">
+            <label>Portfolio / LinkedIn / Website</label>
+            <input type="url" id="applyPortfolio" placeholder="https://...">
+          </div>
+
+          <div class="field">
+            <label>Anything else we should know?</label>
+            <textarea id="applyNotes" placeholder="Optional — availability, salary expectations, questions, etc." style="min-height:60px;"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
+        </form>
+      </div>
+
+      <div class="success-msg" id="successMsg">
+        <h2>Application Received</h2>
+        <p>Thanks for applying! We'll review your submission and reach out if there's a fit. Keep an eye on your inbox.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>&copy; 2026 Polaris Point &middot; Austin, TX</span>
+      <a href="https://polarispoint.io">polarispoint.io</a>
+    </div>
+  </footer>
+
+  <script>
+    // File handling
+    var selectedFile = null;
+    var dropZone = document.getElementById('fileDrop');
+
+    dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleFileObj(e.dataTransfer.files[0]);
+    });
+
+    function handleFile(input) {
+      if (input.files.length) handleFileObj(input.files[0]);
+    }
+
+    function handleFileObj(file) {
+      if (file.size > 5 * 1024 * 1024) { alert('File too large. Max 5MB.'); return; }
+      selectedFile = file;
+      document.getElementById('fileName').textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+    }
+
+    // Submit
+    async function submitApplication(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      var data = {
+        first_name: document.getElementById('applyFirst').value,
+        last_name: document.getElementById('applyLast').value,
+        email: document.getElementById('applyEmail').value,
+        phone: document.getElementById('applyPhone').value,
+        location: document.getElementById('applyLocation').value,
+        role: document.getElementById('applyRole').value,
+        why: document.getElementById('applyWhy').value,
+        superpower: document.getElementById('applySuperpower').value,
+        portfolio: document.getElementById('applyPortfolio').value,
+        notes: document.getElementById('applyNotes').value,
+        resume_name: selectedFile ? selectedFile.name : '',
+        submitted_at: new Date().toISOString()
+      };
+
+      // Convert resume to base64 if present
+      if (selectedFile) {
+        try {
+          var reader = new FileReader();
+          var base64 = await new Promise(function(resolve) {
+            reader.onload = function() { resolve(reader.result.split(',')[1]); };
+            reader.readAsDataURL(selectedFile);
+          });
+          data.resume_base64 = base64;
+        } catch (err) { /* skip resume on error */ }
+      }
+
+      try {
+        var resp = await fetch('/api/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (resp.ok) {
+          document.getElementById('applicationForm').style.display = 'none';
+          document.getElementById('successMsg').style.display = 'block';
+        } else {
+          var err = await resp.json();
+          alert('Error: ' + (err.error || 'Something went wrong'));
+          btn.disabled = false;
+          btn.textContent = 'Submit Application';
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Submit Application';
+      }
+    }
+  </script>
+</body>
+</html>
