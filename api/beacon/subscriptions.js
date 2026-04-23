@@ -54,33 +54,60 @@ module.exports = async function handler(req, res) {
       var plan = body.plan || 'lite';
       var limit = PLAN_LIMITS[plan] || PLAN_LIMITS.lite;
 
+      // Add industry column if not exists
+      await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS industry TEXT DEFAULT 'general'`;
+
+      var industry = body.industry || 'general';
+
       var result = await sql`
-        INSERT INTO beacon_subscriptions (site_id, plan, tokens_limit, status)
-        VALUES (${body.site_id}, ${plan}, ${limit}, 'active')
+        INSERT INTO beacon_subscriptions (site_id, plan, tokens_limit, status, industry)
+        VALUES (${body.site_id}, ${plan}, ${limit}, 'active', ${industry})
         RETURNING *
       `;
 
-      // Create default scheduled tasks based on plan
+      // Create scheduled tasks based on plan + industry
       var subId = result[0].id;
 
-      // All plans get weekly social posts and monthly newsletter
-      await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
-        VALUES (${subId}, 'social_post', 'weekly', NOW() + INTERVAL '7 days')`;
-      await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
-        VALUES (${subId}, 'newsletter', 'monthly', NOW() + INTERVAL '30 days')`;
-      await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
-        VALUES (${subId}, 'blog', 'monthly', NOW() + INTERVAL '14 days')`;
-
-      // Beacon+ plans get competitor monitoring
-      if (plan === 'beacon' || plan === 'pro') {
+      if (industry === 'real_estate') {
+        // Real estate task set
         await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
-          VALUES (${subId}, 'competitor_report', 'monthly', NOW() + INTERVAL '30 days')`;
-      }
-
-      // Pro gets quarterly strategy
-      if (plan === 'pro') {
+          VALUES (${subId}, 'listing_post', 'weekly', NOW() + INTERVAL '7 days')`;
         await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
-          VALUES (${subId}, 'growth_strategy', 'quarterly', NOW() + INTERVAL '90 days')`;
+          VALUES (${subId}, 'social_post', 'weekly', NOW() + INTERVAL '7 days')`;
+        await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+          VALUES (${subId}, 'newsletter', 'monthly', NOW() + INTERVAL '30 days')`;
+        await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+          VALUES (${subId}, 'neighborhood_guide', 'monthly', NOW() + INTERVAL '14 days')`;
+        await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+          VALUES (${subId}, 'past_client_nurture', 'monthly', NOW() + INTERVAL '30 days')`;
+
+        if (plan === 'beacon' || plan === 'pro') {
+          await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+            VALUES (${subId}, 'market_report', 'monthly', NOW() + INTERVAL '30 days')`;
+          await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+            VALUES (${subId}, 'competitor_report', 'monthly', NOW() + INTERVAL '30 days')`;
+        }
+        if (plan === 'pro') {
+          await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+            VALUES (${subId}, 'growth_strategy', 'quarterly', NOW() + INTERVAL '90 days')`;
+        }
+      } else {
+        // Default task set (general / local service)
+        await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+          VALUES (${subId}, 'social_post', 'weekly', NOW() + INTERVAL '7 days')`;
+        await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+          VALUES (${subId}, 'newsletter', 'monthly', NOW() + INTERVAL '30 days')`;
+        await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+          VALUES (${subId}, 'blog', 'monthly', NOW() + INTERVAL '14 days')`;
+
+        if (plan === 'beacon' || plan === 'pro') {
+          await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+            VALUES (${subId}, 'competitor_report', 'monthly', NOW() + INTERVAL '30 days')`;
+        }
+        if (plan === 'pro') {
+          await sql`INSERT INTO beacon_tasks (subscription_id, task_type, frequency, next_run)
+            VALUES (${subId}, 'growth_strategy', 'quarterly', NOW() + INTERVAL '90 days')`;
+        }
       }
 
       return res.json({ subscription: result[0] });

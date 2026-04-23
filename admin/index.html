@@ -2211,6 +2211,37 @@
             </div>
           </div>
         </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Industry</label>
+          <select id="beaconIndustry" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;" onchange="toggleReFields()">
+            <option value="general">General / Local Service</option>
+            <option value="real_estate">Real Estate Agent</option>
+          </select>
+        </div>
+        <div id="reFields" style="display:none;margin-bottom:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Agent Name & Designations</label>
+              <input type="text" id="reAgentName" placeholder="Sarah Chen, ABR, SRS" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Brokerage</label>
+              <input type="text" id="reBrokerage" placeholder="Compass" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Farm Areas (comma-separated)</label>
+            <input type="text" id="reFarmAreas" placeholder="South Austin, Bee Cave, Lakeway, Buda" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Active Listings (one per line: address | price | beds/baths | notes)</label>
+            <textarea id="reListings" rows="4" placeholder="1847 S 3rd St, Austin 78704 | $625,000 | 3/2 | Modern farmhouse, walk to SoCo" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.8rem;resize:vertical;outline:none;"></textarea>
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Competitor Agents (comma-separated names)</label>
+            <input type="text" id="reCompetitors" placeholder="Jake Morrison, Lisa Park" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+        </div>
         <button class="btn-export" onclick="createBeaconSub()" style="width:100%;justify-content:center;margin-bottom:18px;">Create Beacon Subscription</button>
 
         <h3 style="margin-bottom:10px;">Active Subscriptions</h3>
@@ -5251,18 +5282,71 @@
       });
     }
 
+    function toggleReFields() {
+      var sel = document.getElementById('beaconIndustry');
+      var div = document.getElementById('reFields');
+      if (div) div.style.display = sel.value === 'real_estate' ? 'block' : 'none';
+    }
+
     async function createBeaconSub() {
       var siteId = document.getElementById('beaconSiteSelect').value;
       if (!siteId) { alert('Please select a site.'); return; }
       var planEl = document.querySelector('input[name="beaconPlan"]:checked');
       if (!planEl) { alert('Please select a plan.'); return; }
+      var industry = document.getElementById('beaconIndustry').value;
       try {
         var res = await fetch('/api/beacon/subscriptions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ site_id: siteId, plan: planEl.value })
+          body: JSON.stringify({ site_id: siteId, plan: planEl.value, industry: industry })
         });
         if (!res.ok) throw new Error('Server returned ' + res.status);
+        var data = await res.json();
+
+        // If real estate, seed context documents from the RE fields
+        if (industry === 'real_estate' && data && data.subscription && data.subscription.id) {
+          var subId = data.subscription.id;
+          var agentName = document.getElementById('reAgentName').value.trim();
+          var brokerage = document.getElementById('reBrokerage').value.trim();
+          var farmAreas = document.getElementById('reFarmAreas').value.trim();
+          var listings = document.getElementById('reListings').value.trim();
+          var competitors = document.getElementById('reCompetitors').value.trim();
+
+          // Seed brand voice
+          if (agentName) {
+            fetch('/api/beacon/context', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ subscription_id: subId, context_type: 'brand_voice', title: 'Agent Profile',
+                content: 'Real estate agent: ' + agentName + ' at ' + (brokerage || 'Independent') + '. Specialize in ' + (farmAreas || 'the local area') + '. Professional, knowledgeable, approachable tone. Position as the local market expert.' })
+            });
+          }
+          // Seed listings
+          if (listings) {
+            fetch('/api/beacon/context', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ subscription_id: subId, context_type: 'document', title: 'Active Listings', content: listings })
+            });
+          }
+          // Seed farm areas
+          if (farmAreas) {
+            fetch('/api/beacon/context', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ subscription_id: subId, context_type: 'document', title: 'Service Areas', content: 'Primary service areas: ' + farmAreas })
+            });
+          }
+          // Seed competitors
+          if (competitors) {
+            fetch('/api/beacon/context', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ subscription_id: subId, context_type: 'document', title: 'Competitors', content: 'Key competitor agents: ' + competitors })
+            });
+          }
+        }
+
         await loadBeaconSubs();
       } catch (e) {
         alert('Failed to create subscription: ' + e.message);

@@ -1,0 +1,46 @@
+{
+  "agent_name": "Sarah Chen",
+  "brokerage": "Compass",
+  "context_documents": [
+    {
+      "context_type": "brand_voice",
+      "title": "Brand Voice",
+      "content": "Professional but warm. Confident without being pushy. I say 'y'all' occasionally — I'm a Texan. I explain things clearly without jargon. I'm direct about market conditions (I don't sugarcoat a tough market). I use data to back up my opinions. My tone is like a knowledgeable friend who happens to be great at real estate. I never use ALL CAPS, excessive exclamation marks, or phrases like 'MUST SEE!' or 'WON'T LAST!' — those feel desperate. I prefer 'This one's special' over 'AMAZING OPPORTUNITY!!!'"
+    },
+    {
+      "context_type": "document",
+      "title": "Agent Bio",
+      "content": "Sarah Chen | REALTOR, ABR, SRS\nCompass — Austin, TX\n\n8 years in Austin real estate. Originally from Houston, fell in love with Austin in college at UT and never left. Specialize in South Austin, Bee Cave, and Lakeway.\n\nTransaction history: 180+ homes sold, $85M+ in career volume. 2024 Top Producer at Compass Austin. Average 32 transactions/year.\n\nSpecializations: First-time buyers, relocation (especially tech workers moving from CA), luxury lakefront properties in Lakeway/Bee Cave.\n\nPersonal: Live in Travis Heights with my husband David and our rescue dog Bowie (yes, named after the street). Weekend warrior at Barton Springs. Obsessed with breakfast tacos — Veracruz is the hill I'll die on.\n\nPhone: (512) 555-0822\nEmail: sarah@sarahchenrealty.com\nInstagram: @sarahchenaustin\nWebsite: sarahchenrealty.com"
+    },
+    {
+      "context_type": "document",
+      "title": "Active Listings",
+      "content": "LISTING 1:\n1847 S 3rd St, Austin TX 78704\n$625,000 | 3 bed / 2 bath | 1,680 sqft | Built 2018\nModern farmhouse in Bouldin Creek. White oak floors, chef's kitchen with waterfall quartz island, primary suite with walk-in closet. Private backyard with mature oaks. Walk to South Congress shops and restaurants. Zilker Elementary.\n\nLISTING 2:\n4201 Lago Vista Dr, Bee Cave TX 78738\n$1,150,000 | 4 bed / 3.5 bath | 3,200 sqft | Built 2015\nHill Country contemporary on a half acre with Lake Travis views. Open concept living, wall of windows, saltwater pool, outdoor kitchen. Lakeway schools. 25 min to downtown.\n\nLISTING 3:\n902 Manchaca Rd, Austin TX 78745\n$475,000 | 3 bed / 2 bath | 1,420 sqft | Updated 2023\nCompletely renovated South Austin bungalow. New roof, new HVAC, quartz counters, subway tile, original hardwoods refinished. Huge lot with room for ADU. Near Menchaca/Stassney — easy access to Mopac and I-35."
+    },
+    {
+      "context_type": "document",
+      "title": "Service Areas",
+      "content": "PRIMARY FARM AREAS:\n\n78704 (South Austin / Bouldin Creek / Travis Heights)\n- Median price: $685K | Avg DOM: 14 days\n- Vibe: Walkable, eclectic, SoCo lifestyle. Young professionals and families.\n- Schools: Zilker Elementary, Becker Elementary, Crockett HS\n\n78745 (South Austin / Manchaca / Westgate)\n- Median price: $445K | Avg DOM: 18 days\n- Vibe: More affordable South Austin. Established neighborhoods, growing restaurant scene.\n- Schools: Baranoff Elementary, Bailey MS\n\n78738 (Bee Cave / Lakeway)\n- Median price: $850K | Avg DOM: 22 days\n- Vibe: Hill Country luxury. Lake access, resort-style living, excellent schools.\n- Schools: Lake Travis ISD (top rated in Austin area)\n\n78734 (Lakeway)\n- Median price: $720K | Avg DOM: 25 days\n- Vibe: Established lakefront community. Golf, boating, quieter pace.\n\n78610 (Buda / Kyle)\n- Median price: $365K | Avg DOM: 12 days\n- Vibe: Fast-growing suburbs. New construction, young families, value-oriented."
+    },
+    {
+      "context_type": "document",
+      "title": "Competitors",
+      "content": "COMPETITOR 1: Jake Morrison, Keller Williams\n- Website: jakemorrisonrealty.com\n- Farm: 78704 overlap. Posts 3x/week on Instagram. Heavy video content.\n- Strength: Personal brand, video walkthroughs\n- Weakness: No blog, no newsletter, Google Business has 12 reviews vs my 47\n\nCOMPETITOR 2: Lisa Park, Redfin\n- Website: redfin.com/real-estate-agents/lisa-park\n- Farm: 78745, 78748. Very active on Nextdoor.\n- Strength: Redfin platform, lower commission pitch\n- Weakness: Generic Redfin branding, less personal touch\n\nCOMPETITOR 3: The Martinez Group, Sotheby's\n- Website: martinezgroupaustin.com\n- Farm: Bee Cave/Lakeway luxury. Polished marketing, professional photography.\n- Strength: Luxury brand positioning, team resources\n- Weakness: Impersonal, slow response times per reviews"
+    },
+    {
+      "context_type": "document",
+      "title": "Past Clients (Sample)",
+      "content": "1. Tom & Rachel Kim — Closed 3/2025 — 2105 Kinney Ave, 78704 — $595K — First-time buyers, relocated from SF\n2. Marcus Johnson — Closed 11/2024 — 5601 Manchaca Rd, 78745 — $380K — Investment property\n3. The Patel Family — Closed 8/2024 — 3900 Lago Vista, Bee Cave — $980K — Move-up buyers, 2 kids\n4. Diana Reeves — Closed 6/2024 — 1200 S 5th St, 78704 — $710K — Downsizer from Westlake\n5. Chris & Amy Nguyen — Closed 4/2024 — 700 Bouldin Ave, 78704 — $525K — First-time buyers\n6. David Okonkwo — Closed 2/2024 — 4400 Bee Cave Rd, 78746 — $1.2M — Tech exec relocation from Seattle\n7. Sarah & Mike Thompson — Closed 12/2023 — 8800 Lake Travis Dr, Lakeway — $875K — Empty nesters\n8. The Garcia Family — Closed 9/2023 — 1900 Oltorf St, 78704 — $465K — Growing family\n9. Jennifer Walsh — Closed 7/2023 — 300 Buda Dr, Buda — $340K — First-time buyer\n10. Robert & Linda Chen — Closed 5/2023 — 2200 Barton Hills Dr, 78704 — $820K — Sarah's parents!"
+    },
+    {
+      "context_type": "document",
+      "title": "Market Data - April 2026",
+      "content": "AUSTIN METRO MARKET — APRIL 2026:\n- Median home price: $485,000 (up 3.2% YoY)\n- Active inventory: 4,800 listings (up from 4,200 last month)\n- Months of supply: 2.8 (still a seller's market, but loosening)\n- Average days on market: 18 (down from 22 in January)\n- Mortgage rates: 6.25% (30yr fixed, down from 6.8% in Q4 2025)\n- New listings this month: 2,100\n- Closed sales: 1,720\n\nKEY TRENDS:\n- Rate drop from Q4 is bringing buyers back — showing activity up 15%\n- 78704 is tightest market — 11 DOM average, multiple offers common over $500K\n- Bee Cave/Lakeway luxury ($1M+) softening slightly — more negotiation room\n- Buda/Kyle still hottest for first-timers — new construction under $400K disappearing fast\n- ADU/garage apartment interest surging in 78704/78745 — city permitting backlog"
+    },
+    {
+      "context_type": "document",
+      "title": "Testimonials",
+      "content": "\"Sarah made our first home purchase so smooth. We relocated from San Francisco and she knew exactly what areas would fit our lifestyle. Found us the perfect place in Bouldin Creek in 2 weeks.\" — Tom & Rachel Kim\n\n\"Working with Sarah on our Lakeway purchase was incredible. She negotiated $40K off asking and found issues in the inspection we would have missed. True professional.\" — The Patel Family\n\n\"I've bought and sold 3 homes with Sarah over the years. She's the only agent I'd ever recommend. Responsive, honest, and genuinely cares about getting you the right home — not just closing a deal.\" — Diana Reeves\n\n\"As a first-time buyer I had a million questions. Sarah answered every single one without ever making me feel dumb. She found me an amazing house in South Austin under budget.\" — Chris Nguyen"
+    }
+  ]
+}

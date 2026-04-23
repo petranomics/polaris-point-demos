@@ -52,11 +52,21 @@ module.exports = async function handler(req, res) {
 
     // Build prompt based on content type
     var prompts = {
+      // General
       social_post: 'Generate 5 social media posts for this business. Mix promotional, educational, and engaging content. Keep each under 280 characters. Format as a numbered list.',
       newsletter: 'Write a monthly newsletter email for this business. Include a greeting, 2-3 short sections with updates/tips, and a call to action. Keep it under 500 words. Tone should match the brand voice.',
       blog: 'Write a blog post (600-800 words) relevant to this business and its customers. Include a compelling title, introduction, 3-4 sections with subheadings, and a conclusion with CTA.',
       email: 'Write a professional marketing email for this business. Include subject line, preview text, body (2-3 paragraphs), and CTA button text.',
-      press_release: 'Write a press release for this business. Include headline, dateline, lead paragraph, 2-3 body paragraphs with quotes, boilerplate, and contact info.'
+      press_release: 'Write a press release for this business. Include headline, dateline, lead paragraph, 2-3 body paragraphs with quotes, boilerplate, and contact info.',
+
+      // Real Estate
+      listing_post: 'Write 3 social media posts promoting a property listing from the context. Each post should take a different angle: (1) lifestyle — paint a picture of living there, (2) investment — highlight value and market position, (3) features — bedroom/bath count, upgrades, unique selling points. Include price, neighborhood name, and a CTA to schedule a showing. Keep each under 300 characters.',
+      listing_description: 'Write an MLS-ready property description (200-300 words) using the listing details from context. Lead with the lifestyle and emotional appeal, then key features (beds, baths, sqft, upgrades), then neighborhood highlights (schools, dining, parks, commute). Professional tone — no ALL CAPS, no excessive exclamation marks. End with a soft CTA.',
+      market_report: 'Write a monthly local real estate market update (400-600 words) for the agent\'s service area. Include: median home price and trend, active inventory, average days on market, interest rate context, and what this means for buyers vs sellers. Conversational and authoritative tone — position the agent as the local expert. Include 2-3 specific neighborhood callouts.',
+      neighborhood_guide: 'Write a 500-word neighborhood guide for one of the agent\'s service areas. Cover: overall vibe and lifestyle, housing types and typical price range, top schools, best restaurants and coffee shops, parks and outdoor activities, commute to downtown, and who this neighborhood is best for (families, young professionals, retirees, etc.). Make it feel like insider knowledge, not a Wikipedia article.',
+      past_client_nurture: 'Write a warm, personal check-in email to a past real estate client. Include: a friendly greeting referencing the season, one relevant home maintenance or home value tip, a brief market update for their area, and a soft referral ask ("Know anyone thinking about buying or selling?"). Keep it under 200 words. Should feel like a note from a friend who happens to be their realtor, not a sales pitch.',
+      buyer_drip: 'Write a 5-email drip campaign for new buyer leads. Email 1: welcome + what to expect. Email 2: financing basics and pre-approval tips. Email 3: neighborhood guide for the area they\'re interested in. Email 4: what to look for at showings. Email 5: soft CTA to schedule a buyer consultation. Each email 100-150 words, subject lines included.',
+      seller_drip: 'Write a 5-email drip campaign for potential sellers. Email 1: "What\'s your home worth?" with market context. Email 2: 5 things that increase home value before listing. Email 3: what the selling process looks like (timeline). Email 4: why now is a good time to sell (market data). Email 5: CTA to schedule a listing consultation. Each email 100-150 words, subject lines included.'
     };
 
     var userPrompt = prompts[type] || body.custom_prompt || 'Generate marketing content for this business.';
