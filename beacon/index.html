@@ -65,22 +65,255 @@
     ::-webkit-scrollbar-thumb { background: rgba(91,141,239,.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(91,141,239,.3); }
 
-    /* ---- LOGIN GATE ---- */
+    /* ---- LANDING PAGE ---- */
     #loginGate {
+      min-height: 100vh;
+      background: var(--space);
+      overflow-x: hidden;
+    }
+    .landing-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(5,13,30,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+    .landing-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-      background: var(--space);
+      justify-content: space-between;
     }
+    .landing-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-family: 'Space Grotesk',sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+    }
+    .landing-logo svg { width: 22px; height: 22px; filter: drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .landing-nav-cta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .landing-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+    .landing-hero {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 48px;
+      align-items: center;
+      padding: 80px 24px 56px;
+    }
+    .landing-hero-text h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin-bottom: 14px;
+    }
+    .landing-hero-text h1 .accent { color: var(--gold); }
+    .landing-hero-text p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 50ch;
+      margin-bottom: 24px;
+    }
+    .landing-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .landing-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: .88rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform .15s, background .15s;
+    }
+    .landing-btn-gold { background: var(--gold); color: var(--space); }
+    .landing-btn-gold:hover { transform: translateY(-1px); }
+    .landing-btn-glass { background: rgba(255,255,255,.06); color: #fff; border: 1px solid var(--border); }
+    .landing-btn-glass:hover { background: rgba(255,255,255,.1); }
+    .landing-trust {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 20px;
+      font-size: .76rem;
+      color: var(--text-secondary);
+    }
+    .landing-trust .stars { color: var(--gold); letter-spacing: 2px; }
     .login-card {
       background: var(--surface-solid);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 40px 36px;
-      width: 360px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 380px;
       text-align: center;
+      margin-left: auto;
+    }
+    .landing-divider {
+      text-align: center;
+      color: var(--dim);
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin: 0;
+      padding: 24px 0;
+    }
+    .landing-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .landing-feature {
+      background: rgba(15,25,55,.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .landing-feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(91,141,239,.15), rgba(232,197,71,.1));
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+    }
+    .landing-feature-icon svg { width: 18px; height: 18px; color: var(--blue); }
+    .landing-feature h3 { font-size: .95rem; margin-bottom: 4px; }
+    .landing-feature p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.55; }
+    .landing-section-header { text-align: center; margin-bottom: 32px; }
+    .landing-section-header .label {
+      display: inline-block;
+      color: var(--blue);
+      font-size: .68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    .landing-section-header h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      margin-bottom: 8px;
+    }
+    .landing-section-header p {
+      color: var(--text-secondary);
+      max-width: 56ch;
+      margin: 0 auto;
+      font-size: .92rem;
+    }
+    .landing-industries {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .industry-card {
+      background: rgba(15,25,55,.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      transition: border-color .2s, transform .15s;
+    }
+    .industry-card:hover { border-color: rgba(91,141,239,.3); transform: translateY(-2px); }
+    .industry-card h4 { font-size: .88rem; margin-bottom: 4px; color: #fff; }
+    .industry-card p { font-size: .75rem; color: var(--dim); margin: 0; line-height: 1.4; }
+    .landing-output-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .output-card {
+      background: rgba(15,25,55,.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .output-card .type-badge {
+      display: inline-block;
+      font-size: .58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      margin-bottom: 8px;
+    }
+    .output-card .type-social { background: rgba(91,141,239,.15); color: var(--blue); }
+    .output-card .type-news { background: rgba(232,197,71,.15); color: var(--gold); }
+    .output-card .type-blog { background: rgba(34,197,94,.15); color: #22c55e; }
+    .output-card .type-email { background: rgba(167,139,250,.15); color: #a78bfa; }
+    .output-card p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.6; }
+    .output-card .output-meta { color: var(--dim); font-size: .72rem; margin-top: 8px; font-style: italic; }
+    .landing-pricing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .price-card {
+      background: rgba(15,25,55,.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+      position: relative;
+    }
+    .price-card.featured { border-color: rgba(232,197,71,.3); }
+    .price-badge {
+      position: absolute;
+      top: -8px;
+      right: 14px;
+      background: var(--gold);
+      color: var(--space);
+      font-size: .55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+    .price-card .price-name { color: var(--blue); font-size: .65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
+    .price-card.featured .price-name { color: var(--gold); }
+    .price-card .price-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .price-card .price-sub { font-size: .68rem; color: var(--text-muted); margin: 4px 0 12px; line-height: 1.5; }
+    .price-card ul { list-style: none; padding: 0; margin: 0; font-size: .78rem; color: var(--text-secondary); line-height: 1.85; }
+    .price-card ul li.hl { color: #fff; }
+    .landing-cta-section {
+      text-align: center;
+      padding: 56px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .landing-cta-section h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 10px; }
+    .landing-cta-section h2 .accent { color: var(--gold); }
+    .landing-cta-section p { color: var(--text-secondary); margin-bottom: 24px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+    .landing-footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: .75rem;
+      color: var(--dim);
+    }
+    .landing-footer a { color: var(--blue); text-decoration: none; }
+    @media (max-width: 800px) {
+      .landing-hero { grid-template-columns: 1fr; padding: 48px 24px 32px; }
+      .login-card { margin: 0 auto; }
+      .landing-section { padding: 40px 24px; }
     }
     .login-card .login-star {
       width: 44px;
@@ -1414,23 +1647,227 @@
   </symbol>
 </svg>
 
-<!-- ===== LOGIN GATE ===== -->
+<!-- ===== LANDING PAGE (shown when not logged in) ===== -->
 <div id="loginGate">
-  <div class="login-card">
-    <svg class="login-star"><use href="#icon-star"/></svg>
-    <h1>Beacon</h1>
-    <div class="login-subtitle">Client Portal</div>
-    <form id="loginForm" autocomplete="on">
-      <div class="login-field">
-        <input type="email" id="loginEmail" placeholder="Email address" required autocomplete="email">
+
+  <!-- Top nav -->
+  <nav class="landing-nav">
+    <div class="landing-nav-inner">
+      <a class="landing-logo" href="/">
+        <svg><use href="#icon-star"/></svg>
+        Beacon
+      </a>
+      <div class="landing-nav-cta">
+        <a href="#how-it-works" class="landing-btn landing-btn-glass" style="padding:8px 14px;font-size:.8rem;">How It Works</a>
+        <a href="/beacon/signup" class="landing-btn landing-btn-gold" style="padding:8px 14px;font-size:.8rem;">Apply for Beta</a>
       </div>
-      <div class="login-field">
-        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+    </div>
+  </nav>
+
+  <!-- Hero with login -->
+  <section class="landing-hero" style="max-width:1100px;margin:0 auto;">
+    <div class="landing-hero-text">
+      <p style="display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 6px var(--blue);"></span>
+        AI Marketing for Small Business
+      </p>
+      <h1>Your always-on <span class="accent">marketing employee</span> — for less than a coffee a day.</h1>
+      <p>Beacon writes your social posts, newsletters, and blog content in your brand voice. It tracks your competitors, drafts review responses, and generates ideas on demand. All for a fraction of the cost of hiring a marketer or agency.</p>
+      <div class="landing-cta-row">
+        <a href="/beacon/signup" class="landing-btn landing-btn-gold">Apply for 6-Week Trial</a>
+        <a href="#how-it-works" class="landing-btn landing-btn-glass">See How It Works</a>
       </div>
-      <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
-    </form>
-    <div class="login-error" id="loginError"></div>
-  </div>
+      <div class="landing-trust">
+        <span class="stars">★★★★★</span>
+        <span>Built by Polaris Point — Austin, TX</span>
+      </div>
+    </div>
+
+    <!-- Login card on the right -->
+    <div class="login-card">
+      <svg class="login-star"><use href="#icon-star"/></svg>
+      <h1>Welcome Back</h1>
+      <div class="login-subtitle">Sign In to Your Workspace</div>
+      <form id="loginForm" autocomplete="on">
+        <div class="login-field">
+          <input type="email" id="loginEmail" placeholder="Email address" required autocomplete="email">
+        </div>
+        <div class="login-field">
+          <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+      </form>
+      <div class="login-error" id="loginError"></div>
+      <div style="margin-top:18px;font-size:.78rem;color:var(--text-muted);">
+        Don't have an account? <a href="/beacon/signup" style="color:var(--blue);text-decoration:none;font-weight:600;">Apply for beta access →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Beacon Does -->
+  <section class="landing-section" id="how-it-works">
+    <div class="landing-section-header">
+      <span class="label">What Beacon Does</span>
+      <h2>One System. Endless Marketing.</h2>
+      <p>Beacon is seeded with everything about your business — your services, brand voice, competitors, and customers. Then it works for you, every day.</p>
+    </div>
+    <div class="landing-features">
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Always-On Chat</h3>
+        <p>Ask anything about your marketing — Beacon already knows your business and responds with context-aware answers in seconds.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h3>Auto-Scheduled Content</h3>
+        <p>Weekly social posts. Monthly newsletters. Blog drafts on a calendar. All written in your brand voice — ready for you to approve and publish.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <h3>Competitor Watch</h3>
+        <p>Beacon checks your competitors' websites and reviews daily. Get summaries of what they're doing — and what gaps you can exploit.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h3>Review Responses</h3>
+        <p>New review hits Google? Beacon drafts a thoughtful response in your voice within minutes. You review, approve, post.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 11h-6M19 8v6"/></svg>
+        </div>
+        <h3>Lead Outreach</h3>
+        <p>Cold emails, follow-up sequences, referral requests. Beacon drafts personalized outreach so you never stare at a blank page.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+        </div>
+        <h3>Quarterly Strategy</h3>
+        <p>Every 90 days, get a strategy report based on your performance, market trends, and competitive landscape. Like having a CMO on call.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industries -->
+  <section class="landing-section">
+    <div class="landing-section-header">
+      <span class="label">Built For</span>
+      <h2>Beacon Works for Any Local Business</h2>
+      <p>Each instance is custom-tuned to your industry. Pick the closest fit and Beacon learns the rest from your business context.</p>
+    </div>
+    <div class="landing-industries">
+      <div class="industry-card"><h4>🏠 Real Estate</h4><p>Listing posts, market reports, neighborhood guides, past client nurture</p></div>
+      <div class="industry-card"><h4>🔧 Local Services</h4><p>Plumbers, HVAC, pest control, cleaners, handymen, landscapers</p></div>
+      <div class="industry-card"><h4>🍴 Food & Hospitality</h4><p>Restaurants, cafes, bars, food trucks, catering, event venues</p></div>
+      <div class="industry-card"><h4>💆 Health & Wellness</h4><p>Med spas, dentists, chiropractors, trainers, yoga studios</p></div>
+      <div class="industry-card"><h4>📊 Professional Services</h4><p>Lawyers, accountants, financial advisors, consultants, coaches</p></div>
+      <div class="industry-card"><h4>🛍 E-Commerce</h4><p>Online stores, boutiques, product brands, Amazon sellers</p></div>
+      <div class="industry-card"><h4>🎨 Creative & Agency</h4><p>Photographers, designers, videographers, marketing agencies</p></div>
+      <div class="industry-card"><h4>📚 Education</h4><p>Tutors, coaches, course creators, music teachers, driving schools</p></div>
+    </div>
+  </section>
+
+  <!-- Sample Outputs -->
+  <section class="landing-section">
+    <div class="landing-section-header">
+      <span class="label">What You'll Get</span>
+      <h2>Sample Outputs</h2>
+      <p>Real content generated by Beacon for a real client. Custom-written for their business, ready to publish.</p>
+    </div>
+    <div class="landing-output-grid">
+      <div class="output-card">
+        <span class="type-badge type-social">Instagram Post</span>
+        <p>"South Austin homeowners — your AC is about to start screaming for help. Spring tune-ups are $89 right now. Locks in priority service before the summer rush hits. Book through the link in bio. 🌞"</p>
+        <div class="output-meta">Generated for an Austin HVAC company</div>
+      </div>
+      <div class="output-card">
+        <span class="type-badge type-news">Newsletter</span>
+        <p>"Three new listings hit South Austin this week — including a stunning 1920s bungalow in 78704 with original hardwoods and a casita in back. Plus: why now is actually a great time to sell despite the rate environment..."</p>
+        <div class="output-meta">Generated for a real estate agent</div>
+      </div>
+      <div class="output-card">
+        <span class="type-badge type-blog">Blog Post</span>
+        <p>"5 signs your home has a hidden water leak — and what it'll cost if you ignore them. We see this every week in Austin homes. The good news? Most leaks announce themselves long before they cause real damage..."</p>
+        <div class="output-meta">Generated for a plumbing company</div>
+      </div>
+      <div class="output-card">
+        <span class="type-badge type-email">Outreach Email</span>
+        <p>"Hi Tom, saw your post about the Cedar Park flip taking longer than expected. Most issues we see at this stage come down to permit holds. We can usually shake those loose in 48 hours — happy to share a few tactics that worked for other Austin investors..."</p>
+        <div class="output-meta">Generated for a contractor</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="landing-section" id="pricing">
+    <div class="landing-section-header">
+      <span class="label">Pricing</span>
+      <h2>Less Than One Hour of a Marketing Consultant</h2>
+      <p>All tiers come with the AI workspace, content generation, and brand voice training. Longer commitments unlock better pricing.</p>
+    </div>
+    <div class="landing-pricing">
+      <div class="price-card">
+        <p class="price-name">Beacon Lite</p>
+        <p class="price-num">$129<span style="font-size:.7rem;font-weight:400;color:var(--text-muted);">/mo annually</span></p>
+        <p class="price-sub">$149/mo quarterly · $169/mo monthly</p>
+        <ul>
+          <li class="hl">Weekly social media posts</li>
+          <li>Monthly newsletter drafts</li>
+          <li>Blog content (2/mo)</li>
+          <li>Review response templates</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge">Most Popular</span>
+        <p class="price-name">Beacon</p>
+        <p class="price-num">$249<span style="font-size:.7rem;font-weight:400;color:var(--text-muted);">/mo annually</span></p>
+        <p class="price-sub">$299/mo quarterly · $349/mo monthly</p>
+        <ul>
+          <li class="hl">Everything in Lite</li>
+          <li class="hl">Dedicated AI workspace</li>
+          <li>Competitor monitoring</li>
+          <li>Review tracking + alerts</li>
+          <li>Campaign strategy</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <p class="price-name">Beacon Pro</p>
+        <p class="price-num">$419<span style="font-size:.7rem;font-weight:400;color:var(--text-muted);">/mo annually</span></p>
+        <p class="price-sub">$499/mo quarterly · $579/mo monthly</p>
+        <ul>
+          <li class="hl">Everything in Beacon</li>
+          <li class="hl">Lead research & lists</li>
+          <li>Outbound email sequences</li>
+          <li>Quarterly strategy</li>
+          <li>Multi-user (Enterprise)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="landing-cta-section">
+    <h2>Try Beacon <span class="accent">Free for 6 Weeks</span></h2>
+    <p>We're onboarding beta users with extended free trials. Apply now to claim a spot — no credit card required, full access.</p>
+    <div class="landing-cta-row" style="justify-content:center;">
+      <a href="/beacon/signup" class="landing-btn landing-btn-gold">Apply for Beta Access</a>
+      <a href="https://polarispoint.io/#booking" class="landing-btn landing-btn-glass">Book a Call</a>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <p>&copy; 2026 Polaris Point · Austin, TX · <a href="https://polarispoint.io">polarispoint.io</a></p>
+  </footer>
+
 </div>
 
 <!-- ===== APP SHELL ===== -->
