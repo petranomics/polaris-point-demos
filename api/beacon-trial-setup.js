@@ -7,6 +7,11 @@ module.exports = async function handler(req, res) {
   const sql = neon(process.env.DATABASE_URL);
 
   try {
+    // Ensure client columns exist first (from earlier migration)
+    await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS client_name TEXT`;
+    await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS client_email TEXT`;
+    await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS client_password_hash TEXT`;
+
     // Add trial + referral columns to beacon_subscriptions
     await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS billing_term TEXT DEFAULT 'monthly'`;
     await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMP`;
