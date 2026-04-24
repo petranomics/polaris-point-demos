@@ -65,403 +65,244 @@
     ::-webkit-scrollbar-thumb { background: rgba(91,141,239,.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(91,141,239,.3); }
 
-    /* ---- LANDING PAGE ---- */
+    /* ---- EDITORIAL LANDING ---- */
     #loginGate {
       min-height: 100vh;
       background: var(--space);
       overflow-x: hidden;
+      color: var(--text);
     }
-    .landing-nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(5,13,30,.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 24px;
-    }
-    .landing-nav-inner {
-      max-width: 1200px;
+    .editorial-nav {
+      max-width: 720px;
       margin: 0 auto;
+      padding: 24px 24px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .landing-logo {
+    .editorial-nav .brand {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       color: #fff;
-      font-family: 'Space Grotesk',sans-serif;
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: .95rem;
       text-decoration: none;
     }
-    .landing-logo svg { width: 22px; height: 22px; filter: drop-shadow(0 0 4px rgba(91,141,239,.4)); }
-    .landing-nav-cta {
+    .editorial-nav .brand svg {
+      width: 18px; height: 18px;
+      filter: drop-shadow(0 0 4px rgba(91,141,239,.5));
+    }
+    .editorial-nav .nav-actions {
       display: flex;
       gap: 8px;
       align-items: center;
     }
-    .landing-section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 64px 24px;
-    }
-    .landing-hero {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 36px;
-      align-items: center;
-      padding: 56px 24px 40px;
-    }
-    .landing-hero-text h1 {
-      font-size: clamp(1.6rem, 3.4vw, 2.2rem);
-      line-height: 1.15;
-      letter-spacing: -.02em;
-      margin-bottom: 12px;
-    }
-    .landing-hero-text h1 .accent { color: var(--gold); }
-    .landing-hero-text p {
-      font-size: .92rem;
+    .ed-link {
       color: var(--text-secondary);
-      max-width: 50ch;
-      margin-bottom: 18px;
-    }
-    .landing-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .landing-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 11px 20px;
-      border-radius: 8px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: .88rem;
       text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: transform .15s, background .15s;
+      font-size: .82rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color .15s, background .15s;
     }
-    .landing-btn-gold { background: var(--gold); color: var(--space); }
-    .landing-btn-gold:hover { transform: translateY(-1px); }
-    .landing-btn-glass { background: rgba(255,255,255,.06); color: #fff; border: 1px solid var(--border); }
-    .landing-btn-glass:hover { background: rgba(255,255,255,.1); }
-    .landing-trust {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      margin-top: 20px;
-      font-size: .76rem;
-      color: var(--text-secondary);
-    }
-    .landing-trust .stars { color: var(--gold); letter-spacing: 2px; }
-    .login-card {
-      background: var(--surface-solid);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px 22px;
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-      margin-left: auto;
-    }
-    .landing-divider {
-      text-align: center;
-      color: var(--dim);
-      font-size: .65rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 600;
-      margin: 0;
-      padding: 24px 0;
-    }
-    .landing-features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-    .landing-feature {
-      background: rgba(15,25,55,.5);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 22px 20px;
-    }
-    .landing-feature-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, rgba(91,141,239,.15), rgba(232,197,71,.1));
-      display: grid;
-      place-items: center;
-      margin-bottom: 12px;
-    }
-    .landing-feature-icon svg { width: 18px; height: 18px; color: var(--blue); }
-    .landing-feature h3 { font-size: .95rem; margin-bottom: 4px; }
-    .landing-feature p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.55; }
-    .landing-section-header { text-align: center; margin-bottom: 24px; }
-    .landing-section-header .label {
-      display: inline-block;
-      color: var(--blue);
-      font-size: .62rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-    }
-    .landing-section-header h2 {
-      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-      margin-bottom: 6px;
-      letter-spacing: -.01em;
-    }
-    .landing-section-header p {
-      color: var(--text-secondary);
-      max-width: 52ch;
-      margin: 0 auto;
-      font-size: .85rem;
-    }
-    .landing-industries {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-    .industry-card {
-      background: rgba(15,25,55,.4);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-      transition: border-color .2s, transform .15s;
-    }
-    .industry-card:hover { border-color: rgba(91,141,239,.3); transform: translateY(-2px); }
-    .industry-card h4 { font-size: .88rem; margin-bottom: 4px; color: #fff; }
-    .industry-card p { font-size: .75rem; color: var(--dim); margin: 0; line-height: 1.4; }
-    .landing-output-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 14px;
-    }
-    .output-card {
-      background: rgba(15,25,55,.5);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-    }
-    .output-card .type-badge {
-      display: inline-block;
-      font-size: .58rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 3px 8px;
-      border-radius: 5px;
-      margin-bottom: 8px;
-    }
-    .output-card .type-social { background: rgba(91,141,239,.15); color: var(--blue); }
-    .output-card .type-news { background: rgba(232,197,71,.15); color: var(--gold); }
-    .output-card .type-blog { background: rgba(34,197,94,.15); color: #22c55e; }
-    .output-card .type-email { background: rgba(167,139,250,.15); color: #a78bfa; }
-    .output-card p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.6; }
-    .output-card .output-meta { color: var(--dim); font-size: .72rem; margin-top: 8px; font-style: italic; }
-    .landing-pricing {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-    }
-    .price-card {
-      background: rgba(15,25,55,.5);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 18px;
-      position: relative;
-    }
-    .price-card.featured { border-color: rgba(232,197,71,.3); }
-    .price-badge {
-      position: absolute;
-      top: -8px;
-      right: 14px;
+    .ed-link:hover { color: #fff; background: rgba(255,255,255,.04); }
+    .ed-btn-gold {
       background: var(--gold);
       color: var(--space);
-      font-size: .55rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      padding: 2px 8px;
-      border-radius: 5px;
+      text-decoration: none;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: transform .15s;
     }
-    .price-card .price-name { color: var(--blue); font-size: .65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
-    .price-card.featured .price-name { color: var(--gold); }
-    .price-card .price-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; }
-    .price-card .price-sub { font-size: .65rem; color: var(--text-muted); margin: 3px 0 10px; line-height: 1.5; }
-    .price-card ul { list-style: none; padding: 0; margin: 0; font-size: .74rem; color: var(--text-secondary); line-height: 1.7; }
-    .price-card ul li.hl { color: #fff; }
-    .landing-cta-section {
-      text-align: center;
-      padding: 40px 24px 56px;
-      max-width: 660px;
-      margin: 0 auto;
-    }
-    .landing-cta-section h2 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin-bottom: 8px; }
-    .landing-cta-section h2 .accent { color: var(--gold); }
-    .landing-cta-section p { color: var(--text-secondary); margin-bottom: 18px; max-width: 50ch; margin-left: auto; margin-right: auto; font-size: .88rem; }
-    .landing-footer {
-      border-top: 1px solid var(--border);
-      padding: 24px;
-      text-align: center;
-      font-size: .75rem;
-      color: var(--dim);
-    }
-    .landing-footer a { color: var(--blue); text-decoration: none; }
+    .ed-btn-gold:hover { transform: translateY(-1px); }
 
-    /* ---- NARRATIVE LANDING SECTIONS ---- */
-    .narrative-section {
-      max-width: 940px;
-      margin: 0 auto;
-      padding: 48px 24px;
-    }
-    .narrative-quote {
+    /* Article container */
+    .editorial {
       max-width: 720px;
       margin: 0 auto;
-      padding: 56px 24px 40px;
-      text-align: center;
-    }
-    .narrative-quote p {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.05rem, 2.2vw, 1.4rem);
-      line-height: 1.5;
-      color: var(--text);
-      letter-spacing: -.01em;
-    }
-    .narrative-quote .accent { color: var(--gold); }
-    .narrative-quote .small {
-      display: block;
-      font-family: 'Inter', sans-serif;
-      font-size: .85rem;
-      color: var(--text-secondary);
-      margin-top: 12px;
-      font-weight: 400;
-      letter-spacing: 0;
+      padding: 0 24px 80px;
     }
 
-    .narrative-step {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 36px;
+    /* Hero — minimal, anchored at top */
+    .ed-hero {
+      padding: 80px 0 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ed-eyebrow {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 48px;
+      gap: 8px;
+      color: var(--blue);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin-bottom: 18px;
     }
-    .narrative-step:last-child { margin-bottom: 0; }
-    .narrative-step.reverse {
-      grid-template-columns: 1fr 1fr;
+    .ed-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 6px var(--blue);
     }
-    .narrative-step.reverse .narrative-text { order: 2; }
-    .narrative-step.reverse .narrative-visual { order: 1; }
+    .ed-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin: 0 0 16px;
+      color: #fff;
+    }
+    .ed-hero h1 .accent { color: var(--gold); }
+    .ed-hero .lede {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 56ch;
+      margin: 0 0 28px;
+    }
+    .ed-hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .ed-cta-primary {
+      background: var(--gold);
+      color: var(--space);
+      text-decoration: none;
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .ed-cta-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,197,71,.2); }
+    .ed-cta-secondary {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      transition: border-color .15s, color .15s;
+    }
+    .ed-cta-secondary:hover { border-color: rgba(91,141,239,.3); color: #fff; }
+    .ed-hero-meta {
+      margin-top: 24px;
+      font-size: .78rem;
+      color: var(--dim);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .ed-hero-meta .stars { color: var(--gold); letter-spacing: 2px; }
 
-    .narrative-step .step-num {
+    /* Body sections */
+    .ed-section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .ed-section:last-of-type { border-bottom: none; }
+    .ed-section .ed-label {
+      color: var(--blue);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .ed-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+      line-height: 1.2;
+      letter-spacing: -.01em;
+      margin: 0 0 18px;
+      color: #fff;
+    }
+    .ed-section p {
+      font-size: .95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0 0 14px;
+      max-width: 60ch;
+    }
+    .ed-section p strong { color: #fff; font-weight: 600; }
+    .ed-section p:last-child { margin-bottom: 0; }
+
+    /* Steps inline list */
+    .ed-steps { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: step; }
+    .ed-steps li {
+      counter-increment: step;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(91,141,239,.08);
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 14px;
+    }
+    .ed-steps li:last-child { border: none; padding-bottom: 0; }
+    .ed-steps li:first-child { padding-top: 8px; }
+    .ed-steps li::before {
+      content: counter(step);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .78rem;
+      color: var(--gold);
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(232,197,71,.08);
+      border: 1px solid rgba(232,197,71,.2);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(91,141,239,.2), rgba(232,197,71,.15));
-      border: 1px solid rgba(91,141,239,.3);
-      color: var(--gold);
+    }
+    .ed-steps .step-body h3 {
       font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: .78rem;
-      margin-bottom: 10px;
+      font-size: 1.02rem;
+      margin: 0 0 4px;
+      color: #fff;
+      line-height: 1.3;
     }
-    .narrative-step h3 {
-      font-size: clamp(1.05rem, 2vw, 1.3rem);
-      margin-bottom: 8px;
-      letter-spacing: -.01em;
-    }
-    .narrative-step p {
-      color: var(--text-secondary);
+    .ed-steps .step-body p {
       font-size: .88rem;
       line-height: 1.6;
-      margin-bottom: 8px;
-    }
-    .narrative-visual {
-      background: var(--surface-solid);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-    }
-    .narrative-visual-list { list-style: none; padding: 0; margin: 0; }
-    .narrative-visual-list li {
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(91,141,239,.08);
-      font-size: .78rem;
+      margin: 0;
       color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .narrative-visual-list li:last-child { border: none; }
-    .narrative-visual-list .check {
-      color: #22c55e;
-      flex-shrink: 0;
     }
 
-    /* Mock chat preview */
-    .mock-chat {
-      background: #0B1120;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: .76rem;
-    }
-    .mock-msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; max-width: 88%; line-height: 1.45; }
-    .mock-msg.user { background: #1e3a5f; color: #fff; margin-left: auto; }
-    .mock-msg.bot { background: #141c2e; color: var(--text-secondary); }
-    .mock-label { font-size: .62rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-
-    /* Day-with-Beacon timeline */
-    .day-timeline {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .day-event {
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 18px;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(91,141,239,.08);
-    }
-    .day-event:last-child { border: none; }
-    .day-time {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      color: var(--blue);
-      font-size: .85rem;
-    }
-    .day-content h4 { font-size: .92rem; margin-bottom: 4px; color: #fff; }
-    .day-content p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.6; }
-
-    /* Featured output card */
-    .featured-output {
+    /* Inline output sample (looks like a real screenshot) */
+    .ed-sample {
+      margin: 22px 0 4px;
       background: var(--surface-solid);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      max-width: 580px;
-      margin: 0 auto;
+      border-radius: 10px;
       overflow: hidden;
     }
-    .featured-output-header {
-      padding: 10px 16px;
-      background: rgba(91,141,239,.08);
-      border-bottom: 1px solid var(--border);
+    .ed-sample-bar {
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 10px 14px;
+      background: rgba(91,141,239,.06);
+      border-bottom: 1px solid var(--border);
       font-size: .72rem;
       color: var(--text-secondary);
     }
-    .featured-output-header .dot {
-      width: 7px; height: 7px; border-radius: 50%;
+    .ed-sample-bar .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
       background: #22c55e;
     }
-    .featured-output-body { padding: 18px 20px; }
-    .featured-output-body .biz-tag {
+    .ed-sample-body {
+      padding: 18px 20px;
+    }
+    .ed-sample-tag {
       font-size: .62rem;
       text-transform: uppercase;
       letter-spacing: 1.5px;
@@ -469,51 +310,197 @@
       font-weight: 600;
       margin-bottom: 10px;
     }
-    .featured-output-body p {
-      color: var(--text);
+    .ed-sample-body .sample-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      margin: 0 0 8px;
+      line-height: 1.3;
+    }
+    .ed-sample-body p {
       font-size: .85rem;
       line-height: 1.6;
-      margin-bottom: 6px;
+      color: var(--text);
+      margin: 0 0 6px;
     }
-    .featured-output-body p:last-child { margin: 0; }
-    .featured-output-footer {
-      padding: 10px 16px;
+    .ed-sample-body p.muted {
+      color: var(--dim);
+      font-style: italic;
+      font-size: .78rem;
+    }
+    .ed-sample-foot {
+      padding: 8px 14px;
       background: rgba(15,25,55,.5);
       border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
       font-size: .68rem;
       color: var(--dim);
+      display: flex;
+      justify-content: space-between;
     }
 
-    /* Industry pills */
-    .industry-pills {
+    /* Industries — inline tags */
+    .ed-industries {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      max-width: 760px;
-      margin: 0 auto;
+      gap: 6px;
+      margin-top: 8px;
     }
-    .industry-pill {
-      background: rgba(15,25,55,.5);
+    .ed-tag {
+      background: rgba(15,25,55,.6);
       border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 16px;
-      font-size: .82rem;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: .76rem;
       color: var(--text-secondary);
     }
 
-    @media (max-width: 800px) {
-      .landing-hero { grid-template-columns: 1fr; padding: 48px 24px 32px; }
-      .login-card { margin: 0 auto; }
-      .landing-section { padding: 40px 24px; }
-      .narrative-section { padding: 48px 24px; }
-      .narrative-quote { padding: 48px 24px; }
-      .narrative-step { grid-template-columns: 1fr; gap: 24px; margin-bottom: 56px; }
-      .narrative-step.reverse .narrative-text { order: 1; }
-      .narrative-step.reverse .narrative-visual { order: 2; }
-      .day-event { grid-template-columns: 60px 1fr; gap: 12px; }
+    /* Pricing — inline table-style */
+    .ed-pricing {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+      background: rgba(15,25,55,.3);
+    }
+    .ed-tier {
+      padding: 22px 18px;
+      border-right: 1px solid var(--border);
+    }
+    .ed-tier:last-child { border-right: none; }
+    .ed-tier.featured { background: rgba(232,197,71,.04); }
+    .ed-tier .tier-name {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      color: var(--blue);
+      margin: 0 0 8px;
+    }
+    .ed-tier.featured .tier-name { color: var(--gold); }
+    .ed-tier .tier-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .ed-tier .tier-price small {
+      font-size: .65rem;
+      font-weight: 400;
+      color: var(--dim);
+    }
+    .ed-tier .tier-sub {
+      font-size: .65rem;
+      color: var(--dim);
+      margin: 4px 0 14px;
+      line-height: 1.5;
+    }
+    .ed-tier ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: .76rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .ed-tier ul li::before {
+      content: "·";
+      color: var(--dim);
+      margin-right: 6px;
+    }
+
+    /* CTA at bottom */
+    .ed-final {
+      padding: 48px 0 8px;
+      text-align: center;
+    }
+    .ed-final h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.3rem, 3vw, 1.75rem);
+      letter-spacing: -.01em;
+      margin: 0 0 10px;
+      color: #fff;
+    }
+    .ed-final h2 .accent { color: var(--gold); }
+    .ed-final p {
+      color: var(--text-secondary);
+      font-size: .92rem;
+      margin: 0 0 22px;
+    }
+    .ed-final-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    /* Floating sign-in card (sticky on right side on desktop) */
+    .ed-signin-card {
+      position: fixed;
+      top: 88px;
+      right: 24px;
+      width: 290px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+      z-index: 40;
+      box-shadow: 0 12px 40px rgba(0,0,0,.3);
+    }
+    .ed-signin-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .95rem;
+      margin: 0 0 4px;
+      color: #fff;
+    }
+    .ed-signin-card .signin-sub {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .ed-signin-card .login-field { margin-bottom: 10px; }
+    .ed-signin-card .login-field input { font-size: .8rem; padding: 9px 12px; }
+    .ed-signin-card .login-btn { font-size: .82rem; padding: 9px; margin-top: 4px; }
+    .ed-signin-card .signin-foot {
+      margin-top: 14px;
+      font-size: .72rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+    .ed-signin-card .signin-foot a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .ed-footer {
+      padding: 40px 24px;
+      text-align: center;
+      font-size: .75rem;
+      color: var(--dim);
+      border-top: 1px solid var(--border);
+    }
+    .ed-footer a { color: var(--blue); text-decoration: none; }
+
+    @media (max-width: 1100px) {
+      .ed-signin-card {
+        position: static;
+        width: auto;
+        max-width: 380px;
+        margin: 24px auto 0;
+        box-shadow: none;
+      }
+    }
+    @media (max-width: 700px) {
+      .ed-hero { padding: 56px 0 36px; }
+      .ed-section { padding: 32px 0; }
+      .ed-pricing { grid-template-columns: 1fr; }
+      .ed-tier { border-right: none; border-bottom: 1px solid var(--border); }
+      .ed-tier:last-child { border-bottom: none; }
     }
     .login-card .login-star {
       width: 44px;
@@ -1851,231 +1838,191 @@
 <div id="loginGate">
 
   <!-- Top nav -->
-  <nav class="landing-nav">
-    <div class="landing-nav-inner">
-      <a class="landing-logo" href="/">
-        <svg><use href="#icon-star"/></svg>
-        Beacon
-      </a>
-      <div class="landing-nav-cta">
-        <a href="#how-it-works" class="landing-btn landing-btn-glass" style="padding:8px 14px;font-size:.8rem;">How It Works</a>
-        <a href="/beacon/signup" class="landing-btn landing-btn-gold" style="padding:8px 14px;font-size:.8rem;">Apply for Beta</a>
-      </div>
+  <nav class="editorial-nav">
+    <a class="brand" href="/">
+      <svg><use href="#icon-star"/></svg>
+      Beacon
+    </a>
+    <div class="nav-actions">
+      <a class="ed-link" href="#how">How it works</a>
+      <a class="ed-link" href="#pricing">Pricing</a>
+      <a class="ed-btn-gold" href="/beacon/signup">Apply for beta</a>
     </div>
   </nav>
 
-  <!-- Hero with login -->
-  <section class="landing-hero" style="max-width:1100px;margin:0 auto;">
-    <div class="landing-hero-text">
-      <p style="display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;">
-        <span style="width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 6px var(--blue);"></span>
-        AI Marketing for Small Business
-      </p>
-      <h1>Your always-on <span class="accent">marketing employee</span> — for less than a coffee a day.</h1>
-      <p>Beacon writes your social posts, newsletters, and blog content in your brand voice. It tracks your competitors, drafts review responses, and generates ideas on demand. All for a fraction of the cost of hiring a marketer or agency.</p>
-      <div class="landing-cta-row">
-        <a href="/beacon/signup" class="landing-btn landing-btn-gold">Apply for 6-Week Trial</a>
-        <a href="#how-it-works" class="landing-btn landing-btn-glass">See How It Works</a>
+  <!-- Floating sign-in (becomes inline below 1100px) -->
+  <aside class="ed-signin-card">
+    <h3>Welcome back</h3>
+    <div class="signin-sub">Sign in</div>
+    <form id="loginForm" autocomplete="on">
+      <div class="login-field">
+        <input type="email" id="loginEmail" placeholder="Email" required autocomplete="email">
       </div>
-      <div class="landing-trust">
+      <div class="login-field">
+        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+    </form>
+    <div class="login-error" id="loginError"></div>
+    <div class="signin-foot">No account? <a href="/beacon/signup">Apply for beta →</a></div>
+  </aside>
+
+  <!-- Editorial article -->
+  <article class="editorial">
+
+    <!-- Hero -->
+    <header class="ed-hero">
+      <div class="ed-eyebrow"><span class="dot"></span>AI marketing for small business</div>
+      <h1>Your always-on marketing employee — for <span class="accent">$129 a month</span>.</h1>
+      <p class="lede">Beacon writes your social posts, newsletters, and blog drafts in your brand voice. It tracks competitors, drafts review responses, and answers your marketing questions on demand. About 10 minutes a week to keep your marketing running — no consultant or new hire required.</p>
+      <div class="ed-hero-actions">
+        <a class="ed-cta-primary" href="/beacon/signup">Apply for 6-week trial</a>
+        <a class="ed-cta-secondary" href="#how">See how it works</a>
+      </div>
+      <div class="ed-hero-meta">
         <span class="stars">★★★★★</span>
-        <span>Built by Polaris Point — Austin, TX</span>
+        <span>Built by Polaris Point · Austin, TX</span>
       </div>
-    </div>
+    </header>
 
-    <!-- Login card on the right -->
-    <div class="login-card">
-      <svg class="login-star"><use href="#icon-star"/></svg>
-      <h1>Welcome Back</h1>
-      <div class="login-subtitle">Sign In to Your Workspace</div>
-      <form id="loginForm" autocomplete="on">
-        <div class="login-field">
-          <input type="email" id="loginEmail" placeholder="Email address" required autocomplete="email">
+    <!-- Why -->
+    <section class="ed-section">
+      <p class="ed-label">The problem</p>
+      <h2>You know you should be marketing online. You don't have time.</h2>
+      <p>Most small businesses know consistent marketing is what separates them from the competition. None of them have hours each week to write social posts, draft newsletters, or respond thoughtfully to every review.</p>
+      <p>The shortcuts haven't worked either. <strong>ChatGPT doesn't know your business</strong> — every prompt starts from zero. <strong>Freelancers cost $500–$1,500/month</strong> for recycled templates. <strong>Hiring a marketer runs $4,000+/month</strong> and takes three months to get up to speed.</p>
+      <p>Beacon is the missing middle: a system that learns your business once, then works for you every day.</p>
+    </section>
+
+    <!-- How -->
+    <section class="ed-section" id="how">
+      <p class="ed-label">How it works</p>
+      <h2>Three steps. About a week to set up. Then it just runs.</h2>
+      <ol class="ed-steps">
+        <li>
+          <div class="step-body">
+            <h3>We seed it with your business.</h3>
+            <p>Services, brand voice, competitors, customer reviews, market data — all loaded during onboarding. By day two, Beacon writes like someone who's worked at your company for years.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h3>It works on a schedule.</h3>
+            <p>Weekly social posts. Monthly newsletters. Blog drafts. Competitor reports. Review response drafts. All generated automatically and delivered to your dashboard.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h3>You approve in 10 minutes.</h3>
+            <p>Review the drafts, tweak if needed, hit post. You can also chat with Beacon anytime — ask for an email, a strategy idea, a response to a tough customer.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Sample -->
+    <section class="ed-section">
+      <p class="ed-label">What it actually writes</p>
+      <h2>No templates. Custom-written for your business.</h2>
+      <p>Here's a real blog post Beacon generated for an Austin HVAC company. The intro is below — the full post runs 612 words and includes SEO optimization for "Austin AC repair" and six related search terms.</p>
+
+      <div class="ed-sample">
+        <div class="ed-sample-bar">
+          <span class="live-dot"></span>
+          Generated by Beacon · 8:14 AM
         </div>
-        <div class="login-field">
-          <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+        <div class="ed-sample-body">
+          <div class="ed-sample-tag">Blog post · 612 words</div>
+          <p class="sample-title">5 Signs Your Austin AC Is About to Quit (Before It Costs You $4,000)</p>
+          <p>Every July, we get the same call. "It was working fine yesterday." We pull up to a 100-degree house, find a system that's been begging for help for months, and watch a homeowner write a check they didn't budget for.</p>
+          <p>The frustrating part? AC units almost always tell you they're dying. Most people don't know what to listen for.</p>
+          <p class="muted">[continues for 540 more words with subheadings, local references, and a soft CTA]</p>
         </div>
-        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
-      </form>
-      <div class="login-error" id="loginError"></div>
-      <div style="margin-top:18px;font-size:.78rem;color:var(--text-muted);">
-        Don't have an account? <a href="/beacon/signup" style="color:var(--blue);text-decoration:none;font-weight:600;">Apply for beta access →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- The Problem (full-width quote) -->
-  <section class="narrative-quote" id="how-it-works">
-    <p>You know you should be marketing online.<br>You don't have time. <span class="accent">ChatGPT doesn't know your business.</span><br>Hiring a marketer costs $4,000 a month.</p>
-    <span class="small">There's a better answer.</span>
-  </section>
-
-  <!-- Step 1: Seed -->
-  <section class="narrative-section">
-    <div class="narrative-step">
-      <div class="narrative-text">
-        <span class="step-num">1</span>
-        <h3>We seed Beacon with your business.</h3>
-        <p>Your services. Your brand voice. Your competitors. Your past customers. Your reviews. The way you actually talk.</p>
-        <p>By the time we hand it over, Beacon knows more about your business than your average new hire knows in 90 days.</p>
-      </div>
-      <div class="narrative-visual">
-        <div class="mock-label">Context loaded</div>
-        <ul class="narrative-visual-list">
-          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Business profile + services</li>
-          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Brand voice & writing style</li>
-          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Top 3 competitors monitored</li>
-          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Customer reviews indexed</li>
-          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Service area + market data</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Step 2: Generate (reversed) -->
-    <div class="narrative-step reverse">
-      <div class="narrative-text">
-        <span class="step-num">2</span>
-        <h3>It works for you, every day.</h3>
-        <p>Weekly social posts. Monthly newsletters. Blog drafts. Review response drafts. Competitor reports. Outreach emails. All on a schedule, all in your voice.</p>
-        <p>You can also chat with it — ask for an email, a strategy idea, a response to a tough customer. Like texting your marketing team.</p>
-      </div>
-      <div class="narrative-visual">
-        <div class="mock-chat">
-          <div class="mock-msg user">Write me a Facebook post about our spring AC tune-up special.</div>
-          <div class="mock-msg bot">"Austin homeowners — your AC is about to start screaming. Spring tune-ups are $89 right now. Locks in priority service before the summer rush hits. Book through the link in bio. 🌞"</div>
-          <div class="mock-msg user">Make it sound less corporate.</div>
-          <div class="mock-msg bot">"Heads up Austin — get your AC tuned up now ($89) or risk the dreaded mid-July breakdown call. We've all been there. Link in bio."</div>
+        <div class="ed-sample-foot">
+          <span>SEO: Austin AC repair + 6 related terms</span>
+          <span>Generated in 8 seconds</span>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Step 3: Approve -->
-    <div class="narrative-step">
-      <div class="narrative-text">
-        <span class="step-num">3</span>
-        <h3>You approve. Beacon runs the rest.</h3>
-        <p>Every piece of content lands in your dashboard with a copy button and a download button. You review, tweak if needed, and post.</p>
-        <p>It takes about 10 minutes a week to keep your marketing running. The kind of consistent presence that compounds — without burning a single hour you don't have.</p>
+    <!-- Industries -->
+    <section class="ed-section">
+      <p class="ed-label">Built for</p>
+      <h2>Any local business with customers to reach.</h2>
+      <p>Beacon is industry-tuned. Pick the closest fit during onboarding and we'll seed it with the right context, content patterns, and competitor profiles for your space.</p>
+      <div class="ed-industries">
+        <span class="ed-tag">Real estate agents</span>
+        <span class="ed-tag">Plumbers & HVAC</span>
+        <span class="ed-tag">Pest control</span>
+        <span class="ed-tag">Cleaners</span>
+        <span class="ed-tag">Restaurants & cafes</span>
+        <span class="ed-tag">Med spas</span>
+        <span class="ed-tag">Dentists</span>
+        <span class="ed-tag">Lawyers & accountants</span>
+        <span class="ed-tag">Photographers</span>
+        <span class="ed-tag">E-commerce brands</span>
+        <span class="ed-tag">Personal trainers</span>
+        <span class="ed-tag">Tutors & coaches</span>
       </div>
-      <div class="narrative-visual">
-        <div class="mock-label">Your week</div>
-        <ul class="narrative-visual-list">
-          <li style="color:var(--text);">📅 5 social posts ready</li>
-          <li style="color:var(--text);">📧 Monthly newsletter draft</li>
-          <li style="color:var(--text);">📝 Blog post: "5 signs you need a plumber"</li>
-          <li style="color:var(--text);">⚠️ Competitor lowered prices — alert sent</li>
-          <li style="color:var(--text);">⭐ New 4-star review — response drafted</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Featured sample output -->
-  <section class="narrative-section" style="border-top:1px solid var(--border);">
-    <div class="landing-section-header">
-      <span class="label">Real Output</span>
-      <h2>This is what Beacon writes for an Austin HVAC company.</h2>
-      <p>No templates. Custom-written from their actual services, brand voice, and market context.</p>
-    </div>
-    <div class="featured-output">
-      <div class="featured-output-header">
-        <span class="dot"></span>
-        Generated by Beacon · 8:14 AM
-      </div>
-      <div class="featured-output-body">
-        <div class="biz-tag">Blog Post · 612 words</div>
-        <p style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#fff;">5 Signs Your Austin AC Is About to Quit (Before It Costs You $4,000)</p>
-        <p>Every July, we get the same call. "It was working fine yesterday." We pull up to a 100-degree house, find a system that's been begging for help for months, and watch a homeowner write a check they didn't budget for.</p>
-        <p>The frustrating part? AC units almost always tell you they're dying. Most people don't know what to listen for.</p>
-        <p>Here are the five signs we wish every Austin homeowner knew — because catching them early can be the difference between a $200 repair and a $4,000 system replacement...</p>
-        <p style="color:var(--dim);font-style:italic;font-size:.85rem;">[continues for 540 more words, with subheadings, local references, and a soft CTA]</p>
-      </div>
-      <div class="featured-output-footer">
-        <span>SEO-optimized for "Austin AC repair" and 6 related terms</span>
-        <span>Generation time: 8 seconds</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Industries (compact pills) -->
-  <section class="narrative-section" style="text-align:center;border-top:1px solid var(--border);">
-    <p style="font-size:.92rem;color:var(--text-secondary);margin-bottom:18px;">Beacon is industry-tuned for:</p>
-    <div class="industry-pills">
-      <span class="industry-pill">Real Estate Agents</span>
-      <span class="industry-pill">Plumbers & HVAC</span>
-      <span class="industry-pill">Pest Control</span>
-      <span class="industry-pill">Cleaners</span>
-      <span class="industry-pill">Restaurants & Cafes</span>
-      <span class="industry-pill">Med Spas</span>
-      <span class="industry-pill">Dentists</span>
-      <span class="industry-pill">Lawyers</span>
-      <span class="industry-pill">Accountants</span>
-      <span class="industry-pill">Photographers</span>
-      <span class="industry-pill">E-Commerce Brands</span>
-      <span class="industry-pill">Personal Trainers</span>
-      <span class="industry-pill">Tutors & Coaches</span>
-      <span class="industry-pill">+ any local business</span>
-    </div>
-  </section>
-
-  <!-- Pricing -->
-  <section class="narrative-section" id="pricing" style="border-top:1px solid var(--border);">
-    <div class="landing-section-header">
-      <span class="label">Pricing</span>
+    <!-- Pricing -->
+    <section class="ed-section" id="pricing">
+      <p class="ed-label">Pricing</p>
       <h2>Less than one hour of a marketing consultant.</h2>
       <p>All tiers include the AI workspace, scheduled content, and brand voice training. Longer commitments unlock better pricing.</p>
-    </div>
-    <div class="landing-pricing">
-      <div class="price-card">
-        <p class="price-name">Beacon Lite</p>
-        <p class="price-num">$129<span style="font-size:.7rem;font-weight:400;color:var(--text-muted);">/mo annually</span></p>
-        <p class="price-sub">$149/mo quarterly · $169/mo monthly</p>
-        <ul>
-          <li class="hl">Weekly social media posts</li>
-          <li>Monthly newsletter drafts</li>
-          <li>Blog content (2/mo)</li>
-          <li>Review response templates</li>
-        </ul>
+      <div class="ed-pricing">
+        <div class="ed-tier">
+          <p class="tier-name">Lite</p>
+          <p class="tier-price">$129<small>/mo annual</small></p>
+          <p class="tier-sub">$149/mo quarterly<br>$169/mo monthly</p>
+          <ul>
+            <li>Weekly social posts</li>
+            <li>Monthly newsletter</li>
+            <li>2 blog drafts/mo</li>
+            <li>Review templates</li>
+          </ul>
+        </div>
+        <div class="ed-tier featured">
+          <p class="tier-name">Beacon · most popular</p>
+          <p class="tier-price">$249<small>/mo annual</small></p>
+          <p class="tier-sub">$299/mo quarterly<br>$349/mo monthly</p>
+          <ul>
+            <li>Everything in Lite</li>
+            <li>AI chat workspace</li>
+            <li>Competitor monitoring</li>
+            <li>Review tracking</li>
+            <li>Campaign strategy</li>
+          </ul>
+        </div>
+        <div class="ed-tier">
+          <p class="tier-name">Pro</p>
+          <p class="tier-price">$419<small>/mo annual</small></p>
+          <p class="tier-sub">$499/mo quarterly<br>$579/mo monthly</p>
+          <ul>
+            <li>Everything in Beacon</li>
+            <li>Lead research</li>
+            <li>Outbound sequences</li>
+            <li>Quarterly strategy</li>
+            <li>Multi-user (Enterprise)</li>
+          </ul>
+        </div>
       </div>
-      <div class="price-card featured">
-        <span class="price-badge">Most Popular</span>
-        <p class="price-name">Beacon</p>
-        <p class="price-num">$249<span style="font-size:.7rem;font-weight:400;color:var(--text-muted);">/mo annually</span></p>
-        <p class="price-sub">$299/mo quarterly · $349/mo monthly</p>
-        <ul>
-          <li class="hl">Everything in Lite</li>
-          <li class="hl">Dedicated AI workspace</li>
-          <li>Competitor monitoring</li>
-          <li>Review tracking + alerts</li>
-          <li>Campaign strategy</li>
-        </ul>
-      </div>
-      <div class="price-card">
-        <p class="price-name">Beacon Pro</p>
-        <p class="price-num">$419<span style="font-size:.7rem;font-weight:400;color:var(--text-muted);">/mo annually</span></p>
-        <p class="price-sub">$499/mo quarterly · $579/mo monthly</p>
-        <ul>
-          <li class="hl">Everything in Beacon</li>
-          <li class="hl">Lead research & lists</li>
-          <li>Outbound email sequences</li>
-          <li>Quarterly strategy</li>
-          <li>Multi-user (Enterprise)</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CTA -->
-  <section class="landing-cta-section" style="border-top:1px solid var(--border);">
-    <h2>Try Beacon <span class="accent">free for 6 weeks.</span></h2>
-    <p>We're onboarding beta users with extended free trials. No credit card required. Full access.</p>
-    <div class="landing-cta-row" style="justify-content:center;">
-      <a href="/beacon/signup" class="landing-btn landing-btn-gold">Apply for Beta Access</a>
-      <a href="https://polarispoint.io/#booking" class="landing-btn landing-btn-glass">Book a Call</a>
-    </div>
-  </section>
+    <!-- Final CTA -->
+    <section class="ed-final">
+      <h2>Try Beacon <span class="accent">free for 6 weeks.</span></h2>
+      <p>Beta access for new clients — no credit card, full system, real onboarding.</p>
+      <div class="ed-final-actions">
+        <a class="ed-cta-primary" href="/beacon/signup">Apply for beta access</a>
+        <a class="ed-cta-secondary" href="https://polarispoint.io/#booking">Book a call</a>
+      </div>
+    </section>
 
-  <footer class="landing-footer">
+  </article>
+
+  <footer class="ed-footer">
     <p>&copy; 2026 Polaris Point · Austin, TX · <a href="https://polarispoint.io">polarispoint.io</a></p>
   </footer>
 
