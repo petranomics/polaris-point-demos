@@ -310,10 +310,209 @@
       color: var(--dim);
     }
     .landing-footer a { color: var(--blue); text-decoration: none; }
+
+    /* ---- NARRATIVE LANDING SECTIONS ---- */
+    .narrative-section {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+    .narrative-quote {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .narrative-quote p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2.1rem);
+      line-height: 1.4;
+      color: var(--text);
+      letter-spacing: -.01em;
+    }
+    .narrative-quote .accent { color: var(--gold); }
+    .narrative-quote .small {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-top: 16px;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .narrative-step {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 80px;
+    }
+    .narrative-step.reverse {
+      grid-template-columns: 1fr 1fr;
+    }
+    .narrative-step.reverse .narrative-text { order: 2; }
+    .narrative-step.reverse .narrative-visual { order: 1; }
+
+    .narrative-step .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(91,141,239,.2), rgba(232,197,71,.15));
+      border: 1px solid rgba(91,141,239,.3);
+      color: var(--gold);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      margin-bottom: 16px;
+    }
+    .narrative-step h3 {
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      margin-bottom: 12px;
+      letter-spacing: -.01em;
+    }
+    .narrative-step p {
+      color: var(--text-secondary);
+      font-size: .96rem;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .narrative-visual {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      min-height: 220px;
+    }
+    .narrative-visual-list { list-style: none; padding: 0; margin: 0; }
+    .narrative-visual-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(91,141,239,.08);
+      font-size: .85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .narrative-visual-list li:last-child { border: none; }
+    .narrative-visual-list .check {
+      color: #22c55e;
+      flex-shrink: 0;
+    }
+
+    /* Mock chat preview */
+    .mock-chat {
+      background: #0B1120;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: .82rem;
+    }
+    .mock-msg { padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; max-width: 85%; }
+    .mock-msg.user { background: #1e3a5f; color: #fff; margin-left: auto; }
+    .mock-msg.bot { background: #141c2e; color: var(--text-secondary); }
+    .mock-label { font-size: .65rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+    /* Day-with-Beacon timeline */
+    .day-timeline {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .day-event {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 18px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(91,141,239,.08);
+    }
+    .day-event:last-child { border: none; }
+    .day-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--blue);
+      font-size: .85rem;
+    }
+    .day-content h4 { font-size: .92rem; margin-bottom: 4px; color: #fff; }
+    .day-content p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.6; }
+
+    /* Featured output card */
+    .featured-output {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      max-width: 640px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .featured-output-header {
+      padding: 14px 20px;
+      background: rgba(91,141,239,.08);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .78rem;
+      color: var(--text-secondary);
+    }
+    .featured-output-header .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e;
+    }
+    .featured-output-body { padding: 22px 24px; }
+    .featured-output-body .biz-tag {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .featured-output-body p {
+      color: var(--text);
+      font-size: .95rem;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .featured-output-body p:last-child { margin: 0; }
+    .featured-output-footer {
+      padding: 12px 20px;
+      background: rgba(15,25,55,.5);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: .72rem;
+      color: var(--dim);
+    }
+
+    /* Industry pills */
+    .industry-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .industry-pill {
+      background: rgba(15,25,55,.5);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: .82rem;
+      color: var(--text-secondary);
+    }
+
     @media (max-width: 800px) {
       .landing-hero { grid-template-columns: 1fr; padding: 48px 24px 32px; }
       .login-card { margin: 0 auto; }
       .landing-section { padding: 40px 24px; }
+      .narrative-section { padding: 48px 24px; }
+      .narrative-quote { padding: 48px 24px; }
+      .narrative-step { grid-template-columns: 1fr; gap: 24px; margin-bottom: 56px; }
+      .narrative-step.reverse .narrative-text { order: 1; }
+      .narrative-step.reverse .narrative-visual { order: 2; }
+      .day-event { grid-template-columns: 60px 1fr; gap: 12px; }
     }
     .login-card .login-star {
       width: 44px;
@@ -1704,115 +1903,171 @@
     </div>
   </section>
 
-  <!-- What Beacon Does -->
-  <section class="landing-section" id="how-it-works">
-    <div class="landing-section-header">
-      <span class="label">What Beacon Does</span>
-      <h2>One System. Endless Marketing.</h2>
-      <p>Beacon is seeded with everything about your business — your services, brand voice, competitors, and customers. Then it works for you, every day.</p>
+  <!-- The Problem (full-width quote) -->
+  <section class="narrative-quote" id="how-it-works">
+    <p>You know you should be marketing online.<br>You don't have time. <span class="accent">ChatGPT doesn't know your business.</span><br>Hiring a marketer costs $4,000 a month.</p>
+    <span class="small">There's a better answer.</span>
+  </section>
+
+  <!-- Step 1: Seed -->
+  <section class="narrative-section">
+    <div class="narrative-step">
+      <div class="narrative-text">
+        <span class="step-num">1</span>
+        <h3>We seed Beacon with your business.</h3>
+        <p>Your services. Your brand voice. Your competitors. Your past customers. Your reviews. The way you actually talk.</p>
+        <p>By the time we hand it over, Beacon knows more about your business than your average new hire knows in 90 days.</p>
+      </div>
+      <div class="narrative-visual">
+        <div class="mock-label">Context loaded</div>
+        <ul class="narrative-visual-list">
+          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Business profile + services</li>
+          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Brand voice & writing style</li>
+          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Top 3 competitors monitored</li>
+          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Customer reviews indexed</li>
+          <li><svg class="check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Service area + market data</li>
+        </ul>
+      </div>
     </div>
-    <div class="landing-features">
-      <div class="landing-feature">
-        <div class="landing-feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <h3>Always-On Chat</h3>
-        <p>Ask anything about your marketing — Beacon already knows your business and responds with context-aware answers in seconds.</p>
+
+    <!-- Step 2: Generate (reversed) -->
+    <div class="narrative-step reverse">
+      <div class="narrative-text">
+        <span class="step-num">2</span>
+        <h3>It works for you, every day.</h3>
+        <p>Weekly social posts. Monthly newsletters. Blog drafts. Review response drafts. Competitor reports. Outreach emails. All on a schedule, all in your voice.</p>
+        <p>You can also chat with it — ask for an email, a strategy idea, a response to a tough customer. Like texting your marketing team.</p>
       </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="narrative-visual">
+        <div class="mock-chat">
+          <div class="mock-msg user">Write me a Facebook post about our spring AC tune-up special.</div>
+          <div class="mock-msg bot">"Austin homeowners — your AC is about to start screaming. Spring tune-ups are $89 right now. Locks in priority service before the summer rush hits. Book through the link in bio. 🌞"</div>
+          <div class="mock-msg user">Make it sound less corporate.</div>
+          <div class="mock-msg bot">"Heads up Austin — get your AC tuned up now ($89) or risk the dreaded mid-July breakdown call. We've all been there. Link in bio."</div>
         </div>
-        <h3>Auto-Scheduled Content</h3>
-        <p>Weekly social posts. Monthly newsletters. Blog drafts on a calendar. All written in your brand voice — ready for you to approve and publish.</p>
       </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-        </div>
-        <h3>Competitor Watch</h3>
-        <p>Beacon checks your competitors' websites and reviews daily. Get summaries of what they're doing — and what gaps you can exploit.</p>
+    </div>
+
+    <!-- Step 3: Approve -->
+    <div class="narrative-step">
+      <div class="narrative-text">
+        <span class="step-num">3</span>
+        <h3>You approve. Beacon runs the rest.</h3>
+        <p>Every piece of content lands in your dashboard with a copy button and a download button. You review, tweak if needed, and post.</p>
+        <p>It takes about 10 minutes a week to keep your marketing running. The kind of consistent presence that compounds — without burning a single hour you don't have.</p>
       </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <h3>Review Responses</h3>
-        <p>New review hits Google? Beacon drafts a thoughtful response in your voice within minutes. You review, approve, post.</p>
-      </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 11h-6M19 8v6"/></svg>
-        </div>
-        <h3>Lead Outreach</h3>
-        <p>Cold emails, follow-up sequences, referral requests. Beacon drafts personalized outreach so you never stare at a blank page.</p>
-      </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
-        </div>
-        <h3>Quarterly Strategy</h3>
-        <p>Every 90 days, get a strategy report based on your performance, market trends, and competitive landscape. Like having a CMO on call.</p>
+      <div class="narrative-visual">
+        <div class="mock-label">Your week</div>
+        <ul class="narrative-visual-list">
+          <li style="color:var(--text);">📅 5 social posts ready</li>
+          <li style="color:var(--text);">📧 Monthly newsletter draft</li>
+          <li style="color:var(--text);">📝 Blog post: "5 signs you need a plumber"</li>
+          <li style="color:var(--text);">⚠️ Competitor lowered prices — alert sent</li>
+          <li style="color:var(--text);">⭐ New 4-star review — response drafted</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- Industries -->
-  <section class="landing-section">
+  <!-- A Day With Beacon (timeline) -->
+  <section class="narrative-section" style="border-top:1px solid var(--border);">
     <div class="landing-section-header">
-      <span class="label">Built For</span>
-      <h2>Beacon Works for Any Local Business</h2>
-      <p>Each instance is custom-tuned to your industry. Pick the closest fit and Beacon learns the rest from your business context.</p>
+      <span class="label">A Typical Tuesday</span>
+      <h2>Here's what 10 minutes with Beacon looks like.</h2>
     </div>
-    <div class="landing-industries">
-      <div class="industry-card"><h4>🏠 Real Estate</h4><p>Listing posts, market reports, neighborhood guides, past client nurture</p></div>
-      <div class="industry-card"><h4>🔧 Local Services</h4><p>Plumbers, HVAC, pest control, cleaners, handymen, landscapers</p></div>
-      <div class="industry-card"><h4>🍴 Food & Hospitality</h4><p>Restaurants, cafes, bars, food trucks, catering, event venues</p></div>
-      <div class="industry-card"><h4>💆 Health & Wellness</h4><p>Med spas, dentists, chiropractors, trainers, yoga studios</p></div>
-      <div class="industry-card"><h4>📊 Professional Services</h4><p>Lawyers, accountants, financial advisors, consultants, coaches</p></div>
-      <div class="industry-card"><h4>🛍 E-Commerce</h4><p>Online stores, boutiques, product brands, Amazon sellers</p></div>
-      <div class="industry-card"><h4>🎨 Creative & Agency</h4><p>Photographers, designers, videographers, marketing agencies</p></div>
-      <div class="industry-card"><h4>📚 Education</h4><p>Tutors, coaches, course creators, music teachers, driving schools</p></div>
+    <div class="day-timeline">
+      <div class="day-event">
+        <div class="day-time">8:14 AM</div>
+        <div class="day-content">
+          <h4>You open the dashboard.</h4>
+          <p>5 new social posts are queued. Beacon flagged a 4-star review from yesterday with a draft response.</p>
+        </div>
+      </div>
+      <div class="day-event">
+        <div class="day-time">8:17 AM</div>
+        <div class="day-content">
+          <h4>You scan the posts.</h4>
+          <p>Three are perfect. One you tweak (change "easy" to "simple"). One you skip — the angle isn't right this week. 90 seconds.</p>
+        </div>
+      </div>
+      <div class="day-event">
+        <div class="day-time">8:19 AM</div>
+        <div class="day-content">
+          <h4>You hit "Post" on the review response.</h4>
+          <p>Customer feels heard. Future customers see you respond thoughtfully. Your Google rating reflects that you care.</p>
+        </div>
+      </div>
+      <div class="day-event">
+        <div class="day-time">8:22 AM</div>
+        <div class="day-content">
+          <h4>You ask Beacon a question.</h4>
+          <p>"Write me a follow-up email to that prospect from Friday." 30 seconds later, draft is ready. You add a personal line, hit send.</p>
+        </div>
+      </div>
+      <div class="day-event">
+        <div class="day-time">8:24 AM</div>
+        <div class="day-content">
+          <h4>You close the dashboard.</h4>
+          <p>Your marketing for the day is done. You go run your actual business.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Sample Outputs -->
-  <section class="landing-section">
+  <!-- Featured sample output -->
+  <section class="narrative-section" style="border-top:1px solid var(--border);">
     <div class="landing-section-header">
-      <span class="label">What You'll Get</span>
-      <h2>Sample Outputs</h2>
-      <p>Real content generated by Beacon for a real client. Custom-written for their business, ready to publish.</p>
+      <span class="label">Real Output</span>
+      <h2>This is what Beacon writes for an Austin HVAC company.</h2>
+      <p>No templates. Custom-written from their actual services, brand voice, and market context.</p>
     </div>
-    <div class="landing-output-grid">
-      <div class="output-card">
-        <span class="type-badge type-social">Instagram Post</span>
-        <p>"South Austin homeowners — your AC is about to start screaming for help. Spring tune-ups are $89 right now. Locks in priority service before the summer rush hits. Book through the link in bio. 🌞"</p>
-        <div class="output-meta">Generated for an Austin HVAC company</div>
+    <div class="featured-output">
+      <div class="featured-output-header">
+        <span class="dot"></span>
+        Generated by Beacon · 8:14 AM
       </div>
-      <div class="output-card">
-        <span class="type-badge type-news">Newsletter</span>
-        <p>"Three new listings hit South Austin this week — including a stunning 1920s bungalow in 78704 with original hardwoods and a casita in back. Plus: why now is actually a great time to sell despite the rate environment..."</p>
-        <div class="output-meta">Generated for a real estate agent</div>
+      <div class="featured-output-body">
+        <div class="biz-tag">Blog Post · 612 words</div>
+        <p style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#fff;">5 Signs Your Austin AC Is About to Quit (Before It Costs You $4,000)</p>
+        <p>Every July, we get the same call. "It was working fine yesterday." We pull up to a 100-degree house, find a system that's been begging for help for months, and watch a homeowner write a check they didn't budget for.</p>
+        <p>The frustrating part? AC units almost always tell you they're dying. Most people don't know what to listen for.</p>
+        <p>Here are the five signs we wish every Austin homeowner knew — because catching them early can be the difference between a $200 repair and a $4,000 system replacement...</p>
+        <p style="color:var(--dim);font-style:italic;font-size:.85rem;">[continues for 540 more words, with subheadings, local references, and a soft CTA]</p>
       </div>
-      <div class="output-card">
-        <span class="type-badge type-blog">Blog Post</span>
-        <p>"5 signs your home has a hidden water leak — and what it'll cost if you ignore them. We see this every week in Austin homes. The good news? Most leaks announce themselves long before they cause real damage..."</p>
-        <div class="output-meta">Generated for a plumbing company</div>
+      <div class="featured-output-footer">
+        <span>SEO-optimized for "Austin AC repair" and 6 related terms</span>
+        <span>Generation time: 8 seconds</span>
       </div>
-      <div class="output-card">
-        <span class="type-badge type-email">Outreach Email</span>
-        <p>"Hi Tom, saw your post about the Cedar Park flip taking longer than expected. Most issues we see at this stage come down to permit holds. We can usually shake those loose in 48 hours — happy to share a few tactics that worked for other Austin investors..."</p>
-        <div class="output-meta">Generated for a contractor</div>
-      </div>
+    </div>
+  </section>
+
+  <!-- Industries (compact pills) -->
+  <section class="narrative-section" style="text-align:center;border-top:1px solid var(--border);">
+    <p style="font-size:.92rem;color:var(--text-secondary);margin-bottom:18px;">Beacon is industry-tuned for:</p>
+    <div class="industry-pills">
+      <span class="industry-pill">Real Estate Agents</span>
+      <span class="industry-pill">Plumbers & HVAC</span>
+      <span class="industry-pill">Pest Control</span>
+      <span class="industry-pill">Cleaners</span>
+      <span class="industry-pill">Restaurants & Cafes</span>
+      <span class="industry-pill">Med Spas</span>
+      <span class="industry-pill">Dentists</span>
+      <span class="industry-pill">Lawyers</span>
+      <span class="industry-pill">Accountants</span>
+      <span class="industry-pill">Photographers</span>
+      <span class="industry-pill">E-Commerce Brands</span>
+      <span class="industry-pill">Personal Trainers</span>
+      <span class="industry-pill">Tutors & Coaches</span>
+      <span class="industry-pill">+ any local business</span>
     </div>
   </section>
 
   <!-- Pricing -->
-  <section class="landing-section" id="pricing">
+  <section class="narrative-section" id="pricing" style="border-top:1px solid var(--border);">
     <div class="landing-section-header">
       <span class="label">Pricing</span>
-      <h2>Less Than One Hour of a Marketing Consultant</h2>
-      <p>All tiers come with the AI workspace, content generation, and brand voice training. Longer commitments unlock better pricing.</p>
+      <h2>Less than one hour of a marketing consultant.</h2>
+      <p>All tiers include the AI workspace, scheduled content, and brand voice training. Longer commitments unlock better pricing.</p>
     </div>
     <div class="landing-pricing">
       <div class="price-card">
@@ -1855,9 +2110,9 @@
   </section>
 
   <!-- CTA -->
-  <section class="landing-cta-section">
-    <h2>Try Beacon <span class="accent">Free for 6 Weeks</span></h2>
-    <p>We're onboarding beta users with extended free trials. Apply now to claim a spot — no credit card required, full access.</p>
+  <section class="landing-cta-section" style="border-top:1px solid var(--border);">
+    <h2>Try Beacon <span class="accent">free for 6 weeks.</span></h2>
+    <p>We're onboarding beta users with extended free trials. No credit card required. Full access.</p>
     <div class="landing-cta-row" style="justify-content:center;">
       <a href="/beacon/signup" class="landing-btn landing-btn-gold">Apply for Beta Access</a>
       <a href="https://polarispoint.io/#booking" class="landing-btn landing-btn-glass">Book a Call</a>
