@@ -1085,6 +1085,222 @@
     .feature-list li.unavailable { color: var(--dim); }
     .feature-list li.unavailable svg { color: var(--dim); }
 
+    /* ============================================
+       TRIAL BANNER
+       ============================================ */
+    .trial-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: .82rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .trial-banner.show { display: flex; }
+    .trial-banner .banner-message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 200px;
+    }
+    .trial-banner .banner-message svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    .trial-banner .banner-message strong { color: #fff; font-weight: 700; }
+    .trial-banner.tier-info {
+      background: rgba(91,141,239,.08);
+      border-bottom-color: rgba(91,141,239,.2);
+      color: var(--blue);
+    }
+    .trial-banner.tier-warn {
+      background: rgba(245,158,11,.1);
+      border-bottom-color: rgba(245,158,11,.25);
+      color: var(--amber);
+    }
+    .trial-banner.tier-urgent {
+      background: rgba(248,113,113,.1);
+      border-bottom-color: rgba(248,113,113,.3);
+      color: var(--red);
+    }
+    .trial-banner.tier-readonly {
+      background: rgba(239,68,68,.15);
+      border-bottom-color: rgba(239,68,68,.4);
+      color: #fca5a5;
+    }
+    .trial-banner .banner-cta {
+      background: var(--gold);
+      color: #1a1a2e;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 7px 16px;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .trial-banner .banner-cta:hover {
+      background: #f0cf56;
+      transform: translateY(-1px);
+    }
+
+    /* ============================================
+       TAB: REFERRALS
+       ============================================ */
+    .referral-hero {
+      background: linear-gradient(135deg, rgba(91,141,239,.08), rgba(232,197,71,.06));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .referral-hero .referral-eyebrow {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .referral-code-display {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .12em;
+      padding: 14px 20px;
+      background: rgba(0,0,0,.25);
+      border: 1px dashed rgba(91,141,239,.3);
+      border-radius: var(--radius);
+      display: inline-block;
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+    .referral-explainer {
+      font-size: .88rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 18px;
+      line-height: 1.6;
+    }
+    .referral-explainer strong { color: var(--gold); }
+    .referral-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .referral-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .referral-stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .referral-stat-card .stat-label {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--dim);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .referral-stat-card .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .referral-stat-card .stat-sub {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .referral-stat-card.accent .stat-value { color: var(--gold); }
+
+    .referrals-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+    .referrals-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: .65rem;
+      font-weight: 700;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border);
+    }
+    .referrals-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(91,141,239,.06);
+      color: var(--text);
+    }
+    .referrals-table tr:last-child td { border-bottom: none; }
+    .referrals-table .award-yes { color: var(--green); display: inline-flex; align-items: center; gap: 4px; }
+    .referrals-table .award-yes svg { width: 14px; height: 14px; }
+    .referrals-table .award-pending { color: var(--muted); }
+
+    .how-it-works {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .hiw-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .hiw-step .hiw-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .hiw-step .hiw-icon {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 8px;
+      color: var(--gold);
+    }
+    .hiw-step h4 {
+      font-size: .9rem;
+      margin-bottom: 6px;
+    }
+    .hiw-step p {
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
     /* ---- RESPONSIVE ---- */
     @media (max-width: 768px) {
       .sidebar { display: none; }
@@ -1103,6 +1319,11 @@
       .chat-quick-actions { padding: 8px 12px; }
       .chat-input-area { padding: 10px 12px 14px; }
       .library-toolbar { flex-direction: column; align-items: flex-start; }
+      .referral-stats-grid { grid-template-columns: 1fr; }
+      .how-it-works { grid-template-columns: 1fr; }
+      .referral-code-display { font-size: 1.4rem; letter-spacing: .08em; }
+      .referrals-table { font-size: .75rem; }
+      .referrals-table th, .referrals-table td { padding: 8px 6px; }
     }
 
     /* Focus states */
@@ -1179,6 +1400,18 @@
   <symbol id="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
   </symbol>
+  <symbol id="icon-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>
+  </symbol>
+  <symbol id="icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+  </symbol>
 </svg>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -1246,6 +1479,10 @@
         <svg><use href="#icon-schedule"/></svg>
         <span class="nav-label">Schedule</span>
       </button>
+      <button class="nav-link" data-tab="referrals">
+        <svg><use href="#icon-gift"/></svg>
+        <span class="nav-label">Referrals</span>
+      </button>
       <button class="nav-link" data-tab="settings">
         <svg><use href="#icon-settings"/></svg>
         <span class="nav-label">Settings</span>
@@ -1274,6 +1511,15 @@
 
   <!-- Main Content -->
   <main class="main-content">
+
+    <!-- TRIAL STATUS BANNER -->
+    <div class="trial-banner" id="trialBanner">
+      <div class="banner-message">
+        <svg><use href="#icon-alert"/></svg>
+        <span id="trialBannerText">--</span>
+      </div>
+      <button class="banner-cta" id="trialBannerCta" style="display:none">Subscribe Now</button>
+    </div>
 
     <!-- TAB: CHAT -->
     <div class="tab-panel active" id="tab-chat">
@@ -1441,6 +1687,83 @@
       </div>
     </div>
 
+    <!-- TAB: REFERRALS -->
+    <div class="tab-panel" id="tab-referrals">
+      <h2 class="section-title">Referrals</h2>
+
+      <!-- Section A: Your Referral Code -->
+      <div class="referral-hero">
+        <div class="referral-eyebrow">Your Referral Code</div>
+        <div class="referral-code-display" id="referralCode">--</div>
+        <div class="referral-explainer">
+          Share this code with friends. When they sign up, <strong>you both get 1 free month</strong> added to your subscription.
+        </div>
+        <div class="referral-actions">
+          <button class="btn btn-primary" id="copyReferralCodeBtn">
+            <svg><use href="#icon-copy"/></svg>
+            Copy Code
+          </button>
+          <button class="btn btn-glass" id="copyReferralLinkBtn">
+            <svg><use href="#icon-share"/></svg>
+            Copy Share Link
+          </button>
+        </div>
+      </div>
+
+      <!-- Section B: Stats -->
+      <div class="referral-stats-grid">
+        <div class="referral-stat-card">
+          <div class="stat-label">Friends Referred</div>
+          <div class="stat-value" id="statFriendsReferred">0</div>
+          <div class="stat-sub">people signed up</div>
+        </div>
+        <div class="referral-stat-card accent">
+          <div class="stat-label">Free Months Earned</div>
+          <div class="stat-value" id="statFreeMonths">0</div>
+          <div class="stat-sub">applied to your plan</div>
+        </div>
+        <div class="referral-stat-card">
+          <div class="stat-label">Next Review</div>
+          <div class="stat-value" id="statNextReview" style="font-size:1.1rem;padding-top:6px">--</div>
+          <div class="stat-sub">credits applied</div>
+        </div>
+      </div>
+
+      <!-- Section C: Your Referrals -->
+      <div class="card-surface">
+        <h3 style="font-size:.95rem;margin-bottom:14px">Your Referrals</h3>
+        <div id="referralsTableWrap">
+          <div class="empty-state">
+            <svg><use href="#icon-users"/></svg>
+            <div>No referrals yet — share your code to start earning!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section D: How It Works -->
+      <h3 style="font-size:.95rem;margin:24px 0 12px">How It Works</h3>
+      <div class="how-it-works">
+        <div class="hiw-step">
+          <div class="hiw-number">1</div>
+          <svg class="hiw-icon"><use href="#icon-share"/></svg>
+          <h4>Share Your Code</h4>
+          <p>Send your unique referral code or share link to friends, colleagues, or your audience.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-number">2</div>
+          <svg class="hiw-icon"><use href="#icon-users"/></svg>
+          <h4>Friend Signs Up</h4>
+          <p>When they create a Beacon account using your code, they start their own free trial.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-number">3</div>
+          <svg class="hiw-icon"><use href="#icon-gift"/></svg>
+          <h4>Both Get a Free Month</h4>
+          <p>Once they convert to a paid plan, you each receive one free month credit automatically.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- TAB: SETTINGS -->
     <div class="tab-panel" id="tab-settings">
       <h2 class="section-title">Settings</h2>
@@ -1545,6 +1868,7 @@
   let contextDocs = [];
   let competitors = [];
   let tasks = [];
+  let referrals = [];
   let currentTab = 'chat';
   let libraryFilter = 'all';
 
@@ -1700,6 +2024,7 @@
     contextDocs = [];
     competitors = [];
     tasks = [];
+    referrals = [];
     loginGate.style.display = 'flex';
     appShell.classList.remove('active');
     loginEmail.value = '';
@@ -1727,6 +2052,7 @@
     appShell.classList.add('active');
     renderSidebar();
     renderQuickActions();
+    renderTrialBanner();
     switchTab('chat');
   }
 
@@ -1838,6 +2164,7 @@
       case 'context': loadContext(); break;
       case 'competitors': loadCompetitors(); break;
       case 'schedule': loadTasks(); break;
+      case 'referrals': loadReferrals(); break;
       case 'settings': renderSettings(); break;
     }
   }
@@ -2480,6 +2807,192 @@
     }
   }
 
+  // ---- TRIAL BANNER ----
+  function renderTrialBanner() {
+    const banner = $('#trialBanner');
+    const text = $('#trialBannerText');
+    const cta = $('#trialBannerCta');
+    if (!subscription) {
+      banner.classList.remove('show');
+      return;
+    }
+
+    const now = Date.now();
+    const trialEnd = subscription.trial_ends_at ? new Date(subscription.trial_ends_at).getTime() : null;
+    const deleteAfter = subscription.delete_after ? new Date(subscription.delete_after).getTime() : null;
+    const status = subscription.status || '';
+
+    // Reset classes
+    banner.classList.remove('show', 'tier-info', 'tier-warn', 'tier-urgent', 'tier-readonly');
+    cta.style.display = 'none';
+    cta.onclick = null;
+
+    // Read-only / grace period
+    if (status === 'read_only') {
+      let daysLeft = '--';
+      if (deleteAfter) {
+        daysLeft = Math.max(0, Math.ceil((deleteAfter - now) / (1000 * 60 * 60 * 24)));
+      }
+      banner.classList.add('show', 'tier-readonly');
+      text.innerHTML = 'Your workspace is in <strong>read-only mode</strong> — data deletes in ' + daysLeft + ' day' + (daysLeft === 1 ? '' : 's') + '. Subscribe now to keep your content.';
+      cta.textContent = 'Subscribe Now';
+      cta.style.display = 'inline-block';
+      cta.onclick = function() { manageBilling(); };
+      return;
+    }
+
+    // Active trial
+    if (trialEnd && trialEnd > now) {
+      const daysLeft = Math.max(0, Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24)));
+      if (daysLeft < 7) {
+        banner.classList.add('show', 'tier-urgent');
+        text.innerHTML = '<strong>' + daysLeft + ' day' + (daysLeft === 1 ? '' : 's') + ' left</strong> on your free trial — subscribe to keep your workspace active.';
+        cta.textContent = 'Subscribe Now';
+        cta.style.display = 'inline-block';
+        cta.onclick = function() { manageBilling(); };
+      } else if (daysLeft < 14) {
+        banner.classList.add('show', 'tier-warn');
+        text.innerHTML = '<strong>' + daysLeft + ' days left</strong> on your free trial. Add a payment method to avoid any interruption.';
+        cta.textContent = 'Add Payment';
+        cta.style.display = 'inline-block';
+        cta.onclick = function() { manageBilling(); };
+      } else {
+        banner.classList.add('show', 'tier-info');
+        text.innerHTML = '<strong>' + daysLeft + ' days left</strong> on your free trial. Welcome to Beacon!';
+      }
+      return;
+    }
+
+    // Delete countdown (no trial, not read-only, but deletion looming)
+    if (deleteAfter) {
+      const deleteDays = Math.ceil((deleteAfter - now) / (1000 * 60 * 60 * 24));
+      if (deleteDays >= 0 && deleteDays <= 14) {
+        banner.classList.add('show', 'tier-urgent');
+        text.innerHTML = 'Your data will be deleted in <strong>' + deleteDays + ' day' + (deleteDays === 1 ? '' : 's') + '</strong>. Subscribe now to keep access.';
+        cta.textContent = 'Subscribe Now';
+        cta.style.display = 'inline-block';
+        cta.onclick = function() { manageBilling(); };
+        return;
+      }
+    }
+  }
+
+  // ---- TAB: REFERRALS ----
+  function getReferralCode() {
+    if (!subscription) return '';
+    return subscription.referral_code ||
+      ((subscription.client_name || subscription.name || 'USER').toUpperCase().replace(/[^A-Z0-9]/g, '-').slice(0, 12) +
+        '-' + (subscription.id || '').toString().slice(-4).toUpperCase());
+  }
+
+  function getShareLink() {
+    const code = getReferralCode();
+    return 'https://polarispoint.io/beacon/signup?code=' + encodeURIComponent(code);
+  }
+
+  async function loadReferrals() {
+    if (!subscription) return;
+    const code = getReferralCode();
+    $('#referralCode').textContent = code || '--';
+
+    const freeMonths = subscription.free_months_earned || 0;
+    $('#statFreeMonths').textContent = freeMonths;
+
+    // Next review
+    const nextReview = subscription.current_period_end || subscription.token_reset_date;
+    $('#statNextReview').textContent = nextReview ? formatDate(nextReview) : '--';
+
+    // Try dedicated endpoint first; fall back to deriving from subscriptions
+    let items = [];
+    try {
+      const data = await apiCall('GET', '/referrals?subscription_id=' + subscription.id);
+      items = data.referrals || data || [];
+    } catch (err) {
+      try {
+        const subs = await apiCall('GET', '/subscriptions?referred_by_code=' + encodeURIComponent(code));
+        const list = subs.subscriptions || subs || [];
+        items = list.filter(s => (s.referred_by_code || '') === code);
+      } catch (err2) {
+        items = [];
+      }
+    }
+
+    referrals = items;
+    $('#statFriendsReferred').textContent = items.length;
+    renderReferralsTable(items);
+  }
+
+  function renderReferralsTable(items) {
+    const wrap = $('#referralsTableWrap');
+    if (!items || !items.length) {
+      wrap.innerHTML = '<div class="empty-state"><svg><use href="#icon-users"/></svg><div>No referrals yet — share your code to start earning!</div></div>';
+      return;
+    }
+
+    const rows = items.map(r => {
+      const display = r.client_name || r.name || r.email || '--';
+      const signupDate = r.created_at || r.signup_date || r.signed_up_at || '';
+      const statusRaw = (r.status || '').toLowerCase();
+      let statusLabel = 'Active';
+      let badgeCls = 'badge-active';
+      if (statusRaw === 'trial' || (r.trial_ends_at && new Date(r.trial_ends_at).getTime() > Date.now())) {
+        statusLabel = 'Trial';
+        badgeCls = 'badge-monthly';
+      } else if (statusRaw === 'paid' || statusRaw === 'active' || r.stripe_subscription_id) {
+        statusLabel = 'Paid';
+        badgeCls = 'badge-active';
+      } else if (statusRaw === 'read_only' || statusRaw === 'canceled') {
+        statusLabel = 'Inactive';
+        badgeCls = 'badge-paused';
+      }
+
+      const awarded = r.referral_credit_awarded === true ||
+                      r.free_month_awarded === true ||
+                      statusLabel === 'Paid';
+      const awardedCell = awarded
+        ? '<span class="award-yes"><svg><use href="#icon-check"/></svg> Yes</span>'
+        : '<span class="award-pending">Pending</span>';
+
+      return '<tr>' +
+        '<td>' + escapeHtml(display) + '</td>' +
+        '<td>' + (signupDate ? formatDate(signupDate) : '--') + '</td>' +
+        '<td><span class="badge ' + badgeCls + '">' + statusLabel + '</span></td>' +
+        '<td>' + awardedCell + '</td>' +
+      '</tr>';
+    }).join('');
+
+    wrap.innerHTML = '<div style="overflow-x:auto"><table class="referrals-table">' +
+      '<thead><tr>' +
+        '<th>Name</th>' +
+        '<th>Signup Date</th>' +
+        '<th>Status</th>' +
+        '<th>Free Month</th>' +
+      '</tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table></div>';
+  }
+
+  function copyReferralCode() {
+    const code = getReferralCode();
+    if (!code) return;
+    const btn = $('#copyReferralCodeBtn');
+    navigator.clipboard.writeText(code).then(() => {
+      const original = btn.innerHTML;
+      btn.innerHTML = '<svg><use href="#icon-check"/></svg> Copied!';
+      setTimeout(() => { btn.innerHTML = original; }, 1800);
+    }).catch(() => showToast('Could not copy — please copy manually', 'error'));
+  }
+
+  function copyReferralLink() {
+    const link = getShareLink();
+    const btn = $('#copyReferralLinkBtn');
+    navigator.clipboard.writeText(link).then(() => {
+      const original = btn.innerHTML;
+      btn.innerHTML = '<svg><use href="#icon-check"/></svg> Link Copied!';
+      setTimeout(() => { btn.innerHTML = original; }, 1800);
+    }).catch(() => showToast('Could not copy — please copy manually', 'error'));
+  }
+
   // ---- GLOBAL FUNCTIONS (onclick handlers) ----
   window.__copyText = function(btn, text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -2613,6 +3126,10 @@
 
   // Settings: manage billing
   $('#manageBillingBtn').addEventListener('click', manageBilling);
+
+  // Referrals: copy code / share link
+  $('#copyReferralCodeBtn').addEventListener('click', copyReferralCode);
+  $('#copyReferralLinkBtn').addEventListener('click', copyReferralLink);
 
   // ---- INIT ----
   checkExistingAuth();

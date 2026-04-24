@@ -2186,16 +2186,144 @@
   <div id="tabBeacon" class="tab-content" style="display:none;">
     <div class="sales-section">
 
-      <!-- Section A: Create / Manage Subscriptions -->
-      <div class="sales-card" style="padding:20px 24px;">
-        <h3 style="margin-bottom:14px;">Create Beacon Subscription</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <!-- Section 1: Trial Codes Manager -->
+      <div class="sales-card senior-only" style="padding:20px 24px;border:1px solid rgba(212,168,83,.25);background:linear-gradient(180deg,rgba(212,168,83,.04),transparent 60%),#0B1120;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px;">
           <div>
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Site</label>
-            <select id="beaconSiteSelect" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
-              <option value="">Loading sites...</option>
-            </select>
+            <h3 style="margin:0;color:#D4A853;">Trial Codes</h3>
+            <p style="margin:4px 0 0;font-size:.72rem;color:#64748b;">Generate beta invite codes to onboard new users without payment.</p>
           </div>
+          <button class="btn-export" onclick="toggleTrialCodeForm()" id="btnToggleTrialForm" style="font-size:.78rem;padding:8px 16px;">+ Create New Code</button>
+        </div>
+
+        <!-- Trial Code Create Form (inline, hidden by default) -->
+        <div id="trialCodeForm" style="display:none;margin-top:16px;padding:16px;background:#0B1120;border:1px solid rgba(212,168,83,.3);border-radius:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Code (optional)</label>
+              <input type="text" id="tcCode" placeholder="Auto-generate BETA-XXXXXX" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;text-transform:uppercase;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Tier</label>
+              <select id="tcTier" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+                <option value="lite">Lite ($149)</option>
+                <option value="beacon" selected>Beacon ($299)</option>
+                <option value="pro">Pro / Enterprise ($499)</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Trial Weeks</label>
+              <input type="number" id="tcWeeks" min="1" max="12" value="6" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Max Uses (0 = unlimited)</label>
+              <input type="number" id="tcMaxUses" min="0" value="1" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Industry</label>
+              <select id="tcIndustry" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+                <option value="general">General / Any</option>
+                <option value="real_estate">Real Estate</option>
+                <option value="local_service">Local Service</option>
+                <option value="legal">Legal</option>
+                <option value="health">Health / Wellness</option>
+                <option value="ecommerce">E-commerce</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Expires At (optional)</label>
+              <input type="date" id="tcExpiresAt" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Notes (who it's for)</label>
+            <input type="text" id="tcNotes" placeholder="e.g. Sarah Chen, Austin real estate referral" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn-export" onclick="createTrialCode()" style="font-size:.78rem;padding:8px 18px;">Generate Code</button>
+            <button class="btn-export secondary" onclick="toggleTrialCodeForm()" style="font-size:.78rem;padding:8px 18px;">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Freshly-minted code reveal -->
+        <div id="trialCodeReveal" style="display:none;margin-top:16px;padding:18px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.35);border-radius:10px;">
+          <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:#22c55e;font-weight:600;margin-bottom:8px;">New Code Created</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <code id="trialCodeRevealValue" style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;color:#D4A853;background:#0B1120;padding:10px 18px;border-radius:8px;letter-spacing:2px;border:1px solid rgba(212,168,83,.35);">--</code>
+            <button class="btn-export" onclick="copyTrialCode()" id="btnCopyTrialCode" style="font-size:.78rem;padding:8px 16px;">Copy</button>
+            <span id="trialCodeRevealMeta" style="font-size:.72rem;color:#64748b;"></span>
+          </div>
+        </div>
+
+        <!-- Existing trial codes grid -->
+        <div id="trialCodesGrid" style="margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
+          <p style="grid-column:1/-1;text-align:center;color:#334155;font-size:.8rem;padding:20px 0;">Loading trial codes...</p>
+        </div>
+      </div>
+
+      <!-- Section 2: All Subscriptions -->
+      <div class="sales-card" style="padding:20px 24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <h3 style="margin:0;">All Subscriptions</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="text" id="beaconSubSearch" placeholder="Search name or email..." oninput="renderBeaconSubs()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.78rem;outline:none;min-width:200px;">
+            <select id="beaconSubFilter" onchange="renderBeaconSubs()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.78rem;outline:none;">
+              <option value="all">All</option>
+              <option value="trial">Active Trials</option>
+              <option value="paid">Paid</option>
+              <option value="expiring">Expiring Soon</option>
+              <option value="read_only">Read-Only</option>
+            </select>
+            <button class="btn-export secondary" onclick="loadBeaconSubs()" style="font-size:.72rem;padding:6px 14px;">Refresh</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="beaconSubsTable" style="width:100%;border-collapse:collapse;font-size:.76rem;">
+            <thead>
+              <tr style="border-bottom:1px solid #1e293b;color:#64748b;text-align:left;">
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Client</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Email</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Plan</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Status</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Industry</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Trial / Billing</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Tokens</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Ref Code</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Referred By</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="beaconSubsBody">
+              <tr><td colspan="10" style="padding:20px;text-align:center;color:#334155;">Loading subscriptions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 3: Create Subscription Manually -->
+      <div class="sales-card" style="padding:20px 24px;">
+        <h3 style="margin-bottom:4px;">Create Subscription Manually</h3>
+        <p style="font-size:.72rem;color:#64748b;margin:0 0 14px;">Bypass signup flow — create a subscription directly with custom credentials and billing term.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Name</label>
+            <input type="text" id="beaconClientName" placeholder="Sarah Chen" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Email</label>
+            <input type="email" id="beaconClientEmail" placeholder="sarah@example.com" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Password</label>
+            <input type="text" id="beaconClientPassword" placeholder="Set login password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+        </div>
+        <p style="font-size:.68rem;color:#475569;margin:-6px 0 14px;">Credentials for Beacon portal login at <a href="/beacon" style="color:#5B8DEF;">polarispoint.io/beacon</a></p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
           <div>
             <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Plan</label>
             <div style="display:flex;gap:16px;align-items:center;height:38px;">
@@ -2210,30 +2338,49 @@
               </label>
             </div>
           </div>
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Industry</label>
+            <select id="beaconIndustry" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;" onchange="toggleReFields()">
+              <option value="general">General / Local Service</option>
+              <option value="real_estate">Real Estate Agent</option>
+              <option value="local_service">Local Service</option>
+              <option value="legal">Legal</option>
+              <option value="health">Health / Wellness</option>
+              <option value="ecommerce">E-commerce</option>
+            </select>
+          </div>
         </div>
-        <div style="margin-bottom:14px;">
-          <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Industry</label>
-          <select id="beaconIndustry" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;" onchange="toggleReFields()">
-            <option value="general">General / Local Service</option>
-            <option value="real_estate">Real Estate Agent</option>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Billing Term</label>
+            <select id="beaconBillingTerm" onchange="toggleTrialWeeksField()" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+              <option value="trial" selected>Trial (free)</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="annual">Annual</option>
+            </select>
+          </div>
+          <div id="beaconTrialWeeksWrap">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Trial Weeks</label>
+            <input type="number" id="beaconTrialWeeks" min="1" max="12" value="6" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Site (optional)</label>
+          <select id="beaconSiteSelect" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            <option value="">-- No site attached --</option>
           </select>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
-          <div>
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Name</label>
-            <input type="text" id="beaconClientName" placeholder="Sarah Chen" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
-          </div>
-          <div>
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Email</label>
-            <input type="email" id="beaconClientEmail" placeholder="sarah@example.com" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
-          </div>
-          <div>
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Password</label>
-            <input type="text" id="beaconClientPassword" placeholder="Set login password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
-          </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Notes</label>
+          <input type="text" id="beaconNotes" placeholder="Internal notes about this subscription" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
         </div>
-        <p style="font-size:.68rem;color:#475569;margin:-10px 0 14px;">Client credentials for Beacon portal login at <a href="/beacon" style="color:#5B8DEF;">polarispoint.io/beacon</a></p>
-        <div id="reFields" style="display:none;margin-bottom:14px;">
+
+        <div id="reFields" style="display:none;margin-bottom:14px;padding:12px;background:#0B1120;border:1px solid #1e293b;border-radius:8px;">
+          <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:#D4A853;font-weight:600;margin-bottom:10px;">Real Estate Details</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
             <div>
               <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Agent Name & Designations</label>
@@ -2249,30 +2396,39 @@
             <input type="text" id="reRegions" placeholder="South Austin, Bee Cave, Lakeway, Buda" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
           </div>
           <div style="margin-bottom:10px;">
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Active Listings (one per line: address | price | beds/baths | notes)</label>
-            <textarea id="reListings" rows="4" placeholder="1847 S 3rd St, Austin 78704 | $625,000 | 3/2 | Modern farmhouse, walk to SoCo" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.8rem;resize:vertical;outline:none;"></textarea>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Active Listings</label>
+            <textarea id="reListings" rows="3" placeholder="1847 S 3rd St, Austin | $625,000 | 3/2 | Modern farmhouse" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.8rem;resize:vertical;outline:none;"></textarea>
           </div>
           <div>
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Competitor Agents (comma-separated names)</label>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Competitor Agents</label>
             <input type="text" id="reCompetitors" placeholder="Jake Morrison, Lisa Park" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
           </div>
         </div>
-        <button class="btn-export" onclick="createBeaconSub()" style="width:100%;justify-content:center;margin-bottom:18px;">Create Beacon Subscription</button>
 
-        <h3 style="margin-bottom:10px;">Active Subscriptions</h3>
+        <button class="btn-export" onclick="createBeaconSub()" style="width:100%;justify-content:center;">Create Subscription</button>
+      </div>
+
+      <!-- Section 4: Active Referrals Tracking -->
+      <div class="sales-card" style="padding:20px 24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <h3 style="margin:0;">Active Referrals</h3>
+            <p style="margin:4px 0 0;font-size:.72rem;color:#64748b;">Track referral activity and free-month rewards.</p>
+          </div>
+          <button class="btn-export secondary" onclick="loadBeaconReferrals()" style="font-size:.72rem;padding:6px 14px;">Refresh</button>
+        </div>
         <div style="overflow-x:auto;">
-          <table id="beaconSubsTable" style="width:100%;border-collapse:collapse;font-size:.78rem;">
+          <table style="width:100%;border-collapse:collapse;font-size:.78rem;">
             <thead>
               <tr style="border-bottom:1px solid #1e293b;color:#64748b;text-align:left;">
-                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Site</th>
-                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Plan</th>
-                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Status</th>
-                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Token Usage</th>
-                <th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Actions</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Referrer</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Referee</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Signup Date</th>
+                <th style="padding:8px 10px;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;">Free Month Awarded</th>
               </tr>
             </thead>
-            <tbody id="beaconSubsBody">
-              <tr><td colspan="5" style="padding:20px;text-align:center;color:#334155;">Loading subscriptions...</td></tr>
+            <tbody id="beaconReferralsBody">
+              <tr><td colspan="4" style="padding:20px;text-align:center;color:#334155;">Loading referrals...</td></tr>
             </tbody>
           </table>
         </div>
@@ -2444,7 +2600,7 @@
       if (tab === 'leads') renderLeads();
       if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
       if (tab === 'outreach') loadOutreachQueue();
-      if (tab === 'beacon') loadBeaconSubs();
+      if (tab === 'beacon') { loadBeaconSubs(); loadTrialCodes(); loadBeaconReferrals(); }
     }
 
     function applyRole(role, userName) {
@@ -5101,67 +5257,125 @@
 
     async function loadBeaconSubs() {
       try {
-        // Populate site dropdown
+        // Populate site dropdown (optional — Section 3 attaches a site)
         var siteSelect = document.getElementById('beaconSiteSelect');
-        fetch('/api/sites').then(function(r) { return r.json(); }).then(function(data) {
-          var sites = data.sites || data || [];
-          siteSelect.innerHTML = '<option value="">-- Select a site --</option>';
-          if (!sites.length) {
-            siteSelect.innerHTML = '<option value="">No sites deployed yet</option>';
-          }
-          sites.forEach(function(s) {
-            var opt = document.createElement('option');
-            opt.value = s.id;
-            opt.textContent = (s.site_name || s.slug) + ' (' + (s.slug || '') + ')';
-            siteSelect.appendChild(opt);
+        if (siteSelect) {
+          fetch('/api/sites').then(function(r) { return r.json(); }).then(function(data) {
+            var sites = data.sites || data || [];
+            siteSelect.innerHTML = '<option value="">-- No site attached --</option>';
+            sites.forEach(function(s) {
+              var opt = document.createElement('option');
+              opt.value = s.id;
+              opt.textContent = (s.site_name || s.slug) + ' (' + (s.slug || '') + ')';
+              siteSelect.appendChild(opt);
+            });
+          }).catch(function() {
+            siteSelect.innerHTML = '<option value="">-- No site attached --</option>';
           });
-        }).catch(function() {
-          siteSelect.innerHTML = '<option value="">No sites deployed yet</option>';
-        });
+        }
 
         // Fetch subscriptions
         var res = await fetch('/api/beacon/subscriptions');
         var data = await res.json();
         _beaconSubsCache = data.subscriptions || data || [];
         renderBeaconSubs();
+        // Referrals are often derived from subscriptions — refresh the table
+        if (typeof loadBeaconReferrals === 'function') loadBeaconReferrals();
       } catch (e) {
-        document.getElementById('beaconSubsBody').innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:#ef4444;">Failed to load subscriptions: ' + e.message + '</td></tr>';
+        var tbody = document.getElementById('beaconSubsBody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:#ef4444;">Failed to load subscriptions: ' + e.message + '</td></tr>';
       }
     }
 
     function renderBeaconSubs() {
       var tbody = document.getElementById('beaconSubsBody');
-      if (!_beaconSubsCache.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:#334155;">No active subscriptions</td></tr>';
+      var searchEl = document.getElementById('beaconSubSearch');
+      var filterEl = document.getElementById('beaconSubFilter');
+      var q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+      var filterVal = filterEl ? filterEl.value : 'all';
+      var now = Date.now();
+      var sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+      var rows = _beaconSubsCache.filter(function(sub) {
+        if (q) {
+          var hay = ((sub.client_name || '') + ' ' + (sub.client_email || '') + ' ' + (sub.site_name || '')).toLowerCase();
+          if (hay.indexOf(q) === -1) return false;
+        }
+        if (filterVal === 'trial') return sub.status === 'trial' || sub.billing_term === 'trial';
+        if (filterVal === 'paid') return sub.status === 'active' && sub.billing_term && sub.billing_term !== 'trial';
+        if (filterVal === 'read_only') return sub.status === 'read_only';
+        if (filterVal === 'expiring') {
+          var end = sub.trial_ends_at || sub.next_billing_at;
+          if (!end) return false;
+          var t = new Date(end).getTime();
+          return t > now && (t - now) < sevenDays;
+        }
+        return true;
+      });
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:#334155;">No subscriptions match these filters</td></tr>';
         return;
       }
       tbody.innerHTML = '';
-      _beaconSubsCache.forEach(function(sub) {
+      rows.forEach(function(sub) {
         var pct = sub.tokens_limit ? Math.min(100, Math.round((sub.tokens_used || 0) / sub.tokens_limit * 100)) : 0;
-        var statusColor = sub.status === 'active' ? '#22c55e' : sub.status === 'paused' ? '#f59e0b' : '#64748b';
+        var statusStyles = {
+          active: 'background:rgba(34,197,94,.15);color:#22c55e;',
+          trial: 'background:rgba(212,168,83,.15);color:#D4A853;',
+          read_only: 'background:rgba(100,116,139,.15);color:#94a3b8;',
+          cancelled: 'background:rgba(239,68,68,.12);color:#ef4444;',
+          paused: 'background:rgba(245,158,11,.15);color:#f59e0b;'
+        };
+        var statusStyle = statusStyles[sub.status] || statusStyles.active;
+        var planStyle = sub.plan === 'pro' ? 'background:rgba(212,168,83,.15);color:#D4A853;' : sub.plan === 'beacon' ? 'background:rgba(91,141,239,.15);color:#5B8DEF;' : 'background:rgba(100,116,139,.15);color:#94a3b8;';
+
+        var trialEnd = sub.trial_ends_at || null;
+        var nextBilling = sub.next_billing_at || null;
+        var trialBillingLabel = '--';
+        var trialBillingColor = '#64748b';
+        if (sub.status === 'trial' || sub.billing_term === 'trial') {
+          if (trialEnd) {
+            var endT = new Date(trialEnd).getTime();
+            var daysLeft = Math.ceil((endT - now) / (24 * 60 * 60 * 1000));
+            trialBillingLabel = 'Trial: ' + new Date(trialEnd).toLocaleDateString() + ' (' + (daysLeft >= 0 ? daysLeft + 'd left' : 'expired') + ')';
+            trialBillingColor = daysLeft < 0 ? '#ef4444' : daysLeft <= 7 ? '#f59e0b' : '#94a3b8';
+          } else {
+            trialBillingLabel = 'Trial';
+          }
+        } else if (nextBilling) {
+          trialBillingLabel = 'Next: ' + new Date(nextBilling).toLocaleDateString();
+          trialBillingColor = '#94a3b8';
+        }
+
         var isSelected = currentBeaconSub && currentBeaconSub.id === sub.id;
         var tr = document.createElement('tr');
         tr.style.cssText = 'border-bottom:1px solid #1e293b;cursor:pointer;' + (isSelected ? 'background:rgba(91,141,239,.08);' : '');
         tr.onclick = function() { selectBeaconSub(sub.id); };
         tr.innerHTML =
-          '<td style="padding:10px;color:#e2e8f0;">' + (sub.site_name || sub.site_id || '--') + '</td>' +
-          '<td style="padding:10px;"><span style="padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;' +
-            (sub.plan === 'pro' ? 'background:rgba(212,168,83,.15);color:#D4A853;' : sub.plan === 'beacon' ? 'background:rgba(91,141,239,.15);color:#5B8DEF;' : 'background:rgba(100,116,139,.15);color:#94a3b8;') +
-            '">' + (sub.plan || '--') + '</span></td>' +
-          '<td style="padding:10px;"><span style="color:' + statusColor + ';font-size:.78rem;font-weight:500;">' + (sub.status || '--') + '</span></td>' +
+          '<td style="padding:10px;color:#e2e8f0;">' + (sub.client_name || sub.site_name || '--') + '</td>' +
+          '<td style="padding:10px;color:#94a3b8;font-size:.72rem;">' + (sub.client_email || '--') + '</td>' +
+          '<td style="padding:10px;"><span style="padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;' + planStyle + '">' + (sub.plan || '--') + '</span></td>' +
+          '<td style="padding:10px;"><span style="padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;' + statusStyle + '">' + (sub.status || '--') + '</span></td>' +
+          '<td style="padding:10px;color:#94a3b8;font-size:.72rem;">' + (sub.industry || '--') + '</td>' +
+          '<td style="padding:10px;font-size:.72rem;color:' + trialBillingColor + ';">' + trialBillingLabel + '</td>' +
           '<td style="padding:10px;min-width:120px;">' +
-            '<div style="display:flex;align-items:center;gap:8px;">' +
-              '<div style="flex:1;height:8px;background:#1e293b;border-radius:4px;overflow:hidden;">' +
-                '<div style="width:' + pct + '%;height:100%;border-radius:4px;background:linear-gradient(90deg,#5B8DEF,#D4A853);"></div>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<div style="flex:1;height:6px;background:#1e293b;border-radius:3px;overflow:hidden;">' +
+                '<div style="width:' + pct + '%;height:100%;border-radius:3px;background:linear-gradient(90deg,#5B8DEF,#D4A853);"></div>' +
               '</div>' +
-              '<span style="font-size:.68rem;color:#64748b;white-space:nowrap;">' + pct + '%</span>' +
+              '<span style="font-size:.66rem;color:#64748b;white-space:nowrap;">' + pct + '%</span>' +
             '</div>' +
           '</td>' +
+          '<td style="padding:10px;font-size:.7rem;color:#5B8DEF;font-family:\'JetBrains Mono\',monospace;">' + (sub.referral_code || '--') + '</td>' +
+          '<td style="padding:10px;font-size:.7rem;color:#94a3b8;">' + (sub.referred_by || '--') + '</td>' +
           '<td style="padding:10px;">' +
-            '<div style="display:flex;gap:6px;">' +
-              '<button class="btn-export secondary" onclick="event.stopPropagation();selectBeaconSub(\'' + sub.id + '\')" style="font-size:.68rem;padding:4px 10px;">View Chat</button>' +
-              '<button class="btn-export secondary" onclick="event.stopPropagation();toggleBeaconSub(\'' + sub.id + '\',\'' + (sub.status === 'paused' ? 'resume' : 'pause') + '\')" style="font-size:.68rem;padding:4px 10px;">' + (sub.status === 'paused' ? 'Resume' : 'Pause') + '</button>' +
-              '<button class="btn-export secondary" onclick="event.stopPropagation();cancelBeaconSub(\'' + sub.id + '\')" style="font-size:.68rem;padding:4px 10px;color:#ef4444;border-color:#ef4444;">Cancel</button>' +
+            '<div style="display:flex;gap:4px;flex-wrap:wrap;">' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();selectBeaconSub(\'' + sub.id + '\')" style="font-size:.64rem;padding:3px 8px;">View</button>' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();editBeaconSub(\'' + sub.id + '\')" style="font-size:.64rem;padding:3px 8px;">Edit</button>' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();extendBeaconTrial(\'' + sub.id + '\')" style="font-size:.64rem;padding:3px 8px;">Extend</button>' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();suspendBeaconSub(\'' + sub.id + '\')" style="font-size:.64rem;padding:3px 8px;color:#f59e0b;border-color:rgba(245,158,11,.35);">Suspend</button>' +
+              '<button class="btn-export secondary" onclick="event.stopPropagation();cancelBeaconSub(\'' + sub.id + '\')" style="font-size:.64rem;padding:3px 8px;color:#ef4444;border-color:rgba(239,68,68,.35);">Delete</button>' +
             '</div>' +
           '</td>';
         tbody.appendChild(tr);
@@ -5182,17 +5396,36 @@
       var clientName = document.getElementById('beaconClientName').value.trim();
       var clientEmail = document.getElementById('beaconClientEmail').value.trim();
       var clientPassword = document.getElementById('beaconClientPassword').value.trim();
+      var billingTermEl = document.getElementById('beaconBillingTerm');
+      var billingTerm = billingTermEl ? billingTermEl.value : 'trial';
+      var trialWeeksEl = document.getElementById('beaconTrialWeeks');
+      var trialWeeks = trialWeeksEl ? parseInt(trialWeeksEl.value, 10) || 6 : 6;
+      var notesEl = document.getElementById('beaconNotes');
+      var notes = notesEl ? notesEl.value.trim() : '';
+
+      if (!clientName || !clientEmail) { alert('Client name and email are required.'); return; }
+
       var clientPasswordHash = '';
       if (clientPassword) {
-        var enc = new TextEncoder().encode(clientPassword);
-        var hashBuf = await crypto.subtle.digest('SHA-256', enc);
-        clientPasswordHash = Array.from(new Uint8Array(hashBuf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+        clientPasswordHash = await hashPwd(clientPassword);
       }
       try {
+        var payload = {
+          site_id: siteId || null,
+          plan: planEl.value,
+          industry: industry,
+          client_name: clientName,
+          client_email: clientEmail,
+          client_password_hash: clientPasswordHash,
+          billing_term: billingTerm,
+          notes: notes
+        };
+        if (billingTerm === 'trial') payload.trial_weeks = trialWeeks;
+
         var res = await fetch('/api/beacon/subscriptions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ site_id: siteId, plan: planEl.value, industry: industry, client_name: clientName, client_email: clientEmail, client_password_hash: clientPasswordHash })
+          body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error('Server returned ' + res.status);
         var data = await res.json();
@@ -5508,21 +5741,319 @@
     }
 
     async function cancelBeaconSub(subId) {
-      if (!confirm('Cancel this Beacon subscription? This cannot be undone.')) return;
+      if (!confirm('Delete this Beacon subscription? This cannot be undone.')) return;
       try {
-        var res = await fetch('/api/beacon/subscriptions/' + encodeURIComponent(subId), { method: 'DELETE' });
+        var res = await fetch('/api/beacon/subscriptions?id=' + encodeURIComponent(subId), { method: 'DELETE' });
         if (!res.ok) throw new Error('Server returned ' + res.status);
         if (currentBeaconSub && currentBeaconSub.id === subId) {
           currentBeaconSub = null;
-          document.getElementById('beaconContextSection').style.display = 'none';
-          document.getElementById('beaconChatSection').style.display = 'none';
-          document.getElementById('beaconTasksSection').style.display = 'none';
-          document.getElementById('beaconUsageSection').style.display = 'none';
+          var cs = document.getElementById('beaconContextSection'); if (cs) cs.style.display = 'none';
+          var ch = document.getElementById('beaconChatSection'); if (ch) ch.style.display = 'none';
+          var tk = document.getElementById('beaconTasksSection'); if (tk) tk.style.display = 'none';
+          var us = document.getElementById('beaconUsageSection'); if (us) us.style.display = 'none';
         }
         loadBeaconSubs();
       } catch (e) {
-        alert('Failed to cancel subscription: ' + e.message);
+        alert('Failed to delete subscription: ' + e.message);
       }
+    }
+
+    // === SUBSCRIPTION ACTIONS (edit/extend/suspend) ===
+    async function hashPwd(pwd) {
+      var enc = new TextEncoder();
+      var hash = await crypto.subtle.digest('SHA-256', enc.encode(pwd));
+      return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    function toggleTrialWeeksField() {
+      var termEl = document.getElementById('beaconBillingTerm');
+      var wrap = document.getElementById('beaconTrialWeeksWrap');
+      if (wrap) wrap.style.display = (termEl && termEl.value === 'trial') ? 'block' : 'none';
+    }
+
+    async function editBeaconSub(subId) {
+      var sub = _beaconSubsCache.find(function(s) { return s.id === subId; });
+      if (!sub) return;
+      var newName = prompt('Client name:', sub.client_name || '');
+      if (newName === null) return;
+      var newEmail = prompt('Client email:', sub.client_email || '');
+      if (newEmail === null) return;
+      var newPlan = prompt('Plan (lite / beacon / pro):', sub.plan || 'beacon');
+      if (newPlan === null) return;
+      var newPwd = prompt('New password (leave blank to keep current):', '');
+      if (newPwd === null) return;
+      var payload = { client_name: newName.trim(), client_email: newEmail.trim(), plan: newPlan.trim() };
+      if (newPwd.trim()) payload.client_password_hash = await hashPwd(newPwd.trim());
+      try {
+        var res = await fetch('/api/beacon/subscriptions?id=' + encodeURIComponent(subId), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        loadBeaconSubs();
+      } catch (e) {
+        alert('Failed to update subscription: ' + e.message);
+      }
+    }
+
+    async function extendBeaconTrial(subId) {
+      var weeksStr = prompt('Extend trial by how many weeks?', '2');
+      if (weeksStr === null) return;
+      var weeks = parseInt(weeksStr, 10);
+      if (!weeks || weeks < 1) { alert('Enter a positive number of weeks.'); return; }
+      try {
+        var res = await fetch('/api/beacon/subscriptions?id=' + encodeURIComponent(subId), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'extend_trial', extend_weeks: weeks })
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        loadBeaconSubs();
+      } catch (e) {
+        alert('Failed to extend trial: ' + e.message);
+      }
+    }
+
+    async function suspendBeaconSub(subId) {
+      var sub = _beaconSubsCache.find(function(s) { return s.id === subId; });
+      var isRO = sub && sub.status === 'read_only';
+      var nextStatus = isRO ? 'active' : 'read_only';
+      if (!confirm((isRO ? 'Reactivate' : 'Suspend (set to read-only)') + ' this subscription?')) return;
+      try {
+        var res = await fetch('/api/beacon/subscriptions?id=' + encodeURIComponent(subId), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: nextStatus })
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        loadBeaconSubs();
+      } catch (e) {
+        alert('Failed to update subscription: ' + e.message);
+      }
+    }
+
+    // === TRIAL CODES ===
+    var _trialCodesCache = [];
+    var _lastTrialCode = null;
+
+    function toggleTrialCodeForm() {
+      var form = document.getElementById('trialCodeForm');
+      if (!form) return;
+      var show = form.style.display === 'none';
+      form.style.display = show ? 'block' : 'none';
+      var btn = document.getElementById('btnToggleTrialForm');
+      if (btn) btn.textContent = show ? 'Close Form' : '+ Create New Code';
+    }
+
+    async function loadTrialCodes() {
+      var grid = document.getElementById('trialCodesGrid');
+      if (!grid) return;
+      try {
+        var res = await fetch('/api/beacon/trial-codes');
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        var data = await res.json();
+        _trialCodesCache = data.codes || data.trial_codes || data || [];
+        renderTrialCodes();
+      } catch (e) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;font-size:.78rem;padding:16px 0;">Failed to load trial codes: ' + e.message + '</p>';
+      }
+    }
+
+    function renderTrialCodes() {
+      var grid = document.getElementById('trialCodesGrid');
+      if (!grid) return;
+      if (!_trialCodesCache.length) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#334155;font-size:.78rem;padding:20px 0;">No trial codes yet. Click "Create New Code" to generate one.</p>';
+        return;
+      }
+      grid.innerHTML = '';
+      _trialCodesCache.forEach(function(c) {
+        var tierStyle = c.tier === 'pro' ? 'background:rgba(212,168,83,.15);color:#D4A853;' : c.tier === 'beacon' ? 'background:rgba(91,141,239,.15);color:#5B8DEF;' : 'background:rgba(100,116,139,.15);color:#94a3b8;';
+        var usesUsed = c.uses_count != null ? c.uses_count : (c.used_count || 0);
+        var usesMax = c.max_uses == null ? 1 : c.max_uses;
+        var usesLabel = usesMax === 0 ? usesUsed + ' / unlimited' : usesUsed + ' / ' + usesMax;
+        var exhausted = usesMax !== 0 && usesUsed >= usesMax;
+        var expired = c.expires_at && new Date(c.expires_at).getTime() < Date.now();
+        var dead = exhausted || expired;
+
+        var card = document.createElement('div');
+        card.style.cssText = 'background:#0B1120;border:1px solid ' + (dead ? '#1e293b' : 'rgba(212,168,83,.25)') + ';border-radius:10px;padding:14px;' + (dead ? 'opacity:.55;' : '');
+        card.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">' +
+            '<code style="font-family:\'JetBrains Mono\',monospace;font-size:.92rem;color:#D4A853;letter-spacing:1px;word-break:break-all;">' + (c.code || '--') + '</code>' +
+            '<button onclick="copyTrialCodeValue(\'' + (c.code || '').replace(/'/g, "\\'") + '\')" style="background:none;border:1px solid #1e293b;color:#94a3b8;border-radius:5px;padding:2px 8px;font-size:.64rem;cursor:pointer;white-space:nowrap;">Copy</button>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' +
+            '<span style="padding:2px 8px;border-radius:4px;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;' + tierStyle + '">' + (c.tier || '--') + '</span>' +
+            '<span style="padding:2px 8px;border-radius:4px;font-size:.62rem;color:#94a3b8;background:#1e293b;">' + (c.trial_weeks || 6) + ' weeks</span>' +
+            '<span style="padding:2px 8px;border-radius:4px;font-size:.62rem;color:#94a3b8;background:#1e293b;">' + usesLabel + '</span>' +
+            (c.industry && c.industry !== 'general' ? '<span style="padding:2px 8px;border-radius:4px;font-size:.62rem;color:#94a3b8;background:#1e293b;">' + c.industry + '</span>' : '') +
+            (exhausted ? '<span style="padding:2px 8px;border-radius:4px;font-size:.62rem;color:#ef4444;background:rgba(239,68,68,.08);">exhausted</span>' : '') +
+            (expired ? '<span style="padding:2px 8px;border-radius:4px;font-size:.62rem;color:#ef4444;background:rgba(239,68,68,.08);">expired</span>' : '') +
+          '</div>' +
+          (c.notes ? '<div style="font-size:.7rem;color:#94a3b8;margin-bottom:8px;">' + c.notes + '</div>' : '') +
+          (c.expires_at ? '<div style="font-size:.66rem;color:#64748b;margin-bottom:8px;">Expires ' + new Date(c.expires_at).toLocaleDateString() + '</div>' : '') +
+          '<div style="display:flex;justify-content:flex-end;">' +
+            '<button onclick="deleteTrialCode(\'' + (c.id || '') + '\')" style="background:none;border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:5px;padding:3px 10px;font-size:.64rem;cursor:pointer;">Delete</button>' +
+          '</div>';
+        grid.appendChild(card);
+      });
+    }
+
+    async function createTrialCode() {
+      var codeInput = document.getElementById('tcCode').value.trim().toUpperCase();
+      var tier = document.getElementById('tcTier').value;
+      var weeks = parseInt(document.getElementById('tcWeeks').value, 10) || 6;
+      var maxUses = parseInt(document.getElementById('tcMaxUses').value, 10);
+      if (isNaN(maxUses)) maxUses = 1;
+      var industry = document.getElementById('tcIndustry').value;
+      var notes = document.getElementById('tcNotes').value.trim();
+      var expiresAt = document.getElementById('tcExpiresAt').value;
+
+      if (weeks < 1 || weeks > 12) { alert('Trial weeks must be between 1 and 12.'); return; }
+
+      var payload = {
+        tier: tier,
+        trial_weeks: weeks,
+        max_uses: maxUses,
+        industry: industry,
+        notes: notes
+      };
+      if (codeInput) payload.code = codeInput;
+      if (expiresAt) payload.expires_at = expiresAt;
+
+      try {
+        var res = await fetch('/api/beacon/trial-codes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        var data = await res.json();
+        var newCode = (data.code && data.code.code) || data.code || (data.trial_code && data.trial_code.code) || payload.code || '';
+        _lastTrialCode = newCode;
+
+        // Clear form
+        document.getElementById('tcCode').value = '';
+        document.getElementById('tcNotes').value = '';
+        document.getElementById('tcExpiresAt').value = '';
+
+        // Reveal the new code prominently
+        var reveal = document.getElementById('trialCodeReveal');
+        var revealVal = document.getElementById('trialCodeRevealValue');
+        var revealMeta = document.getElementById('trialCodeRevealMeta');
+        if (reveal && revealVal) {
+          revealVal.textContent = newCode || '(no code returned)';
+          if (revealMeta) revealMeta.textContent = tier.toUpperCase() + ' • ' + weeks + ' weeks • ' + (maxUses === 0 ? 'unlimited uses' : maxUses + ' use' + (maxUses === 1 ? '' : 's'));
+          reveal.style.display = 'block';
+        }
+
+        // Hide the form
+        var form = document.getElementById('trialCodeForm');
+        if (form) form.style.display = 'none';
+        var btn = document.getElementById('btnToggleTrialForm');
+        if (btn) btn.textContent = '+ Create New Code';
+
+        loadTrialCodes();
+      } catch (e) {
+        alert('Failed to create trial code: ' + e.message);
+      }
+    }
+
+    function copyTrialCode() {
+      if (!_lastTrialCode) return;
+      copyTrialCodeValue(_lastTrialCode);
+      var btn = document.getElementById('btnCopyTrialCode');
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = orig; }, 1500);
+      }
+    }
+
+    function copyTrialCodeValue(code) {
+      if (!code) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = code;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    }
+
+    async function deleteTrialCode(codeId) {
+      if (!codeId) return;
+      if (!confirm('Delete this trial code? Users who have already signed up with it will keep their subscription.')) return;
+      try {
+        var res = await fetch('/api/beacon/trial-codes?id=' + encodeURIComponent(codeId), { method: 'DELETE' });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
+        loadTrialCodes();
+      } catch (e) {
+        alert('Failed to delete code: ' + e.message);
+      }
+    }
+
+    // === REFERRALS ===
+    async function loadBeaconReferrals() {
+      var tbody = document.getElementById('beaconReferralsBody');
+      if (!tbody) return;
+      try {
+        var res = await fetch('/api/beacon/referrals');
+        if (!res.ok) {
+          // Fall back: derive from subscriptions cache
+          renderReferralsFromSubs();
+          return;
+        }
+        var data = await res.json();
+        var refs = data.referrals || data || [];
+        if (!refs.length) {
+          renderReferralsFromSubs();
+          return;
+        }
+        tbody.innerHTML = '';
+        refs.forEach(function(r) {
+          var awarded = r.free_month_awarded || r.reward_granted;
+          var tr = document.createElement('tr');
+          tr.style.cssText = 'border-bottom:1px solid #1e293b;';
+          tr.innerHTML =
+            '<td style="padding:10px;color:#e2e8f0;">' + (r.referrer_name || r.referrer_email || '--') + '</td>' +
+            '<td style="padding:10px;color:#e2e8f0;">' + (r.referee_name || r.referee_email || '--') + '</td>' +
+            '<td style="padding:10px;color:#94a3b8;font-size:.72rem;">' + (r.signup_date ? new Date(r.signup_date).toLocaleDateString() : '--') + '</td>' +
+            '<td style="padding:10px;"><span style="padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600;' + (awarded ? 'background:rgba(34,197,94,.15);color:#22c55e;' : 'background:rgba(100,116,139,.15);color:#94a3b8;') + '">' + (awarded ? 'Yes' : 'No') + '</span></td>';
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        renderReferralsFromSubs();
+      }
+    }
+
+    function renderReferralsFromSubs() {
+      var tbody = document.getElementById('beaconReferralsBody');
+      if (!tbody) return;
+      // Derive referral relationships from the subscriptions cache as a fallback
+      var refs = _beaconSubsCache.filter(function(s) { return s.referred_by; });
+      if (!refs.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;text-align:center;color:#334155;">No referrals yet</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '';
+      refs.forEach(function(sub) {
+        var referrer = _beaconSubsCache.find(function(s) { return s.referral_code === sub.referred_by; });
+        var awarded = sub.referral_reward_granted;
+        var tr = document.createElement('tr');
+        tr.style.cssText = 'border-bottom:1px solid #1e293b;';
+        tr.innerHTML =
+          '<td style="padding:10px;color:#e2e8f0;">' + (referrer ? (referrer.client_name || referrer.client_email || sub.referred_by) : sub.referred_by) + '</td>' +
+          '<td style="padding:10px;color:#e2e8f0;">' + (sub.client_name || sub.client_email || '--') + '</td>' +
+          '<td style="padding:10px;color:#94a3b8;font-size:.72rem;">' + (sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '--') + '</td>' +
+          '<td style="padding:10px;"><span style="padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600;' + (awarded ? 'background:rgba(34,197,94,.15);color:#22c55e;' : 'background:rgba(100,116,139,.15);color:#94a3b8;') + '">' + (awarded ? 'Yes' : 'No') + '</span></td>';
+        tbody.appendChild(tr);
+      });
     }
 
   </script>

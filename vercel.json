@@ -13,6 +13,7 @@
   },
   "crons": [
     { "path": "/api/beacon/cron/daily", "schedule": "0 14 * * *" },
+    { "path": "/api/beacon/cron/trial-emails", "schedule": "0 15 * * *" },
     { "path": "/api/beacon/cron/weekly", "schedule": "0 14 * * 1" },
     { "path": "/api/beacon/cron/monthly", "schedule": "0 14 1 * *" },
     { "path": "/api/beacon/cron/quarterly", "schedule": "0 14 1 1,4,7,10 *" }
