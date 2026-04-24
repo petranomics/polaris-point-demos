@@ -76,8 +76,8 @@ module.exports = async function handler(req, res) {
     var message = userPrompt;
     var result;
 
-    if (sub.plan === 'pro' && process.env.ANTHROPIC_API_KEY) {
-      // Claude direct
+    if (process.env.ANTHROPIC_API_KEY) {
+      // All tiers use Claude Haiku directly
       var systemPrompt = 'You are a marketing content creator. Match the brand voice. Be concise and professional.\n\n== BRAND VOICE ==\n' + brandVoice + '\n\n== BUSINESS CONTEXT ==\n' + contextText;
 
       var resp = await fetch('https://api.anthropic.com/v1/messages', {

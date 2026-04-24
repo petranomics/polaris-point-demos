@@ -1,0 +1,206 @@
+{
+  "real_estate": {
+    "label": "Real Estate Agent",
+    "fields": [
+      { "id": "reAgentName", "label": "Agent Name & Designations", "placeholder": "Sarah Chen, ABR, SRS", "type": "text" },
+      { "id": "reBrokerage", "label": "Brokerage", "placeholder": "Compass", "type": "text" },
+      { "id": "reRegions", "label": "Regions (comma-separated)", "placeholder": "South Austin, Bee Cave, Lakeway, Buda", "type": "text" },
+      { "id": "reListings", "label": "Active Listings (one per line: address | price | beds/baths | notes)", "placeholder": "1847 S 3rd St, Austin 78704 | $625,000 | 3/2 | Modern farmhouse, walk to SoCo", "type": "textarea" },
+      { "id": "reCompetitors", "label": "Competitor Agents (comma-separated)", "placeholder": "Jake Morrison, Lisa Park", "type": "text" },
+      { "id": "reSpecialty", "label": "Specialty", "placeholder": "First-time buyers, luxury, relocation, investment", "type": "text" },
+      { "id": "rePastClients", "label": "Past Clients (name | close date | address — one per line)", "placeholder": "Tom & Rachel Kim | 3/2025 | 2105 Kinney Ave, 78704", "type": "textarea" }
+    ],
+    "brand_voice_template": "Real estate agent: {agentName} at {brokerage}. Specialize in {regions}. Focus areas: {specialty}. Professional, knowledgeable, approachable tone. Position as the local market expert. Never use ALL CAPS or 'MUST SEE' language.",
+    "auto_context": [
+      { "type": "document", "title": "Active Listings", "field": "reListings" },
+      { "type": "document", "title": "Service Regions", "field": "reRegions", "prefix": "Primary service regions: " },
+      { "type": "document", "title": "Competitors", "field": "reCompetitors", "prefix": "Key competitor agents to monitor: " },
+      { "type": "document", "title": "Specializations", "field": "reSpecialty", "prefix": "Agent specializations: " },
+      { "type": "document", "title": "Past Clients", "field": "rePastClients" }
+    ],
+    "content_types": ["listing_post", "listing_description", "market_report", "neighborhood_guide", "past_client_nurture", "buyer_drip", "seller_drip", "social_post", "newsletter"],
+    "sample_prompts": [
+      "Write 3 social posts about my listing at [address]",
+      "Draft a market update for [neighborhood] this month",
+      "Write an open house invite email for Saturday",
+      "Give me 5 talking points for a listing presentation at $500K",
+      "Draft a follow-up email to a buyer who went silent after a showing",
+      "Write a just-sold celebration post",
+      "Compare [neighborhood A] vs [neighborhood B] for a relocating family"
+    ]
+  },
+
+  "local_service": {
+    "label": "Local Service Business",
+    "fields": [
+      { "id": "lsBusinessName", "label": "Business Name", "placeholder": "Lone Star Plumbing Co.", "type": "text" },
+      { "id": "lsOwnerName", "label": "Owner Name", "placeholder": "Mike Rodriguez", "type": "text" },
+      { "id": "lsIndustry", "label": "Industry / Trade", "placeholder": "Plumbing, HVAC, Pest Control, Cleaning, etc.", "type": "text" },
+      { "id": "lsServices", "label": "Services Offered (one per line)", "placeholder": "Drain cleaning\nWater heater repair\nLeak detection\nPipe installation", "type": "textarea" },
+      { "id": "lsServiceArea", "label": "Service Area (comma-separated cities)", "placeholder": "Austin, Round Rock, Cedar Park, Pflugerville", "type": "text" },
+      { "id": "lsYearsInBiz", "label": "Years in Business", "placeholder": "15", "type": "text" },
+      { "id": "lsLicense", "label": "License / Certifications", "placeholder": "TPCL #12345, BBB A+ Rated", "type": "text" },
+      { "id": "lsCompetitors", "label": "Competitors (comma-separated)", "placeholder": "ABC Plumbing, Quick Fix Services", "type": "text" }
+    ],
+    "brand_voice_template": "{businessName} — {industry} serving {serviceArea}. Owned by {ownerName}, {yearsInBiz} years in business. {license}. Tone: trustworthy, professional, local. Emphasize reliability, same-day service, and honest pricing.",
+    "auto_context": [
+      { "type": "document", "title": "Services", "field": "lsServices" },
+      { "type": "document", "title": "Service Area", "field": "lsServiceArea", "prefix": "Service areas: " },
+      { "type": "document", "title": "Credentials", "field": "lsLicense", "prefix": "Licenses and certifications: " },
+      { "type": "document", "title": "Competitors", "field": "lsCompetitors", "prefix": "Key competitors: " }
+    ],
+    "content_types": ["social_post", "newsletter", "blog", "email", "press_release"],
+    "sample_prompts": [
+      "Write 5 social posts for this week",
+      "Draft a monthly newsletter with seasonal tips",
+      "Write a blog post about common [industry] problems homeowners face",
+      "Draft a response to this negative Google review: [paste review]",
+      "Give me a referral program email to send to past customers",
+      "Write a cold outreach email for a commercial account"
+    ]
+  },
+
+  "restaurant_cafe": {
+    "label": "Restaurant / Cafe / Bar",
+    "fields": [
+      { "id": "rcName", "label": "Business Name", "placeholder": "Sidecar Coffee Co.", "type": "text" },
+      { "id": "rcCuisine", "label": "Cuisine / Type", "placeholder": "Specialty coffee, BBQ, Italian, bar & grill", "type": "text" },
+      { "id": "rcLocation", "label": "Location / Neighborhood", "placeholder": "South Congress, Austin TX", "type": "text" },
+      { "id": "rcMenu", "label": "Menu Highlights (one per line: item | price | description)", "placeholder": "Cortado | $5 | House-roasted espresso with steamed milk\nAvocado Toast | $12 | Sourdough, pickled onion, everything seasoning", "type": "textarea" },
+      { "id": "rcHours", "label": "Hours", "placeholder": "Mon-Fri 6am-6pm, Sat-Sun 7am-5pm", "type": "text" },
+      { "id": "rcVibe", "label": "Vibe / Atmosphere", "placeholder": "Cozy, industrial-modern, neighborhood hangout, date-night spot", "type": "text" },
+      { "id": "rcEvents", "label": "Events / Specials (optional)", "placeholder": "Live music Thursdays, happy hour 3-6pm, Sunday brunch", "type": "textarea" },
+      { "id": "rcCompetitors", "label": "Competitors", "placeholder": "Houndstooth Coffee, Jo's Coffee, Epoch", "type": "text" }
+    ],
+    "brand_voice_template": "{name} — {cuisine} in {location}. Vibe: {vibe}. Hours: {hours}. Tone: warm, inviting, community-focused. Highlight the craft, the people, and the experience. Never feel corporate or chain-like.",
+    "auto_context": [
+      { "type": "document", "title": "Menu Highlights", "field": "rcMenu" },
+      { "type": "document", "title": "Events & Specials", "field": "rcEvents" },
+      { "type": "document", "title": "Competitors", "field": "rcCompetitors", "prefix": "Key competitors: " }
+    ],
+    "content_types": ["social_post", "newsletter", "blog", "email"],
+    "sample_prompts": [
+      "Write 5 social posts for this week highlighting different menu items",
+      "Draft a 'weekend specials' Instagram post",
+      "Write a monthly email newsletter with upcoming events",
+      "Draft a response to a 3-star Yelp review about slow service",
+      "Write a catering inquiry response email",
+      "Give me 3 ideas for a slow-Tuesday promotion"
+    ]
+  },
+
+  "health_wellness": {
+    "label": "Health & Wellness",
+    "fields": [
+      { "id": "hwName", "label": "Practice / Business Name", "placeholder": "Glow Med Spa", "type": "text" },
+      { "id": "hwType", "label": "Type", "placeholder": "Med spa, chiropractor, dentist, personal trainer, yoga studio", "type": "text" },
+      { "id": "hwProviders", "label": "Provider Names & Credentials", "placeholder": "Dr. Sarah Kim, MD — Board Certified Dermatologist", "type": "textarea" },
+      { "id": "hwServices", "label": "Services (one per line: service | price range)", "placeholder": "Botox | $12/unit\nMicroneedling | $300/session\nChemical Peel | $150-250", "type": "textarea" },
+      { "id": "hwLocation", "label": "Location", "placeholder": "Domain, Austin TX", "type": "text" },
+      { "id": "hwTarget", "label": "Target Clients", "placeholder": "Women 28-55, professionals, brides-to-be", "type": "text" },
+      { "id": "hwCompetitors", "label": "Competitors", "placeholder": "Westlake Dermatology, Skin Laundry", "type": "text" }
+    ],
+    "brand_voice_template": "{name} — {type} in {location}. Providers: {providers}. Target: {target}. Tone: educated, calming, aspirational but not intimidating. Always HIPAA-conscious — never reference specific patient outcomes or make medical claims. Focus on how services make clients feel, not clinical results.",
+    "auto_context": [
+      { "type": "document", "title": "Services & Pricing", "field": "hwServices" },
+      { "type": "document", "title": "Provider Bios", "field": "hwProviders" },
+      { "type": "document", "title": "Target Audience", "field": "hwTarget", "prefix": "Target client profile: " },
+      { "type": "document", "title": "Competitors", "field": "hwCompetitors", "prefix": "Key competitors: " }
+    ],
+    "content_types": ["social_post", "newsletter", "blog", "email"],
+    "sample_prompts": [
+      "Write 5 educational social posts about our services",
+      "Draft a new patient welcome email sequence (3 emails)",
+      "Write a blog post: 'What to Expect at Your First [Service] Appointment'",
+      "Draft a re-engagement email for clients we haven't seen in 6 months",
+      "Write a seasonal promotion post for [holiday/season]",
+      "Draft a provider spotlight post for [provider name]"
+    ]
+  },
+
+  "professional_services": {
+    "label": "Professional Services",
+    "fields": [
+      { "id": "psName", "label": "Firm / Business Name", "placeholder": "Chen & Associates, CPA", "type": "text" },
+      { "id": "psType", "label": "Type", "placeholder": "Accounting, law firm, insurance, financial advisory, consulting", "type": "text" },
+      { "id": "psSpecialty", "label": "Specialization", "placeholder": "Small business tax, estate planning, commercial insurance", "type": "text" },
+      { "id": "psPartners", "label": "Key People & Titles", "placeholder": "Michael Chen, CPA — Managing Partner\nLisa Wong, CPA — Tax Director", "type": "textarea" },
+      { "id": "psLocation", "label": "Location", "placeholder": "Downtown Austin, TX", "type": "text" },
+      { "id": "psTarget", "label": "Target Clients", "placeholder": "Small business owners, startups, high-net-worth individuals", "type": "text" },
+      { "id": "psCompetitors", "label": "Competitors", "placeholder": "Maxwell & Co CPA, Austin Tax Group", "type": "text" }
+    ],
+    "brand_voice_template": "{name} — {type} specializing in {specialty}. Location: {location}. Target: {target}. Tone: authoritative, trustworthy, approachable. Use clear language — avoid jargon unless writing for industry peers. Position as thought leaders. Always include appropriate disclaimers.",
+    "auto_context": [
+      { "type": "document", "title": "Leadership Team", "field": "psPartners" },
+      { "type": "document", "title": "Specializations", "field": "psSpecialty", "prefix": "Practice specializations: " },
+      { "type": "document", "title": "Target Market", "field": "psTarget", "prefix": "Target client profile: " },
+      { "type": "document", "title": "Competitors", "field": "psCompetitors", "prefix": "Key competitors: " }
+    ],
+    "content_types": ["social_post", "newsletter", "blog", "email", "press_release"],
+    "sample_prompts": [
+      "Write a LinkedIn post about upcoming tax deadline changes",
+      "Draft a monthly client newsletter with regulatory updates",
+      "Write a thought leadership blog post about [topic]",
+      "Draft a cold outreach email to a potential client in [industry]",
+      "Write a case study about how we helped a client save on [topic]",
+      "Draft a referral thank-you email"
+    ]
+  },
+
+  "ecommerce": {
+    "label": "E-Commerce / Retail",
+    "fields": [
+      { "id": "ecName", "label": "Store / Brand Name", "placeholder": "Wildflower Boutique", "type": "text" },
+      { "id": "ecType", "label": "Product Category", "placeholder": "Women's clothing, home goods, jewelry, outdoor gear", "type": "text" },
+      { "id": "ecPlatform", "label": "Platform", "placeholder": "Shopify, Etsy, WooCommerce, physical store", "type": "text" },
+      { "id": "ecBestSellers", "label": "Best Sellers / Key Products", "placeholder": "Linen wrap dress — $89\nHandmade ceramic mug set — $45\nGold hoops — $32", "type": "textarea" },
+      { "id": "ecTarget", "label": "Target Customer", "placeholder": "Women 25-45, eco-conscious, loves unique finds", "type": "text" },
+      { "id": "ecBrandStory", "label": "Brand Story (1-2 sentences)", "placeholder": "Started in my garage in 2020, now shipping nationwide. Every piece is ethically sourced.", "type": "textarea" },
+      { "id": "ecCompetitors", "label": "Competitors", "placeholder": "Anthropologie, Free People, local boutiques", "type": "text" }
+    ],
+    "brand_voice_template": "{name} — {type}. Platform: {platform}. Target: {target}. Brand story: {brandStory}. Tone: authentic, aspirational but accessible, community-driven. Focus on the story behind products, not just features. User-generated content feels natural. Never sound like a corporate retailer.",
+    "auto_context": [
+      { "type": "document", "title": "Product Catalog", "field": "ecBestSellers" },
+      { "type": "document", "title": "Brand Story", "field": "ecBrandStory" },
+      { "type": "document", "title": "Target Customer", "field": "ecTarget", "prefix": "Target customer: " },
+      { "type": "document", "title": "Competitors", "field": "ecCompetitors", "prefix": "Key competitors: " }
+    ],
+    "content_types": ["social_post", "newsletter", "blog", "email"],
+    "sample_prompts": [
+      "Write 5 product spotlight posts for this week",
+      "Draft a 'new arrivals' email campaign",
+      "Write a gift guide blog post for [holiday]",
+      "Draft an abandoned cart email sequence (3 emails)",
+      "Write a customer story post based on this review: [paste review]",
+      "Give me 3 Instagram Reel concepts for [product]"
+    ]
+  },
+
+  "creative_agency": {
+    "label": "Creative / Agency",
+    "fields": [
+      { "id": "caName", "label": "Agency / Studio Name", "placeholder": "Bright Frame Studio", "type": "text" },
+      { "id": "caType", "label": "Type", "placeholder": "Photography, video production, design studio, marketing agency", "type": "text" },
+      { "id": "caServices", "label": "Services", "placeholder": "Brand photography, video production, social media management, web design", "type": "textarea" },
+      { "id": "caPortfolio", "label": "Notable Clients / Projects", "placeholder": "Shot for Nike Austin pop-up, Whole Foods rebrand, 3 wedding venues", "type": "textarea" },
+      { "id": "caTarget", "label": "Target Clients", "placeholder": "Small businesses, startups, wedding couples, restaurants", "type": "text" },
+      { "id": "caCompetitors", "label": "Competitors", "placeholder": "Other local studios, freelancers", "type": "text" }
+    ],
+    "brand_voice_template": "{name} — {type}. Services: {services}. Target: {target}. Tone: creative, confident, portfolio-driven. Show don't tell. Let the work speak. Use behind-the-scenes content to humanize. Never sound desperate for clients — position as selective and in-demand.",
+    "auto_context": [
+      { "type": "document", "title": "Services", "field": "caServices" },
+      { "type": "document", "title": "Portfolio & Clients", "field": "caPortfolio" },
+      { "type": "document", "title": "Target Market", "field": "caTarget", "prefix": "Target clients: " },
+      { "type": "document", "title": "Competitors", "field": "caCompetitors", "prefix": "Key competitors: " }
+    ],
+    "content_types": ["social_post", "newsletter", "blog", "email", "press_release"],
+    "sample_prompts": [
+      "Write a case study post about our work with [client]",
+      "Draft a cold outreach email to a [type] business",
+      "Write a behind-the-scenes post about a recent shoot",
+      "Draft a proposal cover letter for a [type] project",
+      "Give me 5 portfolio caption ideas for Instagram",
+      "Write an award submission for [award name]"
+    ]
+  }
+}

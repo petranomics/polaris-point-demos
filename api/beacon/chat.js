@@ -87,11 +87,11 @@ module.exports = async function handler(req, res) {
       // 5. Route to VPS agent or Claude API directly
       var result;
 
-      if (sub.plan === 'pro' && process.env.ANTHROPIC_API_KEY) {
-        // Pro: call Claude directly from Vercel (faster, no VPS hop)
+      // All tiers use Claude Haiku directly from Vercel (fast, cheap, no VPS hop)
+      if (process.env.ANTHROPIC_API_KEY) {
         result = await callClaudeDirect(otherContext, history, message, brandVoice);
       } else {
-        // Lite/Beacon: proxy to VPS Ollama
+        // Fallback to VPS Ollama if no API key
         var vpsUrl = process.env.VPS_API_URL || 'https://api.polarispoint.io';
         var vpsSecret = process.env.VPS_API_SECRET || '';
 

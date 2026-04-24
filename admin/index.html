@@ -1495,9 +1495,9 @@
           <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:12px;">+ New Lead</h4>
 
           <div class="intake-field" style="margin-bottom:14px;">
-            <label>Quick Fill — Drop a Google Maps or Yelp Link</label>
+            <label>Quick Fill — Drop a Google Maps Link</label>
             <div style="display:flex;gap:8px;">
-              <input type="text" id="leadQuickUrl" placeholder="Paste a Google Maps or Yelp URL to auto-fill..." style="flex:1;">
+              <input type="text" id="leadQuickUrl" placeholder="Paste a Google Maps URL to auto-fill..." style="flex:1;">
               <button class="btn-export" onclick="leadQuickFill()" style="white-space:nowrap;padding:9px 16px;font-size:.78rem;">Auto-Fill</button>
             </div>
           </div>
@@ -1671,8 +1671,8 @@
         </div>
         <div class="intake-row full">
           <div class="intake-field">
-            <label>Or paste a Google Maps / Yelp URL</label>
-            <input type="text" id="searchUrl" placeholder="e.g. https://maps.google.com/... or https://yelp.com/biz/...">
+            <label>Or paste a Google Maps URL</label>
+            <input type="text" id="searchUrl" placeholder="e.g. https://maps.google.com/...">
           </div>
         </div>
         <div class="intake-row">
@@ -2230,8 +2230,8 @@
             </div>
           </div>
           <div style="margin-bottom:10px;">
-            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Farm Areas (comma-separated)</label>
-            <input type="text" id="reFarmAreas" placeholder="South Austin, Bee Cave, Lakeway, Buda" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Regions (comma-separated)</label>
+            <input type="text" id="reRegions" placeholder="South Austin, Bee Cave, Lakeway, Buda" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
           </div>
           <div style="margin-bottom:10px;">
             <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Active Listings (one per line: address | price | beds/baths | notes)</label>
@@ -2932,7 +2932,7 @@
       document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
     });
 
-    // === SEARCH: Google Places, Yelp URL, or name search ===
+    // === SEARCH: Google Places or name search ===
     function searchPlaces() {
       console.log('searchPlaces called');
       var urlInput = document.getElementById('searchUrl').value.trim();
@@ -2944,24 +2944,9 @@
       // Determine search query
       var searchName = '';
       var searchLocation = city;
-      var forceYelp = false;
 
       if (urlInput) {
-        if (urlInput.includes('yelp.com')) {
-          var yelpSlug = urlInput.match(/\/biz\/([\w-]+)/);
-          if (yelpSlug) {
-            // Yelp slug format: "business-name-city-N"
-            // Remove trailing number, then use last word as city, rest as name
-            var slugParts = yelpSlug[1].replace(/-\d+$/, '').split('-');
-            // Last part is usually the city
-            if (!searchLocation && slugParts.length > 1) {
-              searchLocation = slugParts[slugParts.length - 1];
-            }
-            // Full slug as search (Yelp handles partial matches well)
-            searchName = slugParts.join(' ');
-            forceYelp = true;
-          }
-        } else if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
+        if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
           var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
           if (nameMatch) {
             searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
@@ -2989,125 +2974,40 @@
         if (!searchName) searchName = urlInput;
       } else if (biz) {
         searchName = biz;
-        // If no city provided, default to Texas for Yelp
+        // If no city provided, default to Texas
         if (!searchLocation) searchLocation = 'TX';
       } else {
-        alert('Enter a business name or paste a Google Maps / Yelp URL.');
+        alert('Enter a business name or paste a Google Maps URL.');
         return;
       }
 
       listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Searching for "' + escHtml(searchName) + '"...</p>';
       resultsDiv.style.display = 'block';
 
-      var yelpUrl = '/api/yelp?q=' + encodeURIComponent(searchName) + (searchLocation ? '&location=' + encodeURIComponent(searchLocation) : '');
       var placesUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
-      // Fetch both Yelp and Google Places in parallel, merge results
-      Promise.allSettled([
-        fetch(yelpUrl).then(function(r) { return r.json(); }),
-        fetch(placesUrl).then(function(r) { return r.json(); })
-      ]).then(function(results) {
-        var yelp = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value : null;
-        var google = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value : null;
-
-        if (!yelp && !google) {
+      // Fetch Google Places data
+      fetch(placesUrl).then(function(r) { return r.json(); }).then(function(google) {
+        if (!google || google.error) {
           listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
           return;
         }
 
-        // Merge: prefer Yelp for name/rating/categories, Google for phone/website/hours/reviews
-        var merged = {};
-        if (yelp) {
-          merged.name = yelp.name;
-          merged.rating = yelp.rating;
-          merged.reviewCount = yelp.reviewCount;
-          merged.address = yelp.address;
-          merged.phone = yelp.phone;
-          merged.categories = yelp.categories;
-          merged.imageUrl = yelp.imageUrl;
-          merged.photos = yelp.photos || [];
-          merged.yelpUrl = yelp.yelpUrl;
-          merged.reviews = yelp.reviews || [];
-          merged.hours = yelp.hours;
-          merged.hoursFormatted = yelp.hoursFormatted;
-          merged.city = yelp.city;
-          merged.state = yelp.state;
-        }
-        // Ensure reviews array exists
-        if (!merged.reviews) merged.reviews = [];
+        var merged = {
+          name: google.name,
+          rating: google.rating,
+          reviewCount: google.reviewCount,
+          address: google.address,
+          phone: google.phone,
+          website: google.website,
+          hoursFormatted: google.hoursFormatted,
+          reviews: google.reviews || [],
+          mapsUrl: google.mapsUrl,
+          photos: google.photos || [],
+          imageUrl: google.imageUrl
+        };
 
-        if (google) {
-          if (!merged.name) merged.name = google.name;
-          if (!merged.address) merged.address = google.address;
-          if (!merged.phone && google.phone) merged.phone = google.phone;
-          if (google.website) merged.website = google.website;
-          if (google.hoursFormatted && !merged.hoursFormatted) merged.hoursFormatted = google.hoursFormatted;
-          if (!merged.rating && google.rating) { merged.rating = google.rating; merged.reviewCount = google.reviewCount; }
-          // Google reviews have full text — use them as primary, add Yelp as supplement
-          if (google.reviews && google.reviews.length) {
-            var googleReviews = google.reviews;
-            var yelpOnly = merged.reviews.filter(function(r) {
-              return !googleReviews.some(function(g) { return g.author === r.author; });
-            });
-            merged.reviews = googleReviews.concat(yelpOnly);
-          }
-          if (google.mapsUrl) merged.mapsUrl = google.mapsUrl;
-          // Use Google photos if Yelp didn't have any
-          if (google.photos && google.photos.length && !(merged.photos && merged.photos.length)) {
-            merged.photos = google.photos;
-          }
-          if (google.imageUrl && !merged.imageUrl) merged.imageUrl = google.imageUrl;
-        }
-
-        console.log('Merged reviews:', merged.reviews ? merged.reviews.length : 0, merged.reviews);
-
-        // Show initial results immediately
         showResult(merged, listDiv);
-
-        // Then scrape Yelp page for richer reviews + photos (async supplement)
-        if (merged.yelpUrl) {
-          var scrapeUrl = '/api/scrape?url=' + encodeURIComponent(merged.yelpUrl.split('?')[0]);
-          fetch(scrapeUrl).then(function(r) { return r.json(); }).then(function(scraped) {
-            if (scraped.error) return;
-            var updated = false;
-
-            // Import scraped reviews — prefer scraped over API (full text vs snippets)
-            if (scraped.reviews && scraped.reviews.length) {
-              merged.reviews = scraped.reviews;
-              // Re-fill reviews in the form
-              var rl = document.getElementById('reviewsList');
-              rl.innerHTML = '';
-              scraped.reviews.slice(0, 5).forEach(function(r) {
-                addReviewRow(rl);
-                var items = rl.querySelectorAll('.dynamic-item');
-                var last = items[items.length - 1];
-                last.querySelector('.rev-text').value = r.text || '';
-                last.querySelector('.rev-author').value = r.author || '';
-                last.querySelector('.rev-location').value = r.date || '';
-              });
-              updated = true;
-            }
-
-            // Import photos
-            if (scraped.photos && scraped.photos.length) {
-              window._placePhotos = scraped.photos;
-              updated = true;
-            }
-
-            // Update rating if scraped data has it
-            if (scraped.rating && !merged.rating) {
-              window._placeRating = scraped.rating;
-              window._placeReviewCount = scraped.reviewCount;
-            }
-
-            if (updated) {
-              var notice = document.createElement('div');
-              notice.style.cssText = 'color:#16a34a;font-size:.75rem;margin-top:8px;padding:8px 10px;background:rgba(22,163,74,.08);border-radius:6px;';
-              notice.textContent = '\u2705 Found ' + (scraped.reviews ? scraped.reviews.length : 0) + ' reviews and ' + (scraped.photos ? scraped.photos.length : 0) + ' photos from Yelp page';
-              document.getElementById('searchResultsList').appendChild(notice);
-            }
-          }).catch(function() { /* scrape failed silently */ });
-        }
       }).catch(function() {
         listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
       });
@@ -3214,12 +3114,12 @@
       // === STORE DATA FOR CONFIG GENERATOR ===
       window._placeRating = place.rating || null;
       window._placeReviewCount = place.reviewCount || null;
-      window._placeYelpUrl = place.yelpUrl || '';
+      window._placeMapsUrl = place.mapsUrl || '';
       window._placeImageUrl = place.imageUrl || '';
       window._placePhotos = place.photos || [];
       if (place.imageUrl && !window._placePhotos.length) window._placePhotos = [place.imageUrl];
 
-      // NOTE: Google/Yelp photos are NOT logos — they're job/storefront photos.
+      // NOTE: Google photos are NOT logos — they're job/storefront photos.
       // Don't auto-fill the logo field. These photos are used for hero and about
       // images in the config generator via window._placePhotos instead.
       // The user should paste or upload an actual logo separately.
@@ -3462,7 +3362,7 @@
         '  // === GOOGLE REVIEWS ===\n' +
         '  googleReviewsRating: ' + JSON.stringify(String(window._placeRating || '4.9')) + ',\n' +
         '  googleReviewsCount: ' + JSON.stringify(String(window._placeReviewCount || '100')) + ',\n' +
-        '  googleReviewsUrl: ' + JSON.stringify(window._placeYelpUrl || '') + ',\n\n' +
+        '  googleReviewsUrl: ' + JSON.stringify(window._placeMapsUrl || '') + ',\n\n' +
         '  // === ENGAGEMENT ===\n' +
         '  smsNumber: ' + JSON.stringify(smsNum) + ',\n' +
         '  whatsappNumber: "",\n' +
@@ -4151,19 +4051,12 @@
 
     function leadQuickFill() {
       var url = document.getElementById('leadQuickUrl').value.trim();
-      if (!url) return alert('Paste a Google Maps or Yelp URL');
+      if (!url) return alert('Paste a Google Maps URL');
 
       var searchName = '';
       var searchLocation = '';
 
-      if (url.includes('yelp.com')) {
-        var yelpSlug = url.match(/\/biz\/([\w-]+)/);
-        if (yelpSlug) {
-          var slugParts = yelpSlug[1].replace(/-\d+$/, '').split('-');
-          searchName = slugParts.join(' ');
-          if (slugParts.length > 1) searchLocation = slugParts[slugParts.length - 1];
-        }
-      } else if (url.includes('google.com/maps') || url.includes('goo.gl') || url.includes('maps.app')) {
+      if (url.includes('google.com/maps') || url.includes('goo.gl') || url.includes('maps.app')) {
         var nameMatch = url.match(/place\/([^\/\?]+)/);
         if (nameMatch) {
           searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
@@ -4185,22 +4078,16 @@
         }
       }
 
-      if (!searchName) { alert('Could not parse URL. Try pasting the full Google Maps or Yelp link.'); return; }
+      if (!searchName) { alert('Could not parse URL. Try pasting the full Google Maps link.'); return; }
 
       var btn = document.querySelector('#leadQuickUrl + button') || event.target;
       btn.textContent = 'Searching...';
       btn.disabled = true;
 
-      var yelpApiUrl = '/api/yelp?q=' + encodeURIComponent(searchName) + (searchLocation ? '&location=' + encodeURIComponent(searchLocation) : '');
       var placesApiUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
-      Promise.allSettled([
-        fetch(yelpApiUrl).then(function(r) { return r.json(); }),
-        fetch(placesApiUrl).then(function(r) { return r.json(); })
-      ]).then(function(results) {
-        var yelp = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value : null;
-        var google = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value : null;
-        var place = yelp || google || {};
+      fetch(placesApiUrl).then(function(r) { return r.json(); }).then(function(result) {
+        var place = (!result || result.error) ? {} : result;
 
         if (place.name) document.getElementById('leadBizName').value = place.name;
         if (place.phone) document.getElementById('leadPhone').value = place.phone;
@@ -4729,16 +4616,15 @@
     }
 
     function scrapeOneCity(ind, cs, cb) {
-      // Use Yelp search mode via Vercel proxy for real scraping
-      fetch('/api/yelp?q=' + encodeURIComponent(ind) + '&location=' + encodeURIComponent(cs) + '&limit=10&mode=search')
+      // Use Google Places for real scraping
+      fetch('/api/places?q=' + encodeURIComponent(ind + ' ' + cs))
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          if (d.error || !d.businesses || !d.businesses.length) { cb(generateDemoScrapeResults(ind, cs)); return; }
-          var arr = d.businesses.map(function(b) {
-            return { name: b.name, phone: b.phone || null, email: b.email || null,
-              website: b.website || null, address: b.address || cs,
-              rating: b.rating || null, _city: cs };
-          });
+          if (d.error || !d.name) { cb(generateDemoScrapeResults(ind, cs)); return; }
+          // Google Places returns a single result; wrap in array
+          var arr = [{ name: d.name, phone: d.phone || null, email: null,
+            website: d.website || null, address: d.address || cs,
+            rating: d.rating || null, mapsUrl: d.mapsUrl || null, _city: cs }];
           cb(arr);
         }).catch(function() { cb(generateDemoScrapeResults(ind, cs)); });
     }
@@ -4843,20 +4729,6 @@
               if (places.hours && places.hours.length) r.hours = places.hours;
             }
           }
-          // Try Yelp
-          var yelpQ = encodeURIComponent(r.name);
-          var yelpLoc = encodeURIComponent(r.address || 'Austin TX');
-          var yelpResp = await fetch('/api/yelp?q=' + yelpQ + '&location=' + yelpLoc);
-          if (yelpResp.ok) {
-            var yelp = await yelpResp.json();
-            if (yelp.name && !yelp.error) {
-              if (yelp.phone && !r.phone) r.phone = yelp.phone;
-              if (yelp.address && !r.address) r.address = yelp.address;
-              if (yelp.rating && (!r.rating || yelp.rating > r.rating)) { r.yelpRating = yelp.rating; r.yelpReviewCount = yelp.reviewCount; }
-              if (yelp.yelpUrl) r.yelpUrl = yelp.yelpUrl;
-              if (yelp.categories && yelp.categories.length) r.categories = yelp.categories;
-            }
-          }
           r._enriched = true;
         } catch (e) { /* skip enrichment errors */ }
       }
@@ -4877,13 +4749,12 @@
         var r = _scrapeResults[idx];
         if (!r) return;
         var notes = 'Imported via batch scraper' + (r._demo ? ' (demo data)' : '') + (r._enriched ? ' (enriched)' : '');
-        if (r.yelpUrl) notes += '\nYelp: ' + r.yelpUrl;
         if (r.mapsUrl) notes += '\nMaps: ' + r.mapsUrl;
         if (r.hours) notes += '\nHours: ' + (Array.isArray(r.hours) ? r.hours.join(', ') : r.hours);
         fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
             phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
-            notes: notes, listing_url: r.yelpUrl || r.mapsUrl || '', owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
+            notes: notes, listing_url: r.mapsUrl || '', owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
         });
       });
       alert(idxs.length + ' leads imported.');
@@ -5308,7 +5179,7 @@
           var subId = data.subscription.id;
           var agentName = document.getElementById('reAgentName').value.trim();
           var brokerage = document.getElementById('reBrokerage').value.trim();
-          var farmAreas = document.getElementById('reFarmAreas').value.trim();
+          var regions = document.getElementById('reRegions').value.trim();
           var listings = document.getElementById('reListings').value.trim();
           var competitors = document.getElementById('reCompetitors').value.trim();
 
@@ -5318,7 +5189,7 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ subscription_id: subId, context_type: 'brand_voice', title: 'Agent Profile',
-                content: 'Real estate agent: ' + agentName + ' at ' + (brokerage || 'Independent') + '. Specialize in ' + (farmAreas || 'the local area') + '. Professional, knowledgeable, approachable tone. Position as the local market expert.' })
+                content: 'Real estate agent: ' + agentName + ' at ' + (brokerage || 'Independent') + '. Specialize in ' + (regions || 'the local area') + '. Professional, knowledgeable, approachable tone. Position as the local market expert.' })
             });
           }
           // Seed listings
@@ -5329,12 +5200,12 @@
               body: JSON.stringify({ subscription_id: subId, context_type: 'document', title: 'Active Listings', content: listings })
             });
           }
-          // Seed farm areas
-          if (farmAreas) {
+          // Seed regions
+          if (regions) {
             fetch('/api/beacon/context', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ subscription_id: subId, context_type: 'document', title: 'Service Areas', content: 'Primary service areas: ' + farmAreas })
+              body: JSON.stringify({ subscription_id: subId, context_type: 'document', title: 'Service Areas', content: 'Primary service areas: ' + regions })
             });
           }
           // Seed competitors
