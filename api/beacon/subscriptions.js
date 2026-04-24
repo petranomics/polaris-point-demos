@@ -46,22 +46,44 @@ module.exports = async function handler(req, res) {
       return res.json({ subscriptions: rows });
     }
 
-    // POST — create subscription
+    // POST — create subscription or login
     if (req.method === 'POST') {
       var body = req.body;
-      if (!body.site_id) return res.status(400).json({ error: 'Missing site_id' });
 
+      // Add client auth columns if not exist
+      await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS industry TEXT DEFAULT 'general'`;
+      await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS client_email TEXT`;
+      await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS client_password_hash TEXT`;
+      await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS client_name TEXT`;
+
+      // Client login action
+      if (req.query.action === 'login') {
+        if (!body.email || !body.password_hash) {
+          return res.status(400).json({ error: 'Missing email or password' });
+        }
+        var loginRows = await sql`
+          SELECT bs.*, s.site_name, s.slug, s.domain
+          FROM beacon_subscriptions bs
+          LEFT JOIN sites s ON bs.site_id = s.id
+          WHERE bs.client_email = ${body.email}
+            AND bs.client_password_hash = ${body.password_hash}
+            AND bs.status = 'active'
+          ORDER BY bs.created_at DESC LIMIT 1
+        `;
+        if (!loginRows.length) {
+          return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        return res.json({ subscription: loginRows[0] });
+      }
+
+      // Create subscription (allow without site_id for standalone Beacon)
       var plan = body.plan || 'lite';
       var limit = PLAN_LIMITS[plan] || PLAN_LIMITS.lite;
-
-      // Add industry column if not exists
-      await sql`ALTER TABLE beacon_subscriptions ADD COLUMN IF NOT EXISTS industry TEXT DEFAULT 'general'`;
-
       var industry = body.industry || 'general';
 
       var result = await sql`
-        INSERT INTO beacon_subscriptions (site_id, plan, tokens_limit, status, industry)
-        VALUES (${body.site_id}, ${plan}, ${limit}, 'active', ${industry})
+        INSERT INTO beacon_subscriptions (site_id, plan, tokens_limit, status, industry, client_email, client_password_hash, client_name)
+        VALUES (${body.site_id || null}, ${plan}, ${limit}, 'active', ${industry}, ${body.client_email || null}, ${body.client_password_hash || null}, ${body.client_name || null})
         RETURNING *
       `;
 

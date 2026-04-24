@@ -2218,6 +2218,21 @@
             <option value="real_estate">Real Estate Agent</option>
           </select>
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Name</label>
+            <input type="text" id="beaconClientName" placeholder="Sarah Chen" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Email</label>
+            <input type="email" id="beaconClientEmail" placeholder="sarah@example.com" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Client Password</label>
+            <input type="text" id="beaconClientPassword" placeholder="Set login password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+          </div>
+        </div>
+        <p style="font-size:.68rem;color:#475569;margin:-10px 0 14px;">Client credentials for Beacon portal login at <a href="/beacon" style="color:#5B8DEF;">polarispoint.io/beacon</a></p>
         <div id="reFields" style="display:none;margin-bottom:14px;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
             <div>
@@ -5161,18 +5176,30 @@
 
     async function createBeaconSub() {
       var siteId = document.getElementById('beaconSiteSelect').value;
-      if (!siteId) { alert('Please select a site.'); return; }
       var planEl = document.querySelector('input[name="beaconPlan"]:checked');
       if (!planEl) { alert('Please select a plan.'); return; }
       var industry = document.getElementById('beaconIndustry').value;
+      var clientName = document.getElementById('beaconClientName').value.trim();
+      var clientEmail = document.getElementById('beaconClientEmail').value.trim();
+      var clientPassword = document.getElementById('beaconClientPassword').value.trim();
+      var clientPasswordHash = '';
+      if (clientPassword) {
+        var enc = new TextEncoder().encode(clientPassword);
+        var hashBuf = await crypto.subtle.digest('SHA-256', enc);
+        clientPasswordHash = Array.from(new Uint8Array(hashBuf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+      }
       try {
         var res = await fetch('/api/beacon/subscriptions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ site_id: siteId, plan: planEl.value, industry: industry })
+          body: JSON.stringify({ site_id: siteId, plan: planEl.value, industry: industry, client_name: clientName, client_email: clientEmail, client_password_hash: clientPasswordHash })
         });
         if (!res.ok) throw new Error('Server returned ' + res.status);
         var data = await res.json();
+
+        if (clientEmail) {
+          alert('Subscription created! Client can log in at polarispoint.io/beacon with email: ' + clientEmail);
+        }
 
         // If real estate, seed context documents from the RE fields
         if (industry === 'real_estate' && data && data.subscription && data.subscription.id) {
