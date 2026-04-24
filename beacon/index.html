@@ -111,22 +111,22 @@
     .landing-hero {
       display: grid;
       grid-template-columns: 1.2fr .8fr;
-      gap: 48px;
+      gap: 36px;
       align-items: center;
-      padding: 80px 24px 56px;
+      padding: 56px 24px 40px;
     }
     .landing-hero-text h1 {
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      line-height: 1.1;
+      font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+      line-height: 1.15;
       letter-spacing: -.02em;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .landing-hero-text h1 .accent { color: var(--gold); }
     .landing-hero-text p {
-      font-size: 1rem;
+      font-size: .92rem;
       color: var(--text-secondary);
       max-width: 50ch;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
     .landing-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
     .landing-btn {
@@ -159,10 +159,10 @@
     .login-card {
       background: var(--surface-solid);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px 28px;
+      border-radius: 14px;
+      padding: 24px 22px;
       width: 100%;
-      max-width: 380px;
+      max-width: 360px;
       text-align: center;
       margin-left: auto;
     }
@@ -199,25 +199,26 @@
     .landing-feature-icon svg { width: 18px; height: 18px; color: var(--blue); }
     .landing-feature h3 { font-size: .95rem; margin-bottom: 4px; }
     .landing-feature p { font-size: .82rem; color: var(--text-secondary); margin: 0; line-height: 1.55; }
-    .landing-section-header { text-align: center; margin-bottom: 32px; }
+    .landing-section-header { text-align: center; margin-bottom: 24px; }
     .landing-section-header .label {
       display: inline-block;
       color: var(--blue);
-      font-size: .68rem;
+      font-size: .62rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .landing-section-header h2 {
-      font-size: clamp(1.4rem, 3vw, 2rem);
-      margin-bottom: 8px;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      margin-bottom: 6px;
+      letter-spacing: -.01em;
     }
     .landing-section-header p {
       color: var(--text-secondary);
-      max-width: 56ch;
+      max-width: 52ch;
       margin: 0 auto;
-      font-size: .92rem;
+      font-size: .85rem;
     }
     .landing-industries {
       display: grid;
@@ -270,7 +271,7 @@
       background: rgba(15,25,55,.5);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 22px 20px;
+      padding: 18px 18px;
       position: relative;
     }
     .price-card.featured { border-color: rgba(232,197,71,.3); }
@@ -289,19 +290,19 @@
     }
     .price-card .price-name { color: var(--blue); font-size: .65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
     .price-card.featured .price-name { color: var(--gold); }
-    .price-card .price-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #fff; }
-    .price-card .price-sub { font-size: .68rem; color: var(--text-muted); margin: 4px 0 12px; line-height: 1.5; }
-    .price-card ul { list-style: none; padding: 0; margin: 0; font-size: .78rem; color: var(--text-secondary); line-height: 1.85; }
+    .price-card .price-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; }
+    .price-card .price-sub { font-size: .65rem; color: var(--text-muted); margin: 3px 0 10px; line-height: 1.5; }
+    .price-card ul { list-style: none; padding: 0; margin: 0; font-size: .74rem; color: var(--text-secondary); line-height: 1.7; }
     .price-card ul li.hl { color: #fff; }
     .landing-cta-section {
       text-align: center;
-      padding: 56px 24px;
-      max-width: 700px;
+      padding: 40px 24px 56px;
+      max-width: 660px;
       margin: 0 auto;
     }
-    .landing-cta-section h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 10px; }
+    .landing-cta-section h2 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin-bottom: 8px; }
     .landing-cta-section h2 .accent { color: var(--gold); }
-    .landing-cta-section p { color: var(--text-secondary); margin-bottom: 24px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+    .landing-cta-section p { color: var(--text-secondary); margin-bottom: 18px; max-width: 50ch; margin-left: auto; margin-right: auto; font-size: .88rem; }
     .landing-footer {
       border-top: 1px solid var(--border);
       padding: 24px;
@@ -313,20 +314,20 @@
 
     /* ---- NARRATIVE LANDING SECTIONS ---- */
     .narrative-section {
-      max-width: 980px;
+      max-width: 940px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 48px 24px;
     }
     .narrative-quote {
-      max-width: 780px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 56px 24px 40px;
       text-align: center;
     }
     .narrative-quote p {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.4rem, 3vw, 2.1rem);
-      line-height: 1.4;
+      font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+      line-height: 1.5;
       color: var(--text);
       letter-spacing: -.01em;
     }
@@ -334,9 +335,9 @@
     .narrative-quote .small {
       display: block;
       font-family: 'Inter', sans-serif;
-      font-size: 1rem;
+      font-size: .85rem;
       color: var(--text-secondary);
-      margin-top: 16px;
+      margin-top: 12px;
       font-weight: 400;
       letter-spacing: 0;
     }
@@ -344,10 +345,11 @@
     .narrative-step {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 48px;
+      gap: 36px;
       align-items: center;
-      margin-bottom: 80px;
+      margin-bottom: 48px;
     }
+    .narrative-step:last-child { margin-bottom: 0; }
     .narrative-step.reverse {
       grid-template-columns: 1fr 1fr;
     }
@@ -358,43 +360,42 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 36px; height: 36px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       background: linear-gradient(135deg, rgba(91,141,239,.2), rgba(232,197,71,.15));
       border: 1px solid rgba(91,141,239,.3);
       color: var(--gold);
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      font-size: .9rem;
-      margin-bottom: 16px;
+      font-size: .78rem;
+      margin-bottom: 10px;
     }
     .narrative-step h3 {
-      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-      margin-bottom: 12px;
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      margin-bottom: 8px;
       letter-spacing: -.01em;
     }
     .narrative-step p {
       color: var(--text-secondary);
-      font-size: .96rem;
-      line-height: 1.7;
-      margin-bottom: 12px;
+      font-size: .88rem;
+      line-height: 1.6;
+      margin-bottom: 8px;
     }
     .narrative-visual {
       background: var(--surface-solid);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      min-height: 220px;
+      border-radius: 12px;
+      padding: 18px;
     }
     .narrative-visual-list { list-style: none; padding: 0; margin: 0; }
     .narrative-visual-list li {
-      padding: 10px 0;
+      padding: 7px 0;
       border-bottom: 1px solid rgba(91,141,239,.08);
-      font-size: .85rem;
+      font-size: .78rem;
       color: var(--text-secondary);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .narrative-visual-list li:last-child { border: none; }
     .narrative-visual-list .check {
@@ -405,14 +406,14 @@
     /* Mock chat preview */
     .mock-chat {
       background: #0B1120;
-      border-radius: 10px;
-      padding: 16px;
-      font-size: .82rem;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: .76rem;
     }
-    .mock-msg { padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; max-width: 85%; }
+    .mock-msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; max-width: 88%; line-height: 1.45; }
     .mock-msg.user { background: #1e3a5f; color: #fff; margin-left: auto; }
     .mock-msg.bot { background: #141c2e; color: var(--text-secondary); }
-    .mock-label { font-size: .65rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .mock-label { font-size: .62rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 
     /* Day-with-Beacon timeline */
     .day-timeline {
@@ -440,48 +441,48 @@
     .featured-output {
       background: var(--surface-solid);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      max-width: 640px;
+      border-radius: 12px;
+      max-width: 580px;
       margin: 0 auto;
       overflow: hidden;
     }
     .featured-output-header {
-      padding: 14px 20px;
+      padding: 10px 16px;
       background: rgba(91,141,239,.08);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: .78rem;
+      gap: 8px;
+      font-size: .72rem;
       color: var(--text-secondary);
     }
     .featured-output-header .dot {
-      width: 8px; height: 8px; border-radius: 50%;
+      width: 7px; height: 7px; border-radius: 50%;
       background: #22c55e;
     }
-    .featured-output-body { padding: 22px 24px; }
+    .featured-output-body { padding: 18px 20px; }
     .featured-output-body .biz-tag {
-      font-size: .68rem;
+      font-size: .62rem;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: var(--blue);
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .featured-output-body p {
       color: var(--text);
-      font-size: .95rem;
-      line-height: 1.7;
-      margin-bottom: 8px;
+      font-size: .85rem;
+      line-height: 1.6;
+      margin-bottom: 6px;
     }
     .featured-output-body p:last-child { margin: 0; }
     .featured-output-footer {
-      padding: 12px 20px;
+      padding: 10px 16px;
       background: rgba(15,25,55,.5);
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
-      font-size: .72rem;
+      font-size: .68rem;
       color: var(--dim);
     }
 
@@ -1965,51 +1966,6 @@
           <li style="color:var(--text);">⚠️ Competitor lowered prices — alert sent</li>
           <li style="color:var(--text);">⭐ New 4-star review — response drafted</li>
         </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- A Day With Beacon (timeline) -->
-  <section class="narrative-section" style="border-top:1px solid var(--border);">
-    <div class="landing-section-header">
-      <span class="label">A Typical Tuesday</span>
-      <h2>Here's what 10 minutes with Beacon looks like.</h2>
-    </div>
-    <div class="day-timeline">
-      <div class="day-event">
-        <div class="day-time">8:14 AM</div>
-        <div class="day-content">
-          <h4>You open the dashboard.</h4>
-          <p>5 new social posts are queued. Beacon flagged a 4-star review from yesterday with a draft response.</p>
-        </div>
-      </div>
-      <div class="day-event">
-        <div class="day-time">8:17 AM</div>
-        <div class="day-content">
-          <h4>You scan the posts.</h4>
-          <p>Three are perfect. One you tweak (change "easy" to "simple"). One you skip — the angle isn't right this week. 90 seconds.</p>
-        </div>
-      </div>
-      <div class="day-event">
-        <div class="day-time">8:19 AM</div>
-        <div class="day-content">
-          <h4>You hit "Post" on the review response.</h4>
-          <p>Customer feels heard. Future customers see you respond thoughtfully. Your Google rating reflects that you care.</p>
-        </div>
-      </div>
-      <div class="day-event">
-        <div class="day-time">8:22 AM</div>
-        <div class="day-content">
-          <h4>You ask Beacon a question.</h4>
-          <p>"Write me a follow-up email to that prospect from Friday." 30 seconds later, draft is ready. You add a personal line, hit send.</p>
-        </div>
-      </div>
-      <div class="day-event">
-        <div class="day-time">8:24 AM</div>
-        <div class="day-content">
-          <h4>You close the dashboard.</h4>
-          <p>Your marketing for the day is done. You go run your actual business.</p>
-        </div>
       </div>
     </div>
   </section>
