@@ -1488,7 +1488,10 @@
 
       <div class="sales-card">
         <h3>My Leads</h3>
-        <p style="margin-bottom:16px;">Track your prospects through the pipeline. Your leads are saved locally and only visible to you.</p>
+        <p style="margin-bottom:8px;">Track your prospects through the pipeline. Your leads are saved locally and only visible to you.</p>
+        <div style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.74rem;color:#94a3b8;line-height:1.55;">
+          <strong style="color:#5B8DEF;">How this works:</strong> Leads here are already saved. The <strong style="color:#fff;">checkboxes</strong> select leads for batch actions like generating outreach emails. To build a website for one lead, click the <strong style="color:#5B8DEF;">&ldquo;Build Site →&rdquo;</strong> button on its row.
+        </div>
 
         <!-- Add lead form -->
         <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:16px;margin-bottom:16px;">
@@ -4844,6 +4847,7 @@
         '<button class="btn-export secondary" onclick="selectScrapeFilter(\'none\')" style="font-size:.72rem;padding:6px 14px;">Deselect All</button>' +
         '<button class="btn-export" onclick="enrichSelectedScraped()" style="font-size:.72rem;padding:6px 14px;background:#D4A853;">Enrich Selected</button>' +
         '</div>';
+      html += '<div style="font-size:.7rem;color:#64748b;margin-bottom:8px;font-style:italic;">Tip: Check boxes for batch import or enrichment. To skip the import step, click &ldquo;Build Site&rdquo; on a single result to go straight to the site builder.</div>';
       html += '<div class="scrape-results">';
       results.forEach(function(r, i) {
         var enrichedBadges = '';
@@ -4855,9 +4859,50 @@
           '<div class="biz-meta">' + [r.phone, r.email, r.address].filter(Boolean).join(' \u00B7 ') + '</div>' +
           (r.website ? '<div class="biz-meta" style="color:#5B8DEF;">' + r.website + '</div>' : '') +
           (r.rating ? '<div class="biz-meta" style="color:#f59e0b;">\u2605 ' + r.rating + (r.reviewCount ? ' (' + r.reviewCount + ' reviews)' : '') + '</div>' : '') +
-          '</div></div>';
+          '</div>' +
+          '<button onclick="buildSiteFromScrape(' + i + ',\'' + ind + '\')" class="btn-export" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.25);color:#5B8DEF;font-size:.68rem;padding:5px 12px;white-space:nowrap;flex-shrink:0;">Build Site \u2192</button>' +
+          '</div>';
       });
       div.innerHTML = html + '</div>';
+    }
+
+    // One-click: import scrape result as a lead AND open Site Builder pre-filled
+    async function buildSiteFromScrape(idx, ind) {
+      var r = _scrapeResults[idx];
+      if (!r) return;
+      try {
+        var owner = currentUser || sessionStorage.getItem('pp_user') || 'unknown';
+        var notes = 'Quick-built from agent scrape' + (r._enriched ? ' (enriched)' : '');
+        if (r.yelpUrl) notes += '\nYelp: ' + r.yelpUrl;
+        if (r.mapsUrl) notes += '\nMaps: ' + r.mapsUrl;
+        var resp = await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
+            phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '',
+            rank: r.website ? 'warm' : 'hot', source: 'agent-scrape', notes: notes,
+            listing_url: r.yelpUrl || r.mapsUrl || '', owner: owner
+          })
+        });
+        var data = await resp.json();
+        var leadId = (data.lead && data.lead.id) ? data.lead.id : (data.id || null);
+        // Reload leads cache so buildSiteFromLead can find the new one
+        if (typeof loadLeads === 'function') { try { await loadLeads(); } catch (e) {} }
+        if (leadId && typeof buildSiteFromLead === 'function') {
+          buildSiteFromLead(leadId);
+        } else {
+          // Fallback: switch to intake and pre-fill from scrape data directly
+          switchTab('intake');
+          setTimeout(function() {
+            var nameEl = document.getElementById('intBizName'); if (nameEl && r.name) nameEl.value = r.name;
+            var phoneEl = document.getElementById('intPhone'); if (phoneEl && r.phone) phoneEl.value = r.phone;
+            var emailEl = document.getElementById('intEmail'); if (emailEl && r.email) emailEl.value = r.email;
+            var addrEl = document.getElementById('intAddress'); if (addrEl && r.address) addrEl.value = r.address;
+            var webEl = document.getElementById('intWebsite'); if (webEl && r.website && r.website !== 'none') webEl.value = r.website;
+          }, 200);
+        }
+      } catch (e) { alert('Failed to import & build: ' + e.message); }
     }
 
     function selectScrapeFilter(filter) {
@@ -4913,22 +4958,66 @@
       });
     }
 
-    function importSelectedScraped(ind) {
+    async function importSelectedScraped(ind) {
       var idxs = getSelectedScrapeIdxs();
       if (!idxs.length) { alert('Select businesses to import first.'); return; }
-      idxs.forEach(function(idx) {
-        var r = _scrapeResults[idx];
-        if (!r) return;
+      var importedNames = [];
+      var importedIds = [];
+      var prog = document.getElementById('scrapeProgress');
+      if (prog) prog.textContent = 'Importing 0/' + idxs.length + '...';
+
+      for (var i = 0; i < idxs.length; i++) {
+        var r = _scrapeResults[idxs[i]];
+        if (!r) continue;
+        if (prog) prog.textContent = 'Importing ' + (i + 1) + '/' + idxs.length + '...';
         var notes = 'Imported via batch scraper' + (r._demo ? ' (demo data)' : '') + (r._enriched ? ' (enriched)' : '');
         if (r.mapsUrl) notes += '\nMaps: ' + r.mapsUrl;
         if (r.hours) notes += '\nHours: ' + (Array.isArray(r.hours) ? r.hours.join(', ') : r.hours);
-        fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
-            phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
-            notes: notes, listing_url: r.mapsUrl || '', owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
-        });
-      });
-      alert(idxs.length + ' leads imported.');
+        try {
+          var resp = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
+              phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
+              notes: notes, listing_url: r.mapsUrl || '', owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
+          });
+          var data = await resp.json();
+          var leadId = (data.lead && data.lead.id) ? data.lead.id : (data.id || null);
+          if (leadId) importedIds.push(leadId);
+          importedNames.push(r.name);
+        } catch (e) { /* skip individual failures */ }
+      }
+      if (prog) prog.textContent = 'Imported ' + importedNames.length + ' leads';
+      if (typeof loadLeads === 'function') { try { await loadLeads(); } catch (e) {} }
+      renderImportedConfirmation(importedNames, importedIds);
+    }
+
+    // Inline confirmation panel after import — keeps user in flow, no alert
+    function renderImportedConfirmation(names, ids) {
+      var div = document.getElementById('scrapeResults');
+      if (!div || !names.length) return;
+      // Insert at the top of the results
+      var nameList = names.slice(0, 5).map(function(n) { return '<span style=\"display:inline-block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#22c55e;font-size:.7rem;padding:2px 8px;border-radius:5px;margin-right:6px;margin-bottom:4px;\">' + n + '</span>'; }).join('');
+      if (names.length > 5) nameList += '<span style=\"font-size:.7rem;color:#64748b;margin-left:4px;\">+ ' + (names.length - 5) + ' more</span>';
+      var firstId = ids[0];
+      var quickBuildBtn = firstId ? '<button onclick=\"buildSiteFromLead(' + firstId + ')\" style=\"background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);color:#5B8DEF;font-size:.78rem;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;\">Build Site for First Lead →</button>' : '';
+      var html = '<div id=\"importedConfirm\" style=\"background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;\">' +
+        '<div style=\"display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;\">' +
+        '<div><div style=\"color:#22c55e;font-weight:600;font-size:.88rem;margin-bottom:2px;\">✓ ' + names.length + ' lead' + (names.length === 1 ? '' : 's') + ' imported</div>' +
+        '<div style=\"font-size:.72rem;color:#94a3b8;\">Now in your leads database. Continue with outreach or jump straight into building a site.</div></div>' +
+        '<div style=\"display:flex;gap:8px;flex-wrap:wrap;\">' +
+        quickBuildBtn +
+        '<button onclick=\"switchTab(\\'leads\\')\" style=\"background:transparent;border:1px solid #1e293b;color:#94a3b8;font-size:.78rem;padding:7px 14px;border-radius:7px;cursor:pointer;\">View All Leads</button>' +
+        '</div></div>' +
+        '<div>' + nameList + '</div>' +
+        '</div>';
+      // Prepend to results div without wiping existing scrape results
+      var existing = div.innerHTML;
+      // Remove any prior confirmation panel
+      var prior = document.getElementById('importedConfirm');
+      if (prior) prior.remove();
+      div.insertAdjacentHTML('afterbegin', html);
+      // Auto-scroll into view
+      var el = document.getElementById('importedConfirm');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     // --- Outreach Queue ---
