@@ -112,7 +112,6 @@
   var sameAs = [];
   if (C.googleReviewsUrl) sameAs.push(C.googleReviewsUrl);
   if (C.schema && C.schema.facebook) sameAs.push(C.schema.facebook);
-  if (C.schema && C.schema.yelp) sameAs.push(C.schema.yelp);
   if (sameAs.length) biz.sameAs = sameAs;
 
   inject(biz);

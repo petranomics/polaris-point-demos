@@ -13,15 +13,6 @@ const verifyKey = (req, res, next) => {
   next();
 };
 
-// Fetch Yelp reviews via the Vercel proxy
-async function fetchYelpData(bizName, location, yelpApiBase) {
-  try {
-    const url = yelpApiBase + '/api/yelp?q=' + encodeURIComponent(bizName) + '&location=' + encodeURIComponent(location);
-    const resp = await axios.get(url, { timeout: 15000 });
-    return resp.data;
-  } catch { return null; }
-}
-
 // Fetch the website HTML
 async function fetchSiteHtml(siteUrl) {
   try {
@@ -47,40 +38,17 @@ async function fetchSiteHtml(siteUrl) {
 
 const handler = async (req, res) => {
   try {
-    const { lead, vercel_host } = req.body;
+    const { lead } = req.body;
     if (!lead || !lead.biz_name) {
       return res.status(400).json({ error: 'Missing required field: lead.biz_name' });
     }
 
     const hasWebsite = lead.website && lead.website.toLowerCase() !== 'none' && lead.website.trim() !== '';
-    const location = lead.address || lead.city || 'TX';
-    const host = vercel_host || 'https://polaris-point-demos.com';
 
-    // Step 1: Gather data in parallel
-    const tasks = [];
-
-    // Always try to get Yelp data for reviews
-    tasks.push(fetchYelpData(lead.biz_name, location, host));
-
-    // If they have a website, fetch it
-    if (hasWebsite) {
-      tasks.push(fetchSiteHtml(lead.website));
-    } else {
-      tasks.push(Promise.resolve(null));
-    }
-
-    const [yelpData, siteData] = await Promise.all(tasks);
+    // Step 1: Gather data
+    const siteData = hasWebsite ? await fetchSiteHtml(lead.website) : null;
 
     // Step 2: Build the analysis prompt
-    let reviewSection = '';
-    let reviews = [];
-    if (yelpData && yelpData.reviews && yelpData.reviews.length) {
-      reviews = yelpData.reviews;
-      reviewSection = `
-YELP REVIEWS (${yelpData.reviewCount || reviews.length} total, ${yelpData.rating || '?'} stars):
-${reviews.map((r, i) => `Review ${i + 1} (${r.rating} stars, by ${r.author}): "${r.text}"`).join('\n')}`;
-    }
-
     let siteSection = '';
     if (siteData && siteData.html) {
       siteSection = `
@@ -104,7 +72,6 @@ CONTACT: ${lead.contact || 'unknown'}
 PHONE: ${lead.phone || 'unknown'}
 ADDRESS: ${lead.address || 'unknown'}
 HAS WEBSITE: ${hasWebsite ? 'Yes — ' + lead.website : 'No'}
-${reviewSection}
 ${siteSection}
 
 Analyze everything above and create a comprehensive prospect profile. Be specific — cite actual review quotes and actual website issues.
@@ -157,9 +124,9 @@ Return ONLY valid JSON, no markdown:
         strengths: [],
         weaknesses: [],
         review_analysis: {
-          overall_sentiment: reviews.length ? 'unknown' : 'no_reviews',
-          avg_rating: yelpData ? yelpData.rating : null,
-          total_reviews: yelpData ? yelpData.reviewCount : 0,
+          overall_sentiment: 'no_reviews',
+          avg_rating: null,
+          total_reviews: 0,
           positive_themes: [],
           negative_themes: [],
           worst_review_quote: null,
@@ -182,11 +149,6 @@ Return ONLY valid JSON, no markdown:
 
     // Attach raw data for the frontend
     analysis._raw = {
-      yelp_rating: yelpData ? yelpData.rating : null,
-      yelp_review_count: yelpData ? yelpData.reviewCount : 0,
-      yelp_reviews: reviews,
-      yelp_categories: yelpData ? yelpData.categories : [],
-      yelp_photos: yelpData ? (yelpData.photos || []) : [],
       has_website: hasWebsite,
       site_response_time: siteData ? siteData.responseTime : null,
       site_status_code: siteData ? siteData.statusCode : null,
