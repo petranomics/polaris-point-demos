@@ -2671,9 +2671,10 @@
       try {
         var r = await fetch('/api/coupon?username=' + encodeURIComponent(u));
         var d = await r.json();
-        _myCoupon = (d.coupon_code || '').toUpperCase() || 'AUSTIN';
+        _myCoupon = (d.coupon_code || '').toUpperCase();
         var input = document.getElementById('myCouponCode');
-        if (input) input.value = _myCoupon === 'AUSTIN' ? '' : _myCoupon;
+        // Don't overwrite what the user has typed if they haven't saved yet
+        if (input && !input.value) input.value = _myCoupon;
         updateMaterialsLinks();
       } catch (e) {}
       // Senior: load all staff codes
