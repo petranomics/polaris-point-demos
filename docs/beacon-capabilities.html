@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon — Full Capability Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --space:#050D1E; --blue:#5B8DEF; --gold:#E8C547; --green:#22c55e; --amber:#f59e0b; --purple:#a78bfa; --red:#f87171; --text:#e2e8f0; --muted:#8494a7; --dim:#475569; --border:rgba(91,141,239,.1); --surface:rgba(15,25,55,.45); }
+    * { box-sizing:border-box; margin:0; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--space); color:var(--text); font-family:'Inter',sans-serif; line-height:1.55; padding:0; }
+    h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; color:#fff; line-height:1.15; }
+    a { color:var(--blue); }
+    .page { max-width:860px; margin:0 auto; padding:24px; }
+
+    /* Nav */
+    .top-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); margin-bottom:32px; }
+    .logo { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:.9rem; display:flex; align-items:center; gap:6px; }
+    .logo svg { width:18px; height:18px; filter:drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .doc-label { font-size:.6rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); font-weight:600; }
+
+    /* Hero */
+    .hero { margin-bottom:32px; }
+    .hero h1 { font-size:1.8rem; margin-bottom:8px; }
+    .hero h1 .accent { color:var(--gold); }
+    .hero p { color:var(--muted); font-size:.9rem; max-width:56ch; }
+
+    /* Legend */
+    .legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:28px; padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; }
+    .legend-item { display:flex; align-items:center; gap:6px; font-size:.75rem; }
+    .tag { display:inline-block; padding:2px 8px; border-radius:5px; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+    .tag-now { background:rgba(34,197,94,.12); color:var(--green); }
+    .tag-near { background:rgba(245,158,11,.1); color:var(--amber); }
+    .tag-build { background:rgba(167,139,250,.1); color:var(--purple); }
+    .tag-partner { background:rgba(248,113,113,.1); color:var(--red); }
+
+    /* Segment */
+    .segment { margin-bottom:32px; border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    .segment-header { padding:18px 22px; background:var(--surface); cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+    .segment-header:hover { background:rgba(15,25,55,.65); }
+    .segment-header h2 { font-size:1.05rem; margin:0; }
+    .segment-header .industries { color:var(--dim); font-size:.72rem; margin-top:2px; font-family:'Inter',sans-serif; font-weight:400; }
+    .segment-header .toggle { color:var(--dim); font-size:1.2rem; transition:transform .2s; }
+    .segment.open .toggle { transform:rotate(45deg); }
+    .segment-body { display:none; padding:0 22px 20px; }
+    .segment.open .segment-body { display:block; }
+
+    /* Category */
+    .cat { margin-top:18px; }
+    .cat h3 { font-size:.82rem; color:var(--blue); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; }
+    .cap-list { list-style:none; padding:0; margin:0; }
+    .cap-list li { padding:5px 0; font-size:.82rem; color:var(--muted); border-bottom:1px solid rgba(255,255,255,.03); display:flex; align-items:flex-start; gap:8px; }
+    .cap-list li:last-child { border:none; }
+    .cap-list li .tag { flex-shrink:0; margin-top:1px; }
+
+    /* Tier mapping */
+    .tier-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:16px; }
+    .tier-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 16px; }
+    .tier-card.featured { border-color:rgba(232,197,71,.25); }
+    .tier-name { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:.92rem; margin-bottom:2px; }
+    .tier-price { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:1.2rem; }
+    .tier-price span { font-size:.7rem; color:var(--dim); font-weight:400; }
+    .tier-desc { font-size:.7rem; color:var(--dim); margin:4px 0 10px; }
+    .tier-list { list-style:none; padding:0; margin:0; font-size:.75rem; color:var(--muted); line-height:1.9; }
+    .tier-list li::before { content:"→ "; color:var(--blue); }
+
+    /* Standalone */
+    .standalone { margin-top:32px; padding:24px; background:var(--surface); border:1px solid rgba(232,197,71,.15); border-radius:14px; }
+    .standalone h2 { font-size:1.1rem; margin-bottom:8px; }
+    .standalone h2 .accent { color:var(--gold); }
+    .standalone p { color:var(--muted); font-size:.85rem; margin-bottom:10px; }
+    .standalone ul { padding-left:18px; color:var(--muted); font-size:.82rem; line-height:1.8; }
+
+    /* Cross-industry */
+    .cross { margin-top:8px; }
+
+    /* Section divider */
+    .divider { text-align:center; color:var(--dim); font-size:.6rem; text-transform:uppercase; letter-spacing:2px; font-weight:600; margin:36px 0 20px; position:relative; }
+    .divider::before,.divider::after { content:""; position:absolute; top:50%; width:calc(50% - 60px); height:1px; background:var(--border); }
+    .divider::before { left:0; }
+    .divider::after { right:0; }
+
+    /* Footer */
+    .footer { border-top:1px solid var(--border); padding:16px 0; margin-top:40px; display:flex; justify-content:space-between; font-size:.7rem; color:var(--dim); }
+    .footer a { color:var(--blue); text-decoration:none; }
+
+    /* Stats bar */
+    .stats-bar { display:flex; gap:16px; flex-wrap:wrap; margin:20px 0; }
+    .stat-pill { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 14px; text-align:center; }
+    .stat-num { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:1.1rem; }
+    .stat-label { font-size:.62rem; color:var(--dim); text-transform:uppercase; letter-spacing:1px; }
+
+    @media(max-width:600px) {
+      .hero h1 { font-size:1.4rem; }
+      .tier-grid { grid-template-columns:1fr; }
+      .legend { gap:10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top-bar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      Beacon
+    </div>
+    <span class="doc-label">Full Capability Map</span>
+  </div>
+
+  <div class="hero">
+    <h1>What Beacon Can <span class="accent">Do</span></h1>
+    <p>100+ capabilities across 8 industry segments. Every capability tagged by readiness — from live today to future builds.</p>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="tag tag-now">NOW</span> Live today with current stack</div>
+    <div class="legend-item"><span class="tag tag-near">NEAR</span> 1-2 integrations needed</div>
+    <div class="legend-item"><span class="tag tag-build">BUILD</span> Significant new infrastructure</div>
+    <div class="legend-item"><span class="tag tag-partner">PARTNER</span> Third-party or human-in-the-loop</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-pill"><div class="stat-num">62</div><div class="stat-label">Ready Now</div></div>
+    <div class="stat-pill"><div class="stat-num">28</div><div class="stat-label">Near-Term</div></div>
+    <div class="stat-pill"><div class="stat-num">12</div><div class="stat-label">Build</div></div>
+    <div class="stat-pill"><div class="stat-num">8</div><div class="stat-label">Segments</div></div>
+    <div class="stat-pill"><div class="stat-num">100+</div><div class="stat-label">Total Capabilities</div></div>
+  </div>
+
+  <!-- SEGMENTS -->
+  <div class="segment open" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Local Service Businesses</h2><div class="industries">Plumbers, HVAC, electricians, pest control, landscapers, handymen, cleaners, roofers, painters, movers</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Marketing</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Weekly social media post drafts (Facebook, Instagram, Nextdoor)</li>
+        <li><span class="tag tag-now">NOW</span> Monthly email newsletter drafts</li>
+        <li><span class="tag tag-now">NOW</span> Blog posts optimized for local SEO</li>
+        <li><span class="tag tag-now">NOW</span> Seasonal campaign ideas (winterization, spring tune-ups, holiday specials)</li>
+        <li><span class="tag tag-now">NOW</span> Google Business Profile post drafts</li>
+        <li><span class="tag tag-now">NOW</span> Before/after project descriptions for portfolio</li>
+        <li><span class="tag tag-now">NOW</span> Service page copywriting</li>
+        <li><span class="tag tag-now">NOW</span> Customer follow-up email templates + review request</li>
+        <li><span class="tag tag-near">NEAR</span> Auto-generate posts from completed job photos</li>
+        <li><span class="tag tag-near">NEAR</span> Localized content for each service area city</li>
+      </ul></div>
+      <div class="cat"><h3>Reputation & Reviews</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Review response drafts (positive and negative)</li>
+        <li><span class="tag tag-now">NOW</span> Review request email/SMS templates</li>
+        <li><span class="tag tag-near">NEAR</span> Daily Google/Yelp review monitoring with alerts</li>
+        <li><span class="tag tag-near">NEAR</span> Sentiment analysis across all review platforms</li>
+        <li><span class="tag tag-near">NEAR</span> Competitor review tracking</li>
+        <li><span class="tag tag-build">BUILD</span> Auto-respond to Google reviews with AI-drafted replies</li>
+      </ul></div>
+      <div class="cat"><h3>Lead Generation & Sales</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Cold outreach email drafts for commercial accounts</li>
+        <li><span class="tag tag-now">NOW</span> Door hanger / flyer copy</li>
+        <li><span class="tag tag-now">NOW</span> Referral program copy and materials</li>
+        <li><span class="tag tag-near">NEAR</span> Lead scoring from website form submissions</li>
+        <li><span class="tag tag-near">NEAR</span> Automated follow-up email sequences</li>
+        <li><span class="tag tag-build">BUILD</span> Neighborhood targeting — older homes, recent permits</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with ServiceTitan, Housecall Pro, Jobber</li>
+        <li><span class="tag tag-partner">PARTNER</span> Direct mail campaign management</li>
+      </ul></div>
+      <div class="cat"><h3>Operations & Admin</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> FAQ content for website and customer service</li>
+        <li><span class="tag tag-now">NOW</span> Training materials and SOPs for new hires</li>
+        <li><span class="tag tag-now">NOW</span> Job description drafts for hiring</li>
+        <li><span class="tag tag-near">NEAR</span> Estimate/quote email templates</li>
+        <li><span class="tag tag-near">NEAR</span> Customer satisfaction survey generation</li>
+        <li><span class="tag tag-build">BUILD</span> Automated appointment reminder SMS</li>
+      </ul></div>
+      <div class="cat"><h3>Competitive Intelligence</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Competitor website audit and comparison</li>
+        <li><span class="tag tag-now">NOW</span> Competitor pricing research summary</li>
+        <li><span class="tag tag-near">NEAR</span> Weekly competitor monitoring</li>
+        <li><span class="tag tag-near">NEAR</span> Market gap analysis</li>
+        <li><span class="tag tag-build">BUILD</span> Google Ads competitor spend estimation</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Food & Hospitality</h2><div class="industries">Restaurants, cafes, bars, food trucks, bakeries, catering, event venues</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Marketing</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Daily/weekly social media posts (food captions, specials, events)</li>
+        <li><span class="tag tag-now">NOW</span> Menu descriptions and seasonal updates</li>
+        <li><span class="tag tag-now">NOW</span> Event promotion copy (live music, trivia, holidays)</li>
+        <li><span class="tag tag-now">NOW</span> Email newsletter with events and specials</li>
+        <li><span class="tag tag-now">NOW</span> Blog posts (origin stories, sourcing, recipes)</li>
+        <li><span class="tag tag-now">NOW</span> Catering inquiry response templates</li>
+        <li><span class="tag tag-near">NEAR</span> Auto-generate "dish of the day" posts from menu data</li>
+        <li><span class="tag tag-near">NEAR</span> Holiday/seasonal campaign calendars</li>
+      </ul></div>
+      <div class="cat"><h3>Reputation & Reviews</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Review response drafts (critical for restaurants)</li>
+        <li><span class="tag tag-now">NOW</span> Yelp/Google/TripAdvisor monitoring</li>
+        <li><span class="tag tag-near">NEAR</span> Sentiment trend tracking</li>
+        <li><span class="tag tag-near">NEAR</span> Competitor restaurant review analysis</li>
+      </ul></div>
+      <div class="cat"><h3>Revenue Growth</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Catering package descriptions and upsell copy</li>
+        <li><span class="tag tag-now">NOW</span> Gift card promotion campaigns</li>
+        <li><span class="tag tag-now">NOW</span> Loyalty program copy and email sequences</li>
+        <li><span class="tag tag-near">NEAR</span> "Slow day" promotions from traffic patterns</li>
+        <li><span class="tag tag-near">NEAR</span> Segmented email campaigns (regulars vs one-timers)</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with Toast, Square, or Clover</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Health & Wellness</h2><div class="industries">Med spas, chiropractors, dentists, therapists, trainers, yoga studios, pet groomers, vets</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Marketing</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Educational blog posts</li>
+        <li><span class="tag tag-now">NOW</span> Social media content (tips, myth-busting)</li>
+        <li><span class="tag tag-now">NOW</span> Email nurture sequences for leads</li>
+        <li><span class="tag tag-now">NOW</span> Service description copywriting</li>
+        <li><span class="tag tag-now">NOW</span> Seasonal promotions</li>
+        <li><span class="tag tag-near">NEAR</span> Before/after content from uploaded photos</li>
+        <li><span class="tag tag-near">NEAR</span> Provider bio and credential pages</li>
+      </ul></div>
+      <div class="cat"><h3>Compliance & Trust</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> HIPAA-conscious content guidelines</li>
+        <li><span class="tag tag-now">NOW</span> Consent form and policy page drafts</li>
+        <li><span class="tag tag-now">NOW</span> FAQ addressing common patient concerns</li>
+        <li><span class="tag tag-near">NEAR</span> Review monitoring with sensitivity flags</li>
+      </ul></div>
+      <div class="cat"><h3>Patient/Client Acquisition</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> New patient welcome sequences</li>
+        <li><span class="tag tag-now">NOW</span> Re-engagement campaigns</li>
+        <li><span class="tag tag-now">NOW</span> Referral program materials</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with Jane, Mindbody, or Vagaro</li>
+        <li><span class="tag tag-build">BUILD</span> Automated appointment reminders</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Professional Services</h2><div class="industries">Accountants, lawyers, insurance agents, financial advisors, consultants, coaches</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Marketing</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Thought leadership blog posts</li>
+        <li><span class="tag tag-now">NOW</span> LinkedIn posts and article drafts</li>
+        <li><span class="tag tag-now">NOW</span> Email newsletters (regulatory updates, tips)</li>
+        <li><span class="tag tag-now">NOW</span> Case study drafts (anonymized)</li>
+        <li><span class="tag tag-now">NOW</span> White papers and guides</li>
+        <li><span class="tag tag-now">NOW</span> Bio and firm description pages</li>
+      </ul></div>
+      <div class="cat"><h3>Client Development</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Cold outreach emails (personalized)</li>
+        <li><span class="tag tag-now">NOW</span> Proposal templates and cover letters</li>
+        <li><span class="tag tag-now">NOW</span> Follow-up sequences after consultations</li>
+        <li><span class="tag tag-near">NEAR</span> Client onboarding email sequences</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with Clio, QBO, or Salesforce</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Real Estate</h2><div class="industries">Agents, brokerages, property managers, mortgage brokers, inspectors, title companies</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Marketing</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Property listing descriptions</li>
+        <li><span class="tag tag-now">NOW</span> Neighborhood guides</li>
+        <li><span class="tag tag-now">NOW</span> Market update newsletters</li>
+        <li><span class="tag tag-now">NOW</span> Social posts (just listed, just sold, open house)</li>
+        <li><span class="tag tag-now">NOW</span> Agent bio and personal brand copy</li>
+        <li><span class="tag tag-near">NEAR</span> Auto-generate listing descriptions from MLS</li>
+        <li><span class="tag tag-near">NEAR</span> Video script drafts for walkthroughs</li>
+      </ul></div>
+      <div class="cat"><h3>Lead Generation</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Buyer lead nurture sequences</li>
+        <li><span class="tag tag-now">NOW</span> Seller lead conversion emails</li>
+        <li><span class="tag tag-now">NOW</span> FSBO/expired listing outreach templates</li>
+        <li><span class="tag tag-now">NOW</span> Past client re-engagement campaigns</li>
+        <li><span class="tag tag-near">NEAR</span> Neighborhood farming content</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with Follow Up Boss, kvCORE</li>
+        <li><span class="tag tag-build">BUILD</span> Automated CMA summaries from data</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>E-Commerce & Retail</h2><div class="industries">Online stores, local boutiques, product-based businesses, Amazon sellers</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Marketing</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Product descriptions</li>
+        <li><span class="tag tag-now">NOW</span> Email campaigns (new arrivals, sales, back in stock)</li>
+        <li><span class="tag tag-now">NOW</span> Social posts (product spotlights, styling tips)</li>
+        <li><span class="tag tag-now">NOW</span> Blog posts (gift guides, how-tos)</li>
+        <li><span class="tag tag-now">NOW</span> Brand story and about page copy</li>
+      </ul></div>
+      <div class="cat"><h3>Sales Optimization</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> A/B test copy variations</li>
+        <li><span class="tag tag-now">NOW</span> Upsell and cross-sell copy</li>
+        <li><span class="tag tag-near">NEAR</span> Email flows based on purchase behavior</li>
+        <li><span class="tag tag-near">NEAR</span> Product launch campaign playbooks</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with Shopify, WooCommerce, Etsy</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Creative & Agencies</h2><div class="industries">Marketing agencies, design studios, photographers, videographers, event planners</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Biz Dev</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Case study and portfolio write-ups</li>
+        <li><span class="tag tag-now">NOW</span> Proposal and pitch deck copy</li>
+        <li><span class="tag tag-now">NOW</span> Cold outreach to potential clients</li>
+        <li><span class="tag tag-now">NOW</span> RFP response drafts</li>
+        <li><span class="tag tag-now">NOW</span> Award submission drafts</li>
+        <li><span class="tag tag-near">NEAR</span> Client project brief generator from call notes</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="segment" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Education & Coaching</h2><div class="industries">Tutors, music teachers, driving schools, life coaches, course creators</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Content & Acquisition</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Course/program descriptions</li>
+        <li><span class="tag tag-now">NOW</span> Student success story drafts</li>
+        <li><span class="tag tag-now">NOW</span> Email sequences for prospective students</li>
+        <li><span class="tag tag-now">NOW</span> Lead magnet content (free guides, checklists)</li>
+        <li><span class="tag tag-now">NOW</span> Re-enrollment campaigns</li>
+        <li><span class="tag tag-build">BUILD</span> Integration with Teachable, Kajabi, Calendly</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- CROSS-INDUSTRY -->
+  <div class="divider">Cross-Industry Capabilities</div>
+
+  <div class="segment open cross" onclick="this.classList.toggle('open')">
+    <div class="segment-header">
+      <div><h2>Available to Every Segment</h2><div class="industries">Ads, PR, HR, legal, strategy, analytics — universal capabilities</div></div>
+      <span class="toggle">+</span>
+    </div>
+    <div class="segment-body">
+      <div class="cat"><h3>Paid Advertising</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Google Ads copy drafts</li>
+        <li><span class="tag tag-now">NOW</span> Facebook/Instagram ad copy + audience suggestions</li>
+        <li><span class="tag tag-now">NOW</span> Landing page copy for campaigns</li>
+        <li><span class="tag tag-near">NEAR</span> Ad performance monitoring + optimization suggestions</li>
+        <li><span class="tag tag-build">BUILD</span> Automated Google Ads management</li>
+      </ul></div>
+      <div class="cat"><h3>PR & Communications</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Press release drafts</li>
+        <li><span class="tag tag-now">NOW</span> Media pitch emails</li>
+        <li><span class="tag tag-now">NOW</span> Crisis communication templates</li>
+        <li><span class="tag tag-near">NEAR</span> Local media contact research</li>
+        <li><span class="tag tag-near">NEAR</span> Award/"Best Of" nomination applications</li>
+      </ul></div>
+      <div class="cat"><h3>HR & Recruiting</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Job posting drafts</li>
+        <li><span class="tag tag-now">NOW</span> Interview question sets by role</li>
+        <li><span class="tag tag-now">NOW</span> Offer letter and onboarding templates</li>
+        <li><span class="tag tag-now">NOW</span> Performance review templates</li>
+      </ul></div>
+      <div class="cat"><h3>Legal & Compliance</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> Terms of service, privacy policy, service agreements</li>
+        <li><span class="tag tag-now">NOW</span> GDPR/CCPA consent language</li>
+      </ul></div>
+      <div class="cat"><h3>Business Strategy</h3><ul class="cap-list">
+        <li><span class="tag tag-now">NOW</span> SWOT analysis</li>
+        <li><span class="tag tag-now">NOW</span> Pricing strategy recommendations</li>
+        <li><span class="tag tag-now">NOW</span> Customer persona development</li>
+        <li><span class="tag tag-near">NEAR</span> Market sizing estimates for new areas</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- TIERS -->
+  <div class="divider">Suggested Tier Mapping</div>
+
+  <div class="tier-grid">
+    <div class="tier-card">
+      <div class="tier-name">Content Engine</div>
+      <div class="tier-price">$99-149<span>/mo</span></div>
+      <div class="tier-desc">All [NOW] content capabilities</div>
+      <ul class="tier-list">
+        <li>Social posts, newsletters, blogs</li>
+        <li>Review response templates</li>
+        <li>Basic content calendar</li>
+        <li>Written in brand voice</li>
+        <li>50K tokens/month</li>
+      </ul>
+    </div>
+    <div class="tier-card featured">
+      <div class="tier-name">Marketing Assistant</div>
+      <div class="tier-price">$249-299<span>/mo</span></div>
+      <div class="tier-desc">Content + intelligence + workspace</div>
+      <ul class="tier-list">
+        <li>Everything in Content Engine</li>
+        <li>On-demand AI workspace</li>
+        <li>Competitor monitoring</li>
+        <li>Review tracking + alerts</li>
+        <li>Campaign strategy</li>
+        <li>Ad copy drafts</li>
+        <li>200K tokens/month</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-name">Growth Engine</div>
+      <div class="tier-price">$449-499<span>/mo</span></div>
+      <div class="tier-desc">Full outbound + strategy</div>
+      <ul class="tier-list">
+        <li>Everything in Marketing Assistant</li>
+        <li>Lead research + prospecting</li>
+        <li>Outbound email drafts</li>
+        <li>Press releases + PR pitches</li>
+        <li>Quarterly strategy reports</li>
+        <li>500K tokens/month</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-name">Full Stack</div>
+      <div class="tier-price">$799-999<span>/mo</span></div>
+      <div class="tier-desc">Enterprise-grade for growing businesses</div>
+      <ul class="tier-list">
+        <li>Everything in Growth Engine</li>
+        <li>CRM/booking/POS integrations</li>
+        <li>Paid ad management suggestions</li>
+        <li>Performance reporting</li>
+        <li>1M tokens/month</li>
+        <li>Priority Claude model</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STANDALONE -->
+  <div class="standalone">
+    <h2>Standalone <span class="accent">Opportunity</span></h2>
+    <p>Beacon doesn't need to be tied to Polaris Point websites. Most capabilities work for any business with any site (or no site at all).</p>
+    <p style="color:#fff;font-weight:600;font-size:.88rem;">Positioning: "AI marketing team for small businesses"</p>
+    <ul>
+      <li>Beacon KNOWS their specific business — seeded with docs, reviews, competitors</li>
+      <li>Not a generic writing tool — a dedicated marketing employee that learns their brand</li>
+      <li>Includes monitoring + intelligence, not just content generation</li>
+      <li>Local-first — built for Main Street, not enterprise</li>
+    </ul>
+    <p style="margin-top:12px;"><strong style="color:#fff;">Distribution:</strong> Direct sales, partner with other agencies, marketplace listings, white-label</p>
+  </div>
+
+  <div class="footer">
+    <span>&copy; 2026 Polaris Point &middot; Internal Document</span>
+    <a href="https://polarispoint.io">polarispoint.io</a>
+  </div>
+
+</div>
+</body>
+</html>

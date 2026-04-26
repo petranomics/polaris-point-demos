@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon for Real Estate — Product Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --space:#050D1E; --blue:#5B8DEF; --gold:#E8C547; --green:#22c55e; --amber:#f59e0b; --purple:#a78bfa; --text:#e2e8f0; --muted:#8494a7; --dim:#475569; --border:rgba(91,141,239,.1); --surface:rgba(15,25,55,.45); }
+    * { box-sizing:border-box; margin:0; }
+    body { background:var(--space); color:var(--text); font-family:'Inter',sans-serif; line-height:1.6; }
+    h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; color:#fff; line-height:1.2; }
+    .page { max-width:820px; margin:0 auto; padding:24px; }
+    .top-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); margin-bottom:28px; }
+    .logo { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:.9rem; display:flex; align-items:center; gap:6px; }
+    .logo svg { width:18px; height:18px; filter:drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .doc-label { font-size:.6rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); font-weight:600; }
+    .hero { margin-bottom:32px; }
+    .hero h1 { font-size:1.7rem; margin-bottom:8px; }
+    .hero h1 .accent { color:var(--gold); }
+    .hero p { color:var(--muted); font-size:.9rem; max-width:54ch; }
+
+    .section { margin-bottom:32px; }
+    .stag { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.58rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+    .stag-daily { background:rgba(91,141,239,.12); color:var(--blue); }
+    .stag-weekly { background:rgba(34,197,94,.1); color:var(--green); }
+    .stag-monthly { background:rgba(245,158,11,.1); color:var(--amber); }
+    .stag-on-demand { background:rgba(167,139,250,.1); color:var(--purple); }
+    .stag-future { background:rgba(248,113,113,.1); color:#f87171; }
+
+    .section h2 { font-size:1.1rem; margin-bottom:6px; }
+    .section p { color:var(--muted); font-size:.85rem; margin-bottom:10px; }
+    .section p strong { color:var(--text); }
+
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-bottom:12px; }
+    .card h3 { font-size:.9rem; margin-bottom:6px; }
+    .card p { color:var(--muted); font-size:.82rem; margin-bottom:6px; }
+    .card ul { padding-left:16px; color:var(--muted); font-size:.8rem; line-height:1.85; }
+    .card ul li strong { color:var(--text); }
+
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+
+    .example { border-left:3px solid var(--gold); padding:10px 16px; margin:10px 0; background:rgba(232,197,71,.04); border-radius:0 10px 10px 0; }
+    .example p { color:var(--text); font-size:.82rem; font-style:italic; margin:0; }
+    .example .label { color:var(--dim); font-size:.65rem; font-style:normal; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+
+    .persona { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; }
+    .persona h3 { font-size:.88rem; margin-bottom:4px; }
+    .persona .subtitle { color:var(--blue); font-size:.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+    .persona p { font-size:.78rem; color:var(--muted); margin-bottom:4px; }
+    .persona ul { font-size:.76rem; padding-left:14px; color:var(--muted); line-height:1.8; }
+
+    .divider { text-align:center; color:var(--dim); font-size:.6rem; text-transform:uppercase; letter-spacing:2px; font-weight:600; margin:36px 0 20px; position:relative; }
+    .divider::before,.divider::after { content:""; position:absolute; top:50%; width:calc(50% - 50px); height:1px; background:var(--border); }
+    .divider::before { left:0; } .divider::after { right:0; }
+
+    .footer { border-top:1px solid var(--border); padding:16px 0; margin-top:40px; font-size:.7rem; color:var(--dim); }
+
+    @media(max-width:600px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top-bar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      Beacon
+    </div>
+    <span class="doc-label">Real Estate Agent Plan</span>
+  </div>
+
+  <div class="hero">
+    <h1>Beacon for <span class="accent">Real Estate</span></h1>
+    <p>A complete AI marketing system for agents, brokers, and teams. Every feature built around how real estate professionals actually work — listings, leads, neighborhoods, and relationships.</p>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- WHY REAL ESTATE -->
+  <!-- ============================================ -->
+
+  <div class="section">
+    <h2>Why Real Estate Is Perfect for Beacon</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Content-Hungry Industry</h3>
+        <p>Agents need a constant stream of content — listing posts, market updates, neighborhood guides, open house promos, just-sold celebrations, buyer tips, seller tips. Most produce a fraction of what they should.</p>
+      </div>
+      <div class="card">
+        <h3>Relationship-Driven</h3>
+        <p>Past client nurturing is everything. The agent who stays top-of-mind gets the referral. But most agents stop communicating after closing. Beacon automates the "stay in touch" problem.</p>
+      </div>
+      <div class="card">
+        <h3>Hyper-Local</h3>
+        <p>Real estate is neighborhood-by-neighborhood. Generic content is useless. Beacon writes about specific neighborhoods, school districts, price trends, and local businesses — because it knows the agent's farm area.</p>
+      </div>
+      <div class="card">
+        <h3>High LTV</h3>
+        <p>Average agent commission: $8,000-15,000 per transaction. One extra deal per year from better marketing = 10-30x ROI on Beacon. The math is obvious.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BUYER PERSONAS -->
+  <!-- ============================================ -->
+
+  <div class="divider">Who Buys This</div>
+
+  <div class="section">
+    <h2>Target Personas</h2>
+    <div class="grid-3">
+      <div class="persona">
+        <h3>The Solo Agent</h3>
+        <div class="subtitle">$150K-400K GCI</div>
+        <p>Doing everything themselves. No assistant, no marketing budget. Posts sporadically on Instagram, knows they should do more.</p>
+        <ul>
+          <li><strong>Pain:</strong> No time for marketing</li>
+          <li><strong>Beacon tier:</strong> Lite ($149)</li>
+          <li><strong>Key sell:</strong> "You focus on clients, Beacon handles content"</li>
+        </ul>
+      </div>
+      <div class="persona">
+        <h3>The Growing Agent</h3>
+        <div class="subtitle">$400K-800K GCI</div>
+        <p>Has a transaction coordinator maybe. Wants to build a personal brand and farm a neighborhood. Knows marketing drives growth but can't execute consistently.</p>
+        <ul>
+          <li><strong>Pain:</strong> Inconsistent marketing</li>
+          <li><strong>Beacon tier:</strong> Standard ($299)</li>
+          <li><strong>Key sell:</strong> "Competitor intel + consistent content = market dominance"</li>
+        </ul>
+      </div>
+      <div class="persona">
+        <h3>The Team Leader</h3>
+        <div class="subtitle">$800K+ GCI / 3-10 agents</div>
+        <p>Running a team. Needs marketing for the team brand AND individual agents. Wants lead gen and market reports to share with clients.</p>
+        <ul>
+          <li><strong>Pain:</strong> Scaling marketing across a team</li>
+          <li><strong>Beacon tier:</strong> Growth ($499)</li>
+          <li><strong>Key sell:</strong> "One system that markets the whole team"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- AUTOMATED OUTPUTS -->
+  <!-- ============================================ -->
+
+  <div class="divider">What Beacon Produces Automatically</div>
+
+  <div class="section">
+    <h2>Scheduled Content (Runs Without Prompting)</h2>
+
+    <div class="card">
+      <span class="stag stag-daily">Daily</span>
+      <h3>Review & Reputation Monitoring</h3>
+      <ul>
+        <li>Check Google, Yelp, Zillow, Realtor.com for new reviews</li>
+        <li>Draft response for any new review (positive: thank + personal touch, negative: empathetic + redirect)</li>
+        <li>Alert if a competitor agent gets a surge of reviews</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-weekly">Weekly — Monday</span>
+      <h3>Social Media Content Pack</h3>
+      <p>5 posts ready to schedule:</p>
+      <ul>
+        <li><strong>Monday:</strong> Market stat or tip ("Austin median home price hit $485K — here's what that means for buyers")</li>
+        <li><strong>Tuesday:</strong> Neighborhood spotlight or local business shoutout</li>
+        <li><strong>Wednesday:</strong> Listing promo or just-sold celebration (if applicable)</li>
+        <li><strong>Thursday:</strong> Buyer or seller tip (educational content)</li>
+        <li><strong>Friday:</strong> Personal/lifestyle post prompt (humanize the brand)</li>
+      </ul>
+      <div class="example">
+        <div class="label">Sample Output</div>
+        <p>"South Austin market update: Homes in 78704 are averaging 12 days on market — down from 18 last quarter. If you've been thinking about listing, the window is wide open. DM me for a free home valuation. #AustinRealEstate #SouthAustin #SellerTips"</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-weekly">Weekly — Wednesday</span>
+      <h3>Competitor Activity Report</h3>
+      <ul>
+        <li>Track 3-5 competitor agents' social media activity</li>
+        <li>New listings they've posted, open houses they're promoting</li>
+        <li>Changes to their website or marketing approach</li>
+        <li>Summarize: "What are they doing that you're not?"</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-monthly">Monthly — 1st</span>
+      <h3>Market Update Newsletter</h3>
+      <p>Full email newsletter draft ready to send to their database:</p>
+      <ul>
+        <li>Local market stats (median price, inventory, days on market, interest rates)</li>
+        <li>Neighborhood spotlight (rotating through their farm areas)</li>
+        <li>One buyer tip, one seller tip</li>
+        <li>Recent transactions or testimonials</li>
+        <li>CTA: "Thinking about buying or selling? Let's chat."</li>
+      </ul>
+      <div class="example">
+        <div class="label">Sample Subject Line</div>
+        <p>"Austin Market Pulse: April 2026 — Inventory is tightening, here's what it means for you"</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-monthly">Monthly — 15th</span>
+      <h3>Blog Post / SEO Content</h3>
+      <ul>
+        <li>600-800 word blog post targeting local SEO keywords</li>
+        <li>Topics rotate: neighborhood guides, market analysis, buyer/seller advice, local lifestyle</li>
+        <li>Optimized for "best real estate agent in [city]" and "homes for sale in [neighborhood]" type searches</li>
+      </ul>
+      <div class="example">
+        <div class="label">Sample Blog Topics</div>
+        <p>"The Complete Guide to Buying a Home in Bee Cave, TX" / "Austin's Hottest Neighborhoods for First-Time Buyers in 2026" / "What's Happening in 78704: South Congress Real Estate Trends"</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-monthly">Monthly</span>
+      <h3>Past Client Nurture Email</h3>
+      <ul>
+        <li>Personalized check-in email to past clients (segmented by close date)</li>
+        <li>"Happy 1-year home anniversary!" emails</li>
+        <li>Seasonal home maintenance tips ("It's AC season — here are 3 things to check")</li>
+        <li>Soft referral ask ("Know anyone looking to buy or sell?")</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-monthly">Quarterly</span>
+      <h3>Market Analysis Report</h3>
+      <ul>
+        <li>Deep dive into their farm area: price trends, inventory, absorption rate, foreclosure activity</li>
+        <li>Comparison to previous quarter and year-over-year</li>
+        <li>Formatted as a shareable PDF-ready report they can send to clients</li>
+        <li>Positions the agent as the neighborhood expert</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ON-DEMAND -->
+  <!-- ============================================ -->
+
+  <div class="divider">On-Demand Capabilities</div>
+
+  <div class="section">
+    <h2>What They Can Ask Beacon Anytime</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <span class="stag stag-on-demand">On Demand</span>
+        <h3>Listing Content</h3>
+        <ul>
+          <li>"Write a listing description for 1234 Oak St — 3 bed, 2 bath, 1800 sqft, updated kitchen, big backyard, Zilker neighborhood"</li>
+          <li>"Write 3 social posts to promote this listing"</li>
+          <li>"Write an open house invite email"</li>
+          <li>"Draft a just-sold post for Instagram"</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="stag stag-on-demand">On Demand</span>
+        <h3>Lead Nurture</h3>
+        <ul>
+          <li>"Write a follow-up email to a buyer lead who went to an open house but hasn't responded"</li>
+          <li>"Draft a FSBO letter for 5678 Elm Ave"</li>
+          <li>"Write a cold email to expired listing at 910 Pine Dr"</li>
+          <li>"Create a 5-email drip for new buyer leads"</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="stag stag-on-demand">On Demand</span>
+        <h3>Neighborhood Expertise</h3>
+        <ul>
+          <li>"Write a neighborhood guide for Mueller"</li>
+          <li>"What are the best schools near 78745?"</li>
+          <li>"Give me 5 talking points about the Lakeway market for a listing presentation"</li>
+          <li>"Compare Circle C and Avery Ranch for a buyer relocating from Dallas"</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="stag stag-on-demand">On Demand</span>
+        <h3>Client Communication</h3>
+        <ul>
+          <li>"Draft an offer rejection letter (compassionate)"</li>
+          <li>"Write a counter-offer strategy email to my buyer"</li>
+          <li>"Create a pre-listing packet intro letter"</li>
+          <li>"Write a closing day congratulations email with home maintenance tips"</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="stag stag-on-demand">On Demand</span>
+        <h3>Market Intelligence</h3>
+        <ul>
+          <li>"What's happening in the 78704 market this month?"</li>
+          <li>"How does my listing at $485K compare to recent comps?"</li>
+          <li>"What are agents in my area posting about this week?"</li>
+          <li>"Give me 3 objection responses for sellers who want to overprice"</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="stag stag-on-demand">On Demand</span>
+        <h3>Personal Brand</h3>
+        <ul>
+          <li>"Rewrite my agent bio to sound more approachable"</li>
+          <li>"Draft a LinkedIn post about my Q1 results"</li>
+          <li>"Write a 'Why I got into real estate' story for my website"</li>
+          <li>"Create a tagline for my team rebrand"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- FUTURE / PREMIUM -->
+  <!-- ============================================ -->
+
+  <div class="divider">Premium & Future Features</div>
+
+  <div class="section">
+    <h2>Growth Tier & Beyond</h2>
+
+    <div class="card">
+      <span class="stag stag-future">Growth Tier</span>
+      <h3>Prospecting Engine</h3>
+      <ul>
+        <li><strong>FSBO outreach:</strong> Identify For Sale By Owner listings in their area, draft personalized outreach explaining the value of representation</li>
+        <li><strong>Expired listing outreach:</strong> Find recently expired listings, draft empathetic "let's get this sold" letters</li>
+        <li><strong>Neighborhood farming sequences:</strong> 12-month drip campaign for a specific zip code — monthly postcard copy, door knocker scripts, community event ideas</li>
+        <li><strong>Referral network cultivation:</strong> Quarterly touchpoints to mortgage brokers, title companies, home inspectors, attorneys</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-future">Growth Tier</span>
+      <h3>Listing Presentation Materials</h3>
+      <ul>
+        <li>Auto-generate CMA summary with key talking points</li>
+        <li>Pre-listing packet content (marketing plan, comparable analysis, pricing strategy)</li>
+        <li>Seller net sheet explanation in plain English</li>
+        <li>Post-listing launch plan ("Week 1: Photos + staging, Week 2: Social blitz, Week 3: Open house")</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-future">Future Integration</span>
+      <h3>MLS / CRM Integration</h3>
+      <ul>
+        <li><strong>Follow Up Boss / kvCORE:</strong> Pull lead data, auto-draft follow-ups based on lead activity</li>
+        <li><strong>MLS feed:</strong> Auto-generate listing descriptions and social posts when a new listing is entered</li>
+        <li><strong>Dotloop / SkySlope:</strong> Auto-generate closing congratulations and milestone emails based on transaction stage</li>
+        <li><strong>Zillow / Realtor.com:</strong> Monitor your listing views, price-change competitors, pull lead inquiries</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="stag stag-future">Future</span>
+      <h3>Video & Visual Content</h3>
+      <ul>
+        <li>Property walkthrough video scripts ("Start in the foyer, highlight the natural light...")</li>
+        <li>Market update video scripts (2 minutes, teleprompter-ready)</li>
+        <li>Instagram Reel concepts and captions</li>
+        <li>Canva template text for listing flyers and social graphics</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SAMPLE WEEK -->
+  <!-- ============================================ -->
+
+  <div class="divider">A Week in the Life</div>
+
+  <div class="section">
+    <h2>What a Real Estate Agent Gets in Week 1</h2>
+    <p>Assuming Beacon is seeded with: agent bio, service areas (South Austin, Bee Cave, Lakeway), 3 competitor agents, past client list of 120 contacts, current listing at 1234 Oak St.</p>
+
+    <div class="card">
+      <h3>Monday Morning Delivery</h3>
+      <ul>
+        <li>5 social media posts for the week (ready to schedule)</li>
+        <li>Competitor activity summary from last week</li>
+        <li>2 new Google reviews detected — response drafts ready</li>
+        <li>1 expired listing in 78704 identified — outreach letter drafted</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Wednesday — Agent Asks Beacon</h3>
+      <ul>
+        <li>"Write me an open house invite for Saturday at 1234 Oak St"</li>
+        <li>"What should I say to a seller who wants to list at $520K when comps say $485K?"</li>
+        <li>Both responses come back in 30 seconds, tailored to the Austin market and the agent's voice</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Friday — End of Week</h3>
+      <ul>
+        <li>Blog post draft delivered: "Top 5 Neighborhoods in South Austin for Families in 2026"</li>
+        <li>Past client email draft: seasonal home maintenance tips + soft referral ask</li>
+        <li>Weekend open house social post ready</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(232,197,71,.2);">
+      <h3>Total Agent Time Spent: ~25 minutes</h3>
+      <p>Review and approve 5 social posts (5 min). Tweak the open house email (3 min). Skim the blog post (5 min). Read the competitor report (5 min). Approve review responses (2 min). Send the past client email (5 min).</p>
+      <p><strong>Value produced:</strong> 5 social posts, 1 blog post, 2 review responses, 1 open house campaign, 1 past client nurture email, 1 expired listing letter, competitor intel. That's $2,000+ of freelancer work for 25 minutes and $149-299/month.</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PRICING FOR RE -->
+  <!-- ============================================ -->
+
+  <div class="divider">Real Estate Pricing</div>
+
+  <div class="section">
+    <h2>Suggested Tier Structure</h2>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Beacon Lite</h3>
+        <p style="color:var(--blue);font-weight:700;font-size:1.1rem;">$149<span style="font-size:.7rem;color:var(--dim);">/mo</span></p>
+        <p style="font-size:.72rem;color:var(--dim);">The content engine</p>
+        <ul>
+          <li>5 social posts/week</li>
+          <li>1 blog post/month</li>
+          <li>1 newsletter draft/month</li>
+          <li>Review response drafts</li>
+          <li>On-demand AI workspace</li>
+          <li>Listing description generator</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(232,197,71,.2);">
+        <h3>Beacon</h3>
+        <p style="color:var(--gold);font-weight:700;font-size:1.1rem;">$299<span style="font-size:.7rem;color:var(--dim);">/mo</span></p>
+        <p style="font-size:.72rem;color:var(--dim);">Marketing assistant</p>
+        <ul>
+          <li>Everything in Lite</li>
+          <li>Competitor agent monitoring</li>
+          <li>Review tracking + alerts</li>
+          <li>Past client nurture sequences</li>
+          <li>Neighborhood farming content</li>
+          <li>Market analysis reports</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Beacon Pro</h3>
+        <p style="color:var(--blue);font-weight:700;font-size:1.1rem;">$499<span style="font-size:.7rem;color:var(--dim);">/mo</span></p>
+        <p style="font-size:.72rem;color:var(--dim);">Growth engine</p>
+        <ul>
+          <li>Everything in Beacon</li>
+          <li>FSBO + expired outreach</li>
+          <li>Listing presentation materials</li>
+          <li>Quarterly strategy reports</li>
+          <li>Referral network campaigns</li>
+          <li>Video scripts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- GO-TO-MARKET -->
+  <!-- ============================================ -->
+
+  <div class="divider">Go-to-Market Ideas</div>
+
+  <div class="section">
+    <h2>How to Sell Beacon to Agents</h2>
+
+    <div class="card">
+      <h3>Channel 1: Brokerage Partnerships</h3>
+      <p>Approach brokerage owners or managing brokers. Offer Beacon as a perk for their agents. Brokerages are always looking for ways to attract and retain agents. "Give your agents a marketing edge" is a compelling pitch. Volume discount: $99/agent/mo if the brokerage commits 10+ seats.</p>
+    </div>
+
+    <div class="card">
+      <h3>Channel 2: Agent Associations & Events</h3>
+      <p>Austin Board of Realtors, local RE meetups, Inman Connect. Do a live demo: pull up an agent's real Google profile, seed Beacon on the spot, and show them a week's worth of content in 60 seconds. That demo closes deals.</p>
+    </div>
+
+    <div class="card">
+      <h3>Channel 3: Mortgage & Title Partnerships</h3>
+      <p>Mortgage brokers and title companies have direct relationships with agents. Offer a referral fee ($50/signup) or co-branded version. "Powered by [Title Company]" — the title company looks innovative, you get distribution.</p>
+    </div>
+
+    <div class="card">
+      <h3>Channel 4: Cold Outreach to Top Producers</h3>
+      <p>Use your own Beacon outreach tools to identify top-producing agents in Austin who have weak online presence. The pitch writes itself: "You closed $12M last year. Imagine what you'd do with consistent marketing."</p>
+    </div>
+
+    <div class="card">
+      <h3>Demo Script</h3>
+      <p>"I'm going to pull up your Google Business profile right now. [Pulls up profile.] You have 23 reviews — nice. But your last post was 4 months ago, and 3 of your reviews have no response. Let me show you what Beacon would do for you."</p>
+      <p>[Seeds Beacon live.] "Here are 5 social posts for this week, a response to your most recent review, and a blog post about the [neighborhood] market. This took 2 minutes. Without Beacon, this is a week's worth of work."</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- REAL ESTATE SPECIFIC CONTEXT -->
+  <!-- ============================================ -->
+
+  <div class="divider">What to Seed Into the Agent's Beacon</div>
+
+  <div class="section">
+    <h2>Context Onboarding Checklist</h2>
+    <p>This is what makes Beacon write like THEIR agent, not "a real estate agent."</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Agent Identity</h3>
+        <ul>
+          <li>Full bio + years in business</li>
+          <li>Specializations (luxury, first-time, investment, relocation)</li>
+          <li>Farm areas / neighborhoods they focus on</li>
+          <li>Team structure (solo, TC, showing agent, etc.)</li>
+          <li>Brokerage affiliation</li>
+          <li>Awards / designations (CRS, ABR, GRI, etc.)</li>
+          <li>Personal brand voice (professional vs. casual, humor style)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Market Context</h3>
+        <ul>
+          <li>Service area cities and zip codes</li>
+          <li>Typical price range</li>
+          <li>Current active listings (address, price, features)</li>
+          <li>Recent closed deals (for social proof)</li>
+          <li>Local market stats (from MLS or Redfin)</li>
+          <li>Key local amenities (schools, parks, restaurants)</li>
+          <li>Competitor agents (3-5 names + websites)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Past Client Database</h3>
+        <ul>
+          <li>Client names + close dates (for anniversary emails)</li>
+          <li>Property addresses (for neighborhood-specific content)</li>
+          <li>Referral sources (to nurture referral partners)</li>
+          <li>Client testimonials / review quotes</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Brand Assets</h3>
+        <ul>
+          <li>Headshot / team photo</li>
+          <li>Logo</li>
+          <li>Brand colors</li>
+          <li>Website URL</li>
+          <li>Social media handles</li>
+          <li>Preferred hashtags</li>
+          <li>"Phrases I always use" and "Phrases to avoid"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 Polaris Point &middot; Internal Document
+  </div>
+
+</div>
+</body>
+</html>

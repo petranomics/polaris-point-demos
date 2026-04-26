@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon — Sales Brain Dump</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --space:#050D1E; --blue:#5B8DEF; --gold:#E8C547; --green:#22c55e; --red:#f87171; --text:#e2e8f0; --muted:#8494a7; --dim:#475569; --border:rgba(91,141,239,.1); --surface:rgba(15,25,55,.45); }
+    * { box-sizing:border-box; margin:0; }
+    body { background:var(--space); color:var(--text); font-family:'Inter',sans-serif; line-height:1.65; padding:0; }
+    h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; color:#fff; line-height:1.2; }
+    .page { max-width:800px; margin:0 auto; padding:24px; }
+    .top-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); margin-bottom:28px; }
+    .logo { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:.9rem; display:flex; align-items:center; gap:6px; }
+    .logo svg { width:18px; height:18px; filter:drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .doc-label { font-size:.6rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); font-weight:600; }
+
+    .section { margin-bottom:36px; }
+    .section-tag { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+    .section-tag.pitch { background:rgba(91,141,239,.12); color:var(--blue); }
+    .section-tag.tech { background:rgba(34,197,94,.1); color:var(--green); }
+    .section-tag.objection { background:rgba(248,113,113,.1); color:var(--red); }
+    .section-tag.integration { background:rgba(232,197,71,.1); color:var(--gold); }
+    .section-tag.story { background:rgba(167,139,250,.1); color:#a78bfa; }
+
+    .section h2 { font-size:1.15rem; margin-bottom:8px; }
+    .section p { color:var(--muted); font-size:.88rem; margin-bottom:10px; }
+    .section p strong { color:var(--text); }
+    .section ul { padding-left:18px; color:var(--muted); font-size:.85rem; line-height:1.9; margin-bottom:10px; }
+    .section ul li strong { color:var(--text); }
+
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-bottom:12px; }
+    .card h3 { font-size:.92rem; margin-bottom:6px; }
+    .card p { color:var(--muted); font-size:.82rem; }
+
+    .objection-card { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:12px; border-radius:12px; overflow:hidden; border:1px solid var(--border); }
+    .obj-q { background:rgba(248,113,113,.04); padding:16px 18px; }
+    .obj-a { background:var(--surface); padding:16px 18px; }
+    .obj-q h4 { font-size:.82rem; color:var(--red); margin-bottom:4px; }
+    .obj-a h4 { font-size:.82rem; color:var(--green); margin-bottom:4px; }
+    .obj-q p, .obj-a p { font-size:.8rem; }
+
+    .quote { border-left:3px solid var(--gold); padding:12px 18px; margin:12px 0; background:rgba(232,197,71,.04); border-radius:0 10px 10px 0; }
+    .quote p { color:var(--text); font-size:.88rem; font-style:italic; }
+    .quote .attr { color:var(--dim); font-size:.72rem; font-style:normal; margin-top:4px; }
+
+    .divider { text-align:center; color:var(--dim); font-size:.6rem; text-transform:uppercase; letter-spacing:2px; font-weight:600; margin:40px 0 24px; position:relative; }
+    .divider::before,.divider::after { content:""; position:absolute; top:50%; width:calc(50% - 50px); height:1px; background:var(--border); }
+    .divider::before { left:0; } .divider::after { right:0; }
+
+    .footer { border-top:1px solid var(--border); padding:16px 0; margin-top:40px; font-size:.7rem; color:var(--dim); }
+
+    @media(max-width:600px) {
+      .objection-card { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top-bar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      Beacon
+    </div>
+    <span class="doc-label">Sales Brain Dump</span>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- WHAT IT IS -->
+  <!-- ============================================ -->
+
+  <div class="section">
+    <span class="section-tag pitch">The Pitch</span>
+    <h2>What Is Beacon?</h2>
+    <p><strong>The one-liner:</strong> "Beacon is a dedicated AI marketing employee for your business. It knows your brand, writes your content, watches your competitors, and costs less than one hour of a marketing consultant per month."</p>
+    <p><strong>The elevator pitch:</strong> "You know how you keep saying you need to post on social media, send newsletters, and respond to reviews but never have time? Beacon does all of that. It learns everything about your business — your services, your voice, your customers — and produces ready-to-use marketing materials every week. You review, approve, and post. That's it."</p>
+    <p><strong>The founder pitch (for sophisticated buyers):</strong> "We built an AI system that sits between a generic tool like ChatGPT and hiring a marketing person. ChatGPT doesn't know your business. A marketing hire costs $4,000/month and takes 3 months to get up to speed. Beacon knows your business from day one because we feed it everything — your website, your reviews, your competitors, your brand guidelines. It's not a chatbot. It's a marketing brain that works for you 24/7."</p>
+  </div>
+
+  <div class="section">
+    <span class="section-tag pitch">The Pitch</span>
+    <h2>Why It's Necessary</h2>
+
+    <div class="card">
+      <h3>The Problem Every Small Business Has</h3>
+      <p>They know they need to market online. They know they should be posting on social media, sending emails, responding to reviews, and writing blog posts. But they're running a business. The owner is the plumber, the chef, the dentist, the agent. They don't have time, and they can't afford a $4,000/month marketing hire or a $2,000/month agency retainer.</p>
+    </div>
+
+    <div class="card">
+      <h3>What They're Currently Doing (and Why It Fails)</h3>
+      <p><strong>Nothing</strong> — Most common. They know they should do marketing but it falls off the priority list every single week. Their Google Business profile has no posts, their Yelp reviews go unanswered, and their last social media post was 8 months ago.</p>
+      <p><strong>DIY with ChatGPT</strong> — Some have tried. But they spend 30 minutes crafting prompts, get generic output, and give up after 2 weeks. ChatGPT doesn't know their business, their competitors, or their customers.</p>
+      <p><strong>Hiring a freelancer</strong> — $500-1,500/month for someone who manages 15 other clients and sends them recycled templates. The content feels generic because it IS generic.</p>
+      <p><strong>Hiring a marketing person</strong> — $3,000-5,000/month fully loaded. Most small businesses can't justify this. And even then, it takes months for that person to understand the business deeply enough to represent the brand well.</p>
+    </div>
+
+    <div class="card">
+      <h3>What Makes Beacon Different</h3>
+      <p><strong>It already knows you.</strong> Before it writes a single word, we seed it with your website, your reviews, your service list, your competitors, your brand voice, and your market position. When it writes a social post, it's writing as YOUR business, not "a plumbing company."</p>
+      <p><strong>It works every day.</strong> Not when it feels like it, not when it remembers. Scheduled tasks run automatically — social posts generated Monday, newsletter drafted on the 1st, competitor check every morning.</p>
+      <p><strong>It gets smarter over time.</strong> Every piece of feedback you give it, every new document you add, every prompt you send — it accumulates context. Month 6 Beacon is dramatically better than Month 1 Beacon.</p>
+      <p><strong>It costs less than a freelancer and does more than an employee.</strong> $149-499/month vs. $500-5,000/month. And it never calls in sick, never has a bad day, and never forgets a deadline.</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HOW IT WORKS (TECHNICAL) -->
+  <!-- ============================================ -->
+
+  <div class="divider">How It Actually Works</div>
+
+  <div class="section">
+    <span class="section-tag tech">Technical</span>
+    <h2>High-Level Architecture (Non-Technical Explanation)</h2>
+    <p><strong>For the curious business owner or tech-savvy prospect:</strong></p>
+    <p>"Think of Beacon as a private AI that only works for you. When you sign up, we create a secure workspace — like a private office for your AI marketing employee. We then 'onboard' it the same way you'd onboard a new hire:"</p>
+    <ul>
+      <li><strong>Day 1:</strong> We scrape your website, pull your Google and Yelp reviews, and import your business info — name, services, hours, service area, photos</li>
+      <li><strong>Day 1:</strong> We add your brand voice guidelines — are you formal or casual? Funny or straightforward? Do you say "y'all" or "you all"?</li>
+      <li><strong>Day 1:</strong> We identify your top 3-5 competitors and tell Beacon to keep an eye on them</li>
+      <li><strong>Day 2:</strong> Beacon starts producing. First batch of social posts, first newsletter draft, first blog outline — all in your voice, all about your actual services</li>
+      <li><strong>Ongoing:</strong> You review and approve content. You can also chat with Beacon anytime — ask it to write an email, draft a response to a bad review, brainstorm a promotion, or explain what your competitors are doing differently</li>
+    </ul>
+    <p>"Behind the scenes, Beacon runs on the same AI technology that powers ChatGPT and Claude — but it's not a general chatbot. It's a specialized marketing system with your business data baked into every response."</p>
+  </div>
+
+  <div class="section">
+    <span class="section-tag tech">Technical</span>
+    <h2>Technical Architecture (For Internal Use / Technical Buyers)</h2>
+
+    <div class="card">
+      <h3>The Stack</h3>
+      <p><strong>AI Models:</strong> We use a two-tier model system. Standard tier runs on Mistral (open-source, hosted on our own servers — no data leaves our infrastructure). Premium tier uses Claude by Anthropic (best-in-class for business writing, reasoning, and strategy).</p>
+      <p><strong>Context Engine:</strong> Every piece of business data (website content, reviews, services, brand voice, competitor intel) is stored in a structured database and loaded into the AI's context window before every generation. This is what makes it write as YOUR business, not a generic business.</p>
+      <p><strong>Task Scheduler:</strong> Automated cron jobs trigger content generation on schedule — weekly social posts (Monday 8am), monthly newsletters (1st of month), daily review checks. No manual intervention needed.</p>
+      <p><strong>Monitoring System:</strong> Daily automated scraping of competitor websites and review platforms. Changes are summarized by AI and flagged if significant (new services, price changes, negative review spikes).</p>
+      <p><strong>Token Budget:</strong> Each tier has a monthly token allowance (think of it like minutes on a phone plan). This prevents runaway costs and ensures fair usage. The budget resets monthly.</p>
+    </div>
+
+    <div class="card">
+      <h3>Security & Privacy</h3>
+      <p><strong>Data isolation:</strong> Each client's data is stored in separate database rows with subscription-level access controls. One client cannot see another's data.</p>
+      <p><strong>No training on your data:</strong> Your business data is used to generate content FOR you. It is never used to train AI models or shared with other clients.</p>
+      <p><strong>Self-hosted inference:</strong> Standard tier AI runs on our own private servers (Hostinger VPS, US-based). Your data does not flow through OpenAI, Google, or any third-party AI provider unless you're on the premium Claude tier (which uses Anthropic's API with enterprise-grade data handling).</p>
+      <p><strong>Encrypted storage:</strong> All data stored in Neon PostgreSQL with encryption at rest. API communications are TLS-encrypted.</p>
+    </div>
+
+    <div class="card">
+      <h3>What "AI Workspace" Actually Means</h3>
+      <p>It's a chat interface — like texting your marketing employee. But unlike a human, it has instant recall of everything you've ever told it about your business. You can say "write me a Facebook post about our spring AC tune-up special" and it already knows your services, your pricing, your tone, your service area, and your current promotions. No briefing required.</p>
+      <p>You can also ask it strategic questions: "What are my competitors doing that I'm not?" or "Give me 5 ideas for getting more reviews" or "Draft a response to this 2-star review" — and it answers with context about YOUR specific situation.</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- INTEGRATIONS -->
+  <!-- ============================================ -->
+
+  <div class="divider">What It Connects To</div>
+
+  <div class="section">
+    <span class="section-tag integration">Integrations</span>
+    <h2>Current & Planned Integrations</h2>
+
+    <div class="card">
+      <h3>Live Now</h3>
+      <ul>
+        <li><strong>Google Places API</strong> — Pull business info, reviews, ratings, hours, photos automatically</li>
+        <li><strong>Yelp Fusion API</strong> — Pull reviews, ratings, business details, competitor data</li>
+        <li><strong>Website Scraping</strong> — Ingest any website's content to build context</li>
+        <li><strong>Polaris Point Sites</strong> — Direct integration with sites we build (config updates, analytics)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Near-Term (1-2 month build)</h3>
+      <ul>
+        <li><strong>Google Business Profile</strong> — Post directly to GBP, respond to reviews</li>
+        <li><strong>Email platforms (Mailchimp, SendGrid)</strong> — Push newsletter drafts directly to send</li>
+        <li><strong>Social scheduling (Buffer, Later)</strong> — Push posts to scheduling queue</li>
+        <li><strong>CRM systems (HubSpot, Salesforce)</strong> — Pull contact data for personalized outreach</li>
+        <li><strong>Google Analytics</strong> — Pull traffic data for performance-aware content suggestions</li>
+        <li><strong>Google Ads</strong> — Pull ad performance to optimize copy</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Future</h3>
+      <ul>
+        <li><strong>Industry-specific platforms:</strong> ServiceTitan, Housecall Pro, Jobber (service), Toast/Square (food), Jane/Mindbody (wellness), Follow Up Boss (real estate)</li>
+        <li><strong>E-commerce:</strong> Shopify, WooCommerce, Etsy — product data → marketing content</li>
+        <li><strong>Zapier/Make</strong> — Connect to anything via automation platform</li>
+        <li><strong>Slack/Teams</strong> — Deliver content and alerts to where teams already work</li>
+        <li><strong>Direct social posting</strong> — Post to Facebook, Instagram, LinkedIn directly (vs. through scheduler)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- OBJECTIONS -->
+  <!-- ============================================ -->
+
+  <div class="divider">Handling Objections</div>
+
+  <div class="section">
+    <span class="section-tag objection">Objections</span>
+    <h2>What People Will Say (And How to Respond)</h2>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"I can just use ChatGPT for free."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"You absolutely can. The difference is ChatGPT doesn't know your business. Every time you use it, you start from scratch — explaining who you are, what you do, where you're located. Beacon already knows all that. It also runs on a schedule so you don't have to remember to do it. Have you actually been using ChatGPT for marketing consistently? Most people try it once and forget about it."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"AI content is generic. People can tell."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"Generic AI content is generic. That's what you get from a tool that doesn't know you. Beacon is seeded with your specific services, your reviews (actual customer words), your brand voice, and your competitors. When it writes a post about your drain cleaning service in Cedar Park, it's writing about YOUR drain cleaning service in Cedar Park. The output is a draft — you review and tweak it. The AI does the 80% heavy lifting, you add the 20% personal touch."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"I don't trust AI with my business."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"You shouldn't trust it blindly — and we don't ask you to. Everything Beacon produces is a draft for you to review and approve before it goes anywhere. Nothing gets posted, sent, or published without your sign-off. Think of it like having a marketing intern who writes great first drafts but always runs them by you before sending."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"$149/month is a lot for a small business."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"Let's do the math. A single blog post from a freelancer is $150-300. One social media management package is $500-1,000/month. One email newsletter from an agency is $200-400. Beacon gives you all of that for $149. If even ONE new customer finds you from a blog post or social media post, it's paid for itself for the year."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"I don't have time to review content."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"It takes about 10 minutes a week. Beacon delivers ready-to-post content. You scan it, make a quick edit if needed, and post. Compare that to the hour+ it takes to write a single post from scratch, or the 4 hours a week you'd spend managing a marketing employee. Ten minutes a week is the minimum investment to keep your marketing running."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"What if I cancel? Do I lose everything?"</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"All the content Beacon has generated is yours. If you cancel, you keep every blog post, every newsletter, every social post. The AI workspace goes away, but the output doesn't. There's a 12-month commitment upfront because the system gets significantly better over time — month 1 is good, month 6 is great, month 12 is like having someone who's worked at your company for a year."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"My customers are older / not tech-savvy / don't use social media."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"Beacon isn't just social media. It writes emails, newsletters, blog posts, Google Business posts, review responses, flyers, and more. Even if your customers are older, they're Googling you before they call. Blog posts improve your Google ranking. Google Business posts show up in local search. Review responses show future customers you care. The content works even if your customers never see your Instagram."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"I already have a marketing person/agency."</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"That's great — Beacon makes them more productive. Your marketing person spends hours writing first drafts. With Beacon, they start with a 80% complete draft and focus on strategy and refinement instead of staring at a blank page. Many agencies actually use AI tools internally already — you'd just be bringing that capability in-house for a fraction of the cost."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"What about my competitors using the same thing?"</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"Each Beacon instance is completely unique to the business it serves. Your Beacon is seeded with YOUR data, YOUR voice, YOUR competitive advantages. Even if your competitor had Beacon too, the output would be completely different because the inputs are different. That said — right now, most of your competitors aren't doing ANY consistent marketing. The biggest competitive advantage isn't better AI, it's actually showing up consistently while they don't."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"Is my business data safe? Where does it go?"</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"Your data is stored on encrypted US-based servers. It's never shared with other clients, never used to train AI models, and never sold. On our standard tier, the AI runs on our own private servers — your data doesn't even touch OpenAI or Google. On the premium tier, we use Anthropic's Claude which has enterprise-grade data handling agreements. You can request deletion of all your data at any time."</p></div>
+    </div>
+
+    <div class="objection-card">
+      <div class="obj-q"><h4>They Say:</h4><p>"Can I try it before committing to 12 months?"</p></div>
+      <div class="obj-a"><h4>You Say:</h4><p>"We can run a 2-week demo where we seed Beacon with your business data and show you sample outputs — social posts, a newsletter, a blog post, and competitor analysis. You'll see exactly what you'd be getting before you commit. No charge for the demo, no obligation."</p></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- STORIES & SCENARIOS -->
+  <!-- ============================================ -->
+
+  <div class="divider">Use Case Stories</div>
+
+  <div class="section">
+    <span class="section-tag story">Scenarios</span>
+    <h2>Paint the Picture</h2>
+    <p>Use these to make it tangible. People don't buy features, they buy outcomes.</p>
+
+    <div class="quote">
+      <p>"Imagine it's Monday morning. You open your email and there are 5 social media posts ready to go for the week — each one about a different service you offer, each one written in your voice, each one with a call to action. You glance at them, tweak one word, and schedule them. That took you 3 minutes. Without Beacon, that's 2 hours of work you'd never get to."</p>
+      <span class="attr">— For the time-strapped owner</span>
+    </div>
+
+    <div class="quote">
+      <p>"A customer leaves a 2-star review on Google at 10pm. By the time you see it the next morning, Beacon has already drafted a professional, empathetic response. You read it, hit post, and the negative review now has a thoughtful owner response that shows every future customer you care. Without Beacon, that review sits unanswered for a week — or forever."</p>
+      <span class="attr">— For the reputation-conscious</span>
+    </div>
+
+    <div class="quote">
+      <p>"Your competitor just launched a new 'first-time customer discount.' You don't even know about it until a customer mentions it. With Beacon, you got an alert three days ago when it detected the change on their website. You already adjusted your own promotion to stay competitive."</p>
+      <span class="attr">— For the competitive owner</span>
+    </div>
+
+    <div class="quote">
+      <p>"You're a plumber who's great at fixing pipes but has no idea how to write a blog post. Beacon writes '7 Signs Your Austin Home Has a Hidden Water Leak' — a 600-word article packed with your service area keywords. Three months later, it's ranking on page 1 of Google and bringing in 2-3 calls a month from people who never would have found you otherwise."</p>
+      <span class="attr">— For the SEO-skeptical</span>
+    </div>
+
+    <div class="quote">
+      <p>"You've been meaning to send a newsletter to your past customers for two years. You have 400 email addresses collecting dust. Beacon drafts a monthly newsletter with seasonal tips, a special offer, and a friendly check-in. First month, you get 3 repeat customers. That's $2,000+ in revenue from an email that took you 5 minutes to review."</p>
+      <span class="attr">— For the email-procrastinator</span>
+    </div>
+
+    <div class="quote">
+      <p>"You're an insurance agent. Every quarter, regulations change and you should be educating your clients. But writing compliance-friendly content is tedious. Beacon drafts a client email explaining the changes in plain English, with your branding and your agency's contact info. Your clients feel informed, you look proactive, and it took zero hours of your time."</p>
+      <span class="attr">— For professional services</span>
+    </div>
+
+    <div class="quote">
+      <p>"You run a med spa. A patient asks about a new treatment you just added. Instead of spending 30 minutes writing up the service description for your website, you tell Beacon: 'We just added microneedling, here are the details.' Five minutes later, you have a website-ready description, 3 social posts, and an email announcement draft for your patient list."</p>
+      <span class="attr">— For health & wellness</span>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- COMPARISON -->
+  <!-- ============================================ -->
+
+  <div class="divider">How It Compares</div>
+
+  <div class="section">
+    <span class="section-tag pitch">Comparison</span>
+    <h2>Beacon vs. Everything Else</h2>
+
+    <div class="card">
+      <h3>vs. Doing Nothing ($0/mo)</h3>
+      <p><strong>Cost of inaction:</strong> Every month without marketing is a month your competitors are building their online presence while you're invisible. 76% of nearby searches lead to a same-day visit. If you're not showing up, someone else is getting that call.</p>
+    </div>
+
+    <div class="card">
+      <h3>vs. ChatGPT/Free AI ($20/mo)</h3>
+      <p><strong>ChatGPT:</strong> Doesn't know your business. No scheduling. No monitoring. No competitor tracking. You have to prompt it every time, and you have to remember to do it. How many times have you opened ChatGPT with good intentions and then gotten pulled away?</p>
+      <p><strong>Beacon:</strong> Pre-loaded with your business context. Runs on schedule. Monitors competitors. Tracks reviews. Works even when you forget about it.</p>
+    </div>
+
+    <div class="card">
+      <h3>vs. Freelance Marketer ($500-1,500/mo)</h3>
+      <p><strong>Freelancer:</strong> Managing 10-15 clients. Uses templates. 4-8 hours/month on your account. Takes weeks to learn your business. May churn at any time.</p>
+      <p><strong>Beacon:</strong> 100% dedicated to your business. Instant recall of everything about you. Produces more content, faster, for less. Doesn't quit.</p>
+    </div>
+
+    <div class="card">
+      <h3>vs. Marketing Agency ($2,000-5,000/mo)</h3>
+      <p><strong>Agency:</strong> Great for big campaigns and strategy. But 80% of what they charge goes to overhead, account management, and content production. The actual "writing social posts" part is often done by a junior employee or... AI tools they mark up 10x.</p>
+      <p><strong>Beacon:</strong> Gives you the content production and intelligence layer at a fraction of the cost. Pair it with a strategic consultant for quarterly reviews and you have agency-level output at 1/10th the price.</p>
+    </div>
+
+    <div class="card">
+      <h3>vs. Hiring a Marketing Employee ($3,500-5,000/mo)</h3>
+      <p><strong>Employee:</strong> Great when you can afford it. But there's recruiting, onboarding, management, benefits, PTO, and the risk they leave after 6 months. For a small business doing $300K-1M in revenue, this is rarely justifiable.</p>
+      <p><strong>Beacon:</strong> No recruiting, no onboarding, no PTO. Starts producing on day 1. Costs less than their first week's salary — every month.</p>
+    </div>
+
+    <div class="card">
+      <h3>vs. Jasper / Copy.ai / Other AI Tools ($50-200/mo)</h3>
+      <p><strong>Generic AI tools:</strong> They're writing tools — you give them a prompt, they give you copy. But they don't know your business, don't run on schedule, don't monitor competitors, don't track reviews, and don't improve over time with your data.</p>
+      <p><strong>Beacon:</strong> It's not a tool you use. It's a system that works for you. The AI writing is one piece — the context engine, scheduler, monitor, and workspace make it a complete marketing operation.</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CLOSING -->
+  <!-- ============================================ -->
+
+  <div class="divider">Closing Frameworks</div>
+
+  <div class="section">
+    <span class="section-tag pitch">Closing</span>
+    <h2>How to Close the Deal</h2>
+
+    <div class="card">
+      <h3>The "Let's Just Try It" Close</h3>
+      <p>"Here's what I'll do — I'll set up a 2-week demo. I'll seed it with your business data right now, and by tomorrow you'll have sample social posts, a newsletter draft, and a competitor analysis in your inbox. If it's not useful, we shake hands and walk away. If it is, we start the 12-month plan and you never think about marketing content again."</p>
+    </div>
+
+    <div class="card">
+      <h3>The Math Close</h3>
+      <p>"You said you charge about $200 per service call. One new customer per month from better marketing pays for the entire year of Beacon. Are you getting at least one call per month from Google? If not, that's the gap we're filling."</p>
+    </div>
+
+    <div class="card">
+      <h3>The Time Close</h3>
+      <p>"How many hours a week do you spend on marketing? [They'll say zero or 'not enough'] — So it's not getting done. The question isn't whether you need marketing — you already know you do. The question is whether you'll do it yourself or let Beacon handle it for less than the cost of a nice dinner each week."</p>
+    </div>
+
+    <div class="card">
+      <h3>The Competitor Close</h3>
+      <p>"I took a quick look at [competitor name]. They're posting on social media twice a week, they have 47 Google reviews with responses, and their website has a blog with 12 articles. That's why they show up when people search for [service] in [city]. Right now, you're invisible next to them. Beacon closes that gap in weeks, not months."</p>
+    </div>
+
+    <div class="card">
+      <h3>The "Already Sold" Close</h3>
+      <p>Don't ask "Would you like to sign up?" Instead: "Which tier makes the most sense for where you're at right now — the Content Engine at $149 or the full Marketing Assistant at $299?" Assumes the sale. Let them choose which option, not whether to buy.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 Polaris Point &middot; Internal Document &middot; Do not share externally
+  </div>
+
+</div>
+</body>
+</html>
