@@ -643,6 +643,45 @@
       text-decoration: none;
       font-weight: 600;
     }
+    .signin-demo-pane {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+    .signin-demo-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 9px;
+      text-align: center;
+    }
+    .signin-demo-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+    }
+    .demo-chip {
+      background: rgba(232,197,71,.06);
+      border: 1px solid rgba(232,197,71,.22);
+      color: var(--gold);
+      padding: 5px 9px;
+      border-radius: 5px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .3px;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .1s ease;
+    }
+    .demo-chip:hover {
+      background: rgba(232,197,71,.14);
+      border-color: rgba(232,197,71,.45);
+    }
+    .demo-chip:active { transform: translateY(1px); }
 
     /* Footer */
     .ed-footer {
@@ -2033,6 +2072,20 @@
     </form>
     <div class="login-error" id="loginError"></div>
     <div class="signin-foot">No account? <a href="/beacon/signup">Apply for beta →</a></div>
+
+    <div class="signin-demo-pane">
+      <div class="signin-demo-label">Or try a live demo</div>
+      <div class="signin-demo-chips" id="demoChips">
+        <button type="button" class="demo-chip" data-demo-key="real_estate">Real Estate</button>
+        <button type="button" class="demo-chip" data-demo-key="pest_control">Pest Control</button>
+        <button type="button" class="demo-chip" data-demo-key="cleaning">Cleaning</button>
+        <button type="button" class="demo-chip" data-demo-key="plumber">Plumbing</button>
+        <button type="button" class="demo-chip" data-demo-key="restaurant">Restaurant</button>
+        <button type="button" class="demo-chip" data-demo-key="salon">Salon</button>
+        <button type="button" class="demo-chip" data-demo-key="cafe">Cafe</button>
+        <button type="button" class="demo-chip" data-demo-key="handyman">Handyman</button>
+      </div>
+    </div>
   </aside>
 
   <!-- Editorial article -->
@@ -2613,6 +2666,7 @@
   </div>
 </div>
 
+<script src="./demo-personas.js"></script>
 <script>
 /* ============================================
    BEACON CLIENT PORTAL — APPLICATION LOGIC
@@ -2624,109 +2678,52 @@
   // ---- CONFIG ----
   const API_BASE = '/api/beacon';
   const SESSION_KEY = 'beacon_subscription';
-  const DEMO_MODE = new URLSearchParams(location.search).get('demo') === '1';
 
-  // ---- DEMO DATA (only used when ?demo=1) ----
-  const daysAgo = (n) => new Date(Date.now() - n * 86400000).toISOString();
-  const daysAhead = (n) => new Date(Date.now() + n * 86400000).toISOString();
-  const DEMO_DATA = {
-    subscription: {
-      id: 'demo-sub-001',
-      email: 'sarah@sarahchenrealty.com',
-      client_name: 'Sarah Chen',
-      business_name: 'Sarah Chen Realty',
-      industry: 'real_estate',
-      plan: 'pro',
-      status: 'active',
-      tokens_used: 142318,
-      referral_code: 'SARAH-CHEN-RLTY',
-      created_at: '2025-10-15T00:00:00Z',
-      current_period_end: daysAhead(19),
-      token_reset_date: daysAhead(19)
-    },
-    chat: [
-      { role: 'user', content: 'Write an Instagram caption for the new Hyde Park listing — 4BR/3BA at 3812 Avenue G, asking $1.395M.', created_at: daysAgo(2) },
-      { role: 'assistant', type: 'social', content: 'Hyde Park dreams, delivered. ✨\n\n3812 Avenue G | 4BR · 3BA · $1,395,000\n\nA 1920s bungalow with the bones you fall in love with and the kitchen you actually want to cook in. Original hardwoods, restored windows, screened porch made for slow Sundays — and yes, walkable to Quack\'s.\n\nDM for the private tour list. Open Saturday 11–1.\n\n#HydePark #AustinRealEstate #SarahChenRealty', created_at: daysAgo(2) },
-      { role: 'user', content: 'Make it shorter and more casual', created_at: daysAgo(2) },
-      { role: 'assistant', type: 'social', content: 'New listing alert 🏡\n\n3812 Avenue G | Hyde Park | $1.395M\n4 bed, 3 bath bungalow with the original hardwoods and a screened porch you won\'t want to leave.\n\nOpen Sat 11–1. DM for early access.', created_at: daysAgo(2) },
-      { role: 'user', content: 'Draft a follow-up email to last week\'s open house attendees', created_at: daysAgo(1) },
-      { role: 'assistant', type: 'email', content: 'Subject: Thanks for stopping by 3812 Avenue G\n\nHi {{first_name}},\n\nReally appreciated meeting you at the open house Saturday. A few folks asked for the comps in Hyde Park — I put together a quick one-pager covering the last 6 sales on Avenue G and Avenue H. Happy to send it over.\n\nIf 3812 isn\'t the one, I\'ve got two more coming to market in the same pocket next week — both under $1.5M. Want me to text you when they go live?\n\nSarah\n512-555-0143', created_at: daysAgo(1) }
-    ],
-    context: [
-      { id: 'doc-1', type: 'brand_voice', title: 'Brand Voice', content: 'Warm but expert. Conversational, never salesy. Specific over generic — name the streets, the schools, the coffee shops. Speak to first-time Austin buyers and to homeowners who already know the market. Avoid hype words ("stunning", "must-see"). Default to numbers and sensory detail.' },
-      { id: 'doc-2', type: 'services', title: 'Services Offered', content: 'Buyer representation (first-time + move-up), seller listings, relocation services for tech transplants, investment property consultations, off-market sourcing for $1M+ buyers, staging coordination through partner firm.' },
-      { id: 'doc-3', type: 'about', title: 'About Sarah', content: 'Austin native, 11 years in residential real estate. Top 5% producer 2023 + 2024. Specializes in central Austin pockets: Hyde Park, Tarrytown, Mueller, East Cesar Chavez, Bouldin. UT alum. Bilingual English/Mandarin.' },
-      { id: 'doc-4', type: 'faq', title: 'FAQ for Buyers', content: 'Most-asked: How fast does central Austin move? (median 18 days, 6% over ask in 78751). Cash vs. financed? Conventional with strong escalation works. Inspection contingency? Always — but waive repairs under $5K to compete.' }
-    ],
-    competitors: [
-      {
-        id: 'comp-1',
-        name: 'Bramlett Residential',
-        url: 'https://bramlettresidential.com',
-        last_checked: daysAgo(1),
-        summary: 'New positioning push around relocation services — added a "Moving to Austin" landing page with neighborhood guides for Hyde Park, Mueller, and Westlake. Their blog dropped 3 posts this week on tech-employee buyer programs. Worth matching with a 78751-specific guide. Pricing transparency on listings is stronger than ours; consider adding price-per-sqft to listing posts.'
-      },
-      {
-        id: 'comp-2',
-        name: 'Realty Austin',
-        url: 'https://realtyaustin.com',
-        last_checked: daysAgo(2),
-        summary: 'Heavy Instagram Reels investment — running daily neighborhood tours with their agents on camera. 3 of their last 5 posts hit 10K+ views. They\'re also testing a "live market update" weekly newsletter (Wednesdays) with hyperlocal data. Recommend testing similar weekly cadence for our Hyde Park / Tarrytown segment.'
-      },
-      {
-        id: 'comp-3',
-        name: 'JBGoodwin REALTORS',
-        url: 'https://jbgoodwin.com',
-        last_checked: daysAgo(3),
-        summary: 'Quiet on social this month, but launched a refreshed email newsletter with a "deals of the week" section featuring price drops + new listings under $750K. Their SEO ranking improved on "Austin first time home buyer" — they now hold position 2. Monitor whether they sustain it.'
-      }
-    ],
-    tasks: [
-      { id: 'task-1', task_type: 'social_post', frequency: 'weekly', status: 'active', last_run: daysAgo(2), next_run: daysAhead(5), last_output: 'New listing alert 🏡\n\n3812 Avenue G | Hyde Park | $1.395M\n4 bed, 3 bath bungalow with the original hardwoods and a screened porch you won\'t want to leave.\n\nOpen Sat 11–1. DM for early access.' },
-      { id: 'task-2', task_type: 'newsletter', frequency: 'monthly', status: 'active', last_run: daysAgo(8), next_run: daysAhead(22), last_output: 'Subject: April in Austin: 3 pockets I\'m watching\n\nHey friends — quick market update before May.\n\nHyde Park: median DOM dropped to 14 days (down from 21 in March). Buyers are jumping on anything under $1.5M with original character.\n\nMueller: phase 5 townhomes selling pre-construction. If you\'ve been waiting, the wait is over.\n\nEast Cesar Chavez: investor activity cooled. First-time buyer territory again — three solid options under $650K right now.\n\nReply to this email if you want the full comp set for any of these. Always happy to nerd out on data.\n\nSarah' },
-      { id: 'task-3', task_type: 'blog_post', frequency: 'biweekly', status: 'active', last_run: daysAgo(3), next_run: daysAhead(11), last_output: '5 Things to Know Before Buying in Hyde Park (2026 Edition)\n\nHyde Park sits in a strange sweet spot: walkable like Mueller, character like Tarrytown, prices that still occasionally start with a 7. Here\'s what every buyer should know before writing an offer in 78751...\n\n1. The lot matters more than the house. Most homes are pre-1940. The good ones have been thoughtfully renovated; the great ones still have the original casement windows...' },
-      { id: 'task-4', task_type: 'review_response', frequency: 'weekly', status: 'active', last_run: daysAgo(4), next_run: daysAhead(3), last_output: 'Hi Jennifer — thank you so much. Helping you and Marcus find the Bouldin house was genuinely one of my favorite deals this year. The fact that you took my "let\'s wait for the right one" advice instead of jumping on the Travis Heights listing in February — that patience is what got you the porch you wanted. Cheers to many slow Sundays at home. — Sarah' },
-      { id: 'task-5', task_type: 'competitor_report', frequency: 'weekly', status: 'active', last_run: daysAgo(1), next_run: daysAhead(6), last_output: 'Weekly competitor scan (Bramlett, Realty Austin, JBGoodwin):\n\n• Bramlett added a "Moving to Austin" relocation hub — 3 new neighborhood guides this week.\n• Realty Austin: 3 of last 5 Reels hit 10K+ views. Recommend matching their daily Reel cadence.\n• JBGoodwin: refreshed newsletter format (price drops + new <$750K). SEO position 2 on "Austin first time home buyer" — watch.\n\nTop opportunity: weekly Hyde Park / Tarrytown live market newsletter. None of them own this segment locally.' },
-      { id: 'task-6', task_type: 'outbound_sequence', frequency: 'weekly', status: 'active', last_run: daysAgo(0), next_run: daysAhead(7), last_output: 'Cold outreach — past renters in 78751 (week of April 22)\n\nSubject: Quick question about your Hyde Park lease\n\nHi {{first_name}} — saw your lease at {{address}} renews this fall. Quick note: 3 homes just hit the market within 4 blocks under $1.4M, all renovated. With current rates and a 5% down conventional, the math on buying vs. renewing is closer than most people realize.\n\nWant me to send the buy-vs-rent breakdown for your specific street? Takes me 5 minutes, no pitch.\n\nSarah' },
-      { id: 'task-7', task_type: 'lead_research', frequency: 'weekly', status: 'paused', last_run: daysAgo(11), next_run: daysAhead(3), last_output: 'Paused while we focus on Q2 listing pipeline. Resume after May 15.' }
-    ],
-    referrals: [
-      { id: 'ref-1', client_name: 'Mike Johnson', email: 'mike@jrealty.co', status: 'paid', created_at: daysAgo(45), referral_credit_awarded: true },
-      { id: 'ref-2', client_name: 'Lisa Park', email: 'lisa@parkproperties.com', status: 'trial', created_at: daysAgo(8), trial_ends_at: daysAhead(34) }
-    ]
-  };
+  // ---- DEMO MODE ----
+  // Active when (a) URL has ?demo=<key>, or (b) user signs in with a demo email.
+  // Demo personas are loaded from beacon/demo-personas.js (window.BEACON_DEMO_PERSONAS).
+  const DEMO_PERSONAS = window.BEACON_DEMO_PERSONAS || {};
+  const DEMO_BY_EMAIL = window.BEACON_DEMO_BY_EMAIL || {};
+  let demoActive = false;
+  let activeDemo = null;
+
+  function resolveDemoFromParam(p) {
+    if (!p) return null;
+    if (DEMO_PERSONAS[p]) return DEMO_PERSONAS[p];
+    if (p === '1' || p === 'true') return DEMO_PERSONAS.real_estate;
+    return null;
+  }
+
+  function activateDemo(persona) {
+    if (!persona) return;
+    demoActive = true;
+    activeDemo = persona;
+  }
+
+  // URL-driven activation
+  activateDemo(resolveDemoFromParam(new URLSearchParams(location.search).get('demo')));
 
   function demoApi(method, path) {
-    if (method !== 'GET') {
-      // Mutations: pretend success without persisting (no-op for demo)
-      return Promise.resolve({ ok: true });
-    }
-    if (path.startsWith('/chat')) return Promise.resolve({ messages: DEMO_DATA.chat });
-    if (path.startsWith('/context')) return Promise.resolve({ documents: DEMO_DATA.context });
-    if (path.startsWith('/monitor')) return Promise.resolve({ competitors: DEMO_DATA.competitors });
-    if (path.startsWith('/tasks')) return Promise.resolve({ tasks: DEMO_DATA.tasks });
-    if (path.startsWith('/referrals')) return Promise.resolve({ referrals: DEMO_DATA.referrals });
+    if (!activeDemo) return Promise.resolve({});
+    if (method !== 'GET') return Promise.resolve({ ok: true });
+    if (path.startsWith('/chat')) return Promise.resolve({ messages: activeDemo.chat });
+    if (path.startsWith('/context')) return Promise.resolve({ documents: activeDemo.context });
+    if (path.startsWith('/monitor')) return Promise.resolve({ competitors: activeDemo.competitors });
+    if (path.startsWith('/tasks')) return Promise.resolve({ tasks: activeDemo.tasks });
+    if (path.startsWith('/referrals')) return Promise.resolve({ referrals: activeDemo.referrals });
     return Promise.resolve({});
   }
 
   function demoChatReply(content) {
+    if (!activeDemo) return { content: '' };
+    const t = activeDemo.chatTemplates || {};
     const c = (content || '').toLowerCase();
-    if (c.includes('listing') || c.includes('post') || c.includes('instagram') || c.includes('social')) {
-      return { type: 'social', content: 'Just listed in Tarrytown 🌳\n\n2418 Westover Rd | 5BR · 4BA · $2,250,000\n\nClassic Tarrytown brick on a quiet block, walkable to Lake Austin. Renovated kitchen, original oak floors, screened porch built for evening drinks.\n\nPrivate tours by appt — DM to book.' };
-    }
-    if (c.includes('newsletter') || c.includes('email update')) {
-      return { type: 'newsletter', content: 'Subject: This week in central Austin (Apr 22)\n\nQuick read on the three pockets I watch closest:\n\nHyde Park — 4 new listings, 2 already pending after one weekend. Still moving fast under $1.5M.\nTarrytown — inventory up 12% MoM. First-time real buyer leverage in 18 months.\nMueller — phase 5 pre-sales open. Ping me if you want the floor plans.\n\nReply with questions. Always happy to dig in.\n\nSarah' };
-    }
-    if (c.includes('blog') || c.includes('article') || c.includes('seo')) {
-      return { type: 'blog_post', content: 'Why Tarrytown Inventory Is Finally Loosening (And What It Means for Buyers)\n\nFor 18 months, Tarrytown listings disappeared in a weekend. That\'s changing — and not because demand cooled. Here\'s what the April data is showing...' };
-    }
-    if (c.includes('email') || c.includes('follow up') || c.includes('follow-up')) {
-      return { type: 'email', content: 'Subject: Following up — the Bouldin listing\n\nHi {{first_name}},\n\nWanted to circle back on 1804 S 5th. Inspection came back clean except for the foundation note we expected. Sellers signaled they\'d cover up to $8K in repairs.\n\nIf you\'re still interested, I think we have room to negotiate. Want to hop on a 15-minute call this week?\n\nSarah' };
-    }
-    if (c.includes('review')) {
-      return { type: 'review_response', content: 'Hi {{name}} — thank you, this means a lot. Helping you find the right home in {{neighborhood}} was the easy part; you knew exactly what you wanted. Wishing you many happy years there. — Sarah' };
-    }
-    return { content: 'Got it — I can help with that. To make the output really sharp, can you give me the listing address (or topic), the audience (buyer vs. seller vs. past client), and what platform you\'re publishing on?' };
+    if (c.includes('listing') || c.includes('post') || c.includes('instagram') || c.includes('social') || c === 'social_post') return { type: 'social', content: t.social || t.fallback || '' };
+    if (c.includes('newsletter')) return { type: 'newsletter', content: t.newsletter || t.fallback || '' };
+    if (c.includes('blog') || c.includes('article') || c.includes('seo')) return { type: 'blog_post', content: t.blog_post || t.fallback || '' };
+    if (c.includes('email') || c.includes('follow up') || c.includes('follow-up')) return { type: 'email', content: t.email || t.fallback || '' };
+    if (c.includes('review')) return { type: 'review_response', content: t.review_response || t.fallback || '' };
+    return { content: t.fallback || 'Got it — tell me a bit more about what you need.' };
   }
 
   // ---- STATE ----
@@ -2821,17 +2818,17 @@
 
   // ---- API HELPERS ----
   async function apiCall(method, path, body) {
-    if (DEMO_MODE) {
-      // Special handling for chat/generate to feel interactive
+    if (demoActive && activeDemo) {
+      // Demo: chat + generate produce interactive responses with rolling token bumps.
       if (method === 'POST' && path.startsWith('/chat')) {
-        DEMO_DATA.subscription.tokens_used += Math.floor(Math.random() * 800) + 200;
+        activeDemo.subscription.tokens_used += Math.floor(Math.random() * 800) + 200;
         const reply = demoChatReply(body && body.message);
-        return { tokens_used: DEMO_DATA.subscription.tokens_used, response: reply.content, type: reply.type };
+        return { tokens_used: activeDemo.subscription.tokens_used, response: reply.content, type: reply.type };
       }
       if (method === 'POST' && path.startsWith('/generate')) {
-        DEMO_DATA.subscription.tokens_used += Math.floor(Math.random() * 1200) + 400;
+        activeDemo.subscription.tokens_used += Math.floor(Math.random() * 1200) + 400;
         const reply = demoChatReply(body && body.type);
-        return { tokens_used: DEMO_DATA.subscription.tokens_used, response: reply.content, type: reply.type || (body && body.type) };
+        return { tokens_used: activeDemo.subscription.tokens_used, response: reply.content, type: reply.type || (body && body.type) };
       }
       return demoApi(method, path);
     }
@@ -2884,8 +2881,17 @@
     try {
       const email = loginEmail.value.trim();
       const password = loginPassword.value;
-      const password_hash = await sha256(password);
 
+      // Demo email interception — sign in fully client-side, no backend call.
+      const demoMatch = DEMO_BY_EMAIL[email.toLowerCase()];
+      if (demoMatch && password === demoMatch.password) {
+        activateDemo(demoMatch);
+        subscription = activeDemo.subscription;
+        showDashboard();
+        return;
+      }
+
+      const password_hash = await sha256(password);
       const data = await apiCall('POST', '/subscriptions?action=login', { email, password_hash });
       subscription = data.subscription || data;
       sessionStorage.setItem(SESSION_KEY, JSON.stringify(subscription));
@@ -3912,6 +3918,23 @@
   // Login
   loginForm.addEventListener('submit', handleLogin);
 
+  // Demo chips: autofill + submit so the live login flow plays out on screen.
+  const demoChipsEl = document.getElementById('demoChips');
+  if (demoChipsEl) {
+    demoChipsEl.addEventListener('click', function(e) {
+      const btn = e.target.closest('.demo-chip');
+      if (!btn) return;
+      const persona = DEMO_PERSONAS[btn.dataset.demoKey];
+      if (!persona) return;
+      loginEmail.value = persona.email;
+      loginPassword.value = persona.password;
+      setTimeout(function() {
+        if (typeof loginForm.requestSubmit === 'function') loginForm.requestSubmit();
+        else loginForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+      }, 180);
+    });
+  }
+
   // Sign out buttons
   $('#signoutSidebar').addEventListener('click', signOut);
   $('#signoutSettings').addEventListener('click', signOut);
@@ -4016,8 +4039,8 @@
   $('#copyReferralLinkBtn').addEventListener('click', copyReferralLink);
 
   // ---- INIT ----
-  if (DEMO_MODE) {
-    subscription = DEMO_DATA.subscription;
+  if (demoActive && activeDemo) {
+    subscription = activeDemo.subscription;
     showDashboard();
   } else {
     checkExistingAuth();
