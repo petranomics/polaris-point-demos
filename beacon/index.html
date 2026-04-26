@@ -40,15 +40,17 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html, body { min-height: 100%; }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background: var(--space);
       color: var(--text);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
-      overflow: hidden;
     }
+    /* Lock scroll only when dashboard is active */
+    body.dashboard-active { overflow: hidden; height: 100%; }
+    body.dashboard-active html { height: 100%; }
     h1, h2, h3, h4 {
       font-family: 'Space Grotesk', sans-serif;
       color: #fff;
@@ -412,6 +414,172 @@
       content: "·";
       color: var(--dim);
       margin-right: 6px;
+    }
+
+    /* Comparison table */
+    .ed-compare {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: .85rem;
+    }
+    .ed-compare th, .ed-compare td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .ed-compare th {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--blue);
+    }
+    .ed-compare th.beacon-col { color: var(--gold); }
+    .ed-compare td { color: var(--text-secondary); }
+    .ed-compare td.feature { color: #fff; font-weight: 500; }
+    .ed-compare td.beacon-col {
+      background: rgba(232,197,71,.04);
+      color: #fff;
+    }
+    .ed-compare td .yes { color: #22c55e; font-weight: 600; }
+    .ed-compare td .no { color: #f87171; }
+    .ed-compare tr:last-child th, .ed-compare tr:last-child td { border-bottom: none; }
+
+    /* Featured outputs grid (smaller, 3-up) */
+    .ed-output-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .ed-output-mini {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .ed-output-mini .mini-tag {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .ed-output-mini .mini-tag.social { background: rgba(91,141,239,.15); color: var(--blue); }
+    .ed-output-mini .mini-tag.email { background: rgba(167,139,250,.15); color: #a78bfa; }
+    .ed-output-mini .mini-tag.review { background: rgba(34,197,94,.15); color: #22c55e; }
+    .ed-output-mini p {
+      font-size: .76rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .ed-output-mini .mini-foot {
+      font-size: .62rem;
+      color: var(--dim);
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* FAQ */
+    .ed-faq { margin-top: 8px; }
+    .ed-faq details {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    .ed-faq details:first-child { padding-top: 6px; }
+    .ed-faq details:last-child { border-bottom: none; }
+    .ed-faq summary {
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .95rem;
+      font-weight: 600;
+      color: #fff;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .ed-faq summary::-webkit-details-marker { display: none; }
+    .ed-faq summary::after {
+      content: "+";
+      color: var(--blue);
+      font-size: 1.2rem;
+      font-weight: 400;
+      transition: transform .2s;
+    }
+    .ed-faq details[open] summary::after { content: "−"; }
+    .ed-faq details p {
+      margin: 10px 0 0;
+      font-size: .85rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* Founder note */
+    .ed-founder {
+      background: rgba(232,197,71,.04);
+      border: 1px solid rgba(232,197,71,.15);
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-top: 14px;
+    }
+    .ed-founder .quote-mark {
+      color: var(--gold);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .ed-founder p {
+      font-style: italic;
+      font-size: .95rem;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0 0 10px;
+    }
+    .ed-founder .signature {
+      font-size: .82rem;
+      color: var(--text-secondary);
+      font-style: normal;
+    }
+
+    /* Stats row */
+    .ed-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 14px 0 8px;
+      background: rgba(15,25,55,.3);
+    }
+    .ed-stat {
+      padding: 18px 14px;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .ed-stat:last-child { border-right: none; }
+    .ed-stat .num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .ed-stat .lbl {
+      font-size: .68rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     /* CTA at bottom */
@@ -2620,8 +2788,9 @@
     competitors = [];
     tasks = [];
     referrals = [];
-    loginGate.style.display = 'flex';
+    loginGate.style.display = 'block';
     appShell.classList.remove('active');
+    document.body.classList.remove('dashboard-active');
     loginEmail.value = '';
     loginPassword.value = '';
     loginError.style.display = 'none';
@@ -2638,13 +2807,14 @@
         sessionStorage.removeItem(SESSION_KEY);
       }
     }
-    loginGate.style.display = 'flex';
+    loginGate.style.display = 'block';
   }
 
   // ---- DASHBOARD ----
   function showDashboard() {
     loginGate.style.display = 'none';
     appShell.classList.add('active');
+    document.body.classList.add('dashboard-active');
     renderSidebar();
     renderQuickActions();
     renderTrialBanner();
