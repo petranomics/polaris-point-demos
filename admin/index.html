@@ -1075,12 +1075,12 @@
   <p style="text-align:center;margin-bottom:8px;"><button onclick="signOut()" style="background:none;border:none;color:#64748b;font-size:.7rem;cursor:pointer;text-decoration:underline;">Sign Out</button></p>
   <div class="admin-tabs">
     <button class="admin-tab active" onclick="switchTab('deck')">Sales Deck</button>
+    <button class="admin-tab senior-only" onclick="switchTab('outreach')">1. Find Prospects</button>
+    <button class="admin-tab" onclick="switchTab('leads')">2. My Leads</button>
+    <button class="admin-tab" onclick="switchTab('intake')">3. Build Site</button>
     <button class="admin-tab" onclick="switchTab('offers')">Offers</button>
     <button class="admin-tab" onclick="switchTab('guide')">Sales Guide</button>
-    <button class="admin-tab senior-only" onclick="switchTab('outreach')">Outreach</button>
-    <button class="admin-tab" onclick="switchTab('leads')">My Leads</button>
     <button class="admin-tab" onclick="switchTab('materials')">Materials</button>
-    <button class="admin-tab" onclick="switchTab('intake')">Site Builder</button>
     <a class="admin-tab" href="/ops" style="text-decoration:none;">Ops Dashboard</a>
     <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
     <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
@@ -1488,12 +1488,48 @@
 
       <div class="sales-card">
         <h3>My Leads</h3>
-        <p style="margin-bottom:8px;">Track your prospects through the pipeline. Your leads are saved locally and only visible to you.</p>
+        <p style="margin-bottom:8px;">All your prospects in one place. Filter, run outreach, or build sites — everything happens here.</p>
         <div style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.74rem;color:#94a3b8;line-height:1.55;">
-          <strong style="color:#5B8DEF;">How this works:</strong> Leads here are already saved. The <strong style="color:#fff;">checkboxes</strong> select leads for batch actions like generating outreach emails. To build a website for one lead, click the <strong style="color:#5B8DEF;">&ldquo;Build Site →&rdquo;</strong> button on its row.
+          <strong style="color:#5B8DEF;">How this works:</strong> Use filters to narrow your list. Check boxes for batch actions (emails, scripts, audits). Or click <strong style="color:#5B8DEF;">&ldquo;Build Site →&rdquo;</strong> on any single lead to make a website.
         </div>
 
-        <!-- Add lead form -->
+        <!-- Filter pills (moved from Outreach tab) -->
+        <div class="outreach-filter-row" id="leadsFilterRow">
+          <button class="outreach-filter active" onclick="filterOutreach('all',this)">All</button>
+          <button class="outreach-filter" onclick="filterOutreach('no_website',this)">No Website</button>
+          <button class="outreach-filter" onclick="filterOutreach('needs_outreach',this)">Needs Outreach</button>
+          <button class="outreach-filter" onclick="filterOutreach('email_sent',this)">Email Sent</button>
+          <button class="outreach-filter" onclick="filterOutreach('called',this)">Called</button>
+          <button class="outreach-filter" onclick="filterOutreach('follow_up',this)">Follow Up</button>
+        </div>
+
+        <!-- Batch actions bar -->
+        <div id="batchBar" style="display:none;background:#0B1120;border:1px solid rgba(91,141,239,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.75rem;color:#94a3b8;">
+                <input type="checkbox" id="selectAllLeads" onchange="toggleSelectAllLeads(this.checked)" style="accent-color:#5B8DEF;width:16px;height:16px;">
+                <span id="selectedCount">0 selected</span>
+              </label>
+              <button onclick="selectLeadsByFilter('no_website')" style="background:none;border:none;color:#f59e0b;font-size:.68rem;cursor:pointer;text-decoration:underline;">Select no-site</button>
+              <button onclick="selectLeadsByFilter('has_email')" style="background:none;border:none;color:#5B8DEF;font-size:.68rem;cursor:pointer;text-decoration:underline;">Select with email</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;" class="senior-only">
+              <button class="outreach-btn" onclick="batchGenerateEmails()">&#9993; Generate Emails</button>
+              <button class="outreach-btn call-btn" onclick="batchGenerateCallPreps()">&#9742; Generate Scripts</button>
+              <button class="outreach-btn" onclick="batchSendViaMailto()" style="background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:#a855f7;">&#9993; Open in Mail App</button>
+              <button class="outreach-btn audit-btn" onclick="batchAuditSites()">&#9889; Audit Sites</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lead list (rendered via renderOutreachQueue) -->
+        <div id="outreachQueue"><p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">Loading leads...</p></div>
+        <p id="leadsEmpty" style="display:none;text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads yet. Use the form below to add your first prospect, or scrape from the Outreach tab.</p>
+
+        <!-- Add lead form (collapsible) -->
+        <details style="margin-top:20px;">
+          <summary style="cursor:pointer;color:#5B8DEF;font-size:.85rem;font-weight:600;padding:10px 0;">+ Add a Lead Manually</summary><!-- Add lead form -->
         <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:16px;margin-bottom:16px;">
           <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:12px;">+ New Lead</h4>
 
@@ -1616,10 +1652,7 @@
           </div>
           <button class="btn-export" onclick="addLead()" style="width:100%;margin-top:8px;">Add Lead</button>
         </div>
-
-        <!-- Lead list -->
-        <div id="leadsList"></div>
-        <p id="leadsEmpty" style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads yet. Start adding prospects above.</p>
+        </details>
       </div>
 
     </div>
@@ -2095,25 +2128,29 @@
   <div id="tabOutreach" class="tab-content" style="display:none;">
     <div class="sales-section">
 
-      <!-- Agent Config -->
-      <div class="sales-card" style="padding:16px 20px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="var b=this.parentElement.querySelector('.agent-cfg-body');b.style.display=b.style.display==='none'?'block':'none'">
-          <h3 style="margin:0;font-size:.85rem;">Agent API</h3>
-          <span style="font-size:.72rem;" id="agentStatusInline"></span>
+      <!-- Step indicator -->
+      <div style="display:flex;gap:0;margin-bottom:20px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px 18px;align-items:center;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(91,141,239,.15);border:1px solid rgba(91,141,239,.3);color:#5B8DEF;font-weight:700;font-size:.78rem;">1</span>
+          <span style="font-weight:600;color:#fff;font-size:.85rem;">Search</span>
         </div>
-        <div class="agent-cfg-body" style="display:none;margin-top:14px;">
-          <p style="font-size:.75rem;color:#475569;margin-bottom:10px;">Agent calls route through the Vercel proxy. API key is managed server-side and never exposed to the browser.</p>
-          <div style="display:flex;gap:10px;">
-            <button class="btn-export secondary" onclick="testAgentConnection()" style="font-size:.75rem;padding:8px 16px;">Test Connection</button>
-            <span id="agentStatus" style="font-size:.72rem;color:#475569;display:flex;align-items:center;gap:6px;"></span>
-          </div>
+        <span style="margin:0 14px;color:#334155;">→</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#0B1120;border:1px solid #334155;color:#475569;font-weight:700;font-size:.78rem;">2</span>
+          <span style="color:#94a3b8;font-size:.85rem;">Pick winners</span>
         </div>
+        <span style="margin:0 14px;color:#334155;">→</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#0B1120;border:1px solid #334155;color:#475569;font-weight:700;font-size:.78rem;">3</span>
+          <span style="color:#94a3b8;font-size:.85rem;">Build site</span>
+        </div>
+        <span style="margin-left:auto;font-size:.7rem;cursor:pointer;color:#475569;" id="agentStatusInline" onclick="testAgentConnection()" title="Click to test agent connection"></span>
       </div>
 
       <!-- Batch Scraper -->
       <div class="sales-card">
-        <h3>Batch Lead Scraper</h3>
-        <p style="margin-bottom:14px;">Scrape business directories for prospects. Select a state and cities, or scrape the entire state.</p>
+        <h3>Find Prospects</h3>
+        <p style="margin-bottom:14px;">Pick an industry and a state. We'll scrape Google for businesses you can pitch.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div class="intake-field"><label>Industry</label>
             <select id="scrapeIndustry">
@@ -2148,38 +2185,9 @@
         <div id="scrapeResults"></div>
       </div>
 
-      <!-- Outreach Queue -->
-      <div class="sales-card">
-        <h3>Outreach Queue</h3>
-        <p style="margin-bottom:14px;">Select leads, generate emails, prep call scripts, and track outreach.</p>
-        <div class="outreach-filter-row">
-          <button class="outreach-filter active" onclick="filterOutreach('all',this)">All</button>
-          <button class="outreach-filter" onclick="filterOutreach('no_website',this)">No Website</button>
-          <button class="outreach-filter" onclick="filterOutreach('needs_outreach',this)">Needs Outreach</button>
-          <button class="outreach-filter" onclick="filterOutreach('email_sent',this)">Email Sent</button>
-          <button class="outreach-filter" onclick="filterOutreach('called',this)">Called</button>
-          <button class="outreach-filter" onclick="filterOutreach('follow_up',this)">Follow Up</button>
-        </div>
-        <!-- Batch actions bar -->
-        <div id="batchBar" style="display:none;background:#0B1120;border:1px solid rgba(91,141,239,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.75rem;color:#94a3b8;">
-                <input type="checkbox" id="selectAllLeads" onchange="toggleSelectAllLeads(this.checked)" style="accent-color:#5B8DEF;width:16px;height:16px;">
-                <span id="selectedCount">0 selected</span>
-              </label>
-              <button onclick="selectLeadsByFilter('no_website')" style="background:none;border:none;color:#f59e0b;font-size:.68rem;cursor:pointer;text-decoration:underline;">Select no-site</button>
-              <button onclick="selectLeadsByFilter('has_email')" style="background:none;border:none;color:#5B8DEF;font-size:.68rem;cursor:pointer;text-decoration:underline;">Select with email</button>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button class="outreach-btn" onclick="batchGenerateEmails()">&#9993; Generate Emails</button>
-              <button class="outreach-btn call-btn" onclick="batchGenerateCallPreps()">&#9742; Generate Scripts</button>
-              <button class="outreach-btn" onclick="batchSendViaMailto()" style="background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:#a855f7;">&#9993; Open in Mail App</button>
-              <button class="outreach-btn audit-btn" onclick="batchAuditSites()">&#9889; Audit Sites</button>
-            </div>
-          </div>
-        </div>
-        <div id="outreachQueue"><p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">Loading outreach queue...</p></div>
+      <!-- After import: see all leads in My Leads tab -->
+      <div style="margin-top:16px;text-align:center;font-size:.78rem;color:#475569;">
+        <p style="margin:0;">Imported leads appear in the <a onclick="switchTab('leads')" style="color:#5B8DEF;cursor:pointer;font-weight:600;">My Leads</a> tab where you can run outreach or build sites.</p>
       </div>
 
     </div>
@@ -2600,7 +2608,7 @@
         if (btn.getAttribute('onclick') === "switchTab('" + tab + "')") btn.classList.add('active');
       });
       // Load leads when switching to leads tab
-      if (tab === 'leads') renderLeads();
+      if (tab === 'leads') { renderLeads(); loadOutreachQueue(); }
       if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
       if (tab === 'outreach') loadOutreachQueue();
       if (tab === 'beacon') { loadBeaconSubs(); loadTrialCodes(); loadBeaconReferrals(); }
@@ -4286,10 +4294,14 @@
     }
 
     function renderLeads() {
+      // Leads now render via the consolidated outreach queue UI in My Leads tab.
+      // Keep this function as the entry point so add/update/delete handlers still work.
+      if (typeof loadOutreachQueue === 'function') { loadOutreachQueue(); return; }
       var container = document.getElementById('leadsList');
       var empty = document.getElementById('leadsEmpty');
+      if (!container) return;
       container.innerHTML = '<p style="color:#475569;font-size:.82rem;text-align:center;padding:16px;">Loading leads...</p>';
-      empty.style.display = 'none';
+      if (empty) empty.style.display = 'none';
 
       fetchLeads().then(function(leads) {
         if (!leads.length) {
@@ -5036,7 +5048,7 @@
 
     function renderOutreachQueue(leads) {
       var c = document.getElementById('outreachQueue');
-      if (!leads.length) { c.innerHTML = '<p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads yet. Add leads in My Leads tab or use the Batch Scraper above.</p>'; return; }
+      if (!leads.length) { c.innerHTML = '<p style="text-align:center;color:#334155;font-size:.82rem;padding:20px;">No leads yet. <a onclick="switchTab(\'outreach\')" style="color:#5B8DEF;cursor:pointer;font-weight:600;">Scrape some prospects</a> or expand &ldquo;Add a Lead Manually&rdquo; below.</p>'; return; }
       var f = leads;
       if (_outreachFilter === 'no_website') f = leads.filter(function(l) { return !l.website || l.website.toLowerCase() === 'none' || !l.website.trim(); });
       else if (_outreachFilter === 'needs_outreach') f = leads.filter(function(l) { return !l.outreach_status || l.outreach_status === 'new'; });
