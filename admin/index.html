@@ -1669,7 +1669,7 @@
         <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;">
           <div class="intake-field" style="margin:0;">
             <label>Your Coupon Code</label>
-            <input type="text" id="myCouponCode" placeholder="e.g. PETE, MIKE, JANE" style="text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+            <input type="text" id="myCouponCode" placeholder="e.g. PETE, MIKE, JANE" style="text-transform:uppercase;letter-spacing:1.5px;font-weight:600;" oninput="updateMaterialsLinks()" onblur="saveCouponCode(true)">
           </div>
           <button class="btn-export" onclick="saveCouponCode()" style="padding:9px 18px;font-size:.78rem;height:42px;">Save Code</button>
         </div>
@@ -2716,12 +2716,13 @@
       }
     }
 
-    async function saveCouponCode() {
+    async function saveCouponCode(silent) {
       var u = currentUser || sessionStorage.getItem('pp_user');
-      if (!u) { alert('Sign in first'); return; }
+      if (!u) { if (!silent) alert('Sign in first'); return; }
       var input = document.getElementById('myCouponCode');
       var code = (input.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 20);
-      if (!code) { alert('Enter a code (letters and numbers only)'); return; }
+      if (!code) { if (!silent) alert('Enter a code (letters and numbers only)'); return; }
+      if (silent && code === _myCoupon) return; // no change, skip silent save
       var status = document.getElementById('couponStatus');
       status.style.display = 'block'; status.style.color = '#94a3b8';
       status.textContent = 'Saving...';
@@ -2749,20 +2750,26 @@
       }
     }
 
+    function getActiveCouponCode() {
+      var input = document.getElementById('myCouponCode');
+      var typed = input ? (input.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 20) : '';
+      return typed || _myCoupon || 'AUSTIN';
+    }
+
     function updateMaterialsLinks() {
-      var code = _myCoupon || 'AUSTIN';
-      var suffix = code !== 'AUSTIN' ? '?code=' + code : '';
+      var code = getActiveCouponCode();
+      var suffix = '?code=' + encodeURIComponent(code);
       var f1 = document.getElementById('link-flyer');
       var f2 = document.getElementById('link-flyer-print');
       var iframe = document.getElementById('flyerPreview');
       if (f1) f1.href = '/flyer' + suffix;
       if (f2) f2.href = '/flyer-print' + suffix;
-      if (iframe) iframe.src = '/flyer' + suffix;
+      if (iframe && iframe.src.indexOf(suffix) === -1) iframe.src = '/flyer' + suffix;
     }
 
     function copyMaterialLink(which) {
-      var code = _myCoupon || 'AUSTIN';
-      var suffix = code !== 'AUSTIN' ? '?code=' + code : '';
+      var code = getActiveCouponCode();
+      var suffix = '?code=' + encodeURIComponent(code);
       var url = window.location.origin + '/' + which + suffix;
       navigator.clipboard.writeText(url).then(function() {
         var status = document.getElementById('couponStatus');
