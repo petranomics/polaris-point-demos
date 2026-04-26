@@ -1661,30 +1661,77 @@
   <!-- MATERIALS TAB -->
   <div id="tabMaterials" class="tab-content" style="display:none;">
     <div class="sales-section">
-      <div class="sales-card" style="text-align:center;">
+
+      <!-- Your coupon code -->
+      <div class="sales-card">
+        <h3>Your Sales Code</h3>
+        <p style="margin-bottom:14px;">Set a personal code (like your name or initials). When prospects scan your flyer's QR or use the code, you get credit for the sale.</p>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;">
+          <div class="intake-field" style="margin:0;">
+            <label>Your Coupon Code</label>
+            <input type="text" id="myCouponCode" placeholder="e.g. PETE, MIKE, JANE" style="text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+          </div>
+          <button class="btn-export" onclick="saveCouponCode()" style="padding:9px 18px;font-size:.78rem;height:42px;">Save Code</button>
+        </div>
+        <p id="couponStatus" style="font-size:.72rem;margin-top:8px;display:none;"></p>
+      </div>
+
+      <!-- Marketing materials with personalized links -->
+      <div class="sales-card">
         <h3>Marketing Materials</h3>
-        <p style="margin-bottom:16px;">Print-ready flyers and assets for door-to-door and in-person sales.</p>
-        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-          <a href="/flyer" target="_blank" class="btn-export" style="text-decoration:none;padding:12px 24px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Full Page Flyer
-          </a>
-          <a href="/flyer-print" target="_blank" class="btn-export" style="text-decoration:none;padding:12px 24px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
-            2-Up Print (Half Page)
-          </a>
-          <a href="/business-cards" target="_blank" class="btn-export secondary" style="text-decoration:none;padding:12px 24px;">
-            Business Cards Page
-          </a>
+        <p style="margin-bottom:14px;">Print-ready flyers — your personalized code is embedded in each link.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;">
+          <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:4px;">Full-Page Flyer</h4>
+            <p style="font-size:.7rem;color:#475569;margin-bottom:10px;">8.5×11" letter-size flyer with full Beacon callout</p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a id="link-flyer" href="/flyer" target="_blank" class="btn-export" style="text-decoration:none;padding:8px 12px;font-size:.74rem;text-align:center;">Open</a>
+              <button onclick="copyMaterialLink('flyer')" class="btn-export secondary" style="padding:7px 12px;font-size:.7rem;">Copy Link</button>
+            </div>
+          </div>
+          <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:4px;">2-Up Print Flyer</h4>
+            <p style="font-size:.7rem;color:#475569;margin-bottom:10px;">Two half-page flyers per letter sheet — saves paper</p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a id="link-flyer-print" href="/flyer-print" target="_blank" class="btn-export" style="text-decoration:none;padding:8px 12px;font-size:.74rem;text-align:center;">Open</a>
+              <button onclick="copyMaterialLink('flyer-print')" class="btn-export secondary" style="padding:7px 12px;font-size:.7rem;">Copy Link</button>
+            </div>
+          </div>
+          <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin-bottom:4px;">Business Cards</h4>
+            <p style="font-size:.7rem;color:#475569;margin-bottom:10px;">Editable card design — print-ready PDF</p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/business-cards" target="_blank" class="btn-export secondary" style="text-decoration:none;padding:8px 12px;font-size:.74rem;text-align:center;">Open</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#0B1120;border:1px solid rgba(232,197,71,.2);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px;">Now featured on flyers</div>
+            <div style="font-size:.85rem;color:#fff;font-weight:600;">Beacon — AI Marketing Assistant ($129/mo)</div>
+            <p style="font-size:.7rem;color:#475569;margin:4px 0 0;line-height:1.4;">Both flyers now showcase Beacon as a follow-on offer after a website. Helps justify the upsell at door-knock time.</p>
+          </div>
         </div>
       </div>
+
+      <!-- Senior only: see all staff codes -->
+      <div class="sales-card senior-only" id="staffCodesCard" style="display:none;">
+        <h3>Staff Sales Codes</h3>
+        <p style="margin-bottom:14px;">All staff codes. Each rep gets a personalized flyer link and credit for sales.</p>
+        <div id="staffCodesList" style="font-size:.85rem;"></div>
+      </div>
+
+      <!-- Flyer preview -->
       <div class="sales-card">
         <h3>Flyer Preview</h3>
         <div style="border:1px solid #1e293b;border-radius:10px;overflow:hidden;margin-top:12px;">
-          <iframe src="/flyer" style="width:100%;height:600px;border:none;background:#050D1E;transform-origin:top left;" loading="lazy"></iframe>
+          <iframe id="flyerPreview" src="/flyer" style="width:100%;height:600px;border:none;background:#050D1E;transform-origin:top left;" loading="lazy"></iframe>
         </div>
-        <p style="font-size:.72rem;color:#475569;margin-top:8px;text-align:center;">Open the flyer and use the Print button to save as PDF</p>
+        <p style="font-size:.72rem;color:#475569;margin-top:8px;text-align:center;">Open the flyer and use Cmd/Ctrl + P to save as PDF</p>
       </div>
+
     </div>
   </div>
 
@@ -2612,6 +2659,126 @@
       if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
       if (tab === 'outreach') loadOutreachQueue();
       if (tab === 'beacon') { loadBeaconSubs(); loadTrialCodes(); loadBeaconReferrals(); }
+      if (tab === 'materials') loadMaterialsTab();
+    }
+
+    // ---- Materials / Coupon code ----
+    var _myCoupon = '';
+    async function loadMaterialsTab() {
+      // Load my code
+      var u = currentUser || sessionStorage.getItem('pp_user');
+      if (!u) return;
+      try {
+        var r = await fetch('/api/coupon?username=' + encodeURIComponent(u));
+        var d = await r.json();
+        _myCoupon = (d.coupon_code || '').toUpperCase() || 'AUSTIN';
+        var input = document.getElementById('myCouponCode');
+        if (input) input.value = _myCoupon === 'AUSTIN' ? '' : _myCoupon;
+        updateMaterialsLinks();
+      } catch (e) {}
+      // Senior: load all staff codes
+      if (currentRole === 'senior') {
+        document.getElementById('staffCodesCard').style.display = 'block';
+        try {
+          var rr = await fetch('/api/coupon?action=list');
+          var dd = await rr.json();
+          var list = document.getElementById('staffCodesList');
+          if (!dd.users || !dd.users.length) {
+            list.innerHTML = '<p style="color:#475569;font-size:.78rem;">No staff yet.</p>';
+            return;
+          }
+          list.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:.78rem;">' +
+            '<thead><tr style="border-bottom:1px solid #1e293b;color:#64748b;text-align:left;">' +
+            '<th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Name</th>' +
+            '<th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Role</th>' +
+            '<th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Code</th>' +
+            '<th style="padding:8px 10px;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;">Personal Flyer</th>' +
+            '</tr></thead><tbody>' +
+            dd.users.map(function(usr) {
+              var code = (usr.coupon_code || '').toUpperCase();
+              var roleBadge = usr.role === 'senior' ?
+                '<span style="background:rgba(212,168,83,.12);color:#D4A853;font-size:.6rem;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.8px;font-weight:600;">Senior</span>' :
+                '<span style="background:rgba(91,141,239,.12);color:#5B8DEF;font-size:.6rem;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.8px;font-weight:600;">Team</span>';
+              var codeCell = code ?
+                '<span style="font-family:monospace;background:rgba(232,197,71,.08);color:#E8C547;padding:3px 8px;border-radius:4px;font-weight:600;letter-spacing:1px;">' + code + '</span>' :
+                '<span style="color:#475569;font-size:.72rem;font-style:italic;">— not set —</span>';
+              var flyerLink = code ?
+                '<button onclick="copyStaffFlyerLink(\'' + code + '\')" style="background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.2);color:#5B8DEF;font-size:.68rem;padding:4px 10px;border-radius:5px;cursor:pointer;">Copy Link</button>' :
+                '<span style="color:#475569;font-size:.7rem;">—</span>';
+              return '<tr style="border-bottom:1px solid rgba(30,41,59,.5);">' +
+                '<td style="padding:10px;color:#fff;">' + (usr.full_name || usr.username) + '</td>' +
+                '<td style="padding:10px;">' + roleBadge + '</td>' +
+                '<td style="padding:10px;">' + codeCell + '</td>' +
+                '<td style="padding:10px;">' + flyerLink + '</td>' +
+              '</tr>';
+            }).join('') + '</tbody></table>';
+        } catch (e) {}
+      }
+    }
+
+    async function saveCouponCode() {
+      var u = currentUser || sessionStorage.getItem('pp_user');
+      if (!u) { alert('Sign in first'); return; }
+      var input = document.getElementById('myCouponCode');
+      var code = (input.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 20);
+      if (!code) { alert('Enter a code (letters and numbers only)'); return; }
+      var status = document.getElementById('couponStatus');
+      status.style.display = 'block'; status.style.color = '#94a3b8';
+      status.textContent = 'Saving...';
+      try {
+        var r = await fetch('/api/coupon', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, coupon_code: code })
+        });
+        var d = await r.json();
+        if (d.success) {
+          _myCoupon = d.coupon_code;
+          input.value = _myCoupon;
+          status.style.color = '#22c55e';
+          status.textContent = '✓ Code saved. Your flyer links now use ' + _myCoupon + '.';
+          updateMaterialsLinks();
+          if (currentRole === 'senior') loadMaterialsTab();
+        } else {
+          status.style.color = '#ef4444';
+          status.textContent = '✗ ' + (d.error || 'Save failed');
+        }
+      } catch (e) {
+        status.style.color = '#ef4444';
+        status.textContent = '✗ Network error';
+      }
+    }
+
+    function updateMaterialsLinks() {
+      var code = _myCoupon || 'AUSTIN';
+      var suffix = code !== 'AUSTIN' ? '?code=' + code : '';
+      var f1 = document.getElementById('link-flyer');
+      var f2 = document.getElementById('link-flyer-print');
+      var iframe = document.getElementById('flyerPreview');
+      if (f1) f1.href = '/flyer' + suffix;
+      if (f2) f2.href = '/flyer-print' + suffix;
+      if (iframe) iframe.src = '/flyer' + suffix;
+    }
+
+    function copyMaterialLink(which) {
+      var code = _myCoupon || 'AUSTIN';
+      var suffix = code !== 'AUSTIN' ? '?code=' + code : '';
+      var url = window.location.origin + '/' + which + suffix;
+      navigator.clipboard.writeText(url).then(function() {
+        var status = document.getElementById('couponStatus');
+        if (status) {
+          status.style.display = 'block'; status.style.color = '#22c55e';
+          status.textContent = '✓ Copied: ' + url;
+          setTimeout(function() { status.style.display = 'none'; }, 3000);
+        }
+      });
+    }
+
+    function copyStaffFlyerLink(code) {
+      var url = window.location.origin + '/flyer?code=' + code;
+      navigator.clipboard.writeText(url).then(function() {
+        alert('Copied: ' + url);
+      });
     }
 
     function applyRole(role, userName) {
