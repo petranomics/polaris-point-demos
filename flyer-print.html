@@ -9,8 +9,10 @@
     * { box-sizing: border-box; margin: 0; }
     @page { size: letter portrait; margin: 0; }
     @media print {
-      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #050D1E; }
       .no-print { display: none !important; }
+      .page { margin: 0 !important; box-shadow: none !important; page-break-after: avoid; page-break-inside: avoid; }
+      .half { page-break-inside: avoid; }
     }
     body { font-family: 'Inter', sans-serif; background: #e5e5e5; }
 
@@ -195,7 +197,7 @@
 
 <div class="print-bar no-print">
   <button onclick="window.print()">Print 2-Up Flyers</button>
-  <p>Prints two identical flyers on one 8.5 x 11" sheet — cut along the dashed line</p>
+  <p>Prints two identical flyers on one 8.5 x 11" sheet — cut along the dashed line.<br><strong>In the print dialog, set Margins to "None" and Scale to 100%</strong> so the bottom flyer doesn't get clipped.</p>
 </div>
 
 <div class="page">
