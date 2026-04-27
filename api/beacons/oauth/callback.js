@@ -65,6 +65,31 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error('oauth/callback error', err);
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.status(500).send(htmlRedirect('/beacons#oauth-error=' + encodeURIComponent((err.message || 'unknown').slice(0, 80)), 'OAuth callback failed.'));
+    // Render the full error inline so we can actually read it.
+    const msg = err.message || 'Unknown error';
+    return res.status(500).send(`<!doctype html><html><head><meta charset="utf-8"><title>Beacons · OAuth error</title>
+<style>
+body{background:#050D1E;color:#9BB0D4;font-family:-apple-system,Inter,sans-serif;padding:48px 24px;margin:0;min-height:100vh;box-sizing:border-box}
+.card{max-width:760px;margin:0 auto;background:#0E1A38;border:1px solid rgba(91,141,239,.32);border-radius:14px;padding:28px;}
+h1{color:#fff;font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin:0 0 16px}
+pre{background:#050D1E;border:1px solid rgba(91,141,239,.15);border-radius:8px;padding:14px;overflow-x:auto;color:#9BB0D4;font-size:.82rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.foot{margin-top:24px;font-size:.85rem;color:#6B82A8}
+a{color:#5B8DEF}
+ul{padding-left:20px;line-height:1.7}
+strong{color:#fff}
+</style></head><body><div class="card">
+<h1>OAuth callback failed</h1>
+<p style="margin-top:0">Google rejected the token exchange. The full error is below — paste it back to me to diagnose.</p>
+<pre>${msg.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</pre>
+<div class="foot">
+<strong>Most common causes for "invalid_client" at this stage:</strong>
+<ul>
+<li>The Client Secret in Vercel was copied from a different OAuth client than the Client ID.</li>
+<li>You regenerated/replaced the OAuth client in Google Cloud after pasting the secret — the old secret is now invalid.</li>
+<li>The Client Secret has whitespace or got truncated (now auto-trimmed by the server).</li>
+</ul>
+<a href="/beacons">← Back to Beacons</a>
+</div>
+</div></body></html>`);
   }
 };
