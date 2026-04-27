@@ -1074,6 +1074,73 @@ main {
 @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
 
 /* ====================================================
+   CONNECTIONS
+   ==================================================== */
+.connections-card {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.connection-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 20px;
+}
+.connection-row + .connection-row { border-top: 1px solid var(--border); }
+.conn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(232,197,71,.1);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -.02em;
+}
+.conn-icon.connected {
+  background: rgba(46,194,126,.12);
+  color: var(--green);
+}
+.conn-icon.unconfigured {
+  background: rgba(91,141,239,.06);
+  color: var(--text-muted);
+}
+.conn-title {
+  color: var(--text);
+  font-weight: 500;
+  font-size: .95rem;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.conn-status-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.conn-status-pill.connected { background: rgba(46,194,126,.12); color: var(--green); border: 1px solid rgba(46,194,126,.25); }
+.conn-status-pill.idle { background: rgba(91,141,239,.06); color: var(--text-muted); border: 1px solid var(--border); }
+.conn-status-pill.error { background: rgba(248,113,113,.1); color: var(--red); border: 1px solid rgba(248,113,113,.25); }
+.conn-sub {
+  font-size: .82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.conn-sub strong { color: var(--text); font-weight: 500; }
+.conn-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* ====================================================
    CHAT WORKSPACE
    ==================================================== */
 .chat-card {
@@ -1400,6 +1467,29 @@ main {
           <button class="btn-icon" id="editDirectionsBtn">Edit</button>
         </div>
         <div class="directions-body" id="directionsBody"></div>
+      </div>
+    </div>
+
+    <!-- ============== CONNECTIONS ============== -->
+    <div class="section-block">
+      <div class="section-bar">
+        <div>
+          <h2>Connections</h2>
+          <div class="section-sub" id="connectionsSub">Hook Beacon up to your tools — Drive, Gmail, Docs, Sheets, Slides</div>
+        </div>
+      </div>
+      <div class="connections-card">
+        <div class="connection-row" id="googleConnectionRow">
+          <div class="conn-icon unconfigured" id="googleConnIcon">G</div>
+          <div>
+            <div class="conn-title">Google Workspace <span class="conn-status-pill idle" id="googleConnPill">Not connected</span></div>
+            <div class="conn-sub" id="googleConnSub">Drive (read), Gmail (read), Docs · Sheets · Slides (read+write)</div>
+          </div>
+          <div class="conn-actions">
+            <button class="btn btn-ghost" id="googleConnectBtn">Connect</button>
+            <button class="btn btn-ghost" id="googleDisconnectBtn" style="display:none;color:var(--red);border-color:rgba(248,113,113,.3)">Disconnect</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2409,6 +2499,122 @@ function copyCurrent() {
 }
 
 /* ============================================================
+   CONNECTIONS (Google OAuth)
+   ============================================================ */
+let googleConnection = { connected: false, configured: false };
+
+async function loadGoogleStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/oauth/status`, { headers: authHeaders() });
+    if (!res.ok) {
+      googleConnection = { connected: false, configured: false };
+    } else {
+      googleConnection = await res.json();
+    }
+  } catch (e) {
+    googleConnection = { connected: false, configured: false, error: e.message };
+  }
+  renderGoogleConnection();
+}
+
+function renderGoogleConnection() {
+  const icon = $('#googleConnIcon');
+  const pill = $('#googleConnPill');
+  const sub = $('#googleConnSub');
+  const connectBtn = $('#googleConnectBtn');
+  const disconnectBtn = $('#googleDisconnectBtn');
+
+  if (googleConnection.connected) {
+    icon.classList.remove('unconfigured');
+    icon.classList.add('connected');
+    pill.classList.remove('idle', 'error'); pill.classList.add('connected');
+    pill.textContent = 'Connected';
+    sub.innerHTML = `<strong>${escapeHtml(googleConnection.email || 'Google account')}</strong> — ${(googleConnection.scopes || []).length} scopes granted${googleConnection.connectedAt ? ' · since ' + fmtDate(googleConnection.connectedAt) : ''}`;
+    connectBtn.style.display = 'none';
+    disconnectBtn.style.display = 'inline-flex';
+  } else if (!googleConnection.configured) {
+    icon.classList.remove('connected');
+    icon.classList.add('unconfigured');
+    pill.classList.remove('connected', 'idle'); pill.classList.add('error');
+    pill.textContent = 'Setup needed';
+    const missing = (googleConnection.missing || []).join(', ');
+    sub.innerHTML = `Add <strong>${missing || 'GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET'}</strong> in Vercel env vars to enable.`;
+    connectBtn.style.display = 'inline-flex';
+    connectBtn.disabled = true;
+    disconnectBtn.style.display = 'none';
+  } else {
+    icon.classList.remove('connected');
+    icon.classList.add('unconfigured');
+    pill.classList.remove('connected', 'error'); pill.classList.add('idle');
+    pill.textContent = 'Not connected';
+    sub.innerHTML = 'Drive (read), Gmail (read), Docs · Sheets · Slides (read+write)';
+    connectBtn.style.display = 'inline-flex';
+    connectBtn.disabled = false;
+    disconnectBtn.style.display = 'none';
+  }
+}
+
+async function startGoogleConnect() {
+  if (!cloudMode) {
+    showToast('Cloud sync must be on first', true);
+    return;
+  }
+  $('#googleConnectBtn').disabled = true;
+  try {
+    const res = await fetch(`${API_BASE}/oauth/start`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || ('HTTP ' + res.status));
+    }
+    const { url } = await res.json();
+    if (!url) throw new Error('No auth URL returned');
+    location.href = url;
+  } catch (e) {
+    showToast('Connect failed: ' + e.message, true);
+    $('#googleConnectBtn').disabled = false;
+  }
+}
+
+async function disconnectGoogle() {
+  if (!confirm('Disconnect Google? Beacon will lose Drive + Gmail access until you reconnect.')) return;
+  try {
+    const res = await fetch(`${API_BASE}/oauth/disconnect`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || ('HTTP ' + res.status));
+    }
+    showToast('Google disconnected');
+    await loadGoogleStatus();
+  } catch (e) {
+    showToast('Disconnect failed: ' + e.message, true);
+  }
+}
+
+function consumeOAuthHash() {
+  // After /api/beacons/oauth/callback redirects us back, we land on
+  // /beacons#oauth-connected=email or #oauth-error=msg. Read once, clean up.
+  const hash = location.hash || '';
+  if (!hash) return;
+  if (hash.indexOf('oauth-connected') !== -1) {
+    const email = decodeURIComponent(hash.split('=')[1] || '');
+    showToast(email ? `Connected ${email}` : 'Connected');
+    history.replaceState(null, '', location.pathname);
+    // Status refresh after connect
+    setTimeout(loadGoogleStatus, 200);
+  } else if (hash.indexOf('oauth-error') !== -1) {
+    const msg = decodeURIComponent(hash.split('=')[1] || 'unknown');
+    showToast('Google connect failed: ' + msg, true);
+    history.replaceState(null, '', location.pathname);
+  }
+}
+
+/* ============================================================
    CHAT
    ============================================================ */
 let chatHistory = [];
@@ -2711,6 +2917,10 @@ async function bootstrap() {
   renderAll();
   const h = new Date().getHours();
   $('#welcomeHeading').textContent = (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening') + '.';
+  // Google connection status: only meaningful in cloud mode
+  if (cloudMode) loadGoogleStatus();
+  else renderGoogleConnection();
+  consumeOAuthHash();
 }
 
 /* ============================================================
@@ -2785,6 +2995,10 @@ async function init() {
       else if (actBtn.dataset.act === 'project') makeProjectFromChat(i);
     }
   });
+
+  // Connections
+  $('#googleConnectBtn').addEventListener('click', startGoogleConnect);
+  $('#googleDisconnectBtn').addEventListener('click', disconnectGoogle);
 
   // Directions
   $('#editDirectionsBtn').addEventListener('click', openDirectionsModal);
