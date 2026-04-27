@@ -62,16 +62,23 @@ function buildSystemPrompt(items) {
     '  • Summarize meetings, calls, threads, and documents.',
     '  • Generate ideas, angles, and strategic recommendations grounded in their context.',
     '  • Scan their library and projects to surface what\'s relevant for whatever they ask.',
+    '  • Research the open web for fresh information when the answer needs it.',
     '  • Stay specific and concrete. Use the actual names, dates, and details from their context — never generic placeholders.',
+    '',
+    'You have a web_search tool available. Use it when:',
+    '  • The user explicitly asks for research, news, market intel, competitor moves, or current pricing.',
+    '  • The answer needs information that post-dates your training or wouldn\'t be in their library.',
+    '  • A specific external fact materially changes the answer (regulations, official statements, public data).',
+    'Do NOT search for things already covered in the user\'s library — their context comes first. When you do search, cite the source URL inline so they can verify. 2–4 searches per question is usually plenty; do not over-search.',
     '',
     'Tone: direct, professional, peer-to-peer. Skip throat-clearing ("Great question!"). Lead with the answer. When drafting on their behalf, match the voice they\'ve described in their directions.',
     '',
     'Output formatting:',
     '  • For drafts (emails, posts, briefs), output the draft only. No preamble like "Here\'s your draft:".',
     '  • For analysis or recommendations, use plain prose. Headers and bullets only when they earn their place.',
-    '  • Cite specific items from context when relevant: "per [Q3 Nestlé deck]", "from your Apr 22 meeting note".',
+    '  • Cite specific items from context when relevant: "per [Q3 Nestlé deck]", "from your Apr 22 meeting note". Cite web sources by URL.',
     '',
-    'When asked something you can\'t determine from context, say so plainly and ask for the missing piece. Do not invent facts about people, brands, prices, or events.',
+    'When asked something you can\'t determine from context or the web, say so plainly and ask for the missing piece. Do not invent facts about people, brands, prices, or events.',
   ].join('\n'));
 
   // ----- USER DIRECTIONS -----
@@ -168,6 +175,14 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
   }
   messages.push({ role: 'user', content: String(message) });
 
+  // Server-side web search tool. Anthropic runs the search loop; we get the
+  // final answer back with citations embedded in the text blocks.
+  const tools = [{
+    type: 'web_search_20250305',
+    name: 'web_search',
+    max_uses: 6
+  }];
+
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -178,6 +193,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
     body: JSON.stringify({
       model,
       max_tokens: 4096,
+      tools,
       system: systemBlocks,
       messages
     })
@@ -188,11 +204,23 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
     throw new Error('Anthropic API error: ' + resp.status + ' ' + errText.slice(0, 400));
   }
   const data = await resp.json();
-  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n').trim();
+  const blocks = data.content || [];
+  const text = blocks.filter(b => b.type === 'text').map(b => b.text).join('\n').trim();
+
+  // Surface what the model searched so the UI can show "Searched N sources"
+  const searchUrls = [];
+  blocks.forEach(b => {
+    if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
+      b.content.forEach(r => { if (r && r.url) searchUrls.push({ url: r.url, title: r.title || '' }); });
+    }
+  });
+
   return {
     response: text,
     model: data.model || model,
-    usage: data.usage || {}
+    usage: data.usage || {},
+    searchCount: searchUrls.length,
+    searchSources: searchUrls.slice(0, 10)
   };
 }
 

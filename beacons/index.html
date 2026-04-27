@@ -1207,6 +1207,32 @@ main {
   letter-spacing: .14em;
   color: var(--text-dim);
 }
+.chat-msg-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.chat-msg-sources a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  color: var(--blue);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: rgba(91,141,239,.04);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: border-color .15s, background .15s;
+}
+.chat-msg-sources a:hover {
+  border-color: var(--blue);
+  background: rgba(91,141,239,.1);
+}
 .chat-msg.user .chat-msg-meta { align-self: flex-end; }
 
 .chat-typing {
@@ -1382,7 +1408,7 @@ main {
       <div class="section-bar">
         <div>
           <h2>Chat with Beacon</h2>
-          <div class="section-sub" id="chatSub">Ask, draft, brief — Beacon knows your projects, tasks, and library</div>
+          <div class="section-sub" id="chatSub">Knows your projects, tasks, and library · Can search the web</div>
         </div>
         <div class="section-bar-actions">
           <select id="chatMode" class="chat-mode-select" title="Default routes to Sonnet for everyday work. Deep uses Opus for heavy analysis. Fast uses Haiku for quick utility.">
@@ -2366,7 +2392,7 @@ function emptyChatHTML() {
   return `<div class="chat-empty">
     <div>
       <div class="chat-empty-greet">What can I work on for you?</div>
-      <div class="chat-empty-sub">I have your directions, projects, tasks, and full library loaded. Just ask.</div>
+      <div class="chat-empty-sub">I have your directions, projects, tasks, and full library loaded — and I can search the web for fresh research. Just ask.</div>
     </div>
     <div class="chat-quickactions">${qaButtons}</div>
   </div>`;
@@ -2388,10 +2414,21 @@ function renderChat() {
           <button data-act="task" data-i="${i}">Make task</button>
         </div>`
       : '';
-    const meta = role === 'assistant' && m.model ? `<div class="chat-msg-meta">${escapeHtml(m.model)}${m.mode ? ' · ' + m.mode : ''}</div>` : '';
+    const metaParts = [];
+    if (role === 'assistant' && m.model) {
+      metaParts.push(escapeHtml(m.model) + (m.mode ? ' · ' + m.mode : ''));
+    }
+    if (role === 'assistant' && m.searchCount) {
+      metaParts.push(`◐ Searched ${m.searchCount} ${m.searchCount === 1 ? 'source' : 'sources'}`);
+    }
+    const meta = metaParts.length ? `<div class="chat-msg-meta">${metaParts.join(' · ')}</div>` : '';
+    const sourcesHtml = (role === 'assistant' && m.searchSources && m.searchSources.length)
+      ? `<div class="chat-msg-sources">${m.searchSources.map(s => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.title || s.url)}</a>`).join('')}</div>`
+      : '';
     return `<div class="chat-msg ${role}">
       ${meta}
       <div class="chat-bubble">${escapeHtml(text)}</div>
+      ${sourcesHtml}
       ${actions}
     </div>`;
   }).join('');
@@ -2437,7 +2474,9 @@ async function sendChat(message, modeOverride) {
         role: 'assistant',
         content: data.response || '(empty response)',
         model: data.model,
-        mode: data.mode
+        mode: data.mode,
+        searchCount: data.searchCount || 0,
+        searchSources: data.searchSources || []
       });
     }
     renderChat();
