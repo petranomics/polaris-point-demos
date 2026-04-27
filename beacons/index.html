@@ -3226,12 +3226,16 @@ function renderChat() {
   thread.innerHTML = chatHistory.map((m, i) => {
     const role = m.role;
     const text = m.content || '';
+    const driveBtns = (googleConnection && googleConnection.connected)
+      ? '<button data-act="gdoc" data-i="' + i + '">→ Google Doc</button><button data-act="gsheet" data-i="' + i + '">→ Sheet</button>'
+      : '';
     const actions = (role === 'assistant' && !m.streaming)
       ? `<div class="chat-msg-actions">
           <button data-act="save" data-i="${i}">Save to library</button>
           <button data-act="copy" data-i="${i}">Copy</button>
           <button data-act="task" data-i="${i}">Make task</button>
           <button data-act="project" data-i="${i}">Make project</button>
+          ${driveBtns}
         </div>`
       : '';
     const metaParts = [];
@@ -3410,6 +3414,31 @@ function copyChatMsg(idx) {
     () => showToast('Copied'),
     () => showToast('Copy failed', true)
   );
+}
+
+async function saveChatToDrive(idx, format) {
+  const msg = chatHistory[idx];
+  if (!msg) return;
+  const userMsg = chatHistory[idx - 1];
+  const titleSeed = userMsg && userMsg.content ? userMsg.content : msg.content;
+  const title = (titleSeed || '').replace(/\s+/g, ' ').slice(0, 70);
+  showToast(`Creating Google ${format === 'sheet' ? 'Sheet' : 'Doc'}…`);
+  try {
+    const res = await fetch(`${API_BASE}/google/save-as-doc`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: msg.content, title, format })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || ('HTTP ' + res.status));
+    }
+    const data = await res.json();
+    showToast(`Saved · opening ${data.name}`);
+    if (data.webViewLink) window.open(data.webViewLink, '_blank', 'noopener');
+  } catch (e) {
+    showToast('Save failed: ' + e.message, true);
+  }
 }
 
 async function makeTaskFromChat(idx) {
@@ -3634,6 +3663,8 @@ async function init() {
       else if (actBtn.dataset.act === 'copy') copyChatMsg(i);
       else if (actBtn.dataset.act === 'task') makeTaskFromChat(i);
       else if (actBtn.dataset.act === 'project') makeProjectFromChat(i);
+      else if (actBtn.dataset.act === 'gdoc') saveChatToDrive(i, 'doc');
+      else if (actBtn.dataset.act === 'gsheet') saveChatToDrive(i, 'sheet');
     }
   });
 
