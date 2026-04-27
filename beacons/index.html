@@ -685,6 +685,395 @@ main {
 }
 
 /* ====================================================
+   SECTION HEADERS
+   ==================================================== */
+.section-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.section-bar h2 { font-size: 1.05rem; margin-bottom: 2px; }
+.section-bar .section-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--text-muted);
+}
+.section-bar-actions { display: flex; gap: 8px; align-items: center; }
+
+.section-block { margin-bottom: 36px; }
+
+/* ====================================================
+   DIRECTIONS CARD
+   ==================================================== */
+.directions-card {
+  background: linear-gradient(135deg, rgba(232,197,71,.04) 0%, rgba(91,141,239,.04) 100%);
+  border: 1px solid rgba(232,197,71,.18);
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+.directions-card.empty {
+  background: var(--surface-solid);
+  border-color: var(--border);
+  border-style: dashed;
+}
+.directions-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.directions-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.directions-title-mark {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  background: var(--gold-dim);
+  color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+}
+.directions-body {
+  font-size: .9rem;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  line-height: 1.55;
+  max-height: 180px;
+  overflow: auto;
+}
+.directions-empty-msg {
+  color: var(--text-muted);
+  font-size: .88rem;
+  font-style: italic;
+}
+
+/* ====================================================
+   PROJECTS GRID
+   ==================================================== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.project-card {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 160px;
+}
+.project-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+.project-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.project-name {
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text);
+  font-weight: 600;
+  font-size: .95rem;
+  line-height: 1.3;
+}
+.project-cadence-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: rgba(91,141,239,.12);
+  color: var(--blue);
+  border: 1px solid rgba(91,141,239,.25);
+  white-space: nowrap;
+}
+.project-cadence-pill.weekly { color: var(--gold); background: rgba(232,197,71,.08); border-color: rgba(232,197,71,.25); }
+.project-cadence-pill.adhoc { color: var(--text-muted); background: rgba(255,255,255,.03); border-color: var(--border); }
+.project-status-paused { opacity: .55; }
+.project-status-done { opacity: .45; }
+
+.project-desc {
+  font-size: .82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+.project-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text-muted);
+}
+.project-foot strong { color: var(--text); font-weight: 500; }
+
+.project-card.add-new {
+  border-style: dashed;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  background: transparent;
+}
+.project-card.add-new:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-1px); }
+.project-card.add-new .add-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 6px; }
+.project-card.add-new .add-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+
+/* ====================================================
+   TASKS LIST
+   ==================================================== */
+.tasks-card {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.tasks-quickadd {
+  display: flex;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(91,141,239,.03);
+  flex-wrap: wrap;
+}
+.tasks-quickadd input[type="text"] {
+  flex: 1;
+  min-width: 220px;
+  background: var(--space);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 13px;
+  border-radius: 8px;
+  font-size: .88rem;
+  outline: 0;
+  transition: border-color .15s;
+}
+.tasks-quickadd input[type="text"]:focus { border-color: var(--blue); }
+.tasks-quickadd input[type="text"]::placeholder { color: var(--text-dim); }
+.tasks-quickadd select {
+  background: var(--space);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: .8rem;
+  font-family: 'JetBrains Mono', monospace;
+  outline: 0;
+  cursor: pointer;
+  max-width: 200px;
+}
+.tasks-quickadd select:focus { border-color: var(--blue); }
+
+.tasks-toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.tasks-toolbar .tlabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+.tasks-toolbar select.task-filter-select {
+  background: var(--space);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  outline: 0;
+  cursor: pointer;
+}
+
+.tasks-list { list-style: none; max-height: 520px; overflow-y: auto; }
+.tasks-empty {
+  padding: 50px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .88rem;
+}
+.tasks-empty strong { color: var(--text); display: block; margin-bottom: 4px; font-weight: 500; }
+
+.task-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+  cursor: pointer;
+}
+.task-row:hover { background: rgba(91,141,239,.04); }
+.task-row:last-child { border-bottom: 0; }
+
+.task-status-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-muted);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+.task-status-btn:hover { border-color: var(--text); }
+.task-status-btn.in-progress {
+  border-color: var(--blue);
+  background: rgba(91,141,239,.18);
+  color: var(--blue);
+}
+.task-status-btn.done {
+  border-color: var(--green);
+  background: var(--green);
+  color: var(--space);
+}
+
+.task-title-cell { min-width: 0; }
+.task-title {
+  font-size: .92rem;
+  color: var(--text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-row.done .task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.task-sub {
+  font-size: .74rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.task-project-pill {
+  background: rgba(91,141,239,.1);
+  color: var(--blue);
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: .6rem;
+  letter-spacing: .12em;
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.task-priority-pill {
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: .58rem;
+  letter-spacing: .12em;
+}
+.task-priority-pill.high { background: rgba(248,113,113,.12); color: var(--red); }
+.task-priority-pill.normal { display: none; }
+.task-priority-pill.low { background: rgba(255,255,255,.04); color: var(--text-muted); }
+
+/* ====================================================
+   EDIT MODAL FORMS
+   ==================================================== */
+.modal-form {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+.modal-form .form-field { display: flex; flex-direction: column; gap: 6px; }
+.modal-form label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--text-muted);
+}
+.modal-form input[type="text"],
+.modal-form select,
+.modal-form textarea {
+  background: var(--space);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: .9rem;
+  outline: 0;
+  transition: border-color .15s;
+}
+.modal-form input[type="text"]:focus,
+.modal-form select:focus,
+.modal-form textarea:focus { border-color: var(--blue); }
+.modal-form textarea { min-height: 110px; resize: vertical; line-height: 1.55; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+/* ====================================================
    TOAST
    ==================================================== */
 .toast {
@@ -764,12 +1153,76 @@ main {
     </div>
 
     <div class="stats">
-      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Items in library</div></div>
-      <div class="stat"><div class="stat-num" id="statFiles">0</div><div class="stat-lbl">Files</div></div>
-      <div class="stat"><div class="stat-num" id="statThoughts">0</div><div class="stat-lbl">Thoughts</div></div>
-      <div class="stat"><div class="stat-num" id="statSize">0 KB</div><div class="stat-lbl">Stored locally</div></div>
+      <div class="stat"><div class="stat-num" id="statLibrary">0</div><div class="stat-lbl">Library items</div></div>
+      <div class="stat"><div class="stat-num" id="statProjects">0</div><div class="stat-lbl">Active projects</div></div>
+      <div class="stat"><div class="stat-num" id="statTasks">0</div><div class="stat-lbl">Open tasks</div></div>
+      <div class="stat"><div class="stat-num" id="statSize">0 KB</div><div class="stat-lbl" id="statSizeLabel">Stored locally</div></div>
     </div>
 
+    <!-- ============== DIRECTIONS ============== -->
+    <div class="section-block">
+      <div class="directions-card empty" id="directionsCard">
+        <div class="directions-head">
+          <div class="directions-title">
+            <span class="directions-title-mark">✦</span>
+            Directions for Beacon
+          </div>
+          <button class="btn-icon" id="editDirectionsBtn">Edit</button>
+        </div>
+        <div class="directions-body" id="directionsBody"></div>
+      </div>
+    </div>
+
+    <!-- ============== PROJECTS ============== -->
+    <div class="section-block">
+      <div class="section-bar">
+        <div>
+          <h2>Projects</h2>
+          <div class="section-sub" id="projectsSub">Ongoing initiatives · weekly cadence</div>
+        </div>
+        <div class="section-bar-actions">
+          <button class="btn btn-ghost" id="newProjectBtn">+ New project</button>
+        </div>
+      </div>
+      <div class="projects-grid" id="projectsGrid"></div>
+    </div>
+
+    <!-- ============== TASKS ============== -->
+    <div class="section-block">
+      <div class="section-bar">
+        <div>
+          <h2>Tasks</h2>
+          <div class="section-sub" id="tasksSub">A map of what's in flight</div>
+        </div>
+      </div>
+      <div class="tasks-card">
+        <div class="tasks-quickadd">
+          <input type="text" id="quickTaskTitle" placeholder="Quick-add a task — e.g. Draft Nestlé Q3 brief">
+          <select id="quickTaskProject"><option value="">No project</option></select>
+          <button class="btn btn-primary" id="quickTaskAddBtn">Add</button>
+        </div>
+        <div class="tasks-toolbar">
+          <span class="tlabel">Filter</span>
+          <button class="filter-chip active" data-task-filter="open">Open</button>
+          <button class="filter-chip" data-task-filter="in_progress">In progress</button>
+          <button class="filter-chip" data-task-filter="done">Done</button>
+          <button class="filter-chip" data-task-filter="all">All</button>
+          <span class="tlabel" style="margin-left:14px">Project</span>
+          <select id="taskFilterProject" class="task-filter-select">
+            <option value="all">All projects</option>
+          </select>
+        </div>
+        <ul class="tasks-list" id="tasksList"></ul>
+      </div>
+    </div>
+
+    <!-- ============== ADD TO CONTEXT ============== -->
+    <div class="section-bar">
+      <div>
+        <h2>Add to context</h2>
+        <div class="section-sub">Source material Beacon pulls from</div>
+      </div>
+    </div>
     <div class="panel-grid">
 
       <!-- Upload panel -->
@@ -855,6 +1308,135 @@ main {
   </div>
 </div>
 
+<!-- ===================== PROJECT MODAL ===================== -->
+<div class="modal" id="projectModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="projectModalTitle">New project</h3>
+        <div class="modal-meta">An ongoing initiative for Beacon to work on</div>
+      </div>
+      <button class="modal-close" data-close-modal="projectModal">×</button>
+    </div>
+    <form class="modal-form" id="projectForm" onsubmit="return false">
+      <div class="form-field">
+        <label>Project name</label>
+        <input type="text" id="projectName" placeholder="e.g. Nestlé Q3 Renewal · Cocoa Origin Landscape · Coffee Market Scan" required>
+      </div>
+      <div class="form-field">
+        <label>Description / goal</label>
+        <textarea id="projectDesc" placeholder="What is Beacon working toward on this project? Who's involved? What's the win?"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Cadence</label>
+          <select id="projectCadence">
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Biweekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="adhoc">Ad-hoc</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Status</label>
+          <select id="projectStatus">
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="projectDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3);display:none">Delete</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-ghost" data-close-modal="projectModal">Cancel</button>
+        <button class="btn btn-primary" id="projectSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TASK MODAL ===================== -->
+<div class="modal" id="taskModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="taskModalTitle">New task</h3>
+        <div class="modal-meta">A discrete piece of work</div>
+      </div>
+      <button class="modal-close" data-close-modal="taskModal">×</button>
+    </div>
+    <form class="modal-form" id="taskForm" onsubmit="return false">
+      <div class="form-field">
+        <label>Title</label>
+        <input type="text" id="taskTitle" placeholder="e.g. Draft pre-call brief for Nestlé sustainability lead" required>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Project</label>
+          <select id="taskProject"><option value="">No project</option></select>
+        </div>
+        <div class="form-field">
+          <label>Priority</label>
+          <select id="taskPriority">
+            <option value="low">Low</option>
+            <option value="normal" selected>Normal</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Notes / brief for Beacon</label>
+        <textarea id="taskNotes" placeholder="Context, framing, what to include, what to avoid..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Status</label>
+          <select id="taskStatus">
+            <option value="todo">To do</option>
+            <option value="in_progress">In progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Due (optional)</label>
+          <input type="text" id="taskDue" placeholder="e.g. Apr 30 · Friday · this week">
+        </div>
+      </div>
+    </form>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="taskDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3);display:none">Delete</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-ghost" data-close-modal="taskModal">Cancel</button>
+        <button class="btn btn-primary" id="taskSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DIRECTIONS MODAL ===================== -->
+<div class="modal" id="directionsModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3>Directions for Beacon</h3>
+        <div class="modal-meta">Standing instructions — who you are, what you need, how to communicate</div>
+      </div>
+      <button class="modal-close" data-close-modal="directionsModal">×</button>
+    </div>
+    <form class="modal-form" id="directionsForm" onsubmit="return false">
+      <div class="form-field">
+        <textarea id="directionsText" placeholder="I'm a Relationship Manager at Rainforest Alliance covering [accounts]. My priorities are [...]. When drafting on my behalf, lean toward [...]. Avoid [...]." style="min-height:280px"></textarea>
+      </div>
+    </form>
+    <div class="modal-foot">
+      <span class="modal-meta">Passed to Beacon at the start of every conversation.</span>
+      <button class="btn btn-primary" id="directionsSaveBtn">Save directions</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== TOAST ===================== -->
 <div class="toast" id="toast"><span class="dot"></span><span id="toastText">Saved</span></div>
 
@@ -864,22 +1446,30 @@ main {
 /* ============================================================
    CONFIG
    ============================================================ */
-// Change this to whatever passcode you want. Hash is SHA-256 of the passcode.
-// Default passcode is set up below in initPasscode() on first run.
 const SESSION_KEY = 'beacons_session_v1';
 const PASSCODE_HASH_KEY = 'beacons_passcode_hash';
-const DEFAULT_PASSCODE = 'rfa-canopy-2026'; // Pete: change this on first unlock if you want
+const DEFAULT_PASSCODE = 'rfa-canopy-2026';
 const DB_NAME = 'beacons_db_v1';
 const DB_STORE = 'items';
+const API_BASE = '/api/beacons';
 
 /* ============================================================
    STATE
    ============================================================ */
 let db = null;
+let cloudMode = false;
+let authHash = null;
 let items = [];
+let projects = [];
+let tasks = [];
+let directionsText = '';
 let currentFilter = 'all';
 let currentSearch = '';
 let currentDetailId = null;
+let currentTaskFilter = 'open';
+let currentTaskProject = 'all';
+let editingProjectId = null;
+let editingTaskId = null;
 
 /* ============================================================
    UTIL
@@ -891,35 +1481,31 @@ async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
 function fmtSize(bytes) {
+  if (bytes === undefined || bytes === null) return '—';
   if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB';
-  return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  if (bytes < 1024*1024*1024) return (bytes/1024/1024).toFixed(1) + ' MB';
+  return (bytes/1024/1024/1024).toFixed(2) + ' GB';
 }
-
 function fmtDate(iso) {
-  const d = new Date(iso);
-  const now = new Date();
+  if (!iso) return '—';
+  const d = new Date(iso), now = new Date();
   const diff = (now - d) / 1000;
   if (diff < 60) return 'just now';
-  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-  if (diff < 86400 * 7) return Math.floor(diff / 86400) + 'd ago';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 86400*7) return Math.floor(diff/86400) + 'd ago';
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
-
 function escapeHtml(s) {
   const div = document.createElement('div');
   div.textContent = s == null ? '' : String(s);
   return div.innerHTML;
 }
-
 function uid() {
   return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
 }
-
 function inferIconKind(item) {
   if (item.kind === 'thought') return 'thought';
   const ext = (item.extension || '').toLowerCase();
@@ -927,14 +1513,12 @@ function inferIconKind(item) {
   if (ext === 'pdf') return 'pdf';
   return 'doc';
 }
-
 function iconLabel(item) {
   if (item.kind === 'thought') return 'TH';
   const ext = (item.extension || '').toLowerCase();
   if (!ext) return 'F';
   return ext.slice(0, 3).toUpperCase();
 }
-
 function showToast(msg, isError) {
   const t = $('#toast');
   $('#toastText').textContent = msg;
@@ -942,56 +1526,60 @@ function showToast(msg, isError) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2400);
 }
+function authHeaders() { return { 'x-beacons-auth': authHash || '' }; }
 
 /* ============================================================
-   AUTH (passcode)
+   AUTH
    ============================================================ */
 async function initPasscode() {
-  // On first run, seed the default passcode hash. Pete can change later.
   if (!localStorage.getItem(PASSCODE_HASH_KEY)) {
-    const hash = await sha256(DEFAULT_PASSCODE);
-    localStorage.setItem(PASSCODE_HASH_KEY, hash);
+    const h = await sha256(DEFAULT_PASSCODE);
+    localStorage.setItem(PASSCODE_HASH_KEY, h);
   }
 }
+function isUnlocked() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
 
-async function checkPasscode(input) {
-  const hash = await sha256(input);
-  return hash === localStorage.getItem(PASSCODE_HASH_KEY);
+async function attemptUnlock(code) {
+  const hash = await sha256(code);
+  authHash = hash;
+  try {
+    const res = await fetch(`${API_BASE}/items`, { headers: authHeaders() });
+    if (res.status === 200) { cloudMode = true; return true; }
+    if (res.status === 401) { authHash = null; return false; }
+  } catch (e) {}
+  const localHash = localStorage.getItem(PASSCODE_HASH_KEY);
+  if (hash === localHash) { cloudMode = false; return true; }
+  authHash = null;
+  return false;
 }
 
-function isUnlocked() {
-  return sessionStorage.getItem(SESSION_KEY) === '1';
-}
-
-function unlock() {
+function showApp() {
   sessionStorage.setItem(SESSION_KEY, '1');
   $('#lockScreen').classList.add('hidden');
   $('#app').classList.add('active');
   bootstrap();
 }
-
 function signOut() {
   sessionStorage.removeItem(SESSION_KEY);
+  authHash = null;
+  cloudMode = false;
   location.reload();
 }
 
 /* ============================================================
-   STORAGE — IndexedDB
+   STORAGE — IDB + Cloud abstraction
    ============================================================ */
 function openDb() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, 1);
     req.onupgradeneeded = e => {
       const d = e.target.result;
-      if (!d.objectStoreNames.contains(DB_STORE)) {
-        d.createObjectStore(DB_STORE, { keyPath: 'id' });
-      }
+      if (!d.objectStoreNames.contains(DB_STORE)) d.createObjectStore(DB_STORE, { keyPath: 'id' });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
 }
-
 function dbAll() {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(DB_STORE, 'readonly');
@@ -1000,7 +1588,6 @@ function dbAll() {
     req.onerror = () => reject(req.error);
   });
 }
-
 function dbPut(item) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(DB_STORE, 'readwrite');
@@ -1009,7 +1596,6 @@ function dbPut(item) {
     tx.onerror = () => reject(tx.error);
   });
 }
-
 function dbDelete(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(DB_STORE, 'readwrite');
@@ -1019,16 +1605,67 @@ function dbDelete(id) {
   });
 }
 
-async function loadItems() {
-  items = await dbAll();
-  items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+async function storageAll() {
+  if (cloudMode) {
+    const res = await fetch(`${API_BASE}/items`, { headers: authHeaders() });
+    if (!res.ok) throw new Error('Cloud read failed: ' + res.status);
+    return await res.json();
+  }
+  return dbAll();
+}
+async function storagePut(item) {
+  if (cloudMode) {
+    const res = await fetch(`${API_BASE}/items`, {
+      method: 'PUT',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    });
+    if (!res.ok) throw new Error('Cloud write failed: ' + res.status);
+    return;
+  }
+  return dbPut(item);
+}
+async function storageDelete(id) {
+  if (cloudMode) {
+    const res = await fetch(`${API_BASE}/items?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE', headers: authHeaders()
+    });
+    if (!res.ok) throw new Error('Cloud delete failed: ' + res.status);
+    return;
+  }
+  return dbDelete(id);
 }
 
 /* ============================================================
-   FILE UPLOAD
+   LOAD ALL
    ============================================================ */
-const TEXT_EXTENSIONS = ['txt', 'md', 'csv', 'json', 'html', 'htm', 'xml', 'eml', 'mbox', 'log', 'tsv', 'rtf', 'srt', 'vtt'];
+function taskCompare(a, b) {
+  const order = { todo: 0, in_progress: 1, done: 2 };
+  const oa = order[a.status] != null ? order[a.status] : 0;
+  const ob = order[b.status] != null ? order[b.status] : 0;
+  if (oa !== ob) return oa - ob;
+  const prio = { high: 0, normal: 1, low: 2 };
+  const pa = prio[a.priority] != null ? prio[a.priority] : 1;
+  const pb = prio[b.priority] != null ? prio[b.priority] : 1;
+  if (pa !== pb) return pa - pb;
+  return new Date(b.created_at) - new Date(a.created_at);
+}
 
+async function loadAll() {
+  const all = await storageAll();
+  items = all.filter(i => i.kind === 'file' || i.kind === 'thought')
+             .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  projects = all.filter(i => i.kind === 'project')
+                .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  tasks = all.filter(i => i.kind === 'task').sort(taskCompare);
+  const dirs = all.filter(i => i.kind === 'direction');
+  directionsText = dirs[0] ? (dirs[0].content || '') : '';
+}
+
+/* ============================================================
+   FILES
+   ============================================================ */
+const TEXT_EXTENSIONS = ['txt','md','csv','json','html','htm','xml','eml','mbox','log','tsv','rtf','srt','vtt'];
 function readFileAsText(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1037,51 +1674,30 @@ function readFileAsText(file) {
     reader.readAsText(file);
   });
 }
-
 async function ingestFile(file) {
   const ext = (file.name.split('.').pop() || '').toLowerCase();
   const isText = TEXT_EXTENSIONS.includes(ext);
-
-  let content = null;
-  let extracted = false;
+  let content = null, extracted = false;
   if (isText) {
-    try {
-      content = await readFileAsText(file);
-      extracted = true;
-    } catch (e) {
-      console.error('text read failed', e);
-    }
+    try { content = await readFileAsText(file); extracted = true; }
+    catch (e) { console.error('text read failed', e); }
   }
-
-  const item = {
-    id: uid(),
-    kind: 'file',
-    title: file.name,
-    extension: ext,
+  await storagePut({
+    id: uid(), kind: 'file',
+    title: file.name, extension: ext,
     mime: file.type || 'application/octet-stream',
-    size: file.size,
-    content: content,
-    extracted,
+    size: file.size, content, extracted,
     created_at: new Date().toISOString()
-  };
-
-  await dbPut(item);
-  return item;
+  });
 }
-
 async function handleFiles(fileList) {
   if (!fileList || !fileList.length) return;
   let okCount = 0;
   for (const f of fileList) {
-    try {
-      await ingestFile(f);
-      okCount++;
-    } catch (e) {
-      console.error('ingest failed', e);
-    }
+    try { await ingestFile(f); okCount++; }
+    catch (e) { console.error('ingest failed', e); }
   }
-  await loadItems();
-  renderAll();
+  await loadAll(); renderAll();
   if (okCount === 1) showToast(`Saved ${fileList[0].name}`);
   else if (okCount > 1) showToast(`Saved ${okCount} files`);
 }
@@ -1093,25 +1709,18 @@ async function saveThought() {
   const title = $('#thoughtTitle').value.trim();
   const body = $('#thoughtBody').value.trim();
   if (!body) return;
-
-  const item = {
-    id: uid(),
-    kind: 'thought',
+  await storagePut({
+    id: uid(), kind: 'thought',
     title: title || `Thought · ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`,
     content: body,
     size: new Blob([body]).size,
     created_at: new Date().toISOString()
-  };
-
-  await dbPut(item);
-  $('#thoughtTitle').value = '';
-  $('#thoughtBody').value = '';
+  });
+  $('#thoughtTitle').value = ''; $('#thoughtBody').value = '';
   updateThoughtCharCount();
-  await loadItems();
-  renderAll();
-  showToast('Thought saved to library');
+  await loadAll(); renderAll();
+  showToast('Thought saved');
 }
-
 function updateThoughtCharCount() {
   const len = $('#thoughtBody').value.length;
   $('#thoughtCharCount').textContent = len.toLocaleString() + ' character' + (len === 1 ? '' : 's');
@@ -1119,40 +1728,287 @@ function updateThoughtCharCount() {
 }
 
 /* ============================================================
+   PROJECTS
+   ============================================================ */
+function openProjectModal(id) {
+  editingProjectId = id || null;
+  const p = id ? projects.find(x => x.id === id) : null;
+  $('#projectModalTitle').textContent = p ? 'Edit project' : 'New project';
+  $('#projectName').value = p ? p.title : '';
+  $('#projectDesc').value = p ? (p.content || '') : '';
+  $('#projectCadence').value = p ? (p.cadence || 'weekly') : 'weekly';
+  $('#projectStatus').value = p ? (p.status || 'active') : 'active';
+  $('#projectDeleteBtn').style.display = p ? 'inline-flex' : 'none';
+  $('#projectModal').classList.add('show');
+  setTimeout(() => $('#projectName').focus(), 50);
+}
+async function saveProject() {
+  const name = $('#projectName').value.trim();
+  if (!name) { $('#projectName').focus(); return; }
+  const p = editingProjectId ? projects.find(x => x.id === editingProjectId) : null;
+  const now = new Date().toISOString();
+  await storagePut({
+    id: p ? p.id : uid(), kind: 'project',
+    title: name,
+    content: $('#projectDesc').value.trim(),
+    cadence: $('#projectCadence').value,
+    status: $('#projectStatus').value,
+    created_at: p ? p.created_at : now,
+    updated_at: now
+  });
+  await loadAll(); renderAll();
+  $('#projectModal').classList.remove('show');
+  showToast(p ? 'Project updated' : 'Project added');
+}
+async function deleteProject() {
+  if (!editingProjectId) return;
+  const p = projects.find(x => x.id === editingProjectId);
+  if (!p) return;
+  if (!confirm(`Delete project "${p.title}"? Tasks linked to it stay; their project link is cleared on next save.`)) return;
+  await storageDelete(editingProjectId);
+  await loadAll(); renderAll();
+  $('#projectModal').classList.remove('show');
+  showToast('Project deleted');
+}
+
+/* ============================================================
+   TASKS
+   ============================================================ */
+function fillProjectSelect(sel, selectedId) {
+  sel.innerHTML = '<option value="">No project</option>' +
+    projects.filter(p => p.status === 'active' || p.id === selectedId)
+      .map(p => `<option value="${p.id}"${selectedId === p.id ? ' selected' : ''}>${escapeHtml(p.title)}</option>`)
+      .join('');
+}
+function openTaskModal(id) {
+  editingTaskId = id || null;
+  const t = id ? tasks.find(x => x.id === id) : null;
+  $('#taskModalTitle').textContent = t ? 'Edit task' : 'New task';
+  $('#taskTitle').value = t ? t.title : '';
+  $('#taskNotes').value = t ? (t.content || '') : '';
+  $('#taskPriority').value = t ? (t.priority || 'normal') : 'normal';
+  $('#taskStatus').value = t ? (t.status || 'todo') : 'todo';
+  $('#taskDue').value = t ? (t.due_date || '') : '';
+  fillProjectSelect($('#taskProject'), t ? t.project_id : '');
+  $('#taskDeleteBtn').style.display = t ? 'inline-flex' : 'none';
+  $('#taskModal').classList.add('show');
+  setTimeout(() => $('#taskTitle').focus(), 50);
+}
+async function saveTask() {
+  const title = $('#taskTitle').value.trim();
+  if (!title) { $('#taskTitle').focus(); return; }
+  const t = editingTaskId ? tasks.find(x => x.id === editingTaskId) : null;
+  const now = new Date().toISOString();
+  const newStatus = $('#taskStatus').value;
+  await storagePut({
+    id: t ? t.id : uid(), kind: 'task',
+    title,
+    content: $('#taskNotes').value.trim(),
+    project_id: $('#taskProject').value || null,
+    priority: $('#taskPriority').value,
+    status: newStatus,
+    due_date: $('#taskDue').value.trim(),
+    created_at: t ? t.created_at : now,
+    updated_at: now,
+    done_at: newStatus === 'done' ? (t && t.done_at ? t.done_at : now) : null
+  });
+  await loadAll(); renderAll();
+  $('#taskModal').classList.remove('show');
+  showToast(t ? 'Task updated' : 'Task added');
+}
+async function deleteTask() {
+  if (!editingTaskId) return;
+  const t = tasks.find(x => x.id === editingTaskId);
+  if (!t) return;
+  if (!confirm(`Delete task "${t.title}"?`)) return;
+  await storageDelete(editingTaskId);
+  await loadAll(); renderAll();
+  $('#taskModal').classList.remove('show');
+  showToast('Task deleted');
+}
+async function quickAddTask() {
+  const title = $('#quickTaskTitle').value.trim();
+  if (!title) return;
+  const now = new Date().toISOString();
+  await storagePut({
+    id: uid(), kind: 'task',
+    title, content: '',
+    project_id: $('#quickTaskProject').value || null,
+    priority: 'normal', status: 'todo', due_date: '',
+    created_at: now, updated_at: now, done_at: null
+  });
+  $('#quickTaskTitle').value = '';
+  await loadAll(); renderAll();
+  showToast('Task added');
+}
+async function cycleTaskStatus(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  const next = { todo: 'in_progress', in_progress: 'done', done: 'todo' }[t.status || 'todo'];
+  const now = new Date().toISOString();
+  await storagePut({ ...t, status: next, updated_at: now, done_at: next === 'done' ? now : null });
+  await loadAll(); renderAll();
+}
+
+/* ============================================================
+   DIRECTIONS
+   ============================================================ */
+function openDirectionsModal() {
+  $('#directionsText').value = directionsText || '';
+  $('#directionsModal').classList.add('show');
+  setTimeout(() => $('#directionsText').focus(), 50);
+}
+async function saveDirections() {
+  const txt = $('#directionsText').value.trim();
+  const all = await storageAll();
+  const existing = all.find(i => i.kind === 'direction');
+  const now = new Date().toISOString();
+  await storagePut({
+    id: existing ? existing.id : '_directions',
+    kind: 'direction',
+    title: 'Standing directions',
+    content: txt,
+    created_at: existing ? existing.created_at : now,
+    updated_at: now
+  });
+  await loadAll(); renderAll();
+  $('#directionsModal').classList.remove('show');
+  showToast('Directions saved');
+}
+
+/* ============================================================
    RENDER
    ============================================================ */
 function renderAll() {
   renderStats();
+  renderDirections();
+  renderProjects();
+  refreshTaskFilters();
+  renderTasks();
   renderLibrary();
+  refreshBanner();
 }
 
 function renderStats() {
   const fileCount = items.filter(i => i.kind === 'file').length;
   const thoughtCount = items.filter(i => i.kind === 'thought').length;
-  const totalSize = items.reduce((s, i) => s + (i.size || 0), 0);
-  $('#statTotal').textContent = items.length.toLocaleString();
-  $('#statFiles').textContent = fileCount.toLocaleString();
-  $('#statThoughts').textContent = thoughtCount.toLocaleString();
+  const activeProjects = projects.filter(p => p.status === 'active').length;
+  const openTasks = tasks.filter(t => t.status !== 'done').length;
+  const inProgress = tasks.filter(t => t.status === 'in_progress').length;
+  const totalSize = items.reduce((s,i) => s + (i.size || 0), 0);
+  $('#statLibrary').textContent = items.length.toLocaleString();
+  $('#statProjects').textContent = activeProjects.toLocaleString();
+  $('#statTasks').textContent = openTasks.toLocaleString();
   $('#statSize').textContent = fmtSize(totalSize);
+  $('#statSizeLabel').textContent = cloudMode ? 'Stored on cloud' : 'Stored locally';
   $('#filesCount').textContent = fileCount + ' file' + (fileCount === 1 ? '' : 's');
   $('#thoughtsCount').textContent = thoughtCount + ' thought' + (thoughtCount === 1 ? '' : 's');
+  $('#projectsSub').textContent = projects.length ? `${activeProjects} active · ${projects.length} total` : 'Ongoing initiatives · weekly cadence';
+  $('#tasksSub').textContent = tasks.length ? `${openTasks} open · ${inProgress} in progress` : "A map of what's in flight";
+}
+
+function renderDirections() {
+  const card = $('#directionsCard');
+  const body = $('#directionsBody');
+  if (directionsText) {
+    card.classList.remove('empty');
+    body.textContent = directionsText;
+  } else {
+    card.classList.add('empty');
+    body.innerHTML = '<div class="directions-empty-msg">Click <strong style="color:var(--text)">Edit</strong> to set Beacon\'s standing instructions — your role, accounts, voice, what to lean toward, what to avoid.</div>';
+  }
+}
+
+function renderProjects() {
+  const grid = $('#projectsGrid');
+  const cards = projects.map(p => {
+    const taskCount = tasks.filter(t => t.project_id === p.id).length;
+    const openCount = tasks.filter(t => t.project_id === p.id && t.status !== 'done').length;
+    const cadenceClass = p.cadence === 'weekly' ? 'weekly' : (p.cadence === 'adhoc' ? 'adhoc' : '');
+    const cadenceLabel = ({ weekly: 'Weekly', biweekly: 'Biweekly', monthly: 'Monthly', adhoc: 'Ad-hoc' })[p.cadence || 'weekly'];
+    const statusClass = p.status === 'paused' ? 'project-status-paused' : (p.status === 'done' ? 'project-status-done' : '');
+    return `<div class="project-card ${statusClass}" data-project-id="${p.id}">
+      <div class="project-card-head">
+        <div class="project-name">${escapeHtml(p.title)}</div>
+        <span class="project-cadence-pill ${cadenceClass}">${cadenceLabel}</span>
+      </div>
+      <div class="project-desc">${escapeHtml(p.content || '—')}</div>
+      <div class="project-foot">
+        <span><strong>${openCount}</strong> open · ${taskCount} total</span>
+        <span>${p.status === 'paused' ? 'Paused' : (p.status === 'done' ? 'Done' : 'Active')}</span>
+      </div>
+    </div>`;
+  }).join('');
+  const addCard = `<div class="project-card add-new" id="addProjectCard">
+    <div class="add-icon">+</div>
+    <div class="add-label">Add project</div>
+  </div>`;
+  grid.innerHTML = cards + addCard;
+}
+
+function renderTasks() {
+  const list = $('#tasksList');
+  let filtered = tasks.slice();
+  if (currentTaskFilter === 'open') filtered = filtered.filter(t => t.status !== 'done');
+  else if (currentTaskFilter === 'in_progress') filtered = filtered.filter(t => t.status === 'in_progress');
+  else if (currentTaskFilter === 'done') filtered = filtered.filter(t => t.status === 'done');
+  if (currentTaskProject !== 'all') {
+    filtered = filtered.filter(t => (t.project_id || '') === (currentTaskProject || ''));
+  }
+  if (!filtered.length) {
+    list.innerHTML = `<li class="tasks-empty">
+      <strong>${tasks.length === 0 ? 'No tasks yet.' : 'Nothing matches.'}</strong>
+      ${tasks.length === 0 ? 'Use the input above to add your first task.' : 'Try a different filter.'}
+    </li>`;
+    return;
+  }
+  list.innerHTML = filtered.map(t => {
+    const status = t.status || 'todo';
+    const statusMark = status === 'done' ? '✓' : (status === 'in_progress' ? '◐' : '');
+    const proj = t.project_id ? projects.find(p => p.id === t.project_id) : null;
+    const subParts = [];
+    if (t.due_date) subParts.push('Due ' + escapeHtml(t.due_date));
+    if (t.content) subParts.push(escapeHtml((t.content || '').replace(/\s+/g, ' ').slice(0, 80)));
+    return `<li class="task-row ${status === 'done' ? 'done' : ''}" data-task-id="${t.id}">
+      <button class="task-status-btn ${status === 'done' ? 'done' : (status === 'in_progress' ? 'in-progress' : '')}" data-act="cycle" data-id="${t.id}">${statusMark}</button>
+      <div class="task-title-cell">
+        <div class="task-title">${escapeHtml(t.title)}</div>
+        ${subParts.length ? `<div class="task-sub">${subParts.join(' · ')}</div>` : ''}
+      </div>
+      <div class="task-meta">
+        ${proj ? `<span class="task-project-pill">${escapeHtml(proj.title)}</span>` : ''}
+        <span class="task-priority-pill ${t.priority || 'normal'}">${(t.priority || 'normal').toUpperCase()}</span>
+      </div>
+      <div class="task-meta">${fmtDate(t.updated_at || t.created_at)}</div>
+    </li>`;
+  }).join('');
+}
+
+function refreshTaskFilters() {
+  const filterSel = $('#taskFilterProject');
+  const quickSel = $('#quickTaskProject');
+  const curFilter = filterSel.value;
+  filterSel.innerHTML = '<option value="all">All projects</option>'
+    + '<option value="">No project</option>'
+    + projects.filter(p => p.status === 'active').map(p => `<option value="${p.id}">${escapeHtml(p.title)}</option>`).join('');
+  filterSel.value = (curFilter === '' || curFilter === 'all' || projects.find(p => p.id === curFilter)) ? curFilter : 'all';
+  const quickVal = quickSel.value;
+  quickSel.innerHTML = '<option value="">No project</option>'
+    + projects.filter(p => p.status === 'active').map(p => `<option value="${p.id}">${escapeHtml(p.title)}</option>`).join('');
+  if (projects.find(p => p.id === quickVal)) quickSel.value = quickVal;
 }
 
 function renderLibrary() {
   const list = $('#libraryList');
   let filtered = items.slice();
-
   if (currentFilter === 'file') filtered = filtered.filter(i => i.kind === 'file');
   if (currentFilter === 'thought') filtered = filtered.filter(i => i.kind === 'thought');
-
   if (currentSearch) {
     const q = currentSearch.toLowerCase();
     filtered = filtered.filter(i =>
       (i.title || '').toLowerCase().includes(q) ||
-      (i.content || '').toLowerCase().includes(q)
-    );
+      (i.content || '').toLowerCase().includes(q));
   }
-
   if (!filtered.length) {
     list.innerHTML = `<li class="library-empty">
       <strong>${items.length === 0 ? 'Library is empty.' : 'Nothing matches.'}</strong>
@@ -1160,15 +2016,13 @@ function renderLibrary() {
     </li>`;
     return;
   }
-
   list.innerHTML = filtered.map(item => {
     const iconKind = inferIconKind(item);
     const lbl = iconLabel(item);
     const preview = (item.content || '').replace(/\s+/g, ' ').slice(0, 140);
     const previewText = preview || (item.kind === 'file' && !item.extracted
-      ? '<em style="color:var(--text-dim)">Extraction pending — saved as metadata until cloud upload is wired up.</em>'
+      ? '<em style="color:var(--text-dim)">Extraction pending — saved as metadata until binary extraction is wired up.</em>'
       : '<em style="color:var(--text-dim)">No preview</em>');
-
     return `<li class="lib-item" data-id="${item.id}">
       <div class="lib-icon ${iconKind}">${escapeHtml(lbl)}</div>
       <div class="lib-body">
@@ -1185,64 +2039,66 @@ function renderLibrary() {
 }
 
 /* ============================================================
-   DETAIL MODAL
+   ITEM DETAIL MODAL
    ============================================================ */
 function openDetail(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   currentDetailId = id;
   $('#modalTitle').textContent = item.title;
-  const meta = [
+  $('#modalMeta').textContent = [
     item.kind === 'thought' ? 'Thought' : 'File',
     item.extension ? '.' + item.extension : '',
     fmtDate(item.created_at)
   ].filter(Boolean).join(' · ');
-  $('#modalMeta').textContent = meta;
   $('#modalSize').textContent = fmtSize(item.size || 0);
-  if (item.content) {
-    $('#modalBody').textContent = item.content;
-  } else if (item.kind === 'file' && !item.extracted) {
-    $('#modalBody').innerHTML = '<em style="color:var(--text-muted)">This file was saved as metadata only. Full text extraction will run once the cloud backend is wired up. The file itself is not stored locally — only its name, size, and type. Re-upload after cloud sync to extract content.</em>';
-  } else {
-    $('#modalBody').textContent = '(empty)';
-  }
+  if (item.content) $('#modalBody').textContent = item.content;
+  else if (item.kind === 'file' && !item.extracted) {
+    $('#modalBody').innerHTML = '<em style="color:var(--text-muted)">This file was saved as metadata only. Full text extraction will run once binary extraction is wired up.</em>';
+  } else $('#modalBody').textContent = '(empty)';
   $('#detailModal').classList.add('show');
 }
-
-function closeDetail() {
-  $('#detailModal').classList.remove('show');
-  currentDetailId = null;
-}
-
+function closeDetail() { $('#detailModal').classList.remove('show'); currentDetailId = null; }
 async function deleteCurrent() {
   if (!currentDetailId) return;
   const item = items.find(i => i.id === currentDetailId);
   if (!item) return;
   if (!confirm(`Delete "${item.title}"?`)) return;
-  await dbDelete(currentDetailId);
-  await loadItems();
-  renderAll();
-  closeDetail();
+  await storageDelete(currentDetailId);
+  await loadAll(); renderAll(); closeDetail();
   showToast('Deleted');
 }
-
 async function deleteById(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   if (!confirm(`Delete "${item.title}"?`)) return;
-  await dbDelete(id);
-  await loadItems();
-  renderAll();
+  await storageDelete(id);
+  await loadAll(); renderAll();
   showToast('Deleted');
 }
-
 function copyCurrent() {
   if (!currentDetailId) return;
   const item = items.find(i => i.id === currentDetailId);
   if (!item || !item.content) return;
-  navigator.clipboard.writeText(item.content).then(() => {
-    showToast('Copied to clipboard');
-  }, () => showToast('Copy failed', true));
+  navigator.clipboard.writeText(item.content).then(
+    () => showToast('Copied'),
+    () => showToast('Copy failed', true)
+  );
+}
+
+/* ============================================================
+   BANNER
+   ============================================================ */
+function refreshBanner() {
+  const bannerEl = document.querySelector('.banner');
+  const localBadge = document.querySelector('.topbar-actions .topbar-link.mono');
+  if (cloudMode) {
+    if (bannerEl) bannerEl.style.display = 'none';
+    if (localBadge) { localBadge.textContent = 'Cloud sync · on'; localBadge.style.color = 'var(--green)'; }
+  } else {
+    if (bannerEl) bannerEl.style.display = 'flex';
+    if (localBadge) { localBadge.textContent = 'Local-only'; localBadge.style.color = ''; }
+  }
 }
 
 /* ============================================================
@@ -1250,113 +2106,139 @@ function copyCurrent() {
    ============================================================ */
 async function bootstrap() {
   db = await openDb();
-  await loadItems();
+  await loadAll();
   renderAll();
-
-  // Welcome time-of-day
   const h = new Date().getHours();
-  const greet = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-  $('#welcomeHeading').textContent = greet + '.';
+  $('#welcomeHeading').textContent = (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening') + '.';
 }
 
 /* ============================================================
-   EVENT WIRING
+   INIT / EVENT WIRING
    ============================================================ */
 async function init() {
   await initPasscode();
 
-  // Lock form
   $('#lockForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const code = $('#passcodeInput').value;
-    const ok = await checkPasscode(code);
-    if (ok) {
-      unlock();
-    } else {
-      $('#lockError').classList.add('show');
-      $('#passcodeInput').value = '';
-    }
+    const ok = await attemptUnlock(code);
+    if (ok) showApp();
+    else { $('#lockError').classList.add('show'); $('#passcodeInput').value = ''; }
   });
+  $('#passcodeInput').addEventListener('input', () => $('#lockError').classList.remove('show'));
 
-  $('#passcodeInput').addEventListener('input', () => {
-    $('#lockError').classList.remove('show');
-  });
+  if (isUnlocked()) {
+    authHash = localStorage.getItem(PASSCODE_HASH_KEY);
+    try {
+      const res = await fetch(`${API_BASE}/items`, { headers: authHeaders() });
+      if (res.status === 200) cloudMode = true;
+    } catch (e) {}
+    showApp();
+  }
 
-  // If already unlocked this session, skip lock
-  if (isUnlocked()) unlock();
-
-  // Sign out
   $('#signOutBtn').addEventListener('click', signOut);
 
   // Dropzone
-  const dropzone = $('#dropzone');
-  const fileInput = $('#fileInput');
-  fileInput.addEventListener('change', e => {
-    handleFiles(e.target.files);
-    fileInput.value = '';
-  });
-  ;['dragenter', 'dragover'].forEach(ev =>
-    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragging'); })
-  );
-  ;['dragleave', 'drop'].forEach(ev =>
-    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragging'); })
-  );
+  const dropzone = $('#dropzone'), fileInput = $('#fileInput');
+  fileInput.addEventListener('change', e => { handleFiles(e.target.files); fileInput.value = ''; });
+  ['dragenter','dragover'].forEach(ev =>
+    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragging'); }));
+  ['dragleave','drop'].forEach(ev =>
+    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragging'); }));
   dropzone.addEventListener('drop', e => {
     e.preventDefault();
-    if (e.dataTransfer && e.dataTransfer.files) {
-      handleFiles(e.dataTransfer.files);
-    }
+    if (e.dataTransfer && e.dataTransfer.files) handleFiles(e.dataTransfer.files);
   });
 
   // Thoughts
   const thoughtBody = $('#thoughtBody');
   thoughtBody.addEventListener('input', updateThoughtCharCount);
   $('#thoughtSaveBtn').addEventListener('click', saveThought);
-  // Cmd/Ctrl+Enter to save
   thoughtBody.addEventListener('keydown', e => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-      e.preventDefault();
-      saveThought();
-    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); saveThought(); }
   });
 
-  // Library: search + filter chips
-  $('#librarySearch').addEventListener('input', e => {
-    currentSearch = e.target.value;
-    renderLibrary();
+  // Directions
+  $('#editDirectionsBtn').addEventListener('click', openDirectionsModal);
+  $('#directionsCard').addEventListener('click', e => {
+    if (e.target.closest('button')) return;
+    if (!directionsText) openDirectionsModal();
   });
-  $$('.filter-chip').forEach(chip => {
+  $('#directionsSaveBtn').addEventListener('click', saveDirections);
+
+  // Projects
+  $('#newProjectBtn').addEventListener('click', () => openProjectModal());
+  $('#projectsGrid').addEventListener('click', e => {
+    if (e.target.closest('#addProjectCard')) { openProjectModal(); return; }
+    const card = e.target.closest('.project-card[data-project-id]');
+    if (card) openProjectModal(card.dataset.projectId);
+  });
+  $('#projectSaveBtn').addEventListener('click', saveProject);
+  $('#projectDeleteBtn').addEventListener('click', deleteProject);
+
+  // Tasks
+  $('#quickTaskAddBtn').addEventListener('click', quickAddTask);
+  $('#quickTaskTitle').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); quickAddTask(); }
+  });
+  $('#tasksList').addEventListener('click', e => {
+    const cycleBtn = e.target.closest('[data-act="cycle"]');
+    if (cycleBtn) { e.stopPropagation(); cycleTaskStatus(cycleBtn.dataset.id); return; }
+    const row = e.target.closest('.task-row');
+    if (row) openTaskModal(row.dataset.taskId);
+  });
+  $('#taskSaveBtn').addEventListener('click', saveTask);
+  $('#taskDeleteBtn').addEventListener('click', deleteTask);
+
+  document.querySelectorAll('.tasks-toolbar .filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      $$('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tasks-toolbar .filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentTaskFilter = chip.dataset.taskFilter;
+      renderTasks();
+    });
+  });
+  $('#taskFilterProject').addEventListener('change', e => {
+    currentTaskProject = e.target.value;
+    renderTasks();
+  });
+
+  // Library
+  $('#librarySearch').addEventListener('input', e => { currentSearch = e.target.value; renderLibrary(); });
+  document.querySelectorAll('.library-controls .filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.library-controls .filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       currentFilter = chip.dataset.filter;
       renderLibrary();
     });
   });
-
-  // Library item clicks (delegate)
   $('#libraryList').addEventListener('click', e => {
     const delBtn = e.target.closest('[data-act="delete"]');
-    if (delBtn) {
-      e.stopPropagation();
-      deleteById(delBtn.dataset.id);
-      return;
-    }
+    if (delBtn) { e.stopPropagation(); deleteById(delBtn.dataset.id); return; }
     const li = e.target.closest('.lib-item');
     if (li) openDetail(li.dataset.id);
   });
 
-  // Modal
+  // Detail modal
   $('#modalCloseBtn').addEventListener('click', closeDetail);
-  $('#detailModal').addEventListener('click', e => {
-    if (e.target.id === 'detailModal') closeDetail();
-  });
+  $('#detailModal').addEventListener('click', e => { if (e.target.id === 'detailModal') closeDetail(); });
   $('#modalDeleteBtn').addEventListener('click', deleteCurrent);
   $('#modalCopyBtn').addEventListener('click', copyCurrent);
 
-  // Esc closes modal
+  // Generic modal close
+  document.querySelectorAll('[data-close-modal]').forEach(btn => {
+    btn.addEventListener('click', () => $('#' + btn.dataset.closeModal).classList.remove('show'));
+  });
+  ['projectModal','taskModal','directionsModal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', e => { if (e.target.id === id) el.classList.remove('show'); });
+  });
+
+  // Esc closes any modal
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && $('#detailModal').classList.contains('show')) closeDetail();
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
   });
 }
 
