@@ -1074,6 +1074,210 @@ main {
 @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
 
 /* ====================================================
+   CHAT WORKSPACE
+   ==================================================== */
+.chat-card {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 440px;
+  overflow: hidden;
+}
+.chat-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: 620px;
+}
+.chat-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+.chat-empty-greet {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.chat-empty-sub {
+  font-size: .88rem;
+  color: var(--text-muted);
+  max-width: 420px;
+  margin-top: -12px;
+}
+.chat-quickactions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 720px;
+}
+.chat-qa {
+  background: rgba(91,141,239,.06);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .85rem;
+  font-weight: 500;
+  transition: all .15s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.chat-qa:hover {
+  border-color: var(--blue);
+  color: var(--text);
+  background: rgba(91,141,239,.12);
+  transform: translateY(-1px);
+}
+.chat-qa-icon {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--gold);
+}
+
+.chat-msg { display: flex; flex-direction: column; gap: 6px; }
+.chat-msg.user { align-items: flex-end; }
+.chat-msg.user .chat-bubble {
+  max-width: 82%;
+  background: rgba(91,141,239,.14);
+  border: 1px solid rgba(91,141,239,.22);
+  color: var(--text);
+  padding: 11px 15px;
+  border-radius: 12px;
+  font-size: .92rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.chat-msg.assistant .chat-bubble {
+  max-width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--text-secondary);
+  padding: 0 2px;
+  font-size: .95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.chat-msg-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.chat-msg-actions button {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .64rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 5px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.chat-msg-actions button:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: rgba(91,141,239,.05);
+}
+.chat-msg-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--text-dim);
+}
+.chat-msg.user .chat-msg-meta { align-self: flex-end; }
+
+.chat-typing {
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .78rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .04em;
+  border-top: 1px solid var(--border);
+}
+.chat-typing .dots {
+  display: inline-flex;
+  gap: 3px;
+}
+.chat-typing .dots span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: chat-pulse 1.2s ease-in-out infinite;
+}
+.chat-typing .dots span:nth-child(2) { animation-delay: .2s; }
+.chat-typing .dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes chat-pulse {
+  0%, 100% { opacity: .25; }
+  50% { opacity: 1; }
+}
+
+.chat-composer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  background: rgba(91,141,239,.03);
+  align-items: flex-end;
+}
+.chat-composer textarea {
+  flex: 1;
+  min-height: 38px;
+  max-height: 220px;
+  background: var(--space);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: .92rem;
+  line-height: 1.5;
+  resize: none;
+  outline: 0;
+  transition: border-color .15s;
+}
+.chat-composer textarea:focus { border-color: var(--blue); }
+.chat-composer textarea::placeholder { color: var(--text-dim); }
+
+.chat-mode-select {
+  background: var(--space);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  letter-spacing: .04em;
+  outline: 0;
+  cursor: pointer;
+}
+
+/* ====================================================
    TOAST
    ==================================================== */
 .toast {
@@ -1170,6 +1374,35 @@ main {
           <button class="btn-icon" id="editDirectionsBtn">Edit</button>
         </div>
         <div class="directions-body" id="directionsBody"></div>
+      </div>
+    </div>
+
+    <!-- ============== CHAT WORKSPACE ============== -->
+    <div class="section-block" id="chatBlock">
+      <div class="section-bar">
+        <div>
+          <h2>Chat with Beacon</h2>
+          <div class="section-sub" id="chatSub">Ask, draft, brief — Beacon knows your projects, tasks, and library</div>
+        </div>
+        <div class="section-bar-actions">
+          <select id="chatMode" class="chat-mode-select" title="Default routes to Sonnet for everyday work. Deep uses Opus for heavy analysis. Fast uses Haiku for quick utility.">
+            <option value="default">Default · Sonnet 4.6</option>
+            <option value="fast">Fast · Haiku 4.5</option>
+            <option value="deep">Deep · Opus 4.7</option>
+          </select>
+          <button class="btn-icon" id="newChatBtn" title="Clear conversation">⟲ New</button>
+        </div>
+      </div>
+      <div class="chat-card">
+        <div class="chat-thread" id="chatThread"></div>
+        <div class="chat-typing" id="chatTyping" style="display:none">
+          <span class="dots"><span></span><span></span><span></span></span>
+          <span id="chatTypingText">Beacon is thinking...</span>
+        </div>
+        <div class="chat-composer">
+          <textarea id="chatInput" placeholder="Ask Beacon anything — draft an email, summarize, brief me, find the angle. Cmd/Ctrl+Enter to send." rows="1"></textarea>
+          <button class="btn btn-primary" id="chatSendBtn">Send</button>
+        </div>
       </div>
     </div>
 
@@ -1882,6 +2115,7 @@ async function saveDirections() {
 function renderAll() {
   renderStats();
   renderDirections();
+  renderChat();
   renderProjects();
   refreshTaskFilters();
   renderTasks();
@@ -2087,6 +2321,195 @@ function copyCurrent() {
 }
 
 /* ============================================================
+   CHAT
+   ============================================================ */
+let chatHistory = [];
+let chatBusy = false;
+
+const QUICK_ACTIONS = {
+  weekly: {
+    label: 'Weekly briefing',
+    icon: '◆',
+    mode: 'deep',
+    prompt: "Generate my weekly briefing. Pull from my active projects, in-progress tasks, and recent library notes. Lead with: (1) what shipped, (2) what's in flight, (3) what's blocked or waiting on someone, (4) what I should focus on this week. Be specific — name projects, accounts, and dates from my context. Skip generic frameworks."
+  },
+  precall: {
+    label: 'Pre-call prep',
+    icon: '◇',
+    mode: 'deep',
+    prompt: "I have an upcoming call. Look at my active projects, recent library notes, and open tasks to identify the most likely call coming up. Produce a one-page prep doc: who's on the call, what they care about based on past notes, our recent history with them, the 3 things I want to walk away with, and 2 tough questions I should be ready for. If you can't tell which call I mean, ask me."
+  },
+  draftemail: {
+    label: 'Draft an email',
+    icon: '✎',
+    mode: 'default',
+    prompt: "Help me draft an email. Ask me the recipient, the goal, and any context. If you can infer a likely email I owe based on recent library notes or open tasks, propose 2 directions and ask which one to develop."
+  },
+  marketscan: {
+    label: 'Market scan',
+    icon: '⌖',
+    mode: 'deep',
+    prompt: "Scan my library for signals from the certification and commodity markets — pricing moves, regulations, competitor activity, brand sustainability commitments, supply-chain disruption, country-of-origin developments. Surface the top 5 things I should know, with a one-line 'so what' for me as a relationship manager on each."
+  },
+  ideas: {
+    label: 'Idea spark',
+    icon: '✦',
+    mode: 'default',
+    prompt: "Look at my projects and current focus. Give me 3 angles or ideas I likely haven't considered yet — practical, specific, grounded in my actual context. Not generic frameworks. Each idea should reference something specific from my library or projects."
+  }
+};
+
+function emptyChatHTML() {
+  const qaButtons = Object.entries(QUICK_ACTIONS).map(([key, qa]) =>
+    `<button class="chat-qa" data-qa="${key}"><span class="chat-qa-icon">${qa.icon}</span>${qa.label}</button>`
+  ).join('');
+  return `<div class="chat-empty">
+    <div>
+      <div class="chat-empty-greet">What can I work on for you?</div>
+      <div class="chat-empty-sub">I have your directions, projects, tasks, and full library loaded. Just ask.</div>
+    </div>
+    <div class="chat-quickactions">${qaButtons}</div>
+  </div>`;
+}
+
+function renderChat() {
+  const thread = $('#chatThread');
+  if (!chatHistory.length) {
+    thread.innerHTML = emptyChatHTML();
+    return;
+  }
+  thread.innerHTML = chatHistory.map((m, i) => {
+    const role = m.role;
+    const text = m.content || '';
+    const actions = role === 'assistant'
+      ? `<div class="chat-msg-actions">
+          <button data-act="save" data-i="${i}">Save to library</button>
+          <button data-act="copy" data-i="${i}">Copy</button>
+          <button data-act="task" data-i="${i}">Make task</button>
+        </div>`
+      : '';
+    const meta = role === 'assistant' && m.model ? `<div class="chat-msg-meta">${escapeHtml(m.model)}${m.mode ? ' · ' + m.mode : ''}</div>` : '';
+    return `<div class="chat-msg ${role}">
+      ${meta}
+      <div class="chat-bubble">${escapeHtml(text)}</div>
+      ${actions}
+    </div>`;
+  }).join('');
+  thread.scrollTop = thread.scrollHeight;
+}
+
+async function sendChat(message, modeOverride) {
+  if (!message || !message.trim() || chatBusy) return;
+  const trimmed = message.trim();
+  chatBusy = true;
+  const mode = modeOverride || $('#chatMode').value || 'default';
+  chatHistory.push({ role: 'user', content: trimmed });
+  renderChat();
+  $('#chatInput').value = '';
+  $('#chatInput').style.height = 'auto';
+  $('#chatTyping').style.display = 'flex';
+  $('#chatTypingText').textContent = mode === 'deep' ? 'Beacon is thinking deeply (Opus)...' : (mode === 'fast' ? 'Beacon is on it (Haiku)...' : 'Beacon is thinking...');
+  $('#chatSendBtn').disabled = true;
+
+  try {
+    if (!cloudMode) {
+      chatHistory.push({
+        role: 'assistant',
+        content: 'Chat needs cloud sync to be active. Set BEACONS_PASSCODE_HASH (sha256 of your passcode) and ANTHROPIC_API_KEY in your Vercel env vars, then reload. Until then, the upload + thoughts panels still work locally.',
+        model: 'local-only'
+      });
+    } else {
+      const res = await fetch(`${API_BASE}/chat`, {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: trimmed,
+          history: chatHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
+          mode
+        })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || ('HTTP ' + res.status));
+      }
+      const data = await res.json();
+      chatHistory.push({
+        role: 'assistant',
+        content: data.response || '(empty response)',
+        model: data.model,
+        mode: data.mode
+      });
+    }
+    renderChat();
+  } catch (e) {
+    chatHistory.push({ role: 'assistant', content: '⚠️ ' + (e.message || 'Error talking to Beacon') });
+    renderChat();
+  } finally {
+    chatBusy = false;
+    $('#chatTyping').style.display = 'none';
+    $('#chatSendBtn').disabled = false;
+  }
+}
+
+function runQuickAction(key) {
+  const qa = QUICK_ACTIONS[key];
+  if (!qa) return;
+  sendChat(qa.prompt, qa.mode);
+}
+
+async function saveAssistantToLibrary(idx) {
+  const msg = chatHistory[idx];
+  if (!msg || msg.role !== 'assistant') return;
+  const now = new Date().toISOString();
+  const userMsg = chatHistory[idx - 1];
+  const titleSeed = userMsg && userMsg.content ? userMsg.content : msg.content;
+  const title = 'Chat: ' + (titleSeed || '').replace(/\s+/g, ' ').slice(0, 70) + (titleSeed.length > 70 ? '…' : '');
+  await storagePut({
+    id: uid(),
+    kind: 'thought',
+    title,
+    content: (userMsg ? '> ' + userMsg.content + '\n\n' : '') + msg.content,
+    size: new Blob([msg.content]).size,
+    created_at: now
+  });
+  await loadAll();
+  renderAll();
+  showToast('Saved to library');
+}
+
+function copyChatMsg(idx) {
+  const msg = chatHistory[idx];
+  if (!msg) return;
+  navigator.clipboard.writeText(msg.content).then(
+    () => showToast('Copied'),
+    () => showToast('Copy failed', true)
+  );
+}
+
+async function makeTaskFromChat(idx) {
+  const msg = chatHistory[idx];
+  if (!msg) return;
+  const title = (msg.content || '').replace(/\s+/g, ' ').slice(0, 100);
+  const now = new Date().toISOString();
+  await storagePut({
+    id: uid(), kind: 'task',
+    title: title || 'Task from chat',
+    content: msg.content,
+    project_id: null,
+    priority: 'normal', status: 'todo', due_date: '',
+    created_at: now, updated_at: now, done_at: null
+  });
+  await loadAll(); renderAll();
+  showToast('Task created');
+}
+
+function clearChat() {
+  if (chatHistory.length && !confirm('Clear conversation?')) return;
+  chatHistory = [];
+  renderChat();
+}
+
+/* ============================================================
    BANNER
    ============================================================ */
 function refreshBanner() {
@@ -2156,6 +2579,32 @@ async function init() {
   $('#thoughtSaveBtn').addEventListener('click', saveThought);
   thoughtBody.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); saveThought(); }
+  });
+
+  // Chat
+  const chatInput = $('#chatInput');
+  $('#chatSendBtn').addEventListener('click', () => sendChat(chatInput.value));
+  chatInput.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      sendChat(chatInput.value);
+    }
+  });
+  chatInput.addEventListener('input', () => {
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 220) + 'px';
+  });
+  $('#newChatBtn').addEventListener('click', clearChat);
+  $('#chatThread').addEventListener('click', e => {
+    const qaBtn = e.target.closest('.chat-qa');
+    if (qaBtn) { runQuickAction(qaBtn.dataset.qa); return; }
+    const actBtn = e.target.closest('[data-act]');
+    if (actBtn) {
+      const i = parseInt(actBtn.dataset.i);
+      if (actBtn.dataset.act === 'save') saveAssistantToLibrary(i);
+      else if (actBtn.dataset.act === 'copy') copyChatMsg(i);
+      else if (actBtn.dataset.act === 'task') makeTaskFromChat(i);
+    }
   });
 
   // Directions
