@@ -27,13 +27,31 @@ module.exports = async function handler(req, res) {
     await G.ensureSchema();
     const acct = await G.getGoogleAccount();
     if (!acct) return res.status(200).json({ connected: false, configured: true });
+
+    // Look up Gmail sync state if the table exists
+    let gmailLastSync = null;
+    let gmailThreadCount = null;
+    try {
+      const { neon } = require('@neondatabase/serverless');
+      const sql = neon(process.env.DATABASE_URL);
+      const rows = await sql`
+        SELECT last_sync_at, thread_count FROM beacons_sync_state WHERE service = 'gmail'
+      `;
+      if (rows[0]) {
+        gmailLastSync = rows[0].last_sync_at;
+        gmailThreadCount = rows[0].thread_count;
+      }
+    } catch (e) { /* table not created yet, fine */ }
+
     return res.status(200).json({
       connected: true,
       configured: true,
       email: acct.email,
       scopes: acct.scopes || [],
       connectedAt: acct.connected_at,
-      updatedAt: acct.updated_at
+      updatedAt: acct.updated_at,
+      gmailLastSync,
+      gmailThreadCount
     });
   } catch (err) {
     console.error('oauth/status error', err);
