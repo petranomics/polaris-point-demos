@@ -1562,6 +1562,125 @@ main {
 }
 
 /* ====================================================
+   COST WHEEL (top-right of topbar)
+   ==================================================== */
+.cost-wheel {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity .15s, transform .15s;
+}
+.cost-wheel.show { display: flex; }
+.cost-wheel:hover { transform: scale(1.05); }
+.cost-wheel-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.cost-wheel-svg circle {
+  fill: none;
+  stroke-width: 2.6;
+}
+.cost-wheel-svg .wheel-bg { stroke: var(--border); }
+.cost-wheel-svg .wheel-fill {
+  stroke: var(--green);
+  stroke-linecap: round;
+  transition: stroke-dasharray .6s ease, stroke .25s;
+}
+.cost-wheel-svg .wheel-fill.warn { stroke: var(--gold); }
+.cost-wheel-svg .wheel-fill.alert { stroke: var(--red); }
+.cost-wheel-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem;
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1;
+  letter-spacing: -.02em;
+  pointer-events: none;
+}
+
+/* ====================================================
+   USAGE MODAL
+   ==================================================== */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.usage-stat {
+  background: var(--space);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.usage-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.usage-stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+}
+.usage-stat-sub {
+  font-size: .72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.usage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+  margin-bottom: 22px;
+}
+.usage-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.usage-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.usage-table tr:last-child td { border-bottom: 0; }
+.usage-table .num { font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--text); }
+.usage-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--blue);
+  min-width: 2px;
+}
+.usage-section-h {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .9rem;
+  color: var(--text);
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+/* ====================================================
    TOAST
    ==================================================== */
 .toast {
@@ -1620,6 +1739,13 @@ main {
       <span class="topbar-brand-meta">/ Pete</span>
     </div>
     <div class="topbar-actions">
+      <div class="cost-wheel" id="costWheel" title="Click for usage breakdown">
+        <svg class="cost-wheel-svg" viewBox="0 0 36 36">
+          <circle class="wheel-bg" cx="18" cy="18" r="15.915"></circle>
+          <circle class="wheel-fill" cx="18" cy="18" r="15.915" stroke-dasharray="0 100"></circle>
+        </svg>
+        <div class="cost-wheel-text" id="costWheelAmount">$0</div>
+      </div>
       <span class="topbar-link mono" style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase">Local-only</span>
       <button class="topbar-link" id="signOutBtn">Sign out</button>
     </div>
@@ -1989,6 +2115,23 @@ main {
     <div class="modal-foot">
       <span class="modal-meta">Passed to Beacon at the start of every conversation.</span>
       <button class="btn btn-primary" id="directionsSaveBtn">Save directions</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== USAGE / COST MODAL ===================== -->
+<div class="modal" id="usageModal">
+  <div class="modal-card" style="max-width:680px">
+    <div class="modal-head">
+      <div>
+        <h3>API usage this month</h3>
+        <div class="modal-meta" id="usageModalMeta">—</div>
+      </div>
+      <button class="modal-close" data-close-modal="usageModal">×</button>
+    </div>
+    <div class="modal-body" id="usageModalBody" style="font-family:'Inter',sans-serif">—</div>
+    <div class="modal-foot">
+      <span class="modal-meta">Set <code style="color:var(--gold);font-size:.72rem">BEACONS_MONTHLY_LIMIT_USD</code> in Vercel to change the cap (default $50)</span>
     </div>
   </div>
 </div>
@@ -2838,6 +2981,106 @@ function copyCurrent() {
 }
 
 /* ============================================================
+   COST WHEEL (token usage monitoring)
+   ============================================================ */
+let usageData = null;
+
+async function loadUsage() {
+  if (!cloudMode) return;
+  try {
+    const res = await fetch(`${API_BASE}/usage`, { headers: authHeaders() });
+    if (!res.ok) return;
+    usageData = await res.json();
+    renderCostWheel();
+  } catch (e) { /* silent — cost wheel just stays hidden */ }
+}
+
+function renderCostWheel() {
+  const el = $('#costWheel');
+  if (!el || !usageData || !usageData.currentMonth) return;
+  const m = usageData.currentMonth;
+  const pct = Math.max(0.5, Math.min(100, m.percentUsed || 0));
+  const fill = el.querySelector('.wheel-fill');
+  fill.setAttribute('stroke-dasharray', `${pct} 100`);
+  fill.classList.toggle('warn', pct >= 50 && pct < 85);
+  fill.classList.toggle('alert', pct >= 85);
+  // Compact display: under $1 show cents (¢), under $10 show one decimal,
+  // otherwise round dollars.
+  const total = m.totalUsd || 0;
+  let shown;
+  if (total < 1) shown = '$' + total.toFixed(2);
+  else if (total < 10) shown = '$' + total.toFixed(1);
+  else shown = '$' + Math.round(total);
+  $('#costWheelAmount').textContent = shown;
+  el.classList.add('show');
+  el.title = `$${total.toFixed(2)} of $${(m.limitUsd || 0).toFixed(0)} this month — click for breakdown`;
+}
+
+function openUsageModal() {
+  if (!usageData || !usageData.currentMonth) {
+    showToast('No usage data yet — try a chat first', false);
+    return;
+  }
+  const m = usageData.currentMonth;
+  const last = usageData.lastMonth || { totalUsd: 0, callCount: 0 };
+
+  $('#usageModalMeta').textContent =
+    `$${m.totalUsd.toFixed(2)} of $${m.limitUsd.toFixed(2)} · ${(m.percentUsed || 0).toFixed(1)}% used`;
+
+  const tokens = (m.totalTokens || 0).toLocaleString();
+  const grid = `
+    <div class="usage-grid">
+      <div class="usage-stat">
+        <div class="usage-stat-label">This month</div>
+        <div class="usage-stat-value">$${m.totalUsd.toFixed(2)}</div>
+        <div class="usage-stat-sub">${m.callCount} chat${m.callCount === 1 ? '' : 's'}</div>
+      </div>
+      <div class="usage-stat">
+        <div class="usage-stat-label">Tokens</div>
+        <div class="usage-stat-value">${tokens.length > 7 ? tokens.slice(0, -7) + 'M' : tokens}</div>
+        <div class="usage-stat-sub">in + out + cache</div>
+      </div>
+      <div class="usage-stat">
+        <div class="usage-stat-label">Last month</div>
+        <div class="usage-stat-value">$${last.totalUsd.toFixed(2)}</div>
+        <div class="usage-stat-sub">${last.callCount} chat${last.callCount === 1 ? '' : 's'}</div>
+      </div>
+    </div>
+  `;
+
+  const byModel = (m.byModel || []);
+  const byModelHtml = byModel.length
+    ? `<table class="usage-table">
+         <thead><tr><th>Model</th><th>Calls</th><th style="text-align:right">Cost</th></tr></thead>
+         <tbody>${byModel.map(r => `<tr><td>${escapeHtml(r.model || '—')}</td><td class="num">${r.calls}</td><td class="num" style="text-align:right">$${r.usd.toFixed(3)}</td></tr>`).join('')}</tbody>
+       </table>`
+    : '<div style="color:var(--text-muted);font-size:.85rem;margin-bottom:22px">No model usage recorded this month.</div>';
+
+  const byDay = (m.byDay || []);
+  const maxDayUsd = byDay.reduce((a, r) => Math.max(a, r.usd || 0), 0.0001);
+  const byDayHtml = byDay.length
+    ? `<table class="usage-table">
+         <thead><tr><th>Day</th><th>Calls</th><th style="text-align:right">Cost</th><th style="width:30%"></th></tr></thead>
+         <tbody>${byDay.map(r => {
+           const d = new Date(r.day);
+           const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+           const w = Math.max(2, Math.round((r.usd / maxDayUsd) * 100));
+           return `<tr><td>${label}</td><td class="num">${r.calls}</td><td class="num" style="text-align:right">$${r.usd.toFixed(3)}</td><td><div class="usage-bar" style="width:${w}%"></div></td></tr>`;
+         }).join('')}</tbody>
+       </table>`
+    : '<div style="color:var(--text-muted);font-size:.85rem">No daily usage recorded.</div>';
+
+  $('#usageModalBody').innerHTML = `
+    ${grid}
+    <h4 class="usage-section-h">By model</h4>
+    ${byModelHtml}
+    <h4 class="usage-section-h">By day (last 14)</h4>
+    ${byDayHtml}
+  `;
+  $('#usageModal').classList.add('show');
+}
+
+/* ============================================================
    CONNECTIONS (Google OAuth)
    ============================================================ */
 let googleConnection = { connected: false, configured: false };
@@ -3378,6 +3621,8 @@ async function sendChat(message, modeOverride) {
     $('#chatSendBtn').disabled = false;
     // Persist the conversation so it survives reloads / cross-device sync.
     autoSaveThread().catch(() => {});
+    // Refresh the cost wheel so the latest spend reflects right after the call.
+    loadUsage().catch(() => {});
   }
 }
 
@@ -3572,6 +3817,8 @@ async function bootstrap() {
   if (cloudMode) loadGoogleStatus();
   else renderGoogleConnection();
   consumeOAuthHash();
+  // Cost wheel: only meaningful in cloud mode (usage logs are server-side)
+  if (cloudMode) loadUsage();
 }
 
 /* ============================================================
@@ -3599,6 +3846,10 @@ async function init() {
   }
 
   $('#signOutBtn').addEventListener('click', signOut);
+
+  // Cost wheel (top-right of topbar)
+  const costWheel = $('#costWheel');
+  if (costWheel) costWheel.addEventListener('click', openUsageModal);
 
   // Dropzone
   const dropzone = $('#dropzone'), fileInput = $('#fileInput');
@@ -3749,7 +4000,7 @@ async function init() {
   document.querySelectorAll('[data-close-modal]').forEach(btn => {
     btn.addEventListener('click', () => $('#' + btn.dataset.closeModal).classList.remove('show'));
   });
-  ['projectModal','taskModal','directionsModal','threadsModal'].forEach(id => {
+  ['projectModal','taskModal','directionsModal','threadsModal','usageModal'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', e => { if (e.target.id === id) el.classList.remove('show'); });
   });

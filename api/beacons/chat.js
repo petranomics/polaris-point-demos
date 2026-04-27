@@ -11,6 +11,7 @@
 //       env var BEACONS_PASSCODE_HASH.
 
 const { neon } = require('@neondatabase/serverless');
+const Pricing = require('../../lib/pricing');
 
 // Model routing: Haiku is the daily driver — fast and cheap, good enough for
 // drafts, summaries, quick Q&A. Sonnet for analysis when reasoning matters.
@@ -298,7 +299,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
   };
 }
 
-async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode }) {
+async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
   const systemBlocks = [{ type: 'text', text: systemPrompt }];
@@ -357,6 +358,14 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   let buffer = '';
   const searchSources = [];
   let resolvedModel = model;
+  // Track usage as it streams in: input lands in message_start, output
+  // accumulates in message_delta events.
+  const finalUsage = {
+    input_tokens: 0,
+    output_tokens: 0,
+    cache_creation_input_tokens: 0,
+    cache_read_input_tokens: 0
+  };
 
   while (true) {
     const { done, value } = await reader.read();
@@ -377,8 +386,11 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
       let data;
       try { data = JSON.parse(dataStr); } catch (e) { continue; }
 
-      if (eventType === 'message_start' && data.message && data.message.model) {
-        resolvedModel = data.message.model;
+      if (eventType === 'message_start' && data.message) {
+        if (data.message.model) resolvedModel = data.message.model;
+        if (data.message.usage) Object.assign(finalUsage, data.message.usage);
+      } else if (eventType === 'message_delta' && data.usage) {
+        Object.assign(finalUsage, data.usage);
       } else if (eventType === 'content_block_delta' && data.delta) {
         if (data.delta.type === 'text_delta' && data.delta.text) {
           send({ type: 'text', text: data.delta.text });
@@ -397,11 +409,30 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
     }
   }
 
+  // Log usage to DB before res.end so the function doesn't get recycled
+  // mid-write. Cost rolls back to the client in the 'done' event so the UI
+  // can flash a per-call price if we ever want to surface it.
+  let costUsd = 0;
+  try {
+    if (sql) {
+      costUsd = await Pricing.logUsage(sql, {
+        userId: null,
+        model: resolvedModel,
+        mode,
+        usage: finalUsage,
+        webSearches: searchSources.length
+      });
+    }
+  } catch (e) {
+    console.error('usage log failed (stream)', e);
+  }
+
   send({
     type: 'done',
     model: resolvedModel,
     searchCount: searchSources.length,
-    searchSources: searchSources.slice(0, 10)
+    searchSources: searchSources.slice(0, 10),
+    costUsd
   });
   res.end();
 }
@@ -447,13 +478,28 @@ module.exports = async function handler(req, res) {
     const systemPrompt = buildSystemPrompt(items);
     const libraryPrompt = buildLibraryPrompt(items, budget, message, history);
 
+    // Make sure the usage log table exists before either call path needs it.
+    await Pricing.ensureUsageTable(sql);
+
     if (body.stream === true) {
-      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode });
+      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql });
       return;
     }
 
     const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message });
-    return res.status(200).json({ ...result, mode });
+    let costUsd = 0;
+    try {
+      costUsd = await Pricing.logUsage(sql, {
+        userId: null,
+        model: result.model,
+        mode,
+        usage: result.usage,
+        webSearches: result.searchCount
+      });
+    } catch (e) {
+      console.error('usage log failed (non-stream)', e);
+    }
+    return res.status(200).json({ ...result, mode, costUsd });
   } catch (err) {
     console.error('beacons/chat error', err);
     if (body.stream === true && !res.headersSent) {
