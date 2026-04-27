@@ -12,21 +12,23 @@
 
 const { neon } = require('@neondatabase/serverless');
 
-// Model routing: Sonnet handles 95% of work cleanly. Opus reserved for deep
-// analysis (weekly briefings, market scans, complex strategy). Haiku for
-// quick utility (rephrase, tighten, summarize-this-paragraph).
+// Model routing: Haiku is the daily driver — fast and cheap, good enough for
+// drafts, summaries, quick Q&A. Sonnet for analysis when reasoning matters.
+// Opus only when the user explicitly opts in (premium tier — much more $).
 const MODELS = {
-  fast: 'claude-haiku-4-5',
-  default: 'claude-sonnet-4-6',
+  default: 'claude-haiku-4-5',
+  smart: 'claude-sonnet-4-6',
   deep: 'claude-opus-4-7'
 };
-// Library budget per mode (chars; ~4 chars/token). Sonnet's window fits this
-// comfortably; Opus deep mode gets a bigger budget for long-form analysis.
+// Library budget per mode (chars; ~4 chars/token). Tighter for Haiku since
+// the model is smaller anyway and we want cost to scale down.
 const LIBRARY_BUDGET = {
-  fast: 60000,
-  default: 160000,
-  deep: 500000
+  default: 60000,
+  smart: 120000,
+  deep: 400000
 };
+// Backwards-compat: older clients may still send mode='fast'. Map to default.
+const MODE_ALIASES = { fast: 'default' };
 
 function checkAuth(req) {
   const expected = process.env.BEACONS_PASSCODE_HASH;
@@ -151,15 +153,53 @@ function buildSystemPrompt(items) {
   return parts.join('\n');
 }
 
-function buildLibraryPrompt(items, budget) {
-  const library = items.filter(i => i.kind === 'file' || i.kind === 'thought')
-    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+// Score one item for relevance to the current query. Title hits weighted
+// 5x. Caps per-token contribution at 5 to avoid spam-bias from one giant
+// thread that mentions a common word a hundred times. Body sample limited
+// to first 2000 chars to keep scoring fast on large libraries.
+function scoreRelevance(item, queryTokens) {
+  if (!queryTokens.length) return 0;
+  const title = (item.title || '').toLowerCase();
+  const sample = (item.content || '').slice(0, 2000).toLowerCase();
+  let score = 0;
+  for (const tok of queryTokens) {
+    if (title.includes(tok)) score += 5;
+    if (sample.includes(tok)) {
+      let hits = 0;
+      let idx = 0;
+      while ((idx = sample.indexOf(tok, idx)) !== -1 && hits < 5) { hits++; idx += tok.length; }
+      score += hits;
+    }
+  }
+  return score;
+}
+
+function buildLibraryPrompt(items, budget, message, history) {
+  const library = items.filter(i => i.kind === 'file' || i.kind === 'thought' || i.kind === 'email_thread');
   if (!library.length) return null;
 
-  const lines = ['=== LIBRARY (files + thoughts) ===\n'];
+  // Pull tokens from current message + last 3 turns of chat for context.
+  const queryText = ((message || '') + ' ' +
+    (Array.isArray(history) ? history.slice(-3).map(h => h.content || '').join(' ') : ''))
+    .toLowerCase();
+  const queryTokens = Array.from(new Set(
+    queryText.split(/[^a-z0-9]+/).filter(t => t.length >= 3)
+  ));
+
+  // Score and sort: relevance desc; tie-break by recency desc.
+  const scored = library.map(item => ({
+    item,
+    score: scoreRelevance(item, queryTokens),
+    age: Date.now() - new Date(item.created_at).getTime()
+  })).sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.age - b.age;
+  });
+
+  const lines = ['=== LIBRARY (most relevant first) ===\n'];
   let chars = lines[0].length;
   let truncated = 0;
-  for (const item of library) {
+  for (const { item } of scored) {
     if (chars >= budget) { truncated++; continue; }
     const tag = tagLine(item);
     const body = (item.content || '').trim();
@@ -167,14 +207,16 @@ function buildLibraryPrompt(items, budget) {
     const block = '\n' + tag + '\n' + body + '\n';
     if (chars + block.length > budget) {
       const remaining = budget - chars;
-      lines.push('\n' + tag + '\n' + body.slice(0, remaining - tag.length - 4) + '\n[...truncated]');
+      if (remaining > tag.length + 100) {
+        lines.push('\n' + tag + '\n' + body.slice(0, remaining - tag.length - 12) + '\n[...truncated]');
+      }
       chars = budget;
       continue;
     }
     lines.push(block);
     chars += block.length;
   }
-  if (truncated) lines.push(`\n[Note: ${truncated} additional library items not included in this turn — context limit reached.]`);
+  if (truncated) lines.push(`\n[Note: ${truncated} additional library items not packed this turn — relevance budget reached. Ask about a specific topic to surface them.]`);
   return lines.join('');
 }
 
@@ -183,13 +225,16 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
     throw new Error('ANTHROPIC_API_KEY not configured on the server');
   }
 
-  // System uses content blocks so we can attach cache_control to the heavy library block.
+  // System uses content blocks so we can attach cache_control to the heavy
+  // library block. 1-hour TTL fits ad-hoc usage (chat through the workday,
+  // not just in 5-min bursts) — initial cache write costs 2x but each hit
+  // pays back fast vs. the 5-min default.
   const systemBlocks = [{ type: 'text', text: systemPrompt }];
   if (libraryPrompt) {
     systemBlocks.push({
       type: 'text',
       text: libraryPrompt,
-      cache_control: { type: 'ephemeral' }
+      cache_control: { type: 'ephemeral', ttl: '1h' }
     });
   }
 
@@ -216,6 +261,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
     headers: {
       'x-api-key': process.env.ANTHROPIC_API_KEY,
       'anthropic-version': '2023-06-01',
+      'anthropic-beta': 'extended-cache-ttl-2025-04-11',
       'content-type': 'application/json'
     },
     body: JSON.stringify({
@@ -257,7 +303,7 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
 
   const systemBlocks = [{ type: 'text', text: systemPrompt }];
   if (libraryPrompt) {
-    systemBlocks.push({ type: 'text', text: libraryPrompt, cache_control: { type: 'ephemeral' } });
+    systemBlocks.push({ type: 'text', text: libraryPrompt, cache_control: { type: 'ephemeral', ttl: '1h' } });
   }
   const messages = [];
   if (Array.isArray(history)) {
@@ -286,6 +332,7 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
     headers: {
       'x-api-key': process.env.ANTHROPIC_API_KEY,
       'anthropic-version': '2023-06-01',
+      'anthropic-beta': 'extended-cache-ttl-2025-04-11',
       'content-type': 'application/json'
     },
     body: JSON.stringify({
@@ -377,7 +424,8 @@ module.exports = async function handler(req, res) {
   if (!message) return res.status(400).json({ error: 'Missing message' });
   const history = Array.isArray(body.history) ? body.history.slice(-20) : [];
   const requestedMode = (body.mode || 'default').toString();
-  const mode = MODELS[requestedMode] ? requestedMode : 'default';
+  const aliasedMode = MODE_ALIASES[requestedMode] || requestedMode;
+  const mode = MODELS[aliasedMode] ? aliasedMode : 'default';
   const model = MODELS[mode];
   const budget = LIBRARY_BUDGET[mode];
 
@@ -397,7 +445,7 @@ module.exports = async function handler(req, res) {
     const items = rows.map(r => r.data);
 
     const systemPrompt = buildSystemPrompt(items);
-    const libraryPrompt = buildLibraryPrompt(items, budget);
+    const libraryPrompt = buildLibraryPrompt(items, budget, message, history);
 
     if (body.stream === true) {
       await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode });

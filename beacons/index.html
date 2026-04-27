@@ -1695,10 +1695,10 @@ main {
           <div class="section-sub" id="chatSub">Knows your projects, tasks, and library · Can search the web</div>
         </div>
         <div class="section-bar-actions">
-          <select id="chatMode" class="chat-mode-select" title="Default routes to Sonnet for everyday work. Deep uses Opus for heavy analysis. Fast uses Haiku for quick utility.">
-            <option value="default">Default · Sonnet 4.6</option>
-            <option value="fast">Fast · Haiku 4.5</option>
-            <option value="deep">Deep · Opus 4.7</option>
+          <select id="chatMode" class="chat-mode-select" title="Default uses Haiku — fast and cheap, good for drafts and Q&A. Smart uses Sonnet when reasoning matters. Deep uses Opus (premium $) only when you want it.">
+            <option value="default">Default · Haiku 4.5</option>
+            <option value="smart">Smart · Sonnet 4.6</option>
+            <option value="deep">Deep · Opus 4.7 ($$)</option>
           </select>
           <button class="btn-icon" id="threadsBtn" title="Past conversations">≡ History</button>
           <button class="btn-icon" id="newChatBtn" title="Start a new conversation">⟲ New</button>
@@ -3175,13 +3175,13 @@ const QUICK_ACTIONS = {
   weekly: {
     label: 'Weekly briefing',
     icon: '◆',
-    mode: 'deep',
+    mode: 'smart',
     prompt: "Generate my weekly briefing. Pull from my active projects, in-progress tasks, and recent library notes. Lead with: (1) what shipped, (2) what's in flight, (3) what's blocked or waiting on someone, (4) what I should focus on this week. Be specific — name projects, accounts, and dates from my context. Skip generic frameworks."
   },
   precall: {
     label: 'Pre-call prep',
     icon: '◇',
-    mode: 'deep',
+    mode: 'smart',
     prompt: "I have an upcoming call. Look at my active projects, recent library notes, and open tasks to identify the most likely call coming up. Produce a one-page prep doc: who's on the call, what they care about based on past notes, our recent history with them, the 3 things I want to walk away with, and 2 tough questions I should be ready for. If you can't tell which call I mean, ask me."
   },
   draftemail: {
@@ -3193,7 +3193,7 @@ const QUICK_ACTIONS = {
   marketscan: {
     label: 'Market scan',
     icon: '⌖',
-    mode: 'deep',
+    mode: 'smart',
     prompt: "Scan my library for signals from the certification and commodity markets — pricing moves, regulations, competitor activity, brand sustainability commitments, supply-chain disruption, country-of-origin developments. Surface the top 5 things I should know, with a one-line 'so what' for me as a relationship manager on each."
   },
   ideas: {
@@ -3281,7 +3281,7 @@ async function sendChat(message, modeOverride) {
   // Streaming mode: rely on the cursor inside the bubble, no need for the
   // bottom typing strip until the model starts searching.
   $('#chatTyping').style.display = 'none';
-  $('#chatTypingText').textContent = mode === 'deep' ? 'Beacon is thinking deeply (Opus)...' : (mode === 'fast' ? 'Beacon is on it (Haiku)...' : 'Beacon is thinking...');
+  $('#chatTypingText').textContent = mode === 'deep' ? 'Beacon is thinking deeply (Opus)...' : (mode === 'smart' ? 'Beacon is reasoning (Sonnet)...' : 'Beacon is on it (Haiku)...');
   $('#chatSendBtn').disabled = true;
 
   try {
@@ -3503,7 +3503,7 @@ async function runProjectInChat() {
 
   $('#projectModal').classList.remove('show');
   scrollToChat();
-  sendChat(prompt, 'deep');
+  sendChat(prompt, 'smart');
 }
 
 async function runTaskInChat() {
