@@ -1679,6 +1679,7 @@ main {
           <div class="conn-actions">
             <button class="btn-icon" id="googleDebugBtn" title="Show server-side env var fingerprints (no secrets exposed)">debug</button>
             <button class="btn btn-ghost" id="gmailSyncBtn" style="display:none">Sync Gmail</button>
+            <button class="btn btn-ghost" id="driveSyncBtn" style="display:none">Sync Drive</button>
             <button class="btn btn-ghost" id="googleConnectBtn">Connect</button>
             <button class="btn btn-ghost" id="googleDisconnectBtn" style="display:none;color:var(--red);border-color:rgba(248,113,113,.3)">Disconnect</button>
           </div>
@@ -2863,20 +2864,22 @@ function renderGoogleConnection() {
   const disconnectBtn = $('#googleDisconnectBtn');
 
   const syncBtn = $('#gmailSyncBtn');
+  const driveBtn = $('#driveSyncBtn');
   if (googleConnection.connected) {
     icon.classList.remove('unconfigured');
     icon.classList.add('connected');
     pill.classList.remove('idle', 'error'); pill.classList.add('connected');
     pill.textContent = 'Connected';
-    const lastSync = googleConnection.gmailLastSync;
-    const threadCount = googleConnection.gmailThreadCount;
-    let subText = `<strong>${escapeHtml(googleConnection.email || 'Google account')}</strong> — connected ${googleConnection.connectedAt ? fmtDate(googleConnection.connectedAt) : 'recently'}`;
-    if (lastSync) subText += ` · Gmail synced ${fmtDate(lastSync)}${threadCount ? ' · ' + threadCount + ' threads' : ''}`;
-    else subText += ' · Gmail not synced yet';
-    sub.innerHTML = subText;
+    const gmailSync = googleConnection.gmailLastSync;
+    const driveSync = googleConnection.driveLastSync;
+    const subParts = [`<strong>${escapeHtml(googleConnection.email || 'Google account')}</strong>`];
+    subParts.push(gmailSync ? `Gmail synced ${fmtDate(gmailSync)}` : 'Gmail not synced');
+    subParts.push(driveSync ? `Drive synced ${fmtDate(driveSync)}` : 'Drive not synced');
+    sub.innerHTML = subParts.join(' · ');
     connectBtn.style.display = 'none';
     disconnectBtn.style.display = 'inline-flex';
     syncBtn.style.display = 'inline-flex';
+    driveBtn.style.display = 'inline-flex';
   } else if (!googleConnection.configured) {
     icon.classList.remove('connected');
     icon.classList.add('unconfigured');
@@ -2888,6 +2891,7 @@ function renderGoogleConnection() {
     connectBtn.disabled = true;
     disconnectBtn.style.display = 'none';
     syncBtn.style.display = 'none';
+    driveBtn.style.display = 'none';
   } else {
     icon.classList.remove('connected');
     icon.classList.add('unconfigured');
@@ -2898,6 +2902,7 @@ function renderGoogleConnection() {
     connectBtn.disabled = false;
     disconnectBtn.style.display = 'none';
     syncBtn.style.display = 'none';
+    driveBtn.style.display = 'none';
   }
 }
 
@@ -2926,6 +2931,38 @@ async function syncGmail() {
     renderAll();
   } catch (e) {
     showToast('Gmail sync failed: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+async function syncDrive() {
+  const btn = $('#driveSyncBtn');
+  if (!btn) return;
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Syncing…';
+  try {
+    const res = await fetch(`${API_BASE}/google/drive-sync`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || ('HTTP ' + res.status));
+    }
+    const data = await res.json();
+    let msg;
+    if (data.ingested === 0 && data.skipped === 0) msg = 'No new files in Drive';
+    else if (data.ingested === 0) msg = `Drive scanned (${data.skipped} unchanged)`;
+    else msg = `Imported ${data.ingested} file${data.ingested === 1 ? '' : 's'}${data.errors ? ' · ' + data.errors + ' failed' : ''}`;
+    showToast(msg);
+    await loadAll();
+    await loadGoogleStatus();
+    renderAll();
+  } catch (e) {
+    showToast('Drive sync failed: ' + e.message, true);
   } finally {
     btn.disabled = false;
     btn.textContent = originalText;
@@ -3605,6 +3642,7 @@ async function init() {
   $('#googleDisconnectBtn').addEventListener('click', disconnectGoogle);
   const dbg = $('#googleDebugBtn'); if (dbg) dbg.addEventListener('click', debugOAuth);
   const gsync = $('#gmailSyncBtn'); if (gsync) gsync.addEventListener('click', syncGmail);
+  const dsync = $('#driveSyncBtn'); if (dsync) dsync.addEventListener('click', syncDrive);
 
   // Directions
   $('#editDirectionsBtn').addEventListener('click', openDirectionsModal);

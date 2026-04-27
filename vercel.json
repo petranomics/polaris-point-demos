@@ -21,7 +21,8 @@
     { "path": "/api/beacon/cron/weekly", "schedule": "0 14 * * 1" },
     { "path": "/api/beacon/cron/monthly", "schedule": "0 14 1 * *" },
     { "path": "/api/beacon/cron/quarterly", "schedule": "0 14 1 1,4,7,10 *" },
-    { "path": "/api/beacons/google/gmail-sync", "schedule": "0 */6 * * *" }
+    { "path": "/api/beacons/google/gmail-sync", "schedule": "0 */6 * * *" },
+    { "path": "/api/beacons/google/drive-sync", "schedule": "30 */6 * * *" }
   ],
   "headers": [
     {

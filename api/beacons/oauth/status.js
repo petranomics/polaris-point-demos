@@ -28,19 +28,26 @@ module.exports = async function handler(req, res) {
     const acct = await G.getGoogleAccount();
     if (!acct) return res.status(200).json({ connected: false, configured: true });
 
-    // Look up Gmail sync state if the table exists
+    // Look up sync state for any service rows that exist
     let gmailLastSync = null;
     let gmailThreadCount = null;
+    let driveLastSync = null;
+    let driveFileCount = null;
     try {
       const { neon } = require('@neondatabase/serverless');
       const sql = neon(process.env.DATABASE_URL);
       const rows = await sql`
-        SELECT last_sync_at, thread_count FROM beacons_sync_state WHERE service = 'gmail'
+        SELECT service, last_sync_at, thread_count FROM beacons_sync_state
       `;
-      if (rows[0]) {
-        gmailLastSync = rows[0].last_sync_at;
-        gmailThreadCount = rows[0].thread_count;
-      }
+      rows.forEach(r => {
+        if (r.service === 'gmail') {
+          gmailLastSync = r.last_sync_at;
+          gmailThreadCount = r.thread_count;
+        } else if (r.service === 'drive') {
+          driveLastSync = r.last_sync_at;
+          driveFileCount = r.thread_count;
+        }
+      });
     } catch (e) { /* table not created yet, fine */ }
 
     return res.status(200).json({
@@ -51,7 +58,9 @@ module.exports = async function handler(req, res) {
       connectedAt: acct.connected_at,
       updatedAt: acct.updated_at,
       gmailLastSync,
-      gmailThreadCount
+      gmailThreadCount,
+      driveLastSync,
+      driveFileCount
     });
   } catch (err) {
     console.error('oauth/status error', err);
