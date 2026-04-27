@@ -1677,6 +1677,7 @@ main {
             <div class="conn-sub" id="googleConnSub">Drive (read), Gmail (read), Docs · Sheets · Slides (read+write)</div>
           </div>
           <div class="conn-actions">
+            <button class="btn-icon" id="googleDebugBtn" title="Show server-side env var fingerprints (no secrets exposed)">debug</button>
             <button class="btn btn-ghost" id="googleConnectBtn">Connect</button>
             <button class="btn btn-ghost" id="googleDisconnectBtn" style="display:none;color:var(--red);border-color:rgba(248,113,113,.3)">Disconnect</button>
           </div>
@@ -2927,6 +2928,40 @@ async function disconnectGoogle() {
   }
 }
 
+async function debugOAuth() {
+  try {
+    const res = await fetch(`${API_BASE}/oauth/debug`, { headers: authHeaders() });
+    const data = await res.json();
+    const ci = data.GOOGLE_CLIENT_ID;
+    const cs = data.GOOGLE_CLIENT_SECRET;
+    const lines = [
+      'Server reports the following env vars:',
+      '',
+      'GOOGLE_CLIENT_ID:',
+      ci ? `  length: ${ci.length}` : '  NOT SET',
+      ci ? `  starts: ${ci.head}...` : '',
+      ci ? `  ends: ...${ci.tail}` : '',
+      ci ? `  expected: 12 digits + dash + 32 chars + .apps.googleusercontent.com` : '',
+      '',
+      'GOOGLE_CLIENT_SECRET:',
+      cs ? `  length: ${cs.length}` : '  NOT SET',
+      cs ? `  starts: ${cs.head}...` : '',
+      cs ? `  ends: ...${cs.tail}` : '',
+      cs ? `  expected: usually starts with GOCSPX- and is ~35 chars total` : '',
+      '',
+      `GOOGLE_REDIRECT_URI: ${data.GOOGLE_REDIRECT_URI || '(default)'}`,
+      `Expected: ${data.expected_redirect_uri}`,
+      `Matches: ${data.redirect_uri_matches_expected ? '✓' : '✗'}`,
+      '',
+      `DATABASE_URL set: ${data.DATABASE_URL_set ? '✓' : '✗'}`,
+      `ANTHROPIC_API_KEY set: ${data.ANTHROPIC_API_KEY_set ? '✓' : '✗'}`
+    ].filter(Boolean).join('\n');
+    alert(lines);
+  } catch (e) {
+    showToast('Debug failed: ' + e.message, true);
+  }
+}
+
 function consumeOAuthHash() {
   // After /api/beacons/oauth/callback redirects us back, we land on
   // /beacons#oauth-connected=email or #oauth-error=msg. Read once, clean up.
@@ -3522,6 +3557,7 @@ async function init() {
   // Connections
   $('#googleConnectBtn').addEventListener('click', startGoogleConnect);
   $('#googleDisconnectBtn').addEventListener('click', disconnectGoogle);
+  const dbg = $('#googleDebugBtn'); if (dbg) dbg.addEventListener('click', debugOAuth);
 
   // Directions
   $('#editDirectionsBtn').addEventListener('click', openDirectionsModal);
