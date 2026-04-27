@@ -12,6 +12,8 @@
 
 const { neon } = require('@neondatabase/serverless');
 const Pricing = require('../../lib/pricing');
+const G = require('../../lib/google');
+const Tools = require('../../lib/tools');
 
 // Model routing: Haiku is the daily driver — fast and cheap, good enough for
 // drafts, summaries, quick Q&A. Sonnet for analysis when reasoning matters.
@@ -85,6 +87,25 @@ function buildSystemPrompt(items) {
     '  3. End your reply with: "Click → Slides under this message to drop it into your Google Drive." NEVER say you can\'t make presentations or recommend external tools — the button does it.',
     '',
     'When a user asks for a doc / brief / Word file: write the content cleanly, end with "Click → Google Doc to save it to your Drive." Same for spreadsheets / CSVs / tables — point at "→ Sheet".',
+    '',
+    '== TOOL USE — operating on real files in their Drive ==',
+    'You have a server-side toolkit that lets you actually MODIFY existing files in their Google Drive. This is bigger than the save-as-buttons — you can find templates, clone them, write into specific cells, replace text in slides.',
+    '',
+    'Available tools:',
+    '  • find_drive_file(query) — fuzzy-find a file in their Drive by name. ALWAYS use this first when the user references a file by name ("my Nestlé tracker", "the Q3 deck"). Returns id, name, mimeType, webViewLink for matches.',
+    '  • read_sheet_range(file_id, range) — peek at sheet structure BEFORE writing. Use this to find column headers, see where data starts, etc. Range is A1 notation: "Sheet1!A1:Z50".',
+    '  • clone_drive_file(file_id, new_name) — copy a Drive file. ALWAYS clone before modifying — never write to the user\'s original template. Naming: descriptive ("Nestlé Q3 2026 Tracker"), not generic ("Copy of Tracker").',
+    '  • update_sheet_cells(file_id, range, values) — write values into a Google Sheet. range is A1 notation; values is a 2D array (rows × columns).',
+    '  • replace_slide_text(file_id, replacements) — find/replace text across a Google Slides deck. Useful for filling template placeholders ({{client_name}}, [DATE], etc.) — many at once in one batch.',
+    '',
+    'Tool-use playbook for "fill out my X tracker / template":',
+    '  1. find_drive_file with the user\'s query → confirm the file. If multiple match, ask the user to pick.',
+    '  2. read_sheet_range / inspect first to understand the structure — don\'t guess at columns.',
+    '  3. clone_drive_file with a descriptive name → get a working copy id.',
+    '  4. update_sheet_cells (or replace_slide_text) on the CLONE — never the original.',
+    '  5. Reply with the new file\'s webViewLink so the user can open it: "Done. New copy here: [link]".',
+    '',
+    'When tools fail (auth issue, file not found, permission denied), say so plainly and ask the user to verify the connection state. Do NOT silently fall back to "here\'s the text, copy it manually" — that defeats the point of the tools. Either succeed or explain why you couldn\'t.',
     '',
     'The user can also click any task or project in the workspace to open it, and from that detail view click "Run with Beacon" to send the task or project context straight back to you for action — that\'s how on-demand execution works.',
     '',
@@ -338,7 +359,15 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
   };
 }
 
-async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql }) {
+// Streaming agent loop: streams text tokens to the client, but also handles
+// multi-turn tool-use cycles. When the model invokes a tool (find_drive_file,
+// clone_drive_file, update_sheet_cells, replace_slide_text, read_sheet_range),
+// we stream a tool_progress event, execute the tool server-side, feed the
+// result back as tool_result, and let the model continue. Cap at MAX_TURNS
+// to prevent runaway loops.
+const MAX_AGENT_TURNS = 6;
+
+async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
   const systemBlocks = [{ type: 'text', text: systemPrompt }];
@@ -354,9 +383,13 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
     });
   }
   messages.push({ role: 'user', content: String(message) });
-  const tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 6 }];
 
-  // SSE headers — flush them so the browser starts reading
+  const tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 6 }];
+  if (accessToken) {
+    Tools.TOOL_DEFINITIONS.forEach(d => tools.push(d));
+  }
+
+  // SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
@@ -364,93 +397,168 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   if (typeof res.flushHeaders === 'function') res.flushHeaders();
 
   const send = (payload) => res.write('data: ' + JSON.stringify(payload) + '\n\n');
+  send({ type: 'meta', model, mode, toolsAvailable: tools.length });
 
-  send({ type: 'meta', model, mode });
-
-  const upstream = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'extended-cache-ttl-2025-04-11',
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 4096,
-      tools,
-      system: systemBlocks,
-      messages,
-      stream: true
-    })
-  });
-
-  if (!upstream.ok) {
-    const errText = await upstream.text();
-    send({ type: 'error', error: 'Upstream ' + upstream.status + ': ' + errText.slice(0, 300) });
-    res.end();
-    return;
-  }
-
-  const reader = upstream.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  const searchSources = [];
-  let resolvedModel = model;
-  // Track usage as it streams in: input lands in message_start, output
-  // accumulates in message_delta events.
-  const finalUsage = {
+  const totalUsage = {
     input_tokens: 0,
     output_tokens: 0,
     cache_creation_input_tokens: 0,
     cache_read_input_tokens: 0
   };
+  const searchSources = [];
+  const toolsUsed = [];
+  let resolvedModel = model;
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const events = buffer.split('\n\n');
-    buffer = events.pop();
+  for (let turn = 0; turn < MAX_AGENT_TURNS; turn++) {
+    const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'extended-cache-ttl-2025-04-11',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 4096,
+        tools,
+        system: systemBlocks,
+        messages,
+        stream: true
+      })
+    });
 
-    for (const evt of events) {
-      const lines = evt.split('\n');
-      let eventType = '';
-      let dataStr = '';
-      for (const ln of lines) {
-        if (ln.startsWith('event: ')) eventType = ln.slice(7).trim();
-        else if (ln.startsWith('data: ')) dataStr = ln.slice(6);
-      }
-      if (!dataStr) continue;
-      let data;
-      try { data = JSON.parse(dataStr); } catch (e) { continue; }
+    if (!upstream.ok) {
+      const errText = await upstream.text();
+      send({ type: 'error', error: 'Upstream ' + upstream.status + ': ' + errText.slice(0, 300) });
+      res.end();
+      return;
+    }
 
-      if (eventType === 'message_start' && data.message) {
-        if (data.message.model) resolvedModel = data.message.model;
-        if (data.message.usage) Object.assign(finalUsage, data.message.usage);
-      } else if (eventType === 'message_delta' && data.usage) {
-        Object.assign(finalUsage, data.usage);
-      } else if (eventType === 'content_block_delta' && data.delta) {
-        if (data.delta.type === 'text_delta' && data.delta.text) {
-          send({ type: 'text', text: data.delta.text });
+    // Parse one streaming turn. Track text deltas, tool_use blocks (with
+    // their JSON input), and the stop_reason that ends the turn.
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    const turnContent = [];           // assistant content blocks for this turn
+    const turnToolUses = [];          // tool_use blocks needing execution
+    let currentBlock = null;          // block-in-progress
+    let stopReason = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split('\n\n');
+      buffer = events.pop();
+
+      for (const evt of events) {
+        const lines = evt.split('\n');
+        let eventType = '', dataStr = '';
+        for (const ln of lines) {
+          if (ln.startsWith('event: ')) eventType = ln.slice(7).trim();
+          else if (ln.startsWith('data: ')) dataStr = ln.slice(6);
         }
-      } else if (eventType === 'content_block_start' && data.content_block) {
-        if (data.content_block.type === 'web_search_tool_use') {
-          send({ type: 'search_started' });
-        }
-      } else if (eventType === 'content_block_stop' && data.content_block) {
-        if (data.content_block.type === 'web_search_tool_result' && Array.isArray(data.content_block.content)) {
-          data.content_block.content.forEach(r => {
-            if (r && r.url) searchSources.push({ url: r.url, title: r.title || '' });
-          });
+        if (!dataStr) continue;
+        let data;
+        try { data = JSON.parse(dataStr); } catch (e) { continue; }
+
+        if (eventType === 'message_start' && data.message) {
+          if (data.message.model) resolvedModel = data.message.model;
+          if (data.message.usage) {
+            totalUsage.input_tokens += data.message.usage.input_tokens || 0;
+            totalUsage.cache_creation_input_tokens += data.message.usage.cache_creation_input_tokens || 0;
+            totalUsage.cache_read_input_tokens += data.message.usage.cache_read_input_tokens || 0;
+          }
+        } else if (eventType === 'content_block_start' && data.content_block) {
+          const cb = data.content_block;
+          if (cb.type === 'tool_use') {
+            currentBlock = { type: 'tool_use', id: cb.id, name: cb.name, _inputAcc: '' };
+            send({ type: 'tool_started', name: cb.name });
+          } else if (cb.type === 'web_search_tool_use') {
+            currentBlock = { type: 'web_search_tool_use' };
+            send({ type: 'search_started' });
+          } else if (cb.type === 'text') {
+            currentBlock = { type: 'text', text: '' };
+          } else if (cb.type === 'web_search_tool_result') {
+            currentBlock = { type: 'web_search_tool_result', content: cb.content || [] };
+          } else {
+            currentBlock = { type: cb.type };
+          }
+        } else if (eventType === 'content_block_delta' && data.delta) {
+          if (data.delta.type === 'text_delta' && data.delta.text) {
+            if (currentBlock && currentBlock.type === 'text') currentBlock.text += data.delta.text;
+            send({ type: 'text', text: data.delta.text });
+          } else if (data.delta.type === 'input_json_delta' && data.delta.partial_json) {
+            if (currentBlock && currentBlock.type === 'tool_use') {
+              currentBlock._inputAcc += data.delta.partial_json;
+            }
+          }
+        } else if (eventType === 'content_block_stop') {
+          if (currentBlock) {
+            if (currentBlock.type === 'tool_use') {
+              let input = {};
+              try { input = currentBlock._inputAcc ? JSON.parse(currentBlock._inputAcc) : {}; } catch (e) { /* keep empty */ }
+              const block = { type: 'tool_use', id: currentBlock.id, name: currentBlock.name, input };
+              turnContent.push(block);
+              turnToolUses.push(block);
+            } else if (currentBlock.type === 'text') {
+              turnContent.push({ type: 'text', text: currentBlock.text });
+            } else if (currentBlock.type === 'web_search_tool_result' && Array.isArray(currentBlock.content)) {
+              currentBlock.content.forEach(r => {
+                if (r && r.url) searchSources.push({ url: r.url, title: r.title || '' });
+              });
+              turnContent.push({ type: 'web_search_tool_result', content: currentBlock.content });
+            } else {
+              // pass-through for other block types
+              turnContent.push({ type: currentBlock.type });
+            }
+          }
+          currentBlock = null;
+        } else if (eventType === 'message_delta') {
+          if (data.delta && data.delta.stop_reason) stopReason = data.delta.stop_reason;
+          if (data.usage) totalUsage.output_tokens += data.usage.output_tokens || 0;
         }
       }
     }
+
+    // Persist the assistant turn so it can be threaded into the next call.
+    if (turnContent.length) messages.push({ role: 'assistant', content: turnContent });
+
+    // If the turn ended without tool calls, we're done.
+    const customToolUses = turnToolUses.filter(tu => Tools.EXECUTORS[tu.name]);
+    if (stopReason !== 'tool_use' || !customToolUses.length) break;
+
+    // Execute each requested tool, collect results.
+    const toolResults = [];
+    for (const tu of customToolUses) {
+      try {
+        send({ type: 'tool_progress', name: tu.name, status: 'running', input: tu.input });
+        const result = await Tools.executeTool(tu.name, tu.input, accessToken);
+        toolsUsed.push({ name: tu.name, input: tu.input, ok: true });
+        send({ type: 'tool_progress', name: tu.name, status: 'done' });
+        toolResults.push({
+          type: 'tool_result',
+          tool_use_id: tu.id,
+          content: JSON.stringify(result).slice(0, 12000)
+        });
+      } catch (e) {
+        const errMsg = e && e.message ? e.message : String(e);
+        toolsUsed.push({ name: tu.name, input: tu.input, ok: false, error: errMsg });
+        send({ type: 'tool_progress', name: tu.name, status: 'error', error: errMsg });
+        toolResults.push({
+          type: 'tool_result',
+          tool_use_id: tu.id,
+          content: JSON.stringify({ error: errMsg }),
+          is_error: true
+        });
+      }
+    }
+    messages.push({ role: 'user', content: toolResults });
+    // Loop continues — model gets the tool results and reasons further.
   }
 
-  // Log usage to DB before res.end so the function doesn't get recycled
-  // mid-write. Cost rolls back to the client in the 'done' event so the UI
-  // can flash a per-call price if we ever want to surface it.
+  // Log usage before res.end so the function doesn't recycle mid-write.
   let costUsd = 0;
   try {
     if (sql) {
@@ -458,7 +566,7 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
         userId: null,
         model: resolvedModel,
         mode,
-        usage: finalUsage,
+        usage: totalUsage,
         webSearches: searchSources.length
       });
     }
@@ -471,6 +579,7 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
     model: resolvedModel,
     searchCount: searchSources.length,
     searchSources: searchSources.slice(0, 10),
+    toolsUsed,
     costUsd
   });
   res.end();
@@ -520,8 +629,20 @@ module.exports = async function handler(req, res) {
     // Make sure the usage log table exists before either call path needs it.
     await Pricing.ensureUsageTable(sql);
 
+    // If Google is connected, the agent can wield Drive/Sheets/Slides tools.
+    // Pull a fresh access token (auto-refreshes if expired) before kicking
+    // off the chat call. Failure here is non-fatal — chat still works
+    // without those tools, just web_search.
+    let accessToken = null;
+    try {
+      await G.ensureSchema();
+      accessToken = await G.getValidAccessToken();
+    } catch (e) {
+      console.warn('Could not fetch Google access token for chat tools:', e.message);
+    }
+
     if (body.stream === true) {
-      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql });
+      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken });
       return;
     }
 

@@ -97,6 +97,36 @@ module.exports = async function handler(req, res) {
       mime === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
     ) {
       content = extractPptxText(buffer).trim();
+    } else if (
+      ext === 'xlsx' || ext === 'xls' ||
+      mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      mime === 'application/vnd.ms-excel'
+    ) {
+      const ExcelJS = require('exceljs');
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buffer);
+      const sheetTexts = [];
+      wb.eachSheet((sheet) => {
+        const rows = [];
+        sheet.eachRow({ includeEmpty: false }, (row) => {
+          const cells = [];
+          row.eachCell({ includeEmpty: true }, (cell) => {
+            let v = cell.value;
+            if (v && typeof v === 'object') {
+              if (v.richText) v = v.richText.map(t => t.text).join('');
+              else if (v.formula) v = v.result != null ? String(v.result) : '=' + v.formula;
+              else if (v.text) v = v.text;
+              else if (v instanceof Date) v = v.toISOString().slice(0, 10);
+              else v = JSON.stringify(v);
+            }
+            cells.push(v == null ? '' : String(v));
+          });
+          rows.push(cells.join('\t'));
+        });
+        if (rows.length) sheetTexts.push(`=== Sheet: ${sheet.name} ===\n${rows.join('\n')}`);
+      });
+      content = sheetTexts.join('\n\n').trim();
+      meta = { sheetCount: wb.worksheets.length };
     } else {
       return res.status(400).json({ error: 'Unsupported file type: ' + (ext || mime || 'unknown') });
     }

@@ -1419,6 +1419,56 @@ main {
 }
 
 /* ====================================================
+   TOOL CHIPS (agent activity above assistant messages)
+   ==================================================== */
+.chat-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: .04em;
+  border: 1px solid var(--border);
+  background: rgba(91,141,239,.06);
+  color: var(--text-secondary);
+}
+.tool-chip.running {
+  border-color: rgba(91,141,239,.4);
+  background: rgba(91,141,239,.12);
+  color: var(--blue);
+}
+.tool-chip.done {
+  border-color: rgba(46,194,126,.3);
+  background: rgba(46,194,126,.08);
+  color: var(--green);
+}
+.tool-chip.error {
+  border-color: rgba(248,113,113,.4);
+  background: rgba(248,113,113,.1);
+  color: var(--red);
+}
+.tool-chip-icon { line-height: 1; }
+.tool-chip-spinner {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: chat-pulse 1s ease-in-out infinite;
+}
+.tool-chip-check {
+  font-weight: 700;
+  font-size: .75rem;
+  line-height: 1;
+}
+
+/* ====================================================
    RECORD (live transcription)
    ==================================================== */
 .thoughts-toolbar {
@@ -1935,7 +1985,7 @@ main {
         <label class="dropzone" id="dropzone">
           <div class="dropzone-icon">↑</div>
           <div class="dropzone-prim">Drop files here, or click to browse</div>
-          <div class="dropzone-sec">Full text extraction for .pdf, .docx, .pptx, plus all common text formats (.txt, .md, .csv, .json, .html, .eml, .mbox). Office files up to ~3MB; larger uploads coming with the blob path.</div>
+          <div class="dropzone-sec">Full text extraction for .pdf, .docx, .pptx, .xlsx, plus all common text formats (.txt, .md, .csv, .json, .html, .eml, .mbox). Office files up to ~3MB; larger uploads coming with the blob path.</div>
           <input type="file" id="fileInput" multiple>
         </label>
       </section>
@@ -2423,7 +2473,7 @@ async function loadAll() {
    FILES
    ============================================================ */
 const TEXT_EXTENSIONS = ['txt','md','csv','json','html','htm','xml','eml','mbox','log','tsv','rtf','srt','vtt'];
-const EXTRACT_EXTENSIONS = ['pdf','docx','pptx'];
+const EXTRACT_EXTENSIONS = ['pdf','docx','pptx','xlsx','xls'];
 const EXTRACT_MAX_BYTES = 3 * 1024 * 1024; // ~3MB original; base64 inflates ~33% to fit Vercel's 4.5MB body cap
 
 function readFileAsText(file) {
@@ -3503,6 +3553,37 @@ const QUICK_ACTIONS = {
   }
 };
 
+const TOOL_LABELS = {
+  find_drive_file:    { label: 'Searching Drive',    icon: '🔍' },
+  read_sheet_range:   { label: 'Reading sheet',      icon: '📊' },
+  clone_drive_file:   { label: 'Cloning template',   icon: '📋' },
+  update_sheet_cells: { label: 'Writing to sheet',   icon: '✏️' },
+  replace_slide_text: { label: 'Updating slides',    icon: '🔁' },
+  web_search:         { label: 'Searching web',      icon: '🌐' }
+};
+function toolDisplayName(name) {
+  return (TOOL_LABELS[name] && TOOL_LABELS[name].label) || name;
+}
+function renderToolChip(tool) {
+  const meta = TOOL_LABELS[tool.name] || { label: tool.name, icon: '⚙' };
+  const status = tool.status || 'done';
+  let inner;
+  if (status === 'running') {
+    inner = '<span class="tool-chip-spinner"></span>';
+  } else if (status === 'done') {
+    inner = '<span class="tool-chip-check">✓</span>';
+  } else if (status === 'error') {
+    inner = '<span class="tool-chip-check">!</span>';
+  } else {
+    inner = '<span class="tool-chip-icon">' + meta.icon + '</span>';
+  }
+  const title = tool.error
+    ? tool.error
+    : (tool.input ? meta.label + ' — ' + JSON.stringify(tool.input).slice(0, 200) : meta.label);
+  return '<span class="tool-chip ' + escapeHtml(status) + '" title="' + escapeHtml(title) + '">' +
+    inner + ' <span>' + escapeHtml(meta.label) + '</span></span>';
+}
+
 function emptyChatHTML() {
   const qaButtons = Object.entries(QUICK_ACTIONS).map(([key, qa]) =>
     `<button class="chat-qa" data-qa="${key}"><span class="chat-qa-icon">${qa.icon}</span>${qa.label}</button>`
@@ -3558,8 +3639,12 @@ function renderChat() {
     } else {
       bubbleHtml = escapeHtml(text);
     }
+    const toolsHtml = (role === 'assistant' && Array.isArray(m.tools) && m.tools.length)
+      ? '<div class="chat-tools">' + m.tools.map(renderToolChip).join('') + '</div>'
+      : '';
     return `<div class="chat-msg ${role}">
       ${meta}
+      ${toolsHtml}
       <div class="chat-bubble">${bubbleHtml}</div>
       ${sourcesHtml}
       ${actions}
@@ -3593,7 +3678,7 @@ async function sendChat(message, modeOverride) {
       renderChat();
     } else {
       // Streaming: push a placeholder assistant message and append deltas.
-      const placeholder = { role: 'assistant', content: '', model: '', mode, streaming: true, searchCount: 0, searchSources: [] };
+      const placeholder = { role: 'assistant', content: '', model: '', mode, streaming: true, searchCount: 0, searchSources: [], tools: [] };
       chatHistory.push(placeholder);
       const placeholderIdx = chatHistory.length - 1;
       renderChat();
@@ -3644,11 +3729,40 @@ async function sendChat(message, modeOverride) {
             chatHistory[placeholderIdx].mode = data.mode || chatHistory[placeholderIdx].mode;
           } else if (data.type === 'search_started') {
             $('#chatTypingText').textContent = 'Beacon is searching the web...';
+          } else if (data.type === 'tool_started') {
+            chatHistory[placeholderIdx].tools.push({ name: data.name, status: 'running' });
+            $('#chatTypingText').textContent = 'Beacon is using ' + toolDisplayName(data.name) + '...';
+            renderChat();
+          } else if (data.type === 'tool_progress') {
+            const t = chatHistory[placeholderIdx].tools;
+            // Find the most recent matching running entry and update it
+            for (let k = t.length - 1; k >= 0; k--) {
+              if (t[k].name === data.name && t[k].status === 'running') {
+                t[k].status = data.status;
+                if (data.error) t[k].error = data.error;
+                if (data.input) t[k].input = data.input;
+                break;
+              }
+            }
+            $('#chatTypingText').textContent = data.status === 'done'
+              ? 'Beacon is reasoning...'
+              : 'Beacon hit an issue with ' + toolDisplayName(data.name);
+            renderChat();
           } else if (data.type === 'done') {
             chatHistory[placeholderIdx].streaming = false;
             chatHistory[placeholderIdx].model = data.model || chatHistory[placeholderIdx].model;
             chatHistory[placeholderIdx].searchCount = data.searchCount || 0;
             chatHistory[placeholderIdx].searchSources = data.searchSources || [];
+            // toolsUsed comes back as the canonical list; replace placeholder.tools so the
+            // final render shows it from the server's authoritative result.
+            if (Array.isArray(data.toolsUsed) && data.toolsUsed.length) {
+              chatHistory[placeholderIdx].tools = data.toolsUsed.map(t => ({
+                name: t.name,
+                status: t.ok ? 'done' : 'error',
+                error: t.error || null,
+                input: t.input || null
+              }));
+            }
           } else if (data.type === 'error') {
             chatHistory[placeholderIdx].content = '⚠️ ' + (data.error || 'Stream error');
             chatHistory[placeholderIdx].streaming = false;
