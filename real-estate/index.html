@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sarah Chen Realty · Field Notes from Central Austin</title>
+<meta name="description" content="A working realtor's field notes on the central Austin pockets she sells in: Hyde Park, Tarrytown, Mueller, Bouldin, East Cesar Chavez. New listings, sold archive, and letters from past clients.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F5F1E8;
+  --paper-warm: #EDE7D7;
+  --ink: #1A1814;
+  --ink-soft: #4A463C;
+  --ink-mute: #8A8470;
+  --rule: #C4BCA8;
+  --rule-soft: #DBD3BD;
+  --accent: #8C2F1B;
+  --accent-soft: #B85530;
+  --max: 1200px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+.container {
+  width: min(100% - 3rem, var(--max));
+  margin-inline: auto;
+}
+
+/* ==================== MASTHEAD ==================== */
+.masthead {
+  border-bottom: 1px solid var(--ink);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 50;
+}
+.masthead-inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+.masthead-meta {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.masthead-meta-right { text-align: right; }
+.masthead-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.subnav {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 10px 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: .7rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.subnav-inner {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+  color: var(--ink-soft);
+}
+.subnav-inner a {
+  position: relative;
+  padding: 4px 0;
+  transition: color .2s;
+}
+.subnav-inner a:hover { color: var(--accent); }
+
+/* ==================== ISSUE BANNER ==================== */
+.issue-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: .68rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ==================== HERO ==================== */
+.hero {
+  padding: 60px 0 90px;
+  border-bottom: 4px double var(--ink);
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.8rem, 7vw, 5.8rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  text-align: center;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+.hero-deck {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  line-height: 1.45;
+  color: var(--ink-soft);
+  text-align: center;
+  max-width: 720px;
+  margin: 28px auto 0;
+}
+.hero-byline {
+  margin-top: 38px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.hero-byline strong { color: var(--ink); font-weight: 500; }
+
+.hero-frame {
+  margin-top: 56px;
+  position: relative;
+  border: 1px solid var(--rule);
+  background: var(--paper-warm);
+  aspect-ratio: 16/8;
+  overflow: hidden;
+}
+.hero-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(.95) saturate(.85);
+}
+.hero-frame-caption {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: rgba(26,24,20,.78);
+  padding: 6px 10px;
+  display: inline-block;
+  width: auto;
+  max-width: 80%;
+}
+
+/* ==================== EDITOR'S LETTER ==================== */
+.editor {
+  padding: 100px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.editor-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.editor-portrait {
+  position: sticky;
+  top: 110px;
+}
+.editor-portrait-frame {
+  aspect-ratio: 4/5;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.editor-portrait-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(.3) contrast(.95);
+}
+.editor-portrait-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+.editor-portrait-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.editor-body .section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+.editor-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -.015em;
+  margin-bottom: 32px;
+  max-width: 640px;
+}
+.editor-body p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 22px;
+  max-width: 640px;
+}
+.editor-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 5rem;
+  line-height: .85;
+  font-weight: 600;
+  float: left;
+  margin: 8px 14px 0 0;
+  color: var(--accent);
+}
+.editor-signature {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.editor-signature-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 2.2rem;
+  color: var(--accent);
+}
+.editor-signature-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  line-height: 1.7;
+}
+
+/* ==================== SECTION HEADERS ==================== */
+.section-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 28px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 56px;
+}
+.section-head-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--accent);
+  font-weight: 400;
+}
+.section-head-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  line-height: 1.1;
+}
+.section-head-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-align: right;
+  line-height: 1.6;
+}
+
+/* ==================== FIELD NOTES (NEIGHBORHOODS) ==================== */
+.field-notes {
+  padding: 100px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+.note {
+  padding: 40px 36px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  cursor: pointer;
+  transition: background .25s;
+}
+.note:hover { background: var(--paper-warm); }
+.note:nth-child(odd) { border-right: 1px solid var(--rule); }
+.note:last-child, .note:nth-last-child(2) { border-bottom: none; }
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 18px;
+}
+.note h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+  margin-bottom: 14px;
+}
+.note h3 a { transition: color .2s; }
+.note:hover h3 a { color: var(--accent); }
+.note p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.note-stats {
+  display: flex;
+  gap: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.note-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.note-stat-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-top: 4px;
+}
+.note-readmore {
+  position: absolute;
+  bottom: 40px;
+  right: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.note:hover .note-readmore { opacity: 1; }
+
+/* ==================== ON MARKET ==================== */
+.market { padding: 100px 0; border-bottom: 1px solid var(--rule); }
+
+.listing {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 64px;
+  margin-bottom: 96px;
+  align-items: start;
+}
+.listing:last-child { margin-bottom: 0; }
+.listing.reverse { grid-template-columns: 1fr 1.2fr; }
+.listing.reverse .listing-image { order: 2; }
+.listing.reverse .listing-body { order: 1; }
+
+.listing-image {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  position: relative;
+}
+.listing-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s ease;
+}
+.listing:hover .listing-image img { transform: scale(1.04); }
+.listing-tag {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 10px;
+}
+.listing-tag.new { background: var(--accent); }
+
+.listing-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 18px;
+  display: flex;
+  gap: 18px;
+}
+.listing-meta strong { color: var(--accent); font-weight: 500; }
+.listing h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.listing-address {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--ink-mute);
+  margin-bottom: 24px;
+}
+.listing-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 500;
+  letter-spacing: -.015em;
+  line-height: 1;
+  margin-bottom: 28px;
+}
+.listing-specs {
+  display: flex;
+  gap: 28px;
+  padding: 16px 0;
+  margin-bottom: 24px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.listing-spec {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.listing-spec strong { color: var(--ink); font-weight: 500; }
+.listing-body p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+.listing-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 14px 22px;
+  border: 1px solid var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition: background .2s, color .2s;
+}
+.listing-cta:hover { background: var(--ink); color: var(--paper); }
+.listing-cta::after { content: "→"; font-family: 'Inter', sans-serif; }
+
+/* ==================== SOLD ARCHIVE ==================== */
+.sold { padding: 100px 0; border-bottom: 1px solid var(--rule); background: var(--paper-warm); }
+
+.sold-row {
+  display: grid;
+  grid-template-columns: 80px 1.5fr 1fr 100px 80px;
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+}
+.sold-row:last-child { border-bottom: none; }
+.sold-row:first-child { border-top: 1px solid var(--ink); }
+.sold-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 2rem;
+  color: var(--accent);
+  font-weight: 400;
+}
+.sold-address {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -.005em;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.sold-neighborhood {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .95rem;
+  color: var(--ink-mute);
+}
+.sold-story {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.sold-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  text-align: right;
+  letter-spacing: -.01em;
+}
+.sold-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-align: right;
+}
+.sold-tag strong { color: var(--accent); display: block; margin-bottom: 2px; }
+
+/* ==================== LETTERS ==================== */
+.letters { padding: 100px 0; border-bottom: 1px solid var(--rule); }
+.letters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+.letter {
+  position: relative;
+  padding: 48px 36px 36px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+.letter::before {
+  content: '"';
+  position: absolute;
+  top: -22px;
+  left: 24px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--accent);
+  background: var(--paper);
+  padding: 0 12px;
+}
+.letter-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+.letter-attrib {
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+}
+.letter-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.letter-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ==================== CONTACT ==================== */
+.contact {
+  padding: 120px 0;
+  background: var(--ink);
+  color: var(--paper);
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.contact-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 24px;
+}
+.contact h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -.015em;
+  margin-bottom: 28px;
+}
+.contact h2 em { color: var(--accent-soft); font-style: italic; }
+.contact p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: rgba(245,241,232,.7);
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+.contact-direct {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  letter-spacing: .08em;
+}
+.contact-direct a { color: var(--paper); border-bottom: 1px solid rgba(245,241,232,.3); padding-bottom: 2px; }
+.contact-direct a:hover { color: var(--accent-soft); }
+
+.contact-form {
+  background: rgba(245,241,232,.04);
+  border: 1px solid rgba(245,241,232,.12);
+  padding: 36px;
+}
+.field { margin-bottom: 22px; }
+.field label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(245,241,232,.5);
+  margin-bottom: 8px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(245,241,232,.25);
+  padding: 8px 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  color: var(--paper);
+  outline: 0;
+  transition: border-color .2s;
+}
+.field textarea { resize: vertical; min-height: 80px; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent-soft); }
+.field input::placeholder, .field textarea::placeholder { color: rgba(245,241,232,.35); font-style: italic; }
+.field select option { background: var(--ink); color: var(--paper); }
+
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: var(--paper);
+  border: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-submit:hover { background: var(--accent-soft); }
+
+/* ==================== COLOPHON / FOOTER ==================== */
+.colophon {
+  padding: 60px 0 40px;
+  background: var(--ink);
+  color: rgba(245,241,232,.5);
+  border-top: 1px solid rgba(245,241,232,.08);
+}
+.colophon-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.colophon h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--paper);
+  margin-bottom: 16px;
+}
+.colophon-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 14px;
+  display: block;
+}
+.colophon p, .colophon ul {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.colophon ul { list-style: none; }
+.colophon li { margin-bottom: 6px; }
+.colophon a { transition: color .2s; }
+.colophon a:hover { color: var(--paper); }
+.colophon-bottom {
+  border-top: 1px solid rgba(245,241,232,.08);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .masthead-inner { grid-template-columns: 1fr; gap: 8px; text-align: center; }
+  .masthead-meta-right { text-align: center; }
+  .subnav-inner { gap: 20px; font-size: .62rem; }
+  .editor-grid { grid-template-columns: 1fr; gap: 40px; }
+  .editor-portrait { position: static; max-width: 280px; }
+  .notes-grid { grid-template-columns: 1fr; }
+  .note:nth-child(odd) { border-right: none; }
+  .listing, .listing.reverse { grid-template-columns: 1fr; gap: 32px; }
+  .listing.reverse .listing-image, .listing.reverse .listing-body { order: initial; }
+  .sold-row {
+    grid-template-columns: 60px 1fr;
+    gap: 16px;
+  }
+  .sold-row > div:nth-child(3),
+  .sold-row > div:nth-child(4),
+  .sold-row > div:nth-child(5) {
+    grid-column: 2;
+  }
+  .sold-tag { text-align: left; }
+  .sold-price { text-align: left; }
+  .letters-grid { grid-template-columns: 1fr; gap: 48px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .colophon-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .colophon-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  .section-head { grid-template-columns: 1fr; gap: 12px; }
+  .section-head-meta { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== MASTHEAD ==================== -->
+<header class="masthead">
+  <div class="container masthead-inner">
+    <div class="masthead-meta">Issue Nº 14 · Spring 2026</div>
+    <div class="masthead-logo">Field Notes <span style="color:var(--ink-mute)">·</span> Sarah Chen Realty</div>
+    <div class="masthead-meta masthead-meta-right">Austin, TX · 78751</div>
+  </div>
+</header>
+
+<nav class="subnav">
+  <div class="container subnav-inner">
+    <a href="#letter">From the Editor</a>
+    <a href="#field-notes">Field Notes</a>
+    <a href="#market">On Market</a>
+    <a href="#sold">Sold Archive</a>
+    <a href="#letters">Letters</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="issue-bar">
+    <span>Vol. III · The Central Austin Issue</span>
+    <span>Eleven years on the ground · A working agent's record</span>
+  </div>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">A working agent's field notes</div>
+    <h1 class="serif">The houses that move quietly, <em>and the ones that don't.</em></h1>
+    <p class="hero-deck">Eleven years of central Austin transactions, told as they happened — by the agent who wrote the offer, walked the inspection, and stood at the closing table.</p>
+    <div class="hero-byline">By <strong>Sarah Chen</strong> · Recorded from the field · April 2026</div>
+
+    <div class="hero-frame">
+      <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=2400&q=80" alt="Central Austin neighborhood at golden hour">
+      <span class="hero-frame-caption">3812 Avenue G, Hyde Park · Listed Apr 14 · Currently Pending</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== EDITOR'S LETTER ==================== -->
+<section class="editor" id="letter">
+  <div class="container editor-grid">
+    <aside class="editor-portrait">
+      <div class="editor-portrait-frame">
+        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80" alt="Portrait of Sarah Chen">
+      </div>
+      <div class="editor-portrait-name">Sarah Chen</div>
+      <div class="editor-portrait-title">Broker · Eleven Years · Top 5% Producer 2023, 2024</div>
+    </aside>
+
+    <div class="editor-body">
+      <p class="section-label">From the Editor</p>
+      <h2>I sell the central pockets, on streets I've walked a thousand times.</h2>
+
+      <p>Most agents in Austin will sell anything anywhere. I don't. I sell the streets between Lamar and Airport, between 35th and Cesar Chavez — Hyde Park, Tarrytown, Mueller, Bouldin, East Cesar Chavez, Travis Heights. I know which lots flood. I know which renovations were done well. I know which neighbors will tell you the truth about the house, and which won't.</p>
+
+      <p>This is the page I wish I'd had when I was buying my first house in 78751 in 2014. Field notes from a working agent — what's actually on market, what just sold and why, what the data says about the next ninety days, and the longer essays that come from being on the ground every week.</p>
+
+      <p>If you're thinking about buying or selling in central Austin, the listings below are real. The sold prices are real. The letters at the bottom are from real clients. Read what's useful, then write me a note. I'd rather have one honest conversation than ten polite ones.</p>
+
+      <div class="editor-signature">
+        <div class="editor-signature-mark">— S.C.</div>
+        <div class="editor-signature-meta">
+          Broker, Sarah Chen Realty<br>
+          License Nº 0742813 · TX
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FIELD NOTES (NEIGHBORHOODS) ==================== -->
+<section class="field-notes" id="field-notes">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head-num">Nº I</div>
+      <div class="section-head-title">Field Notes from the Pockets I Sell</div>
+      <div class="section-head-meta">Updated weekly<br>Spring 2026</div>
+    </div>
+
+    <div class="notes-grid">
+      <article class="note">
+        <div class="note-meta">
+          <span>Hyde Park · 78751</span>
+          <span>Essay · 6 min read</span>
+        </div>
+        <h3 class="serif"><a href="#">The walkable bungalow market is finally moving — but only one block at a time.</a></h3>
+        <p>Median days-on-market in 78751 dropped to 14 in March, but the headline hides a quieter truth: it's the pre-1940 bungalows on Avenue F, G, and H that are moving in days. The 1980s infill is sitting. Here's why, and what to ask if you're walking one this weekend.</p>
+        <div class="note-stats">
+          <div>
+            <div class="note-stat-num">14</div>
+            <div class="note-stat-lbl">Days on market</div>
+          </div>
+          <div>
+            <div class="note-stat-num">+6%</div>
+            <div class="note-stat-lbl">Over ask</div>
+          </div>
+          <div>
+            <div class="note-stat-num">$1.4M</div>
+            <div class="note-stat-lbl">Median sale</div>
+          </div>
+        </div>
+        <span class="note-readmore">Read essay →</span>
+      </article>
+
+      <article class="note">
+        <div class="note-meta">
+          <span>Tarrytown · 78703</span>
+          <span>Essay · 8 min read</span>
+        </div>
+        <h3 class="serif"><a href="#">Inventory is loosening for the first time in eighteen months.</a></h3>
+        <p>For a year and a half, Tarrytown listings disappeared in a weekend. April is the first month I've seen real buyer leverage — three homes under $2.4M sat past day twelve. Demand isn't down. Something else is happening, and the change favors patient buyers willing to wait for the right lot.</p>
+        <div class="note-stats">
+          <div>
+            <div class="note-stat-num">+12%</div>
+            <div class="note-stat-lbl">Inventory MoM</div>
+          </div>
+          <div>
+            <div class="note-stat-num">$2.4M</div>
+            <div class="note-stat-lbl">Median sale</div>
+          </div>
+          <div>
+            <div class="note-stat-num">22d</div>
+            <div class="note-stat-lbl">Days on market</div>
+          </div>
+        </div>
+        <span class="note-readmore">Read essay →</span>
+      </article>
+
+      <article class="note">
+        <div class="note-meta">
+          <span>Mueller · 78723</span>
+          <span>Field guide · 5 min read</span>
+        </div>
+        <h3 class="serif"><a href="#">Phase 5 pre-sales are open. Three things to know before you write.</a></h3>
+        <p>Mueller's last greenfield phase opened to early-access buyers in March. The townhomes are listed, the floor plans are public, and the wait list is real. If you've been holding for the right entry into the planned community, this is likely the last meaningful release. Here's the read on lot orientation, builder allowances, and what to push back on.</p>
+        <div class="note-stats">
+          <div>
+            <div class="note-stat-num">62</div>
+            <div class="note-stat-lbl">Units this phase</div>
+          </div>
+          <div>
+            <div class="note-stat-num">$895k</div>
+            <div class="note-stat-lbl">Starting price</div>
+          </div>
+          <div>
+            <div class="note-stat-num">2027</div>
+            <div class="note-stat-lbl">Move-in</div>
+          </div>
+        </div>
+        <span class="note-readmore">Read guide →</span>
+      </article>
+
+      <article class="note">
+        <div class="note-meta">
+          <span>Bouldin Creek · 78704</span>
+          <span>Essay · 7 min read</span>
+        </div>
+        <h3 class="serif"><a href="#">First-time buyer territory has returned to South 5th Street.</a></h3>
+        <p>Investor activity in 78704 cooled this quarter for the first time since 2021. Three solid options just hit the market under $850K — the kind of houses I haven't seen at that price in eighteen months. The bones are there. The catch is in the seller motivations.</p>
+        <div class="note-stats">
+          <div>
+            <div class="note-stat-num">3</div>
+            <div class="note-stat-lbl">Under $850K</div>
+          </div>
+          <div>
+            <div class="note-stat-num">-8%</div>
+            <div class="note-stat-lbl">Investor offers</div>
+          </div>
+          <div>
+            <div class="note-stat-num">19d</div>
+            <div class="note-stat-lbl">Days on market</div>
+          </div>
+        </div>
+        <span class="note-readmore">Read essay →</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ON MARKET ==================== -->
+<section class="market" id="market">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head-num">Nº II</div>
+      <div class="section-head-title">Currently on Market</div>
+      <div class="section-head-meta">Three featured listings<br>Updated April 26</div>
+    </div>
+
+    <article class="listing">
+      <div class="listing-image">
+        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1600&q=80" alt="Hyde Park bungalow exterior">
+        <span class="listing-tag new">New · Listed April 14</span>
+      </div>
+      <div class="listing-body">
+        <div class="listing-meta">
+          <span><strong>Listing Nº 1</strong></span>
+          <span>Hyde Park · 78751</span>
+        </div>
+        <h3 class="serif">The 1922 bungalow with the kitchen you'd actually cook in.</h3>
+        <div class="listing-address">3812 Avenue G, Austin · MLS 9384701</div>
+        <div class="listing-price">$1,395,000</div>
+        <div class="listing-specs">
+          <span class="listing-spec"><strong>4</strong> Bed</span>
+          <span class="listing-spec"><strong>3</strong> Bath</span>
+          <span class="listing-spec"><strong>2,418</strong> SqFt</span>
+          <span class="listing-spec"><strong>1922</strong> Built</span>
+        </div>
+        <p>Original hardwoods through the main floor, restored casement windows, and a screened porch made for slow Sundays. The kitchen renovation pulled out the 1980s cabinets and gave it back a working pantry, marble counters, and a vintage stove that came with the house. Walkable to Quack's, Asti, and the Avenue B grocery.</p>
+        <p><em>The previous owner loved this house for thirty-one years. It's the kind of bones you can build a life around.</em></p>
+        <a class="listing-cta" href="#contact">Request private tour</a>
+      </div>
+    </article>
+
+    <article class="listing reverse">
+      <div class="listing-image">
+        <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1600&q=80" alt="Tarrytown classic exterior">
+        <span class="listing-tag">By Appointment</span>
+      </div>
+      <div class="listing-body">
+        <div class="listing-meta">
+          <span><strong>Listing Nº 2</strong></span>
+          <span>Tarrytown · 78703</span>
+        </div>
+        <h3 class="serif">Classic Tarrytown brick, walking distance to Lake Austin.</h3>
+        <div class="listing-address">2418 Westover Road, Austin · MLS 9384812</div>
+        <div class="listing-price">$2,250,000</div>
+        <div class="listing-specs">
+          <span class="listing-spec"><strong>5</strong> Bed</span>
+          <span class="listing-spec"><strong>4</strong> Bath</span>
+          <span class="listing-spec"><strong>3,612</strong> SqFt</span>
+          <span class="listing-spec"><strong>1948</strong> Built</span>
+        </div>
+        <p>One of the consistently good streets — Westover doesn't get the casual investor flips that some of Tarrytown does. The home is a 1948 brick, expanded thoughtfully in 2019. Original oak floors, the kind of casework that's hard to replicate, and a screened porch that opens to a lot just deep enough for a real garden.</p>
+        <p><em>Casis Elementary, walking distance. The lot is the long-term asset here.</em></p>
+        <a class="listing-cta" href="#contact">Request private tour</a>
+      </div>
+    </article>
+
+    <article class="listing">
+      <div class="listing-image">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80" alt="East Austin home with backyard">
+        <span class="listing-tag new">New · Listed April 22</span>
+      </div>
+      <div class="listing-body">
+        <div class="listing-meta">
+          <span><strong>Listing Nº 3</strong></span>
+          <span>East Cesar Chavez · 78702</span>
+        </div>
+        <h3 class="serif">East Austin renovation with the backyard begging for string lights.</h3>
+        <div class="listing-address">2107 Holly Street, Austin · MLS 9385122</div>
+        <div class="listing-price">$785,000</div>
+        <div class="listing-specs">
+          <span class="listing-spec"><strong>3</strong> Bed</span>
+          <span class="listing-spec"><strong>2</strong> Bath</span>
+          <span class="listing-spec"><strong>1,684</strong> SqFt</span>
+          <span class="listing-spec"><strong>1952</strong> Built</span>
+        </div>
+        <p>The renovation was done with restraint — original tile in the bath, exposed beams in the living room, a kitchen pulled forward to face the yard. Walkable to Cisco's, Lazarus Brewing, and the new East 7th food hall. Light-soaked living room and a screened back porch.</p>
+        <p><em>This is what 78702 used to feel like at $785K. We won't see it again at this number.</em></p>
+        <a class="listing-cta" href="#contact">Request private tour</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ==================== SOLD ARCHIVE ==================== -->
+<section class="sold" id="sold">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head-num">Nº III</div>
+      <div class="section-head-title">From the Sold Archive</div>
+      <div class="section-head-meta">Twenty-two transactions YTD<br>Six included below</div>
+    </div>
+
+    <div class="sold-row">
+      <div class="sold-num">01</div>
+      <div>
+        <div class="sold-address">1804 South 5th Street</div>
+        <div class="sold-neighborhood">Bouldin Creek</div>
+      </div>
+      <div class="sold-story">Buyer side. Foundation note we expected; sellers covered eight thousand. The porch they wanted.</div>
+      <div class="sold-price">$925,000</div>
+      <div class="sold-tag"><strong>Sold</strong>Mar 2026</div>
+    </div>
+
+    <div class="sold-row">
+      <div class="sold-num">02</div>
+      <div>
+        <div class="sold-address">3414 Avenue H</div>
+        <div class="sold-neighborhood">Hyde Park</div>
+      </div>
+      <div class="sold-story">Listed Friday, four offers by Tuesday. Closed eleven days later, six percent over ask.</div>
+      <div class="sold-price">$1,260,000</div>
+      <div class="sold-tag"><strong>Sold</strong>Feb 2026</div>
+    </div>
+
+    <div class="sold-row">
+      <div class="sold-num">03</div>
+      <div>
+        <div class="sold-address">2912 Bowman Avenue</div>
+        <div class="sold-neighborhood">Tarrytown</div>
+      </div>
+      <div class="sold-story">Off-MLS. Pocket buyer matched in eight days. Casis Elementary boundary.</div>
+      <div class="sold-price">$2,475,000</div>
+      <div class="sold-tag"><strong>Sold</strong>Feb 2026</div>
+    </div>
+
+    <div class="sold-row">
+      <div class="sold-num">04</div>
+      <div>
+        <div class="sold-address">4106 Lareina Drive</div>
+        <div class="sold-neighborhood">Mueller</div>
+      </div>
+      <div class="sold-story">Move-up buyer from a starter home in 78745. We waited four months for the right lot.</div>
+      <div class="sold-price">$1,150,000</div>
+      <div class="sold-tag"><strong>Sold</strong>Jan 2026</div>
+    </div>
+
+    <div class="sold-row">
+      <div class="sold-num">05</div>
+      <div>
+        <div class="sold-address">2014 East Cesar Chavez</div>
+        <div class="sold-neighborhood">East Austin</div>
+      </div>
+      <div class="sold-story">First-time buyers, three percent down conventional. Inspection waived under $5K.</div>
+      <div class="sold-price">$612,000</div>
+      <div class="sold-tag"><strong>Sold</strong>Dec 2025</div>
+    </div>
+
+    <div class="sold-row">
+      <div class="sold-num">06</div>
+      <div>
+        <div class="sold-address">1208 Travis Heights Boulevard</div>
+        <div class="sold-neighborhood">Travis Heights</div>
+      </div>
+      <div class="sold-story">Seller side. Pre-listed by a builder; we re-listed in season and added forty-two thousand.</div>
+      <div class="sold-price">$1,475,000</div>
+      <div class="sold-tag"><strong>Sold</strong>Nov 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LETTERS ==================== -->
+<section class="letters" id="letters">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head-num">Nº IV</div>
+      <div class="section-head-title">Letters from Past Clients</div>
+      <div class="section-head-meta">Three of forty-two<br>Five-star reviews YTD</div>
+    </div>
+
+    <div class="letters-grid">
+      <article class="letter">
+        <div class="letter-body">Sarah told us to wait. The Travis Heights listing in February was wrong for us, even though it was on paper exactly what we said we wanted. Three months later we wrote on the Bouldin house and that's where we live now. Few agents tell you to slow down. We're grateful.</div>
+        <div class="letter-attrib">
+          <div class="letter-name">Jennifer & Marcus</div>
+          <div class="letter-meta">Bouldin Creek · Mar 2026</div>
+        </div>
+      </article>
+
+      <article class="letter">
+        <div class="letter-body">We got off-market access to two Hyde Park homes before they touched the MLS. We bought one of them. Sarah's pocket-listing relationships are real, and they're the difference between getting a house in 78751 and not.</div>
+        <div class="letter-attrib">
+          <div class="letter-name">Thomas L.</div>
+          <div class="letter-meta">Hyde Park · Feb 2026</div>
+        </div>
+      </article>
+
+      <article class="letter">
+        <div class="letter-body">She told us our house would list at six fifty over what the prior agent suggested. It went under contract in nine days at four hundred over that. Sarah does the work — comp by comp — and the work is what got us the result.</div>
+        <div class="letter-attrib">
+          <div class="letter-name">The Reyes Family</div>
+          <div class="letter-meta">Travis Heights · Nov 2025</div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CONTACT ==================== -->
+<section class="contact" id="contact">
+  <div class="container contact-grid">
+    <div>
+      <div class="contact-eyebrow">Nº V · Get in Touch</div>
+      <h2 class="serif">Write me a note. I read every one, <em>and I write back the same day.</em></h2>
+      <p>Whether you're thinking about a sale six months out or you saw a listing this morning that you can't stop thinking about — start here. No pressure, no automated drip, no team-of-six handoff.</p>
+      <p>If you'd rather skip the form, my direct line is below. I keep my phone on except during the inspection window.</p>
+
+      <div class="contact-direct">
+        <div>Direct: <a href="tel:5125550143">512 · 555 · 0143</a></div>
+        <div>Email: <a href="mailto:sarah@sarahchenrealty.com">sarah@sarahchenrealty.com</a></div>
+        <div>Office: 3414 Guadalupe St · Austin, TX 78705</div>
+      </div>
+    </div>
+
+    <form class="contact-form" onsubmit="event.preventDefault(); alert('Thanks — Sarah will be in touch within 24 hours.');">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" placeholder="Your name" required>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label>What brings you here</label>
+        <select required>
+          <option value="">Select one</option>
+          <option>I'm thinking about buying in central Austin</option>
+          <option>I'm thinking about selling my home</option>
+          <option>I want to talk through the market, no agenda</option>
+          <option>I'm relocating to Austin</option>
+          <option>I'd like to tour a specific listing</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tell me a bit more</label>
+        <textarea placeholder="A few sentences — neighborhood, timeline, anything on your mind." rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Send the Note</button>
+    </form>
+  </div>
+</section>
+
+<!-- ==================== COLOPHON ==================== -->
+<footer class="colophon">
+  <div class="container">
+    <div class="colophon-grid">
+      <div>
+        <span class="colophon-tag">Colophon</span>
+        <h4>Field Notes by Sarah Chen</h4>
+        <p>A working agent's record of central Austin, published quarterly in print and continuously online. Set in Cormorant Garamond and Inter. Printed by hand, mailed to the list, and updated by Sarah and a small team in Austin.</p>
+      </div>
+      <div>
+        <span class="colophon-tag">Pockets</span>
+        <ul>
+          <li><a href="#">Hyde Park</a></li>
+          <li><a href="#">Tarrytown</a></li>
+          <li><a href="#">Mueller</a></li>
+          <li><a href="#">Bouldin Creek</a></li>
+          <li><a href="#">East Austin</a></li>
+          <li><a href="#">Travis Heights</a></li>
+        </ul>
+      </div>
+      <div>
+        <span class="colophon-tag">The Practice</span>
+        <ul>
+          <li><a href="#">Buyer representation</a></li>
+          <li><a href="#">Listing services</a></li>
+          <li><a href="#">Off-market sourcing</a></li>
+          <li><a href="#">Relocation</a></li>
+          <li><a href="#">Investment consultations</a></li>
+        </ul>
+      </div>
+      <div>
+        <span class="colophon-tag">Subscribe</span>
+        <p style="margin-bottom:14px">A monthly note from the field. Three minutes to read, no calls.</p>
+        <form onsubmit="event.preventDefault(); this.querySelector('input').value = 'Thanks — see you next issue.'; this.querySelector('input').disabled = true;">
+          <input type="email" placeholder="your@email.com" required style="width:100%;background:transparent;border:0;border-bottom:1px solid rgba(245,241,232,.25);padding:8px 0;font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--paper);outline:0;">
+        </form>
+      </div>
+    </div>
+
+    <div class="colophon-bottom">
+      <span>© 2026 Sarah Chen Realty · TREC Lic. Nº 0742813</span>
+      <span>Site by <a href="https://polarispoint.io" style="color:var(--accent-soft)">Polaris Point</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth scroll for in-page nav
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const id = this.getAttribute('href');
+    if (id.length > 1) {
+      const el = document.querySelector(id);
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+});
+</script>
+
+</body>
+</html>
