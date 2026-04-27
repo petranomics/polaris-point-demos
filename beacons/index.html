@@ -1408,6 +1408,66 @@ main {
   0%, 100% { opacity: .25; }
   50% { opacity: 1; }
 }
+.chat-stream-cursor {
+  display: inline-block;
+  color: var(--blue);
+  margin-left: 2px;
+  animation: chat-pulse 1s ease-in-out infinite;
+}
+
+/* ====================================================
+   RECORD (live transcription)
+   ==================================================== */
+.thoughts-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.record-btn {
+  background: rgba(91,141,239,.06);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s;
+}
+.record-btn:hover { color: var(--text); border-color: var(--border-strong); }
+.record-btn.recording {
+  background: rgba(248,113,113,.12);
+  border-color: rgba(248,113,113,.4);
+  color: var(--red);
+}
+.record-status {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  color: var(--red);
+}
+.record-status.show { display: inline-flex; }
+.record-dot {
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: chat-pulse 1.5s ease-in-out infinite;
+}
+.record-hint {
+  font-size: .7rem;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-left: auto;
+}
 
 .chat-composer {
   display: flex;
@@ -1447,6 +1507,58 @@ main {
   letter-spacing: .04em;
   outline: 0;
   cursor: pointer;
+}
+
+/* ====================================================
+   THREADS LIST
+   ==================================================== */
+.threads-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.thread-row {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: center;
+  transition: background .12s;
+}
+.thread-row:last-child { border-bottom: 0; }
+.thread-row:hover { background: rgba(91,141,239,.05); }
+.thread-row.active {
+  background: rgba(232,197,71,.05);
+  border-left: 2px solid var(--gold);
+  padding-left: 22px;
+}
+.thread-title {
+  color: var(--text);
+  font-weight: 500;
+  font-size: .9rem;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.thread-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-muted);
+}
+.thread-actions { display: flex; gap: 6px; }
+.threads-empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .9rem;
 }
 
 /* ====================================================
@@ -1585,7 +1697,8 @@ main {
             <option value="fast">Fast · Haiku 4.5</option>
             <option value="deep">Deep · Opus 4.7</option>
           </select>
-          <button class="btn-icon" id="newChatBtn" title="Clear conversation">⟲ New</button>
+          <button class="btn-icon" id="threadsBtn" title="Past conversations">≡ History</button>
+          <button class="btn-icon" id="newChatBtn" title="Start a new conversation">⟲ New</button>
         </div>
       </div>
       <div class="chat-card">
@@ -1680,8 +1793,13 @@ main {
           <div class="panel-head-count" id="thoughtsCount">0 thoughts</div>
         </div>
         <div class="thoughts-wrap">
+          <div class="thoughts-toolbar">
+            <button class="record-btn" id="recordBtn" type="button">🎙 Record</button>
+            <span class="record-status" id="recordStatus"><span class="record-dot"></span><span id="recordDuration">00:00</span></span>
+            <span class="record-hint" id="recordHint">Live transcription — works for phone calls on speaker</span>
+          </div>
           <input type="text" class="thoughts-title-input" id="thoughtTitle" placeholder="Title (optional) — e.g. Nestlé strategy call · Apr 27">
-          <textarea class="thoughts-textarea" id="thoughtBody" placeholder="Paste an email thread, dump a meeting recap, log an idea, or write down anything useful for context. Saved as soon as you click 'Save to Library'."></textarea>
+          <textarea class="thoughts-textarea" id="thoughtBody" placeholder="Type, paste, or hit Record above. Save when you're done."></textarea>
           <div class="thoughts-bar">
             <div class="thoughts-meta" id="thoughtCharCount">0 characters</div>
             <button class="btn btn-primary" id="thoughtSaveBtn" disabled>Save to Library</button>
@@ -1868,6 +1986,20 @@ main {
       <span class="modal-meta">Passed to Beacon at the start of every conversation.</span>
       <button class="btn btn-primary" id="directionsSaveBtn">Save directions</button>
     </div>
+  </div>
+</div>
+
+<!-- ===================== THREADS HISTORY MODAL ===================== -->
+<div class="modal" id="threadsModal">
+  <div class="modal-card" style="max-width:680px">
+    <div class="modal-head">
+      <div>
+        <h3>Chat history</h3>
+        <div class="modal-meta">Past conversations · click to resume</div>
+      </div>
+      <button class="modal-close" data-close-modal="threadsModal">×</button>
+    </div>
+    <ul class="threads-list" id="threadsList"></ul>
   </div>
 </div>
 
@@ -2223,6 +2355,113 @@ function updateThoughtCharCount() {
   const len = $('#thoughtBody').value.length;
   $('#thoughtCharCount').textContent = len.toLocaleString() + ' character' + (len === 1 ? '' : 's');
   $('#thoughtSaveBtn').disabled = $('#thoughtBody').value.trim().length === 0;
+}
+
+/* ============================================================
+   VOICE RECORD (live transcription via Web Speech API)
+   ============================================================ */
+let recognition = null;
+let recording = false;
+let recordStartTime = 0;
+let recordTimer = null;
+let recordBaseText = '';   // What was in the textarea before recording started
+
+function getSpeechRecognitionCtor() {
+  return window.SpeechRecognition || window.webkitSpeechRecognition;
+}
+
+function toggleRecording() {
+  if (recording) stopRecording('manual');
+  else startRecording();
+}
+
+function startRecording() {
+  const SR = getSpeechRecognitionCtor();
+  if (!SR) {
+    showToast('Speech recognition not supported here. Try Chrome, Edge, or Safari.', true);
+    return;
+  }
+  // Reset for a fresh session — preserve whatever's already in the textarea.
+  const textarea = $('#thoughtBody');
+  recordBaseText = textarea.value;
+  if (recordBaseText && !/\s$/.test(recordBaseText)) recordBaseText += ' ';
+
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    let newFinal = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) newFinal += transcript;
+      else interim += transcript;
+    }
+    if (newFinal) {
+      // Commit final text to the base; subsequent interim won't overwrite it.
+      recordBaseText += newFinal;
+      if (!/\s$/.test(recordBaseText)) recordBaseText += ' ';
+    }
+    textarea.value = recordBaseText + interim;
+    updateThoughtCharCount();
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      showToast('Microphone permission denied', true);
+      stopRecording('error');
+    } else if (e.error === 'no-speech' || e.error === 'aborted' || e.error === 'audio-capture') {
+      // Auto-restart from onend will retry these gracefully.
+    } else {
+      console.warn('SpeechRecognition error:', e.error);
+    }
+  };
+
+  recognition.onend = () => {
+    // Browser cuts the session every ~60s. Auto-restart while still recording
+    // so phone calls and longer notes keep going seamlessly.
+    if (recording) {
+      try { recognition.start(); } catch (_) { /* benign double-start */ }
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch (e) {
+    showToast('Could not start mic: ' + e.message, true);
+    return;
+  }
+  recording = true;
+  recordStartTime = Date.now();
+  $('#recordBtn').classList.add('recording');
+  $('#recordBtn').textContent = '⏹ Stop';
+  $('#recordStatus').classList.add('show');
+  $('#recordHint').style.display = 'none';
+  recordTimer = setInterval(updateRecordDuration, 1000);
+  updateRecordDuration();
+}
+
+function stopRecording(reason) {
+  recording = false;
+  if (recognition) {
+    try { recognition.stop(); } catch (_) {}
+    recognition = null;
+  }
+  if (recordTimer) { clearInterval(recordTimer); recordTimer = null; }
+  $('#recordBtn').classList.remove('recording');
+  $('#recordBtn').textContent = '🎙 Record';
+  $('#recordStatus').classList.remove('show');
+  $('#recordHint').style.display = '';
+  if (reason === 'manual') showToast('Recording stopped — review and save below');
+}
+
+function updateRecordDuration() {
+  const sec = Math.floor((Date.now() - recordStartTime) / 1000);
+  const mins = Math.floor(sec / 60).toString().padStart(2, '0');
+  const secs = (sec % 60).toString().padStart(2, '0');
+  $('#recordDuration').textContent = `${mins}:${secs}`;
 }
 
 /* ============================================================
@@ -2749,6 +2988,71 @@ async function loadMostRecentThread() {
   } catch (e) { /* ignore */ }
 }
 
+async function openThreadsModal() {
+  const all = await storageAll();
+  const threads = all.filter(i => i.kind === 'thread')
+    .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
+  const list = $('#threadsList');
+  if (!threads.length) {
+    list.innerHTML = '<li class="threads-empty"><strong style="color:var(--text);display:block;margin-bottom:6px;font-weight:500">No saved conversations yet.</strong>Once you chat, threads will save here automatically and follow you across devices.</li>';
+  } else {
+    list.innerHTML = threads.map(t => {
+      const msgCount = t.message_count || (() => {
+        try { return JSON.parse(t.content || '[]').length; } catch { return 0; }
+      })();
+      const isActive = t.id === currentThreadId;
+      return `<li class="thread-row ${isActive ? 'active' : ''}" data-thread-id="${t.id}">
+        <div>
+          <div class="thread-title">${escapeHtml(t.title || 'Untitled thread')}</div>
+          <div class="thread-meta">${msgCount} message${msgCount === 1 ? '' : 's'} · ${fmtDate(t.updated_at || t.created_at)}${isActive ? ' · current' : ''}</div>
+        </div>
+        <div class="thread-actions">
+          <button class="btn-icon danger" data-thread-act="delete" data-id="${t.id}" title="Delete thread">×</button>
+        </div>
+      </li>`;
+    }).join('');
+  }
+  $('#threadsModal').classList.add('show');
+}
+
+async function loadThread(id) {
+  // Save current first
+  if (chatHistory.length && currentThreadId !== id) {
+    await autoSaveThread().catch(() => {});
+  }
+  const all = await storageAll();
+  const t = all.find(x => x.id === id && x.kind === 'thread');
+  if (!t) return;
+  try {
+    const messages = typeof t.content === 'string' ? JSON.parse(t.content) : t.content;
+    if (Array.isArray(messages)) {
+      chatHistory = messages;
+      currentThreadId = id;
+      renderChat();
+      $('#threadsModal').classList.remove('show');
+      scrollToChat();
+      showToast('Resumed thread');
+    }
+  } catch (e) {
+    showToast('Could not load thread', true);
+  }
+}
+
+async function deleteThread(id) {
+  const all = await storageAll();
+  const t = all.find(x => x.id === id);
+  if (!t) return;
+  if (!confirm(`Delete this thread (${t.message_count || '?'} messages)? Cannot undo.`)) return;
+  await storageDelete(id);
+  if (currentThreadId === id) {
+    chatHistory = [];
+    currentThreadId = null;
+    renderChat();
+  }
+  await openThreadsModal();
+  showToast('Thread deleted');
+}
+
 const QUICK_ACTIONS = {
   weekly: {
     label: 'Weekly briefing',
@@ -2804,7 +3108,7 @@ function renderChat() {
   thread.innerHTML = chatHistory.map((m, i) => {
     const role = m.role;
     const text = m.content || '';
-    const actions = role === 'assistant'
+    const actions = (role === 'assistant' && !m.streaming)
       ? `<div class="chat-msg-actions">
           <button data-act="save" data-i="${i}">Save to library</button>
           <button data-act="copy" data-i="${i}">Copy</button>
@@ -2823,7 +3127,16 @@ function renderChat() {
     const sourcesHtml = (role === 'assistant' && m.searchSources && m.searchSources.length)
       ? `<div class="chat-msg-sources">${m.searchSources.map(s => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.title || s.url)}</a>`).join('')}</div>`
       : '';
-    const bubbleHtml = role === 'assistant' ? renderMarkdown(text) : escapeHtml(text);
+    let bubbleHtml;
+    if (role === 'assistant') {
+      // While a reply is still streaming in, show plain text so partial markdown
+      // doesn't render half-parsed tokens. Switch to full markdown when done.
+      bubbleHtml = m.streaming
+        ? escapeHtml(text).replace(/\n/g, '<br>') + '<span class="chat-stream-cursor">▍</span>'
+        : renderMarkdown(text);
+    } else {
+      bubbleHtml = escapeHtml(text);
+    }
     return `<div class="chat-msg ${role}">
       ${meta}
       <div class="chat-bubble">${bubbleHtml}</div>
@@ -2843,7 +3156,9 @@ async function sendChat(message, modeOverride) {
   renderChat();
   $('#chatInput').value = '';
   $('#chatInput').style.height = 'auto';
-  $('#chatTyping').style.display = 'flex';
+  // Streaming mode: rely on the cursor inside the bubble, no need for the
+  // bottom typing strip until the model starts searching.
+  $('#chatTyping').style.display = 'none';
   $('#chatTypingText').textContent = mode === 'deep' ? 'Beacon is thinking deeply (Opus)...' : (mode === 'fast' ? 'Beacon is on it (Haiku)...' : 'Beacon is thinking...');
   $('#chatSendBtn').disabled = true;
 
@@ -2854,37 +3169,90 @@ async function sendChat(message, modeOverride) {
         content: 'Chat needs cloud sync to be active. Set BEACONS_PASSCODE_HASH (sha256 of your passcode) and ANTHROPIC_API_KEY in your Vercel env vars, then reload. Until then, the upload + thoughts panels still work locally.',
         model: 'local-only'
       });
+      renderChat();
     } else {
+      // Streaming: push a placeholder assistant message and append deltas.
+      const placeholder = { role: 'assistant', content: '', model: '', mode, streaming: true, searchCount: 0, searchSources: [] };
+      chatHistory.push(placeholder);
+      const placeholderIdx = chatHistory.length - 1;
+      renderChat();
+
       const res = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
         headers: { ...authHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: trimmed,
           history: chatHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
-          mode
+          mode,
+          stream: true
         })
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || ('HTTP ' + res.status));
       }
-      const data = await res.json();
-      chatHistory.push({
-        role: 'assistant',
-        content: data.response || '(empty response)',
-        model: data.model,
-        mode: data.mode,
-        searchCount: data.searchCount || 0,
-        searchSources: data.searchSources || []
-      });
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let lastRender = 0;
+
+      const flushIfDue = () => {
+        const now = Date.now();
+        if (now - lastRender > 60) {
+          renderChat();
+          lastRender = now;
+        }
+      };
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split('\n\n');
+        buffer = events.pop();
+        for (const evt of events) {
+          if (!evt.startsWith('data: ')) continue;
+          let data;
+          try { data = JSON.parse(evt.slice(6)); } catch (_) { continue; }
+          if (data.type === 'text') {
+            chatHistory[placeholderIdx].content += data.text;
+            flushIfDue();
+          } else if (data.type === 'meta') {
+            chatHistory[placeholderIdx].model = data.model || chatHistory[placeholderIdx].model;
+            chatHistory[placeholderIdx].mode = data.mode || chatHistory[placeholderIdx].mode;
+          } else if (data.type === 'search_started') {
+            $('#chatTypingText').textContent = 'Beacon is searching the web...';
+          } else if (data.type === 'done') {
+            chatHistory[placeholderIdx].streaming = false;
+            chatHistory[placeholderIdx].model = data.model || chatHistory[placeholderIdx].model;
+            chatHistory[placeholderIdx].searchCount = data.searchCount || 0;
+            chatHistory[placeholderIdx].searchSources = data.searchSources || [];
+          } else if (data.type === 'error') {
+            chatHistory[placeholderIdx].content = '⚠️ ' + (data.error || 'Stream error');
+            chatHistory[placeholderIdx].streaming = false;
+          }
+        }
+      }
+      // Final render now that streaming flag is off → markdown + actions render
+      chatHistory[placeholderIdx].streaming = false;
+      renderChat();
     }
-    renderChat();
   } catch (e) {
-    chatHistory.push({ role: 'assistant', content: '⚠️ ' + (e.message || 'Error talking to Beacon') });
+    // Replace the placeholder if it exists; otherwise push a new error message
+    const last = chatHistory[chatHistory.length - 1];
+    const errMsg = '⚠️ ' + (e.message || 'Error talking to Beacon');
+    if (last && last.role === 'assistant' && last.streaming) {
+      last.content = errMsg;
+      last.streaming = false;
+    } else {
+      chatHistory.push({ role: 'assistant', content: errMsg });
+    }
     renderChat();
   } finally {
     chatBusy = false;
     $('#chatTyping').style.display = 'none';
+    $('#chatTypingText').textContent = 'Beacon is thinking...';
     $('#chatSendBtn').disabled = false;
     // Persist the conversation so it survives reloads / cross-device sync.
     autoSaveThread().catch(() => {});
@@ -3105,6 +3473,18 @@ async function init() {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); saveThought(); }
   });
 
+  // Voice record
+  $('#recordBtn').addEventListener('click', toggleRecording);
+  // Hide the hint if Web Speech API isn't available
+  if (!getSpeechRecognitionCtor()) {
+    $('#recordHint').textContent = 'Voice record needs Chrome/Edge/Safari';
+    $('#recordBtn').disabled = true;
+    $('#recordBtn').style.opacity = '.5';
+    $('#recordBtn').style.cursor = 'not-allowed';
+  }
+  // Stop the recognizer when the page is being unloaded so the mic LED clears.
+  window.addEventListener('beforeunload', () => { if (recording) stopRecording('unload'); });
+
   // Chat
   const chatInput = $('#chatInput');
   $('#chatSendBtn').addEventListener('click', () => sendChat(chatInput.value));
@@ -3119,6 +3499,13 @@ async function init() {
     chatInput.style.height = Math.min(chatInput.scrollHeight, 220) + 'px';
   });
   $('#newChatBtn').addEventListener('click', clearChat);
+  $('#threadsBtn').addEventListener('click', openThreadsModal);
+  $('#threadsList').addEventListener('click', e => {
+    const delBtn = e.target.closest('[data-thread-act="delete"]');
+    if (delBtn) { e.stopPropagation(); deleteThread(delBtn.dataset.id); return; }
+    const row = e.target.closest('.thread-row');
+    if (row) loadThread(row.dataset.threadId);
+  });
   $('#chatThread').addEventListener('click', e => {
     const qaBtn = e.target.closest('.chat-qa');
     if (qaBtn) { runQuickAction(qaBtn.dataset.qa); return; }
@@ -3210,7 +3597,7 @@ async function init() {
   document.querySelectorAll('[data-close-modal]').forEach(btn => {
     btn.addEventListener('click', () => $('#' + btn.dataset.closeModal).classList.remove('show'));
   });
-  ['projectModal','taskModal','directionsModal'].forEach(id => {
+  ['projectModal','taskModal','directionsModal','threadsModal'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', e => { if (e.target.id === id) el.classList.remove('show'); });
   });

@@ -252,6 +252,113 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
   };
 }
 
+async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode }) {
+  if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
+
+  const systemBlocks = [{ type: 'text', text: systemPrompt }];
+  if (libraryPrompt) {
+    systemBlocks.push({ type: 'text', text: libraryPrompt, cache_control: { type: 'ephemeral' } });
+  }
+  const messages = [];
+  if (Array.isArray(history)) {
+    history.forEach(m => {
+      if (m && (m.role === 'user' || m.role === 'assistant') && m.content) {
+        messages.push({ role: m.role, content: String(m.content) });
+      }
+    });
+  }
+  messages.push({ role: 'user', content: String(message) });
+  const tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 6 }];
+
+  // SSE headers — flush them so the browser starts reading
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+  const send = (payload) => res.write('data: ' + JSON.stringify(payload) + '\n\n');
+
+  send({ type: 'meta', model, mode });
+
+  const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 4096,
+      tools,
+      system: systemBlocks,
+      messages,
+      stream: true
+    })
+  });
+
+  if (!upstream.ok) {
+    const errText = await upstream.text();
+    send({ type: 'error', error: 'Upstream ' + upstream.status + ': ' + errText.slice(0, 300) });
+    res.end();
+    return;
+  }
+
+  const reader = upstream.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  const searchSources = [];
+  let resolvedModel = model;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const events = buffer.split('\n\n');
+    buffer = events.pop();
+
+    for (const evt of events) {
+      const lines = evt.split('\n');
+      let eventType = '';
+      let dataStr = '';
+      for (const ln of lines) {
+        if (ln.startsWith('event: ')) eventType = ln.slice(7).trim();
+        else if (ln.startsWith('data: ')) dataStr = ln.slice(6);
+      }
+      if (!dataStr) continue;
+      let data;
+      try { data = JSON.parse(dataStr); } catch (e) { continue; }
+
+      if (eventType === 'message_start' && data.message && data.message.model) {
+        resolvedModel = data.message.model;
+      } else if (eventType === 'content_block_delta' && data.delta) {
+        if (data.delta.type === 'text_delta' && data.delta.text) {
+          send({ type: 'text', text: data.delta.text });
+        }
+      } else if (eventType === 'content_block_start' && data.content_block) {
+        if (data.content_block.type === 'web_search_tool_use') {
+          send({ type: 'search_started' });
+        }
+      } else if (eventType === 'content_block_stop' && data.content_block) {
+        if (data.content_block.type === 'web_search_tool_result' && Array.isArray(data.content_block.content)) {
+          data.content_block.content.forEach(r => {
+            if (r && r.url) searchSources.push({ url: r.url, title: r.title || '' });
+          });
+        }
+      }
+    }
+  }
+
+  send({
+    type: 'done',
+    model: resolvedModel,
+    searchCount: searchSources.length,
+    searchSources: searchSources.slice(0, 10)
+  });
+  res.end();
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -292,10 +399,20 @@ module.exports = async function handler(req, res) {
     const systemPrompt = buildSystemPrompt(items);
     const libraryPrompt = buildLibraryPrompt(items, budget);
 
+    if (body.stream === true) {
+      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode });
+      return;
+    }
+
     const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message });
     return res.status(200).json({ ...result, mode });
   } catch (err) {
     console.error('beacons/chat error', err);
+    if (body.stream === true && !res.headersSent) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.write('data: ' + JSON.stringify({ type: 'error', error: err.message || 'Internal error' }) + '\n\n');
+      return res.end();
+    }
     return res.status(500).json({ error: err.message || 'Internal error' });
   }
 };
