@@ -1496,7 +1496,7 @@ main {
         <label class="dropzone" id="dropzone">
           <div class="dropzone-icon">↑</div>
           <div class="dropzone-prim">Drop files here, or click to browse</div>
-          <div class="dropzone-sec">Text-format files (.txt, .md, .csv, .json, .html, .eml) get full content extraction now. Office formats (.pdf, .docx, .pptx) save as metadata until cloud extraction is wired up.</div>
+          <div class="dropzone-sec">Full text extraction for .pdf, .docx, .pptx, plus all common text formats (.txt, .md, .csv, .json, .html, .eml, .mbox). Office files up to ~3MB; larger uploads coming with the blob path.</div>
           <input type="file" id="fileInput" multiple>
         </label>
       </section>
@@ -1925,6 +1925,9 @@ async function loadAll() {
    FILES
    ============================================================ */
 const TEXT_EXTENSIONS = ['txt','md','csv','json','html','htm','xml','eml','mbox','log','tsv','rtf','srt','vtt'];
+const EXTRACT_EXTENSIONS = ['pdf','docx','pptx'];
+const EXTRACT_MAX_BYTES = 3 * 1024 * 1024; // ~3MB original; base64 inflates ~33% to fit Vercel's 4.5MB body cap
+
 function readFileAsText(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1933,19 +1936,67 @@ function readFileAsText(file) {
     reader.readAsText(file);
   });
 }
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result || '';
+      const base64 = String(result).split(',')[1] || '';
+      resolve(base64);
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 async function ingestFile(file) {
   const ext = (file.name.split('.').pop() || '').toLowerCase();
   const isText = TEXT_EXTENSIONS.includes(ext);
-  let content = null, extracted = false;
+  const isExtractable = EXTRACT_EXTENSIONS.includes(ext);
+
+  let content = null;
+  let extracted = false;
+  let extractMeta = null;
+  let extractError = null;
+
   if (isText) {
     try { content = await readFileAsText(file); extracted = true; }
-    catch (e) { console.error('text read failed', e); }
+    catch (e) { extractError = e.message; }
+  } else if (isExtractable && cloudMode) {
+    if (file.size > EXTRACT_MAX_BYTES) {
+      extractError = 'File too large for inline extraction (' + fmtSize(file.size) + ' > ' + fmtSize(EXTRACT_MAX_BYTES) + '). Larger uploads need the Blob path — coming next.';
+    } else {
+      try {
+        const base64 = await readFileAsBase64(file);
+        const res = await fetch(`${API_BASE}/extract`, {
+          method: 'POST',
+          headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, mime: file.type, base64 })
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          extractError = err.error || ('extract HTTP ' + res.status);
+        } else {
+          const data = await res.json();
+          content = data.content || '';
+          extracted = !!data.extracted;
+          extractMeta = data.meta || null;
+        }
+      } catch (e) {
+        extractError = e.message;
+      }
+    }
+  } else if (isExtractable && !cloudMode) {
+    extractError = 'Extraction needs cloud sync. Set BEACONS_PASSCODE_HASH in Vercel and reload.';
   }
+
   await storagePut({
     id: uid(), kind: 'file',
     title: file.name, extension: ext,
     mime: file.type || 'application/octet-stream',
     size: file.size, content, extracted,
+    extract_meta: extractMeta,
+    extract_error: extractError,
     created_at: new Date().toISOString()
   });
 }
@@ -2281,7 +2332,7 @@ function renderLibrary() {
     const lbl = iconLabel(item);
     const preview = (item.content || '').replace(/\s+/g, ' ').slice(0, 140);
     const previewText = preview || (item.kind === 'file' && !item.extracted
-      ? '<em style="color:var(--text-dim)">Extraction pending — saved as metadata until binary extraction is wired up.</em>'
+      ? `<em style="color:var(--text-dim)">${item.extract_error ? 'Extraction failed: ' + escapeHtml(item.extract_error) : 'Saved as metadata only.'}</em>`
       : '<em style="color:var(--text-dim)">No preview</em>');
     return `<li class="lib-item" data-id="${item.id}">
       <div class="lib-icon ${iconKind}">${escapeHtml(lbl)}</div>
@@ -2314,7 +2365,10 @@ function openDetail(id) {
   $('#modalSize').textContent = fmtSize(item.size || 0);
   if (item.content) $('#modalBody').textContent = item.content;
   else if (item.kind === 'file' && !item.extracted) {
-    $('#modalBody').innerHTML = '<em style="color:var(--text-muted)">This file was saved as metadata only. Full text extraction will run once binary extraction is wired up.</em>';
+    const note = item.extract_error
+      ? 'Extraction failed: ' + item.extract_error
+      : 'This file was saved as metadata only. Re-upload to retry extraction.';
+    $('#modalBody').innerHTML = '<em style="color:var(--text-muted)">' + escapeHtml(note) + '</em>';
   } else $('#modalBody').textContent = '(empty)';
   $('#detailModal').classList.add('show');
 }
