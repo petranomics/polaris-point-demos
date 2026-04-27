@@ -1607,7 +1607,10 @@ main {
       </div>
     </form>
     <div class="modal-foot">
-      <button class="btn btn-ghost" id="projectDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3);display:none">Delete</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="projectDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3);display:none">Delete</button>
+        <button class="btn btn-ghost" id="projectRunBtn" style="display:none;color:var(--gold);border-color:rgba(232,197,71,.4)">⚡ Run with Beacon</button>
+      </div>
       <div style="display:flex;gap:8px;margin-left:auto">
         <button class="btn btn-ghost" data-close-modal="projectModal">Cancel</button>
         <button class="btn btn-primary" id="projectSaveBtn">Save</button>
@@ -1665,7 +1668,10 @@ main {
       </div>
     </form>
     <div class="modal-foot">
-      <button class="btn btn-ghost" id="taskDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3);display:none">Delete</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="taskDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3);display:none">Delete</button>
+        <button class="btn btn-ghost" id="taskRunBtn" style="display:none;color:var(--gold);border-color:rgba(232,197,71,.4)">⚡ Run with Beacon</button>
+      </div>
       <div style="display:flex;gap:8px;margin-left:auto">
         <button class="btn btn-ghost" data-close-modal="taskModal">Cancel</button>
         <button class="btn btn-primary" id="taskSaveBtn">Save</button>
@@ -2049,6 +2055,7 @@ function openProjectModal(id) {
   $('#projectCadence').value = p ? (p.cadence || 'weekly') : 'weekly';
   $('#projectStatus').value = p ? (p.status || 'active') : 'active';
   $('#projectDeleteBtn').style.display = p ? 'inline-flex' : 'none';
+  $('#projectRunBtn').style.display = p ? 'inline-flex' : 'none';
   $('#projectModal').classList.add('show');
   setTimeout(() => $('#projectName').focus(), 50);
 }
@@ -2101,6 +2108,7 @@ function openTaskModal(id) {
   $('#taskDue').value = t ? (t.due_date || '') : '';
   fillProjectSelect($('#taskProject'), t ? t.project_id : '');
   $('#taskDeleteBtn').style.display = t ? 'inline-flex' : 'none';
+  $('#taskRunBtn').style.display = t ? 'inline-flex' : 'none';
   $('#taskModal').classList.add('show');
   setTimeout(() => $('#taskTitle').focus(), 50);
 }
@@ -2466,6 +2474,7 @@ function renderChat() {
           <button data-act="save" data-i="${i}">Save to library</button>
           <button data-act="copy" data-i="${i}">Copy</button>
           <button data-act="task" data-i="${i}">Make task</button>
+          <button data-act="project" data-i="${i}">Make project</button>
         </div>`
       : '';
     const metaParts = [];
@@ -2582,7 +2591,9 @@ function copyChatMsg(idx) {
 async function makeTaskFromChat(idx) {
   const msg = chatHistory[idx];
   if (!msg) return;
-  const title = (msg.content || '').replace(/\s+/g, ' ').slice(0, 100);
+  const userMsg = chatHistory[idx - 1];
+  const titleSeed = (userMsg && userMsg.content) ? userMsg.content : (msg.content || '');
+  const title = titleSeed.replace(/\s+/g, ' ').slice(0, 100);
   const now = new Date().toISOString();
   await storagePut({
     id: uid(), kind: 'task',
@@ -2593,7 +2604,81 @@ async function makeTaskFromChat(idx) {
     created_at: now, updated_at: now, done_at: null
   });
   await loadAll(); renderAll();
-  showToast('Task created');
+  showToast('Task created — find it in the Tasks list');
+}
+
+function makeProjectFromChat(idx) {
+  const msg = chatHistory[idx];
+  if (!msg) return;
+  const userMsg = chatHistory[idx - 1];
+  const firstLine = (msg.content || '').split('\n').find(l => l.trim()) || '';
+  const titleSeed = (userMsg && userMsg.content)
+    ? userMsg.content.replace(/^(turn this into|make this|save as|track this|let'?s)\s+(a|the)?\s*(project)?:?\s*/i, '').trim()
+    : firstLine;
+  // Open the project modal pre-filled — user adjusts cadence + name then saves.
+  editingProjectId = null;
+  $('#projectModalTitle').textContent = 'New project from chat';
+  $('#projectName').value = (titleSeed || firstLine).replace(/\s+/g, ' ').slice(0, 100);
+  $('#projectDesc').value = msg.content || '';
+  $('#projectCadence').value = 'weekly';
+  $('#projectStatus').value = 'active';
+  $('#projectDeleteBtn').style.display = 'none';
+  $('#projectRunBtn').style.display = 'none';
+  $('#projectModal').classList.add('show');
+  setTimeout(() => $('#projectName').focus(), 50);
+}
+
+function scrollToChat() {
+  const block = document.getElementById('chatBlock');
+  if (block) block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function runProjectInChat() {
+  if (!editingProjectId) return;
+  const p = projects.find(x => x.id === editingProjectId);
+  if (!p) return;
+  const projTasks = tasks.filter(t => t.project_id === p.id);
+  const inProgress = projTasks.filter(t => t.status === 'in_progress');
+  const todo = projTasks.filter(t => t.status === 'todo');
+
+  let prompt = `Let's work on project: "${p.title}".\n`;
+  if (p.content) prompt += `\nProject brief: ${p.content}\n`;
+  if (p.cadence) prompt += `Cadence: ${p.cadence}.\n`;
+  if (inProgress.length) prompt += `\nIn progress on this project:\n` + inProgress.map(t => `  ◐ ${t.title}${t.content ? ' — ' + t.content.slice(0, 200) : ''}`).join('\n') + '\n';
+  if (todo.length) prompt += `\nOpen to-dos on this project:\n` + todo.map(t => `  ☐ ${t.title}${t.due_date ? ' (due ' + t.due_date + ')' : ''}`).join('\n') + '\n';
+  prompt += `\nGiven my full library + directions, deliver one of: a clear next-step plan, a real draft, or a research scan — whichever is most useful right now. Be specific to this project.`;
+
+  $('#projectModal').classList.remove('show');
+  scrollToChat();
+  sendChat(prompt, 'deep');
+}
+
+async function runTaskInChat() {
+  if (!editingTaskId) return;
+  const t = tasks.find(x => x.id === editingTaskId);
+  if (!t) return;
+  const proj = t.project_id ? projects.find(p => p.id === t.project_id) : null;
+
+  let prompt = `Help me with this task: "${t.title}".\n`;
+  if (t.content) prompt += `\nNotes: ${t.content}\n`;
+  if (proj) prompt += `Project: ${proj.title}.\n`;
+  if (t.priority && t.priority !== 'normal') prompt += `Priority: ${t.priority}.\n`;
+  if (t.due_date) prompt += `Due: ${t.due_date}.\n`;
+  prompt += `\nDeliver actual output (draft, brief, summary, research) — not just a plan to make one. Use my library and active context.`;
+
+  // Auto-flip the task to in_progress so the workspace state stays honest.
+  if (t.status === 'todo') {
+    const now = new Date().toISOString();
+    try {
+      await storagePut({ ...t, status: 'in_progress', updated_at: now });
+      await loadAll();
+      renderAll();
+    } catch (e) { /* non-fatal */ }
+  }
+
+  $('#taskModal').classList.remove('show');
+  scrollToChat();
+  sendChat(prompt, 'default');
 }
 
 function clearChat() {
@@ -2697,6 +2782,7 @@ async function init() {
       if (actBtn.dataset.act === 'save') saveAssistantToLibrary(i);
       else if (actBtn.dataset.act === 'copy') copyChatMsg(i);
       else if (actBtn.dataset.act === 'task') makeTaskFromChat(i);
+      else if (actBtn.dataset.act === 'project') makeProjectFromChat(i);
     }
   });
 
@@ -2717,6 +2803,7 @@ async function init() {
   });
   $('#projectSaveBtn').addEventListener('click', saveProject);
   $('#projectDeleteBtn').addEventListener('click', deleteProject);
+  $('#projectRunBtn').addEventListener('click', runProjectInChat);
 
   // Tasks
   $('#quickTaskAddBtn').addEventListener('click', quickAddTask);
@@ -2731,6 +2818,7 @@ async function init() {
   });
   $('#taskSaveBtn').addEventListener('click', saveTask);
   $('#taskDeleteBtn').addEventListener('click', deleteTask);
+  $('#taskRunBtn').addEventListener('click', runTaskInChat);
 
   document.querySelectorAll('.tasks-toolbar .filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
