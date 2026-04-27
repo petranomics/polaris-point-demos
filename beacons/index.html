@@ -1977,6 +1977,7 @@ main {
     <div class="modal-foot">
       <span class="modal-meta" id="modalSize">—</span>
       <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="modalPinBtn">📌 Pin</button>
         <button class="btn btn-ghost" id="modalCopyBtn">Copy text</button>
         <button class="btn btn-ghost" id="modalDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3)">Delete</button>
       </div>
@@ -2914,10 +2915,11 @@ function renderLibrary() {
     const previewText = preview || (item.kind === 'file' && !item.extracted
       ? `<em style="color:var(--text-dim)">${item.extract_error ? 'Extraction failed: ' + escapeHtml(item.extract_error) : 'Saved as metadata only.'}</em>`
       : '<em style="color:var(--text-dim)">No preview</em>');
+    const pinIndicator = item.pinned ? '<span style="color:var(--gold);margin-right:6px" title="Pinned to context">📌</span>' : '';
     return `<li class="lib-item" data-id="${item.id}">
       <div class="lib-icon ${iconKind}">${escapeHtml(lbl)}</div>
       <div class="lib-body">
-        <div class="lib-title">${escapeHtml(item.title)}</div>
+        <div class="lib-title">${pinIndicator}${escapeHtml(item.title)}</div>
         <div class="lib-preview">${previewText}</div>
       </div>
       <div class="lib-meta">${fmtSize(item.size || 0)}</div>
@@ -2936,13 +2938,20 @@ function openDetail(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   currentDetailId = id;
-  $('#modalTitle').textContent = item.title;
+  $('#modalTitle').textContent = (item.pinned ? '📌 ' : '') + item.title;
+  const kindLabel = item.kind === 'thought' ? 'Thought' : (item.kind === 'email_thread' ? 'Email thread' : 'File');
   $('#modalMeta').textContent = [
-    item.kind === 'thought' ? 'Thought' : 'File',
+    kindLabel,
     item.extension ? '.' + item.extension : '',
     fmtDate(item.created_at)
   ].filter(Boolean).join(' · ');
   $('#modalSize').textContent = fmtSize(item.size || 0);
+  const pinBtn = $('#modalPinBtn');
+  if (pinBtn) {
+    pinBtn.textContent = item.pinned ? '📌 Unpin' : '📌 Pin to context';
+    pinBtn.style.color = item.pinned ? 'var(--gold)' : '';
+    pinBtn.style.borderColor = item.pinned ? 'rgba(232,197,71,.4)' : '';
+  }
   if (item.content) $('#modalBody').textContent = item.content;
   else if (item.kind === 'file' && !item.extracted) {
     const note = item.extract_error
@@ -2953,6 +2962,19 @@ function openDetail(id) {
   $('#detailModal').classList.add('show');
 }
 function closeDetail() { $('#detailModal').classList.remove('show'); currentDetailId = null; }
+async function togglePinCurrent() {
+  if (!currentDetailId) return;
+  const item = items.find(i => i.id === currentDetailId);
+  if (!item) return;
+  const updated = { ...item, pinned: !item.pinned, updated_at: new Date().toISOString() };
+  await storagePut(updated);
+  await loadAll();
+  renderAll();
+  // Re-render the modal so the button label flips
+  openDetail(currentDetailId);
+  showToast(updated.pinned ? 'Pinned to context' : 'Unpinned');
+}
+
 async function deleteCurrent() {
   if (!currentDetailId) return;
   const item = items.find(i => i.id === currentDetailId);
@@ -3118,6 +3140,12 @@ function renderGoogleConnection() {
     const subParts = [`<strong>${escapeHtml(googleConnection.email || 'Google account')}</strong>`];
     subParts.push(gmailSync ? `Gmail synced ${fmtDate(gmailSync)}` : 'Gmail not synced');
     subParts.push(driveSync ? `Drive synced ${fmtDate(driveSync)}` : 'Drive not synced');
+    // Detect stale scope (pre-write Drive). Show a re-consent CTA if so.
+    const scopes = googleConnection.scopes || [];
+    const hasFullDrive = scopes.some(s => s === 'https://www.googleapis.com/auth/drive');
+    if (!hasFullDrive) {
+      subParts.push('<span style="color:var(--gold)">⚠ reconnect for write access</span>');
+    }
     sub.innerHTML = subParts.join(' · ');
     connectBtn.style.display = 'none';
     disconnectBtn.style.display = 'inline-flex';
@@ -3470,7 +3498,7 @@ function renderChat() {
     const role = m.role;
     const text = m.content || '';
     const driveBtns = (googleConnection && googleConnection.connected)
-      ? '<button data-act="gdoc" data-i="' + i + '">→ Google Doc</button><button data-act="gsheet" data-i="' + i + '">→ Sheet</button>'
+      ? '<button data-act="gdoc" data-i="' + i + '">→ Google Doc</button><button data-act="gsheet" data-i="' + i + '">→ Sheet</button><button data-act="gslides" data-i="' + i + '">→ Slides</button>'
       : '';
     const actions = (role === 'assistant' && !m.streaming)
       ? `<div class="chat-msg-actions">
@@ -3667,12 +3695,17 @@ async function saveChatToDrive(idx, format) {
   const userMsg = chatHistory[idx - 1];
   const titleSeed = userMsg && userMsg.content ? userMsg.content : msg.content;
   const title = (titleSeed || '').replace(/\s+/g, ' ').slice(0, 70);
-  showToast(`Creating Google ${format === 'sheet' ? 'Sheet' : 'Doc'}…`);
+  const labels = { doc: 'Doc', sheet: 'Sheet', slides: 'Slides' };
+  const endpoint = format === 'slides' ? 'save-as-slides' : 'save-as-doc';
+  showToast(`Creating Google ${labels[format] || 'Doc'}…`);
   try {
-    const res = await fetch(`${API_BASE}/google/save-as-doc`, {
+    const payload = format === 'slides'
+      ? { text: msg.content, title }
+      : { text: msg.content, title, format };
+    const res = await fetch(`${API_BASE}/google/${endpoint}`, {
       method: 'POST',
       headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: msg.content, title, format })
+      body: JSON.stringify(payload)
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -3916,6 +3949,7 @@ async function init() {
       else if (actBtn.dataset.act === 'project') makeProjectFromChat(i);
       else if (actBtn.dataset.act === 'gdoc') saveChatToDrive(i, 'doc');
       else if (actBtn.dataset.act === 'gsheet') saveChatToDrive(i, 'sheet');
+      else if (actBtn.dataset.act === 'gslides') saveChatToDrive(i, 'slides');
     }
   });
 
@@ -3995,6 +4029,7 @@ async function init() {
   $('#detailModal').addEventListener('click', e => { if (e.target.id === 'detailModal') closeDetail(); });
   $('#modalDeleteBtn').addEventListener('click', deleteCurrent);
   $('#modalCopyBtn').addEventListener('click', copyCurrent);
+  $('#modalPinBtn').addEventListener('click', togglePinCurrent);
 
   // Generic modal close
   document.querySelectorAll('[data-close-modal]').forEach(btn => {

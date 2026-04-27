@@ -21,12 +21,13 @@ const MODELS = {
   smart: 'claude-sonnet-4-6',
   deep: 'claude-opus-4-7'
 };
-// Library budget per mode (chars; ~4 chars/token). Tighter for Haiku since
-// the model is smaller anyway and we want cost to scale down.
+// Library budget per mode (chars; ~4 chars/token). Bumped from earlier values
+// because curated context (forwarded emails + hand-picked Drive files) needs
+// room — too tight a budget meant good context got crowded out.
 const LIBRARY_BUDGET = {
-  default: 60000,
-  smart: 120000,
-  deep: 400000
+  default: 120000,
+  smart: 240000,
+  deep: 600000
 };
 // Backwards-compat: older clients may still send mode='fast'. Map to default.
 const MODE_ALIASES = { fast: 'default' };
@@ -179,7 +180,6 @@ function buildLibraryPrompt(items, budget, message, history) {
   const library = items.filter(i => i.kind === 'file' || i.kind === 'thought' || i.kind === 'email_thread');
   if (!library.length) return null;
 
-  // Pull tokens from current message + last 3 turns of chat for context.
   const queryText = ((message || '') + ' ' +
     (Array.isArray(history) ? history.slice(-3).map(h => h.content || '').join(' ') : ''))
     .toLowerCase();
@@ -187,24 +187,32 @@ function buildLibraryPrompt(items, budget, message, history) {
     queryText.split(/[^a-z0-9]+/).filter(t => t.length >= 3)
   ));
 
-  // Score and sort: relevance desc; tie-break by recency desc.
   const scored = library.map(item => ({
     item,
     score: scoreRelevance(item, queryTokens),
-    age: Date.now() - new Date(item.created_at).getTime()
+    age: Date.now() - new Date(item.created_at).getTime(),
+    pinned: !!item.pinned
   })).sort((a, b) => {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
     if (b.score !== a.score) return b.score - a.score;
     return a.age - b.age;
   });
 
-  const lines = ['=== LIBRARY (most relevant first) ===\n'];
+  const lines = ['=== LIBRARY (pinned + most relevant first) ===\n'];
   let chars = lines[0].length;
-  let truncated = 0;
-  for (const { item } of scored) {
-    if (chars >= budget) { truncated++; continue; }
-    const tag = tagLine(item);
+  const kindUsed = { file: 0, thought: 0, email_thread: 0 };
+  // Per-kind cap: no single kind eats more than 60% of budget on the first
+  // pass. Stops Gmail volume from crowding out hand-picked PDFs.
+  const PER_KIND_CAP = Math.floor(budget * 0.6);
+  const addedIds = new Set();
+
+  function tryAdd(item, isPinned, respectKindCap) {
+    if (addedIds.has(item.id)) return false;
+    if (chars >= budget) return false;
+    if (respectKindCap && (kindUsed[item.kind] || 0) >= PER_KIND_CAP) return false;
+    const tag = tagLine(item) + (isPinned ? ' [PINNED]' : '');
     const body = (item.content || '').trim();
-    if (!body) continue;
+    if (!body) return false;
     const block = '\n' + tag + '\n' + body + '\n';
     if (chars + block.length > budget) {
       const remaining = budget - chars;
@@ -212,12 +220,32 @@ function buildLibraryPrompt(items, budget, message, history) {
         lines.push('\n' + tag + '\n' + body.slice(0, remaining - tag.length - 12) + '\n[...truncated]');
       }
       chars = budget;
-      continue;
+      addedIds.add(item.id);
+      return true;
     }
     lines.push(block);
     chars += block.length;
+    kindUsed[item.kind] = (kindUsed[item.kind] || 0) + block.length;
+    addedIds.add(item.id);
+    return true;
   }
-  if (truncated) lines.push(`\n[Note: ${truncated} additional library items not packed this turn — relevance budget reached. Ask about a specific topic to surface them.]`);
+
+  // Pass 1: pinned items, no kind cap.
+  for (const { item, pinned } of scored) {
+    if (pinned) tryAdd(item, true, false);
+  }
+  // Pass 2: by relevance, respecting per-kind cap.
+  for (const { item } of scored) tryAdd(item, false, true);
+  // Pass 3: relax kind cap, fill remaining slots greedily.
+  for (const { item } of scored) {
+    if (chars >= budget) break;
+    tryAdd(item, false, false);
+  }
+
+  const remaining = scored.filter(s => !addedIds.has(s.item.id) && (s.item.content || '').trim()).length;
+  if (remaining > 0) {
+    lines.push(`\n[Note: ${remaining} more library items in your archive — ask about a specific topic, or pin items via the library to anchor them in every chat.]`);
+  }
   return lines.join('');
 }
 
