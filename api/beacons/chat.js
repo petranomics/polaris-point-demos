@@ -118,11 +118,7 @@ function buildSystemPrompt(items) {
     '  • Help them STRUCTURE work into projects and tasks when they\'re thinking out loud — propose names, descriptions, and cadences they can save with one click.',
     '  • Stay specific and concrete. Use the actual names, dates, and details from their context — never generic placeholders.',
     '',
-    'You have a web_search tool available. Use it when:',
-    '  • The user explicitly asks for research, news, market intel, competitor moves, or current pricing.',
-    '  • The answer needs information that post-dates your training or wouldn\'t be in their library.',
-    '  • A specific external fact materially changes the answer (regulations, official statements, public data).',
-    'Do NOT search for things already covered in the user\'s library — their context comes first. When you do search, cite the source URL inline so they can verify. 2–4 searches per question is usually plenty; do not over-search.',
+    'You have web access via the web_search tool — you ARE connected to the internet. Use the tool whenever the user asks for current info, research, news, market intel, competitor moves, or pricing. Don\'t hedge or say "I can\'t access the internet" — the tool exists, use it. If the tool returns an error, say PLAINLY what failed (e.g., "web search returned a network_error — I\'ll try a different query / fall back to your library") rather than claiming you don\'t have access. Try a different query if the first errors. Don\'t search for things already covered in the library. Cite source URLs inline. 2–4 searches per question is plenty.',
     '',
     'Tone: direct, professional, peer-to-peer. Skip throat-clearing ("Great question!"). Lead with the answer. When drafting on their behalf, match the voice they\'ve described in their directions.',
     '',
@@ -384,7 +380,12 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   }
   messages.push({ role: 'user', content: String(message) });
 
-  const tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 6 }];
+  const tools = [{
+    type: 'web_search_20250305',
+    name: 'web_search',
+    max_uses: 6,
+    user_location: { type: 'approximate', country: 'US' }
+  }];
   if (accessToken) {
     Tools.TOOL_DEFINITIONS.forEach(d => tools.push(d));
   }
@@ -478,9 +479,13 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
           } else if (cb.type === 'web_search_tool_use') {
             currentBlock = { type: 'web_search_tool_use' };
             send({ type: 'search_started' });
+            send({ type: 'tool_started', name: 'web_search' });
           } else if (cb.type === 'text') {
             currentBlock = { type: 'text', text: '' };
           } else if (cb.type === 'web_search_tool_result') {
+            // Result content can be either an array of search hits OR an
+            // error object like { type: 'web_search_tool_result_error',
+            // error_code: 'network_error' } when the tool fails.
             currentBlock = { type: 'web_search_tool_result', content: cb.content || [] };
           } else {
             currentBlock = { type: cb.type };
@@ -504,11 +509,26 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
               turnToolUses.push(block);
             } else if (currentBlock.type === 'text') {
               turnContent.push({ type: 'text', text: currentBlock.text });
-            } else if (currentBlock.type === 'web_search_tool_result' && Array.isArray(currentBlock.content)) {
-              currentBlock.content.forEach(r => {
-                if (r && r.url) searchSources.push({ url: r.url, title: r.title || '' });
-              });
-              turnContent.push({ type: 'web_search_tool_result', content: currentBlock.content });
+            } else if (currentBlock.type === 'web_search_tool_result') {
+              const content = currentBlock.content;
+              if (Array.isArray(content)) {
+                // Successful search — extract the hits
+                content.forEach(r => {
+                  if (r && r.url) searchSources.push({ url: r.url, title: r.title || '' });
+                });
+                send({ type: 'tool_progress', name: 'web_search', status: 'done' });
+                turnContent.push({ type: 'web_search_tool_result', content });
+              } else if (content && content.type === 'web_search_tool_result_error') {
+                // Search itself errored. Log the actual error and surface a
+                // useful chip so the user knows WHY web access failed.
+                const errCode = content.error_code || 'unknown';
+                console.warn('web_search tool error:', errCode, JSON.stringify(content));
+                send({ type: 'tool_progress', name: 'web_search', status: 'error', error: errCode });
+                turnContent.push({ type: 'web_search_tool_result', content });
+              } else {
+                console.warn('Unexpected web_search content shape:', JSON.stringify(content).slice(0, 200));
+                turnContent.push({ type: 'web_search_tool_result', content: content || [] });
+              }
             } else {
               // pass-through for other block types
               turnContent.push({ type: currentBlock.type });
