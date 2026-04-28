@@ -2586,13 +2586,18 @@ function updateThoughtCharCount() {
 }
 
 /* ============================================================
-   VOICE RECORD (live transcription via Web Speech API)
+   VOICE RECORD (Web Speech API live, MediaRecorder + Whisper fallback)
    ============================================================ */
 let recognition = null;
 let recording = false;
 let recordStartTime = 0;
 let recordTimer = null;
-let recordBaseText = '';   // What was in the textarea before recording started
+let recordBaseText = '';
+// MediaRecorder fallback state (used when SpeechRecognition fails)
+let mediaRecorder = null;
+let mediaStream = null;
+let mediaChunks = [];
+let recordMode = 'speech'; // 'speech' | 'media'
 
 function getSpeechRecognitionCtor() {
   return window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2666,9 +2671,15 @@ function startRecording() {
       clearTimeout(startTimeout);
       stopRecording('error');
     } else if (e.error === 'network') {
-      showToast('Network error — speech recognition needs internet', true);
+      // Web Speech API needs Google's online service. If that's blocked
+      // (firewall, privacy extension, etc.), automatically swap to the
+      // MediaRecorder + Whisper fallback for the rest of this session.
       clearTimeout(startTimeout);
-      stopRecording('error');
+      // Stop the current SR session cleanly first
+      recording = false;
+      if (recognition) { try { recognition.stop(); } catch(_){} recognition = null; }
+      showToast('Speech recognition blocked — switching to Whisper backup');
+      startRecordingMedia();
     } else if (e.error === 'no-speech' || e.error === 'aborted') {
       // Benign — auto-restart in onend takes care of these
     } else {
@@ -2718,7 +2729,109 @@ function startRecording() {
   }, 12000);
 }
 
+async function startRecordingMedia() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+    showToast('This browser doesn\'t support audio recording', true);
+    return;
+  }
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (e) {
+    showToast('Mic permission denied: ' + (e.message || e.name), true);
+    return;
+  }
+  mediaChunks = [];
+  // Pick the best supported mime. Chrome/Firefox prefer webm/opus; Safari mp4.
+  const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+  const mimeType = candidates.find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
+  try {
+    mediaRecorder = mimeType ? new MediaRecorder(mediaStream, { mimeType }) : new MediaRecorder(mediaStream);
+  } catch (e) {
+    showToast('Could not start recorder: ' + (e.message || e.name), true);
+    if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+    return;
+  }
+  mediaRecorder.ondataavailable = (ev) => {
+    if (ev.data && ev.data.size > 0) mediaChunks.push(ev.data);
+  };
+  mediaRecorder.onerror = (ev) => {
+    console.warn('MediaRecorder error', ev);
+    showToast('Recorder error: ' + (ev.error && ev.error.name), true);
+  };
+  mediaRecorder.start(1000); // collect chunks every 1s
+  recordMode = 'media';
+  recording = true;
+  recordStartTime = Date.now();
+  $('#recordBtn').classList.add('recording');
+  $('#recordBtn').textContent = '⏹ Stop';
+  $('#recordStatus').classList.add('show');
+  $('#recordHint').style.display = 'none';
+  $('#recordHint').textContent = 'Whisper transcribes after Stop — works for phone calls on speaker';
+  recordTimer = setInterval(updateRecordDuration, 1000);
+  updateRecordDuration();
+  showToast('Recording — tap Stop when done');
+}
+
+async function finishMediaRecording() {
+  if (!mediaRecorder) return;
+  await new Promise((resolve) => {
+    mediaRecorder.onstop = resolve;
+    try { mediaRecorder.stop(); } catch (_) { resolve(); }
+  });
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+  }
+  const mime = (mediaRecorder && mediaRecorder.mimeType) || 'audio/webm';
+  const blob = new Blob(mediaChunks, { type: mime });
+  mediaRecorder = null;
+  mediaChunks = [];
+  if (!blob.size) {
+    showToast('No audio captured', true);
+    return;
+  }
+  // Cap at ~24MB so we stay under Whisper's 25MB limit
+  if (blob.size > 24 * 1024 * 1024) {
+    showToast('Recording over 24MB — too long for one Whisper call (split into shorter chunks)', true);
+    return;
+  }
+  showToast('Transcribing…');
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+    const res = await fetch(`${API_BASE}/transcribe`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ audio: base64, mime, language: 'en' })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || ('HTTP ' + res.status));
+    }
+    const data = await res.json();
+    const text = (data.text || '').trim();
+    if (!text) {
+      showToast('Whisper returned empty — try recording again', true);
+      return;
+    }
+    const textarea = $('#thoughtBody');
+    if (recordBaseText && !/\s$/.test(recordBaseText)) recordBaseText += ' ';
+    recordBaseText += text;
+    textarea.value = recordBaseText;
+    updateThoughtCharCount();
+    showToast('Transcribed · ' + text.split(/\s+/).length + ' words');
+  } catch (e) {
+    showToast('Transcribe failed: ' + e.message, true);
+  }
+}
+
 function stopRecording(reason) {
+  const wasMediaMode = recordMode === 'media';
   recording = false;
   if (recognition) {
     try { recognition.stop(); } catch (_) {}
@@ -2729,7 +2842,14 @@ function stopRecording(reason) {
   $('#recordBtn').textContent = '🎙 Record';
   $('#recordStatus').classList.remove('show');
   $('#recordHint').style.display = '';
-  if (reason === 'manual') showToast('Recording stopped — review and save below');
+  // Reset for next session — next click starts in speech mode again
+  recordMode = 'speech';
+  if (wasMediaMode) {
+    // Kick off Whisper transcription async — don't block UI
+    finishMediaRecording();
+  } else if (reason === 'manual') {
+    showToast('Recording stopped — review and save below');
+  }
 }
 
 function updateRecordDuration() {
