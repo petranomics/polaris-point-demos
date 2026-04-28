@@ -2606,7 +2606,7 @@ function toggleRecording() {
 function startRecording() {
   const SR = getSpeechRecognitionCtor();
   if (!SR) {
-    showToast('Speech recognition not supported here. Try Chrome, Edge, or Safari.', true);
+    showToast('Voice record needs Chrome, Edge, or Safari (not Firefox)', true);
     return;
   }
   // Reset for a fresh session — preserve whatever's already in the textarea.
@@ -2619,7 +2619,27 @@ function startRecording() {
   recognition.interimResults = true;
   recognition.lang = 'en-US';
 
+  let started = false;
+  let resultsCount = 0;
+  // Watchdog: if onstart hasn't fired within 3 seconds, tell the user something
+  // is blocking it (most often: an unanswered permission prompt or another tab
+  // already holding the mic). Without this the button just sits in "Stop" state
+  // looking active but doing nothing.
+  const startTimeout = setTimeout(() => {
+    if (!started && recording) {
+      showToast('Mic didn\'t start — check the browser\'s mic permission for this site (lock icon in the URL bar)', true);
+      stopRecording('timeout');
+    }
+  }, 3000);
+
+  recognition.onstart = () => {
+    started = true;
+    clearTimeout(startTimeout);
+    showToast('Recording — speak now');
+  };
+
   recognition.onresult = (event) => {
+    resultsCount++;
     let interim = '';
     let newFinal = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -2628,7 +2648,6 @@ function startRecording() {
       else interim += transcript;
     }
     if (newFinal) {
-      // Commit final text to the base; subsequent interim won't overwrite it.
       recordBaseText += newFinal;
       if (!/\s$/.test(recordBaseText)) recordBaseText += ' ';
     }
@@ -2637,28 +2656,49 @@ function startRecording() {
   };
 
   recognition.onerror = (e) => {
+    console.warn('SpeechRecognition error:', e.error, e.message || '');
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      showToast('Microphone permission denied', true);
+      showToast('Microphone access blocked — click the lock icon in the URL bar and allow mic access', true);
+      clearTimeout(startTimeout);
       stopRecording('error');
-    } else if (e.error === 'no-speech' || e.error === 'aborted' || e.error === 'audio-capture') {
-      // Auto-restart from onend will retry these gracefully.
+    } else if (e.error === 'audio-capture') {
+      showToast('No microphone detected — check that one is plugged in / selected', true);
+      clearTimeout(startTimeout);
+      stopRecording('error');
+    } else if (e.error === 'network') {
+      showToast('Network error — speech recognition needs internet', true);
+      clearTimeout(startTimeout);
+      stopRecording('error');
+    } else if (e.error === 'no-speech' || e.error === 'aborted') {
+      // Benign — auto-restart in onend takes care of these
     } else {
-      console.warn('SpeechRecognition error:', e.error);
+      // Surface anything unexpected
+      showToast('Mic error: ' + e.error, true);
     }
   };
 
   recognition.onend = () => {
-    // Browser cuts the session every ~60s. Auto-restart while still recording
-    // so phone calls and longer notes keep going seamlessly.
-    if (recording) {
-      try { recognition.start(); } catch (_) { /* benign double-start */ }
+    // Browser cuts the session every ~60s. Auto-restart while still recording.
+    if (recording && recognition) {
+      try {
+        recognition.start();
+      } catch (err) {
+        // InvalidStateError happens if start() is called while already starting.
+        // Tiny delay then retry once.
+        setTimeout(() => {
+          if (recording && recognition) {
+            try { recognition.start(); } catch (_) {}
+          }
+        }, 250);
+      }
     }
   };
 
   try {
     recognition.start();
   } catch (e) {
-    showToast('Could not start mic: ' + e.message, true);
+    clearTimeout(startTimeout);
+    showToast('Could not start mic: ' + (e.message || e.name), true);
     return;
   }
   recording = true;
@@ -2669,6 +2709,13 @@ function startRecording() {
   $('#recordHint').style.display = 'none';
   recordTimer = setInterval(updateRecordDuration, 1000);
   updateRecordDuration();
+  // Diagnostic: if 12s pass without a single result, the mic might be muted
+  // or pointed away — give the user a hint without stopping the session.
+  setTimeout(() => {
+    if (recording && started && resultsCount === 0) {
+      showToast('No audio detected yet — check your mic is unmuted and listening', false);
+    }
+  }, 12000);
 }
 
 function stopRecording(reason) {
