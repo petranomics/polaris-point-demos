@@ -1534,6 +1534,9 @@ main {
   flex: 1;
   min-height: 38px;
   max-height: 220px;
+  /* Native auto-grow — no JS layout thrashing per keystroke. Falls back to
+     fixed min-height on browsers without field-sizing support. */
+  field-sizing: content;
   background: var(--space);
   border: 1px solid var(--border);
   color: var(--text);
@@ -3828,7 +3831,6 @@ async function sendChat(message, modeOverride) {
   chatHistory.push({ role: 'user', content: trimmed });
   renderChat();
   $('#chatInput').value = '';
-  $('#chatInput').style.height = 'auto';
   // Streaming mode: rely on the cursor inside the bubble, no need for the
   // bottom typing strip until the model starts searching.
   $('#chatTyping').style.display = 'none';
@@ -4234,10 +4236,8 @@ async function init() {
       sendChat(chatInput.value);
     }
   });
-  chatInput.addEventListener('input', () => {
-    chatInput.style.height = 'auto';
-    chatInput.style.height = Math.min(chatInput.scrollHeight, 220) + 'px';
-  });
+  // Auto-grow handled via CSS `field-sizing: content` — no JS reflow per
+  // keystroke. Older browsers stay at min-height, which is acceptable.
   $('#newChatBtn').addEventListener('click', clearChat);
   $('#threadsBtn').addEventListener('click', openThreadsModal);
   $('#threadsList').addEventListener('click', e => {
