@@ -5,6 +5,7 @@
 //   POST /api/vps?action=agent/outreach-email — outreach agent
 //   GET  /api/vps?action=health              — VPS health check
 //   GET  /api/vps?action=agent/outreach-email/health — agent health
+const { logUsage } = require('../lib/usage-logger.cjs');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -160,6 +161,8 @@ async function runHaikuAudit(req, res) {
       + '  "positives": ["list"]\n'
       + '}';
 
+    var auditModel = 'claude-haiku-4-5-20251001';
+    var auditT0 = Date.now();
     var aiRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -168,7 +171,7 @@ async function runHaikuAudit(req, res) {
         'content-type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: auditModel,
         max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       }),
@@ -181,6 +184,15 @@ async function runHaikuAudit(req, res) {
     }
 
     var aiData = await aiRes.json();
+    await logUsage({
+      app: 'beacons',
+      endpoint: '/api/vps?action=outreach-audit',
+      model: auditModel,
+      provider: 'anthropic',
+      response: aiData,
+      latencyMs: Date.now() - auditT0,
+      metadata: { target_url: targetUrl, status_code: statusCode }
+    });
     var raw = aiData.content && aiData.content[0] ? aiData.content[0].text : '';
 
     var result;

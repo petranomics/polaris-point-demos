@@ -2,6 +2,7 @@
 // POST: send message (pre-fetches context, routes to VPS, logs tokens)
 // GET: fetch chat history
 const { neon } = require('@neondatabase/serverless');
+const { logUsage } = require('../../lib/usage-logger.cjs');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -175,6 +176,8 @@ async function callClaudeDirect(context, history, message, brandVoice) {
   });
   claudeMessages.push({ role: 'user', content: message });
 
+  var beaconChatModel = 'claude-haiku-4-5-20251001';
+  var beaconChatT0 = Date.now();
   var resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -183,7 +186,7 @@ async function callClaudeDirect(context, history, message, brandVoice) {
       'content-type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
+      model: beaconChatModel,
       max_tokens: 2048,
       system: systemParts.join('\n'),
       messages: claudeMessages
@@ -192,6 +195,15 @@ async function callClaudeDirect(context, history, message, brandVoice) {
 
   var data = await resp.json();
   var content = data.content && data.content[0] ? data.content[0].text : '';
+
+  await logUsage({
+    app: 'beacons',
+    endpoint: '/api/beacon/chat',
+    model: beaconChatModel,
+    provider: 'anthropic',
+    response: data,
+    latencyMs: Date.now() - beaconChatT0,
+  });
 
   return {
     response: content,

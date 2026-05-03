@@ -1,6 +1,8 @@
 // /api/generate.js — Content generation via VPS local LLM
 // Usage: POST /api/generate { type, context }
 // Types: blog_post, seo_copy, about_text, service_desc, meta_desc
+const { logUsage } = require('../lib/usage-logger.cjs');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -79,11 +81,13 @@ module.exports = async function handler(req, res) {
       var apiKey = process.env.ANTHROPIC_API_KEY;
       if (!apiKey) return res.status(500).json({ error: 'No AI backend available' });
 
+      var claudeModel = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
+      var t0 = Date.now();
       var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
-          model: process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001',
+          model: claudeModel,
           max_tokens: 4000,
           messages: [{ role: 'user', content: prompt }]
         })
@@ -92,6 +96,15 @@ module.exports = async function handler(req, res) {
       if (data.error) return res.status(500).json({ error: data.error.message });
       text = data.content && data.content[0] ? data.content[0].text : '';
       source = 'anthropic';
+      await logUsage({
+        app: 'beacons',
+        endpoint: '/api/generate',
+        model: claudeModel,
+        provider: 'anthropic',
+        response: data,
+        latencyMs: Date.now() - t0,
+        metadata: { type: body.type }
+      });
     }
 
     return res.status(200).json({ content: text, type: body.type, source: source });

@@ -1,5 +1,7 @@
 // /api/adjust.js — AI-powered config adjustments
 // Tries VPS local LLM first ($0/call), falls back to Anthropic API.
+const { logUsage } = require('../lib/usage-logger.cjs');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -56,6 +58,8 @@ module.exports = async function handler(req, res) {
       var apiKey = process.env.ANTHROPIC_API_KEY;
       if (!apiKey) return res.status(500).json({ error: 'No AI backend available (VPS down, no Anthropic key)' });
 
+      var claudeModel = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
+      var t0 = Date.now();
       var response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -64,7 +68,7 @@ module.exports = async function handler(req, res) {
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001',
+          model: claudeModel,
           max_tokens: 4000,
           messages: [{ role: 'user', content: systemPrompt }]
         })
@@ -74,6 +78,14 @@ module.exports = async function handler(req, res) {
       if (data.error) return res.status(500).json({ error: data.error.message || 'Claude API error' });
       text = data.content && data.content[0] ? data.content[0].text : '';
       source = 'anthropic';
+      await logUsage({
+        app: 'beacons',
+        endpoint: '/api/adjust',
+        model: claudeModel,
+        provider: 'anthropic',
+        response: data,
+        latencyMs: Date.now() - t0,
+      });
     }
 
     // Clean markdown fences

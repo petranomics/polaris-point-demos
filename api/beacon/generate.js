@@ -1,6 +1,7 @@
 // /api/beacon/generate.js — On-demand content generation
 // POST: generate social posts, newsletters, blog drafts, etc.
 const { neon } = require('@neondatabase/serverless');
+const { logUsage } = require('../../lib/usage-logger.cjs');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -80,6 +81,8 @@ module.exports = async function handler(req, res) {
       // All tiers use Claude Haiku directly
       var systemPrompt = 'You are a marketing content creator. Match the brand voice. Be concise and professional.\n\n== BRAND VOICE ==\n' + brandVoice + '\n\n== BUSINESS CONTEXT ==\n' + contextText;
 
+      var beaconGenModel = 'claude-haiku-4-5-20251001';
+      var beaconGenT0 = Date.now();
       var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -88,7 +91,7 @@ module.exports = async function handler(req, res) {
           'content-type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
+          model: beaconGenModel,
           max_tokens: 4096,
           system: systemPrompt,
           messages: [{ role: 'user', content: message }]
@@ -101,6 +104,15 @@ module.exports = async function handler(req, res) {
         tokens_used: data.usage ? data.usage.input_tokens + data.usage.output_tokens : 0,
         model: 'claude-haiku-4-5'
       };
+      await logUsage({
+        app: 'beacons',
+        endpoint: '/api/beacon/generate',
+        model: beaconGenModel,
+        provider: 'anthropic',
+        response: data,
+        latencyMs: Date.now() - beaconGenT0,
+        metadata: { type: type }
+      });
     } else {
       // VPS Ollama
       var vpsUrl = process.env.VPS_API_URL || 'https://api.polarispoint.io';

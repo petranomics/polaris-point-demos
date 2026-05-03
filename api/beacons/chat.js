@@ -583,11 +583,15 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   try {
     if (sql) {
       costUsd = await Pricing.logUsage(sql, {
+        app: 'beacons',
+        endpoint: '/api/beacons/chat',
         userId: null,
         model: resolvedModel,
         mode,
+        provider: 'anthropic',
         usage: totalUsage,
-        webSearches: searchSources.length
+        webSearches: searchSources.length,
+        metadata: { stream: true, tools_used: toolsUsed }
       });
     }
   } catch (e) {
@@ -670,11 +674,15 @@ module.exports = async function handler(req, res) {
     let costUsd = 0;
     try {
       costUsd = await Pricing.logUsage(sql, {
+        app: 'beacons',
+        endpoint: '/api/beacons/chat',
         userId: null,
         model: result.model,
         mode,
+        provider: 'anthropic',
         usage: result.usage,
-        webSearches: result.searchCount
+        webSearches: result.searchCount,
+        metadata: { stream: false }
       });
     } catch (e) {
       console.error('usage log failed (non-stream)', e);

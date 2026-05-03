@@ -1,6 +1,9 @@
 // Beacon Chat Agent — VPS-deployed conversational AI
 // Receives pre-fetched context + history from Vercel, routes to Ollama or Claude
+// NOTE: this file runs on the Hostinger VPS. When deploying, ensure lib/usage-logger.cjs,
+// lib/pricing.js, @neondatabase/serverless, and the DATABASE_URL env var are present.
 const axios = require('axios');
+const { logUsage } = require('../lib/usage-logger.cjs');
 
 const OLLAMA_URL = 'http://localhost:11434';
 
@@ -88,8 +91,10 @@ async function callClaude(systemPrompt, messages, userMessage) {
   }
   claudeMessages.push({ role: 'user', content: userMessage });
 
+  var agentChatModel = 'claude-haiku-4-5-20251001';
+  var agentChatT0 = Date.now();
   var resp = await axios.post('https://api.anthropic.com/v1/messages', {
-    model: 'claude-haiku-4-5-20251001',
+    model: agentChatModel,
     max_tokens: 2048,
     system: systemPrompt,
     messages: claudeMessages
@@ -105,6 +110,15 @@ async function callClaude(systemPrompt, messages, userMessage) {
   var content = resp.data.content && resp.data.content[0] ? resp.data.content[0].text : '';
   var inputTokens = resp.data.usage ? resp.data.usage.input_tokens : 0;
   var outputTokens = resp.data.usage ? resp.data.usage.output_tokens : 0;
+
+  await logUsage({
+    app: 'beacons',
+    endpoint: 'agents/beacon-chat',
+    model: agentChatModel,
+    provider: 'anthropic',
+    response: resp.data,
+    latencyMs: Date.now() - agentChatT0,
+  });
 
   return {
     response: content,
