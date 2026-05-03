@@ -139,6 +139,7 @@
     <button class="ops-tab" onclick="opsTab('team')">Team</button>
     <button class="ops-tab" onclick="opsTab('leads')">Leads</button>
     <button class="ops-tab" onclick="opsTab('analytics')">Analytics</button>
+    <button class="ops-tab" onclick="opsTab('api')">API Usage</button>
     <button class="ops-tab" onclick="opsTab('infra')">Infrastructure</button>
   </div>
 
@@ -226,6 +227,55 @@
         </select>
       </div>
       <div id="opsAnalyticsSites"></div>
+    </div>
+  </div>
+
+  <!-- API USAGE TAB -->
+  <div id="panelApi" class="tab-panel">
+    <div class="kpi-row">
+      <div class="kpi"><div class="num gold"  id="apiKpiCostMtd">—</div><div class="label">Cost (MTD)</div></div>
+      <div class="kpi"><div class="num"       id="apiKpiCallsMtd">—</div><div class="label">Calls (MTD)</div></div>
+      <div class="kpi"><div class="num blue"  id="apiKpiCost24h">—</div><div class="label">Cost (Last 24h)</div></div>
+      <div class="kpi"><div class="num"       id="apiKpiCalls24h">—</div><div class="label">Calls (Last 24h)</div></div>
+      <div class="kpi"><div class="num"       id="apiKpiVsLastMonth">—</div><div class="label">vs Last Month</div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0;">14-Day Cost Trend</h3>
+        <button class="ops-btn secondary" onclick="loadOpsApiUsage()" style="font-size:.7rem;padding:6px 12px;">Refresh</button>
+      </div>
+      <div id="apiChart" style="min-height:160px;"></div>
+    </div>
+
+    <div class="card">
+      <h3>Per-App Breakdown</h3>
+      <div style="overflow-x:auto;">
+        <table class="ops-table">
+          <thead><tr><th>App</th><th>Calls 24h</th><th>Calls MTD</th><th>Cost 24h</th><th>Cost MTD</th><th>Avg Latency (7d)</th><th>Last Seen</th></tr></thead>
+          <tbody id="apiAppBody"><tr><td colspan="7" style="text-align:center;color:#475569;">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Per-Model Breakdown (MTD)</h3>
+      <div style="overflow-x:auto;">
+        <table class="ops-table">
+          <thead><tr><th>Model</th><th>Provider</th><th>Calls</th><th>Cost</th></tr></thead>
+          <tbody id="apiModelBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Recent Activity (last 30)</h3>
+      <div style="overflow-x:auto;">
+        <table class="ops-table">
+          <thead><tr><th>Time</th><th>App</th><th>Endpoint</th><th>Model</th><th>Provider</th><th>Cost</th><th>Latency</th></tr></thead>
+          <tbody id="apiRecentBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -350,6 +400,7 @@
     document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
     event.target.classList.add('active');
     if (tab === 'analytics') loadOpsAnalytics();
+    if (tab === 'api') loadOpsApiUsage();
     if (tab === 'infra') checkVps();
   }
 
@@ -611,6 +662,143 @@
           '</div>';
         }).join('');
       });
+  }
+
+  // === API USAGE TAB ===
+  function loadOpsApiUsage() {
+    fetch('/api/ops/api-usage')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          document.getElementById('apiAppBody').innerHTML =
+            '<tr><td colspan="7" style="color:#ef4444;text-align:center;">' + data.error + '</td></tr>';
+          return;
+        }
+        renderApiKpis(data.totals);
+        renderApiChart(data.by_day);
+        renderApiAppTable(data.by_app);
+        renderApiModelTable(data.by_model);
+        renderApiRecent(data.recent);
+      })
+      .catch(function(err) {
+        document.getElementById('apiAppBody').innerHTML =
+          '<tr><td colspan="7" style="color:#ef4444;text-align:center;">Failed to load: ' + err.message + '</td></tr>';
+      });
+  }
+
+  function fmtUsd(n) {
+    var v = Number(n) || 0;
+    if (v === 0) return '$0.00';
+    if (v < 0.01) return '$' + v.toFixed(4);
+    if (v < 1)    return '$' + v.toFixed(3);
+    return '$' + v.toFixed(2);
+  }
+  function fmtNum(n) { return (Number(n) || 0).toLocaleString(); }
+  function fmtAgo(t) {
+    if (!t) return '—';
+    var diff = (Date.now() - new Date(t).getTime()) / 1000;
+    if (diff < 60)    return Math.round(diff) + 's ago';
+    if (diff < 3600)  return Math.round(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.round(diff / 3600) + 'h ago';
+    return Math.round(diff / 86400) + 'd ago';
+  }
+
+  function renderApiKpis(t) {
+    document.getElementById('apiKpiCostMtd').textContent  = fmtUsd(t.mtd.cost);
+    document.getElementById('apiKpiCallsMtd').textContent = fmtNum(t.mtd.calls);
+    document.getElementById('apiKpiCost24h').textContent  = fmtUsd(t.last24h.cost);
+    document.getElementById('apiKpiCalls24h').textContent = fmtNum(t.last24h.calls);
+    var prev = t.prevMonth.cost, cur = t.mtd.cost;
+    var el = document.getElementById('apiKpiVsLastMonth');
+    if (prev > 0 && cur > 0) {
+      var pct = ((cur - prev) / prev) * 100;
+      el.textContent = (pct >= 0 ? '+' : '') + Math.round(pct) + '%';
+      el.className = 'num ' + (pct > 20 ? 'gold' : pct < 0 ? 'green' : 'blue');
+    } else if (prev > 0) {
+      el.textContent = fmtUsd(prev);
+      el.className = 'num';
+      el.parentElement.querySelector('.label').textContent = 'Last Month Total';
+    } else {
+      el.textContent = '—';
+    }
+  }
+
+  function renderApiChart(days) {
+    var host = document.getElementById('apiChart');
+    if (!days || days.length === 0) {
+      host.innerHTML = '<p style="color:#475569;font-size:.78rem;text-align:center;padding:50px 0;">No usage data in the last 14 days. Apps will appear here once they receive traffic post-deploy.</p>';
+      return;
+    }
+    var h = 160, padX = 1, padBot = 18;
+    var max = days.reduce(function(m, d) { return Math.max(m, d.cost); }, 0) || 1;
+    var bw = (100 - padX * 2) / days.length;
+    var bars = days.map(function(d, i) {
+      var bh = (d.cost / max) * (h - padBot - 8);
+      var x = padX + i * bw;
+      var y = h - padBot - bh;
+      var label = new Date(d.day).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+      return '<rect x="' + (x + 0.3) + '%" y="' + y + '" width="' + (bw - 0.6) + '%" height="' + Math.max(bh, 1) + '" fill="#5B8DEF" rx="1">' +
+               '<title>' + label + ': ' + fmtUsd(d.cost) + ' (' + d.calls + ' calls)</title>' +
+             '</rect>' +
+             '<text x="' + (x + bw / 2) + '%" y="' + (h - 4) + '" text-anchor="middle" font-size="9" fill="#475569">' + label + '</text>';
+    }).join('');
+    host.innerHTML = '<svg viewBox="0 0 100 ' + h + '" preserveAspectRatio="none" style="width:100%;height:' + h + 'px;display:block;">' + bars + '</svg>';
+  }
+
+  function renderApiAppTable(rows) {
+    var body = document.getElementById('apiAppBody');
+    if (!rows || rows.length === 0) {
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#475569;">No apps have logged calls yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(function(r) {
+      return '<tr>' +
+        '<td><strong style="color:#fff;">' + r.app + '</strong></td>' +
+        '<td>' + fmtNum(r.calls_24h) + '</td>' +
+        '<td>' + fmtNum(r.calls_mtd) + '</td>' +
+        '<td>' + fmtUsd(r.cost_24h) + '</td>' +
+        '<td style="color:' + (r.cost_mtd > 1 ? 'var(--gold)' : '#cbd5e1') + ';">' + fmtUsd(r.cost_mtd) + '</td>' +
+        '<td>' + (r.avg_latency_ms ? r.avg_latency_ms + 'ms' : '—') + '</td>' +
+        '<td>' + fmtAgo(r.last_seen) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function renderApiModelTable(rows) {
+    var body = document.getElementById('apiModelBody');
+    if (!rows || rows.length === 0) {
+      body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#475569;">No model usage this month yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(function(r) {
+      var color = r.provider === 'anthropic' ? 'var(--blue)' : '#16a34a';
+      var bg = r.provider === 'anthropic' ? 'rgba(91,141,239,.12)' : 'rgba(22,163,74,.12)';
+      return '<tr>' +
+        '<td><code style="color:#cbd5e1;font-size:.74rem;">' + (r.model || 'unknown') + '</code></td>' +
+        '<td><span class="badge" style="background:' + bg + ';color:' + color + ';">' + r.provider + '</span></td>' +
+        '<td>' + fmtNum(r.calls) + '</td>' +
+        '<td>' + fmtUsd(r.cost) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function renderApiRecent(rows) {
+    var body = document.getElementById('apiRecentBody');
+    if (!rows || rows.length === 0) {
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#475569;">No activity yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(function(r) {
+      return '<tr>' +
+        '<td>' + fmtAgo(r.created_at) + '</td>' +
+        '<td><strong style="color:#cbd5e1;">' + (r.app || 'beacons') + '</strong></td>' +
+        '<td><code style="color:#94a3b8;font-size:.7rem;">' + (r.endpoint || '—') + '</code></td>' +
+        '<td><code style="color:#94a3b8;font-size:.7rem;">' + (r.model || '—') + '</code></td>' +
+        '<td>' + (r.provider || 'anthropic') + '</td>' +
+        '<td>' + fmtUsd(r.cost_usd) + '</td>' +
+        '<td>' + (r.latency_ms ? r.latency_ms + 'ms' : '—') + '</td>' +
+      '</tr>';
+    }).join('');
   }
 </script>
 </body>
