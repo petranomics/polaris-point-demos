@@ -1767,6 +1767,7 @@
               <option value="handyman">Handyman / Contractor</option>
               <option value="cleaning">Cleaning Services</option>
               <option value="pest-control">Pest Control</option>
+              <option value="cafe">Cafe / Coffee Shop</option>
               <option value="restaurant">Restaurant</option>
               <option value="salon">Salon / Barber</option>
             </select>
@@ -4496,7 +4497,7 @@
         if (lead.address) document.getElementById('intAddress').value = lead.address;
         if (lead.website) document.getElementById('intWebsite').value = lead.website;
         if (lead.years_in_biz) document.getElementById('intFounded').value = String(new Date().getFullYear() - parseInt(lead.years_in_biz));
-        var templateMap = { plumber:'plumber', handyman:'handyman', cleaning:'cleaning', 'pest-control':'pest-control' };
+        var templateMap = { plumber:'plumber', handyman:'handyman', cleaning:'cleaning', 'pest-control':'pest-control', cafe:'cafe', restaurant:'restaurant', salon:'salon' };
         if (templateMap[lead.industry]) document.getElementById('searchTemplate').value = templateMap[lead.industry];
         if (lead.listing_url) document.getElementById('searchUrl').value = lead.listing_url;
         else if (lead.biz_name) document.getElementById('searchBizName').value = lead.biz_name;
@@ -5357,6 +5358,7 @@
           '<div class="lead-detail">Industry<span>' + (L.industry || '\u2014') + '</span></div></div>' +
         '<div class="outreach-actions">' +
           '<button class="outreach-btn enrich-btn" id="enrichBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'enrich\')">' + (oData.enrichment ? '\uD83D\uDD0D View Intel' : '\uD83D\uDD0D Analyze Prospect') + '</button>' +
+          '<button class="outreach-btn" id="buildBtn-' + L.id + '" onclick="buildSiteFromLead(' + L.id + ')" style="background:rgba(91,141,239,.08);border-color:rgba(91,141,239,.2);color:#5B8DEF;">\uD83C\uDFD7 Build Site \u2192</button>' +
           '<button class="outreach-btn" id="emailBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'email\')">' + (oData.emails.length ? '\u2709 View Email' : '\u2709 Generate Email') + '</button>' +
           '<button class="outreach-btn call-btn" id="callBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'call\')">' + (oData.callPrep ? '\u260E View Script' : '\u260E Call Prep') + '</button>' +
           (hasWeb ? '<button class="outreach-btn audit-btn" id="auditBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'audit\')">' + (oData.audit ? '\u26A1 View Audit' : '\u26A1 Audit Site') + '</button>' : '') +
