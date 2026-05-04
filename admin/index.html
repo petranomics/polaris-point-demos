@@ -1085,6 +1085,7 @@
     <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
     <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
     <button class="admin-tab senior-only" onclick="switchTab('beacon')">Beacon</button>
+    <button class="admin-tab senior-only" onclick="switchTab('apiusage')">API Usage</button>
   </div>
 
   <!-- SALES DECK TAB -->
@@ -2563,6 +2564,101 @@
     </div>
   </div><!-- /tabBeacon -->
 
+  <!-- ============ API USAGE TAB (senior-only) ============ -->
+  <div id="tabApiusage" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2 style="margin:0;color:#fff;font-family:'Outfit',sans-serif;">API Usage &amp; Cost</h2>
+          <p style="margin:4px 0 0;font-size:.78rem;color:#64748b;">Anthropic + Mistral spend across all 5 apps. Data from <code style="color:#5B8DEF;">beacons_usage_log</code> via <code style="color:#5B8DEF;">/api/ops/api-usage</code>.</p>
+        </div>
+        <button class="btn-export secondary" onclick="loadAdminApiUsage()" style="font-size:.75rem;padding:8px 16px;">Refresh</button>
+      </div>
+
+      <!-- KPI cards -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;">
+        <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;text-align:center;">
+          <div id="auKpiCostMtd" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:700;color:#D4A853;">—</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Cost (MTD)</div>
+        </div>
+        <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;text-align:center;">
+          <div id="auKpiCallsMtd" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:700;color:#fff;">—</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Calls (MTD)</div>
+        </div>
+        <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;text-align:center;">
+          <div id="auKpiCost24h" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:700;color:#5B8DEF;">—</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Cost (Last 24h)</div>
+        </div>
+        <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;text-align:center;">
+          <div id="auKpiCalls24h" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:700;color:#fff;">—</div>
+          <div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Calls (Last 24h)</div>
+        </div>
+        <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;text-align:center;">
+          <div id="auKpiVsLastMonth" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:700;color:#fff;">—</div>
+          <div id="auKpiVsLastMonthLabel" style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">vs Last Month</div>
+        </div>
+      </div>
+
+      <!-- 14-day trend -->
+      <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+        <h3 style="margin:0 0 12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:#fff;">14-Day Cost Trend</h3>
+        <div id="auChart" style="min-height:160px;"></div>
+      </div>
+
+      <!-- Per-app -->
+      <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+        <h3 style="margin:0 0 12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:#fff;">Per-App Breakdown</h3>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;">
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">App</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Calls 24h</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Calls MTD</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Cost 24h</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Cost MTD</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Avg Latency (7d)</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Last Seen</th>
+            </tr></thead>
+            <tbody id="auAppBody"><tr><td colspan="7" style="text-align:center;color:#475569;padding:20px;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Per-model -->
+      <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+        <h3 style="margin:0 0 12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:#fff;">Per-Model Breakdown (MTD)</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;">
+            <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Model</th>
+            <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Provider</th>
+            <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Calls</th>
+            <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Cost</th>
+          </tr></thead>
+          <tbody id="auModelBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Recent activity -->
+      <div style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;">
+        <h3 style="margin:0 0 12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:#fff;">Recent Activity (last 30 calls)</h3>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;">
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Time</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">App</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Endpoint</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Model</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Provider</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Cost</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Latency</th>
+            </tr></thead>
+            <tbody id="auRecentBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tabApiusage -->
+
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script>
     // === ROLE MANAGEMENT ===
@@ -2579,7 +2675,8 @@
       analytics: 'tabAnalytics',
       cards: 'tabCards',
       outreach: 'tabOutreach',
-      beacon: 'tabBeacon'
+      beacon: 'tabBeacon',
+      apiusage: 'tabApiusage'
     };
 
     // === SLIDE DECK ===
@@ -2645,7 +2742,7 @@
 
     function switchTab(tab) {
       // Senior-only tabs check
-      if ((tab === 'cards' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon') && currentRole !== 'senior') return;
+      if ((tab === 'cards' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon' || tab === 'apiusage') && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
       var targetId = TAB_MAP[tab];
@@ -2660,6 +2757,7 @@
       if (tab === 'outreach') loadOutreachQueue();
       if (tab === 'beacon') { loadBeaconSubs(); loadTrialCodes(); loadBeaconReferrals(); }
       if (tab === 'materials') loadMaterialsTab();
+      if (tab === 'apiusage') loadAdminApiUsage();
     }
 
     // ---- Materials / Coupon code ----
@@ -6332,6 +6430,145 @@
       });
     }
 
+    // === API USAGE TAB (admin) ===
+    function loadAdminApiUsage() {
+      fetch('/api/ops/api-usage')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) {
+            document.getElementById('auAppBody').innerHTML =
+              '<tr><td colspan="7" style="color:#ef4444;text-align:center;padding:20px;">' + data.error + '</td></tr>';
+            return;
+          }
+          renderAuKpis(data.totals);
+          renderAuChart(data.by_day);
+          renderAuAppTable(data.by_app);
+          renderAuModelTable(data.by_model);
+          renderAuRecent(data.recent);
+        })
+        .catch(function(err) {
+          document.getElementById('auAppBody').innerHTML =
+            '<tr><td colspan="7" style="color:#ef4444;text-align:center;padding:20px;">Failed to load: ' + err.message + '</td></tr>';
+        });
+    }
+
+    function auFmtUsd(n) {
+      var v = Number(n) || 0;
+      if (v === 0) return '$0.00';
+      if (v < 0.01) return '$' + v.toFixed(4);
+      if (v < 1)    return '$' + v.toFixed(3);
+      return '$' + v.toFixed(2);
+    }
+    function auFmtNum(n) { return (Number(n) || 0).toLocaleString(); }
+    function auFmtAgo(t) {
+      if (!t) return '—';
+      var diff = (Date.now() - new Date(t).getTime()) / 1000;
+      if (diff < 60)    return Math.round(diff) + 's ago';
+      if (diff < 3600)  return Math.round(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.round(diff / 3600) + 'h ago';
+      return Math.round(diff / 86400) + 'd ago';
+    }
+
+    function renderAuKpis(t) {
+      document.getElementById('auKpiCostMtd').textContent  = auFmtUsd(t.mtd.cost);
+      document.getElementById('auKpiCallsMtd').textContent = auFmtNum(t.mtd.calls);
+      document.getElementById('auKpiCost24h').textContent  = auFmtUsd(t.last24h.cost);
+      document.getElementById('auKpiCalls24h').textContent = auFmtNum(t.last24h.calls);
+      var prev = t.prevMonth.cost, cur = t.mtd.cost;
+      var el = document.getElementById('auKpiVsLastMonth');
+      var lbl = document.getElementById('auKpiVsLastMonthLabel');
+      if (prev > 0 && cur > 0) {
+        var pct = ((cur - prev) / prev) * 100;
+        el.textContent = (pct >= 0 ? '+' : '') + Math.round(pct) + '%';
+        el.style.color = pct > 20 ? '#D4A853' : pct < 0 ? '#16a34a' : '#5B8DEF';
+        lbl.textContent = 'vs Last Month';
+      } else if (prev > 0) {
+        el.textContent = auFmtUsd(prev);
+        el.style.color = '#fff';
+        lbl.textContent = 'Last Month Total';
+      } else {
+        el.textContent = '—';
+      }
+    }
+
+    function renderAuChart(days) {
+      var host = document.getElementById('auChart');
+      if (!days || days.length === 0) {
+        host.innerHTML = '<p style="color:#475569;font-size:.78rem;text-align:center;padding:50px 0;">No usage data in the last 14 days. Apps will appear here once they receive traffic post-deploy.</p>';
+        return;
+      }
+      var h = 160, padX = 1, padBot = 18;
+      var max = days.reduce(function(m, d) { return Math.max(m, d.cost); }, 0) || 1;
+      var bw = (100 - padX * 2) / days.length;
+      var bars = days.map(function(d, i) {
+        var bh = (d.cost / max) * (h - padBot - 8);
+        var x = padX + i * bw;
+        var y = h - padBot - bh;
+        var label = new Date(d.day).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+        return '<rect x="' + (x + 0.3) + '%" y="' + y + '" width="' + (bw - 0.6) + '%" height="' + Math.max(bh, 1) + '" fill="#5B8DEF" rx="1">' +
+                 '<title>' + label + ': ' + auFmtUsd(d.cost) + ' (' + d.calls + ' calls)</title>' +
+               '</rect>' +
+               '<text x="' + (x + bw / 2) + '%" y="' + (h - 4) + '" text-anchor="middle" font-size="9" fill="#475569">' + label + '</text>';
+      }).join('');
+      host.innerHTML = '<svg viewBox="0 0 100 ' + h + '" preserveAspectRatio="none" style="width:100%;height:' + h + 'px;display:block;">' + bars + '</svg>';
+    }
+
+    function renderAuAppTable(rows) {
+      var body = document.getElementById('auAppBody');
+      if (!rows || rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#475569;padding:20px;">No apps have logged calls yet.</td></tr>';
+        return;
+      }
+      body.innerHTML = rows.map(function(r) {
+        var costColor = r.cost_mtd > 1 ? '#D4A853' : '#cbd5e1';
+        return '<tr style="font-size:.82rem;color:#cbd5e1;">' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><strong style="color:#fff;">' + r.app + '</strong></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtNum(r.calls_24h) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtNum(r.calls_mtd) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtUsd(r.cost_24h) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);color:' + costColor + ';">' + auFmtUsd(r.cost_mtd) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (r.avg_latency_ms ? r.avg_latency_ms + 'ms' : '—') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtAgo(r.last_seen) + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderAuModelTable(rows) {
+      var body = document.getElementById('auModelBody');
+      if (!rows || rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#475569;padding:20px;">No model usage this month yet.</td></tr>';
+        return;
+      }
+      body.innerHTML = rows.map(function(r) {
+        var color = r.provider === 'anthropic' ? '#5B8DEF' : '#16a34a';
+        var bg = r.provider === 'anthropic' ? 'rgba(91,141,239,.12)' : 'rgba(22,163,74,.12)';
+        return '<tr style="font-size:.82rem;color:#cbd5e1;">' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><code style="font-size:.74rem;">' + (r.model || 'unknown') + '</code></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700;background:' + bg + ';color:' + color + ';">' + r.provider + '</span></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtNum(r.calls) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtUsd(r.cost) + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderAuRecent(rows) {
+      var body = document.getElementById('auRecentBody');
+      if (!rows || rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#475569;padding:20px;">No activity yet.</td></tr>';
+        return;
+      }
+      body.innerHTML = rows.map(function(r) {
+        return '<tr style="font-size:.82rem;color:#cbd5e1;">' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtAgo(r.created_at) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><strong>' + (r.app || 'beacons') + '</strong></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><code style="font-size:.7rem;color:#94a3b8;">' + (r.endpoint || '—') + '</code></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><code style="font-size:.7rem;color:#94a3b8;">' + (r.model || '—') + '</code></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (r.provider || 'anthropic') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtUsd(r.cost_usd) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (r.latency_ms ? r.latency_ms + 'ms' : '—') + '</td>' +
+        '</tr>';
+      }).join('');
+    }
   </script>
   </div><!-- /adminContent -->
 </body>
