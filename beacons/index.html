@@ -1384,6 +1384,100 @@ main {
 }
 .chat-msg.user .chat-msg-meta { align-self: flex-end; }
 
+.chat-msg-exports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.chat-msg-exports a, .chat-msg-exports span {
+  font-size: .72rem;
+  color: var(--gold);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(232,197,71,.3);
+  background: rgba(232,197,71,.06);
+  transition: border-color .15s, background .15s;
+}
+.chat-msg-exports a:hover {
+  border-color: var(--gold);
+  background: rgba(232,197,71,.12);
+}
+
+.chat-project-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(232,197,71,.08);
+  border-bottom: 1px solid rgba(232,197,71,.18);
+  font-size: .72rem;
+  color: var(--gold);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .04em;
+}
+.chat-project-banner button {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(232,197,71,.3);
+  color: var(--gold);
+  font-size: .65rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.chat-project-banner button:hover { background: rgba(232,197,71,.12); }
+
+.project-workspace {
+  margin: -8px 0 16px;
+  padding: 14px 16px;
+  background: rgba(91,141,239,.04);
+  border: 1px solid rgba(91,141,239,.14);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.project-workspace .pw-section h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text);
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+.project-workspace .pw-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(11,17,32,.5);
+  font-size: .82rem;
+  color: var(--text);
+}
+.project-workspace .pw-row + .pw-row { margin-top: 4px; }
+.project-workspace .pw-row .pw-icon { flex: 0 0 18px; opacity: .7; }
+.project-workspace .pw-row .pw-title { flex: 1; color: #e2e8f0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-workspace .pw-row .pw-meta { font-size: .68rem; color: var(--muted); white-space: nowrap; }
+.project-workspace .pw-row a {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: .72rem;
+  padding: 3px 8px;
+  border: 1px solid rgba(232,197,71,.3);
+  border-radius: 4px;
+}
+.project-workspace .pw-row a:hover { background: rgba(232,197,71,.08); }
+.project-workspace .pw-row.clickable { cursor: pointer; transition: background .12s; }
+.project-workspace .pw-row.clickable:hover { background: rgba(91,141,239,.08); }
+.project-workspace .pw-empty { font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; }
+
 .chat-typing {
   padding: 8px 24px;
   display: flex;
@@ -1912,6 +2006,7 @@ main {
         </div>
       </div>
       <div class="chat-card">
+        <div id="chatProjectBanner" class="chat-project-banner" style="display:none"></div>
         <div class="chat-thread" id="chatThread"></div>
         <div class="chat-typing" id="chatTyping" style="display:none">
           <span class="dots"><span></span><span></span><span></span></span>
@@ -2076,6 +2171,9 @@ main {
       </div>
       <button class="modal-close" data-close-modal="projectModal">×</button>
     </div>
+    <!-- Workspace section: only shown when editing an existing project. Populated by openProjectModal(). -->
+    <div id="projectWorkspace" class="project-workspace" style="display:none"></div>
+
     <form class="modal-form" id="projectForm" onsubmit="return false">
       <div class="form-field">
         <label>Project name</label>
@@ -2875,8 +2973,77 @@ function openProjectModal(id) {
   $('#projectStatus').value = p ? (p.status || 'active') : 'active';
   $('#projectDeleteBtn').style.display = p ? 'inline-flex' : 'none';
   $('#projectRunBtn').style.display = p ? 'inline-flex' : 'none';
+  renderProjectWorkspace(p);
   $('#projectModal').classList.add('show');
   setTimeout(() => $('#projectName').focus(), 50);
+}
+
+function renderProjectWorkspace(p) {
+  const host = $('#projectWorkspace');
+  if (!p) { host.style.display = 'none'; host.innerHTML = ''; return; }
+
+  // Linked tasks
+  const projTasks = tasks.filter(t => t.project_id === p.id);
+  const openTasks = projTasks.filter(t => t.status !== 'done');
+  const doneTasks = projTasks.filter(t => t.status === 'done');
+
+  // Linked threads (chat conversations tagged to this project)
+  const allItems = items || [];
+  const threads = allItems
+    .filter(it => it.kind === 'thread' && it.project_id === p.id)
+    .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
+
+  // Outputs: Google Doc/Sheet/Slides exports across all linked threads, plus exports tagged directly to project
+  const outputs = [];
+  const seen = new Set();
+  for (const t of threads) {
+    let msgs = [];
+    try { msgs = typeof t.content === 'string' ? JSON.parse(t.content) : (t.content || []); } catch {}
+    for (const m of msgs) {
+      if (Array.isArray(m.exports)) for (const ex of m.exports) {
+        const key = (ex.webViewLink || '') + '|' + (ex.created_at || '') + '|' + (ex.name || '');
+        if (seen.has(key)) continue; seen.add(key);
+        outputs.push({ ...ex, thread_id: t.id, thread_title: t.title });
+      }
+    }
+  }
+  outputs.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  const exportIcons = { doc: '📄', sheet: '📊', slides: '📽' };
+  const tasksHtml = openTasks.length || doneTasks.length
+    ? [...openTasks, ...doneTasks].slice(0, 8).map(t => {
+        const dot = t.status === 'done' ? '✓' : t.status === 'in_progress' ? '◐' : '☐';
+        const due = t.due_date ? `<span class="pw-meta">due ${escapeHtml(t.due_date)}</span>` : '';
+        return `<div class="pw-row clickable" onclick="event.stopPropagation();$('#projectModal').classList.remove('show');setTimeout(()=>openTaskModal('${escapeHtml(t.id)}'),100);">
+          <span class="pw-icon">${dot}</span>
+          <span class="pw-title">${escapeHtml(t.title)}</span>${due}
+        </div>`;
+      }).join('')
+    : '<div class="pw-empty">No tasks yet. Add tasks below or run the project to generate next steps.</div>';
+
+  const threadsHtml = threads.length
+    ? threads.slice(0, 5).map(t => `<div class="pw-row clickable" onclick="event.stopPropagation();$('#projectModal').classList.remove('show');setTimeout(()=>loadThread('${escapeHtml(t.id)}'),100);">
+        <span class="pw-icon">◌</span>
+        <span class="pw-title">${escapeHtml(t.title || 'Untitled chat')}</span>
+        <span class="pw-meta">${t.message_count || 0} msgs · ${fmtDate(t.updated_at || t.created_at)}</span>
+      </div>`).join('')
+    : '<div class="pw-empty">No chats tagged to this project yet. Click ⚡ Run with Beacon below to start one.</div>';
+
+  const outputsHtml = outputs.length
+    ? outputs.slice(0, 10).map(o => `<div class="pw-row">
+        <span class="pw-icon">${exportIcons[o.format] || '📄'}</span>
+        <span class="pw-title">${escapeHtml(o.name || o.format)}</span>
+        <span class="pw-meta">${fmtDate(o.created_at)}</span>
+        ${o.webViewLink ? `<a href="${escapeHtml(o.webViewLink)}" target="_blank" rel="noopener">Open</a>` : ''}
+      </div>`).join('')
+    : '<div class="pw-empty">No outputs yet. Save a Beacon response to Google Doc/Sheet/Slides and it shows up here.</div>';
+
+  host.innerHTML = `
+    <div class="pw-section"><h4>Tasks (${openTasks.length} open${doneTasks.length ? ` · ${doneTasks.length} done` : ''})</h4>${tasksHtml}</div>
+    <div class="pw-section"><h4>Recent chats (${threads.length})</h4>${threadsHtml}</div>
+    <div class="pw-section"><h4>Outputs (${outputs.length})</h4>${outputsHtml}</div>
+  `;
+  host.style.display = 'flex';
 }
 async function saveProject() {
   const name = $('#projectName').value.trim();
@@ -3588,6 +3755,7 @@ function consumeOAuthHash() {
 let chatHistory = [];
 let chatBusy = false;
 let currentThreadId = null;
+let currentThreadProjectId = null; // set when chat is started from "Run with Beacon" — propagates to thread + exports
 
 async function autoSaveThread() {
   if (!chatHistory.length) return;
@@ -3605,7 +3773,8 @@ async function autoSaveThread() {
       message_count: chatHistory.length,
       last_message_at: now,
       created_at: now,
-      updated_at: now
+      updated_at: now,
+      project_id: currentThreadProjectId || null
     });
   } catch (e) { /* non-fatal */ }
 }
@@ -3621,6 +3790,7 @@ async function loadMostRecentThread() {
     if (Array.isArray(messages) && messages.length) {
       chatHistory = messages;
       currentThreadId = t.id;
+      currentThreadProjectId = t.project_id || null;
     }
   } catch (e) { /* ignore */ }
 }
@@ -3665,6 +3835,7 @@ async function loadThread(id) {
     if (Array.isArray(messages)) {
       chatHistory = messages;
       currentThreadId = id;
+      currentThreadProjectId = t.project_id || null;
       renderChat();
       $('#threadsModal').classList.remove('show');
       scrollToChat();
@@ -3684,6 +3855,7 @@ async function deleteThread(id) {
   if (currentThreadId === id) {
     chatHistory = [];
     currentThreadId = null;
+    currentThreadProjectId = null;
     renderChat();
   }
   await openThreadsModal();
@@ -3768,6 +3940,24 @@ function emptyChatHTML() {
 }
 
 function renderChat() {
+  // Active-project banner: visual cue that current chat is tagged to a project,
+  // so exports + threading flow into the project workspace.
+  const banner = $('#chatProjectBanner');
+  if (banner) {
+    if (currentThreadProjectId) {
+      const proj = projects.find(x => x.id === currentThreadProjectId);
+      if (proj) {
+        banner.innerHTML = `▸ Working in project: <strong style="color:var(--gold)">${escapeHtml(proj.title)}</strong> · all exports will appear in its workspace
+          <button onclick="openProjectModal('${escapeHtml(proj.id)}')">Open project</button>
+          <button onclick="clearChatProject()" title="Detach this chat from the project">Detach</button>`;
+        banner.style.display = 'flex';
+      } else {
+        banner.style.display = 'none';
+      }
+    } else {
+      banner.style.display = 'none';
+    }
+  }
   const thread = $('#chatThread');
   if (!chatHistory.length) {
     thread.innerHTML = emptyChatHTML();
@@ -3799,6 +3989,14 @@ function renderChat() {
     const sourcesHtml = (role === 'assistant' && m.searchSources && m.searchSources.length)
       ? `<div class="chat-msg-sources">${m.searchSources.map(s => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.title || s.url)}</a>`).join('')}</div>`
       : '';
+    const exportIcons = { doc: '📄', sheet: '📊', slides: '📽' };
+    const exportsHtml = (role === 'assistant' && Array.isArray(m.exports) && m.exports.length)
+      ? `<div class="chat-msg-exports">${m.exports.map(ex =>
+          ex.webViewLink
+            ? `<a href="${escapeHtml(ex.webViewLink)}" target="_blank" rel="noopener" title="Open in Google Drive">${exportIcons[ex.format] || '📄'} ${escapeHtml(ex.name || ex.format)}</a>`
+            : `<span>${exportIcons[ex.format] || '📄'} ${escapeHtml(ex.name || ex.format)}</span>`
+        ).join('')}</div>`
+      : '';
     let bubbleHtml;
     if (role === 'assistant') {
       // While a reply is still streaming in, show plain text so partial markdown
@@ -3817,6 +4015,7 @@ function renderChat() {
       ${toolsHtml}
       <div class="chat-bubble">${bubbleHtml}</div>
       ${sourcesHtml}
+      ${exportsHtml}
       ${actions}
     </div>`;
   }).join('');
@@ -4024,6 +4223,19 @@ async function saveChatToDrive(idx, format) {
     }
     const data = await res.json();
     showToast(`Saved · opening ${data.name}`);
+    // Persist the export on the chat message so the user can find the doc later
+    // without hunting through Drive. Inherits project_id from the active thread,
+    // which puts it in the project workspace's outputs list.
+    if (!Array.isArray(msg.exports)) msg.exports = [];
+    msg.exports.push({
+      format,
+      name: data.name || title,
+      webViewLink: data.webViewLink || null,
+      project_id: currentThreadProjectId || null,
+      created_at: new Date().toISOString()
+    });
+    renderChat();
+    autoSaveThread().catch(() => {});
     if (data.webViewLink) window.open(data.webViewLink, '_blank', 'noopener');
   } catch (e) {
     showToast('Save failed: ' + e.message, true);
@@ -4075,6 +4287,12 @@ function scrollToChat() {
   if (block) block.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function clearChatProject() {
+  currentThreadProjectId = null;
+  renderChat();
+  autoSaveThread().catch(() => {});
+}
+
 async function runProjectInChat() {
   if (!editingProjectId) return;
   const p = projects.find(x => x.id === editingProjectId);
@@ -4091,6 +4309,11 @@ async function runProjectInChat() {
   prompt += `\nGiven my full library + directions, deliver one of: a clear next-step plan, a real draft, or a research scan — whichever is most useful right now. Be specific to this project.`;
 
   $('#projectModal').classList.remove('show');
+  // Start a fresh thread tagged to this project so all chats + exports flow into the project workspace.
+  if (chatHistory.length) await autoSaveThread().catch(() => {});
+  chatHistory = [];
+  currentThreadId = null;
+  currentThreadProjectId = p.id;
   scrollToChat();
   sendChat(prompt, 'smart');
 }
@@ -4129,6 +4352,7 @@ async function clearChat() {
   if (chatHistory.length) await autoSaveThread().catch(() => {});
   chatHistory = [];
   currentThreadId = null;
+  currentThreadProjectId = null;
   renderChat();
 }
 
