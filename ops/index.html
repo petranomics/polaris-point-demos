@@ -240,12 +240,30 @@
       <div class="kpi"><div class="num"       id="apiKpiVsLastMonth">—</div><div class="label">vs Last Month</div></div>
     </div>
 
+    <div class="card" id="anthropicBillingCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0;">Anthropic billed vs. locally logged (MTD)</h3>
+        <span id="anthropicBillingStatus" style="font-size:.7rem;color:#475569;"></span>
+      </div>
+      <div id="anthropicBillingBody" style="font-size:.78rem;color:var(--text);">Loading…</div>
+    </div>
+
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <h3 style="margin:0;">14-Day Cost Trend</h3>
         <button class="ops-btn secondary" onclick="loadOpsApiUsage()" style="font-size:.7rem;padding:6px 12px;">Refresh</button>
       </div>
       <div id="apiChart" style="min-height:160px;"></div>
+    </div>
+
+    <div class="card" id="anthropicByKeyCard" style="display:none;">
+      <h3>Anthropic spend by API key (MTD, estimated from token counts)</h3>
+      <div style="overflow-x:auto;">
+        <table class="ops-table">
+          <thead><tr><th>API key</th><th>Tokens</th><th>Est. cost</th></tr></thead>
+          <tbody id="anthropicByKeyBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="card">
@@ -665,6 +683,10 @@
   }
 
   // === API USAGE TAB ===
+  // Holds the most recent /api/ops/api-usage totals so the billing comparator
+  // can pair "logged MTD" against "billed MTD" once both responses land.
+  var _localUsageTotals = null;
+
   function loadOpsApiUsage() {
     fetch('/api/ops/api-usage')
       .then(function(r) { return r.json(); })
@@ -674,16 +696,111 @@
             '<tr><td colspan="7" style="color:#ef4444;text-align:center;">' + data.error + '</td></tr>';
           return;
         }
+        _localUsageTotals = data.totals;
         renderApiKpis(data.totals);
         renderApiChart(data.by_day);
         renderApiAppTable(data.by_app);
         renderApiModelTable(data.by_model);
         renderApiRecent(data.recent);
+        loadAnthropicBilling();
       })
       .catch(function(err) {
         document.getElementById('apiAppBody').innerHTML =
           '<tr><td colspan="7" style="color:#ef4444;text-align:center;">Failed to load: ' + err.message + '</td></tr>';
       });
+  }
+
+  function loadAnthropicBilling() {
+    fetch('/api/ops/anthropic-billing')
+      .then(function(r) { return r.json(); })
+      .then(function(d) { renderAnthropicBilling(d); })
+      .catch(function(err) {
+        document.getElementById('anthropicBillingBody').innerHTML =
+          '<span style="color:#ef4444;">Failed to load billing: ' + err.message + '</span>';
+      });
+  }
+
+  function renderAnthropicBilling(d) {
+    var body = document.getElementById('anthropicBillingBody');
+    var status = document.getElementById('anthropicBillingStatus');
+    var byKeyCard = document.getElementById('anthropicByKeyCard');
+
+    if (!d.configured) {
+      status.textContent = 'not configured';
+      body.innerHTML =
+        '<div style="line-height:1.6;">' +
+        '<p style="margin:0 0 8px 0;">' + (d.hint || 'ANTHROPIC_ADMIN_KEY is not set.') + '</p>' +
+        '<p style="margin:0;color:#475569;font-size:.74rem;">Once set, this card shows what Anthropic actually billed your org alongside what your apps managed to log — the gap is the silent log-write loss.</p>' +
+        '</div>';
+      byKeyCard.style.display = 'none';
+      return;
+    }
+    if (d.error) {
+      status.textContent = 'error';
+      body.innerHTML = '<span style="color:#ef4444;">' + d.error + '</span>';
+      byKeyCard.style.display = 'none';
+      return;
+    }
+
+    status.textContent = d.cached ? 'cached ' + Math.round((d.cache_age_ms || 0) / 1000) + 's ago' : 'fresh';
+    var billedMtd = (d.totals && d.totals.mtd_cost_usd) || 0;
+    var billed24h = (d.totals && d.totals.last24h_cost_usd) || 0;
+    var loggedMtd = (_localUsageTotals && _localUsageTotals.mtd && _localUsageTotals.mtd.cost) || 0;
+    var logged24h = (_localUsageTotals && _localUsageTotals.last24h && _localUsageTotals.last24h.cost) || 0;
+    var gapMtd = Math.max(0, billedMtd - loggedMtd);
+    var gap24h = Math.max(0, billed24h - logged24h);
+    var coverageMtd = billedMtd > 0 ? (loggedMtd / billedMtd) * 100 : null;
+    var coverageColor = coverageMtd === null ? '#475569'
+                       : coverageMtd >= 95 ? '#16a34a'
+                       : coverageMtd >= 60 ? 'var(--gold)'
+                       : '#ef4444';
+
+    body.innerHTML =
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px;">' +
+        _billingCell('Billed (MTD)', fmtUsd(billedMtd), '#fff') +
+        _billingCell('Logged (MTD)', fmtUsd(loggedMtd), '#cbd5e1') +
+        _billingCell('Gap (MTD)',    fmtUsd(gapMtd), gapMtd > 0.01 ? '#ef4444' : '#16a34a') +
+        _billingCell('Coverage',     coverageMtd === null ? '—' : coverageMtd.toFixed(0) + '%', coverageColor) +
+        _billingCell('Billed (24h)', fmtUsd(billed24h), '#fff') +
+        _billingCell('Gap (24h)',    fmtUsd(gap24h), gap24h > 0.01 ? '#ef4444' : '#16a34a') +
+      '</div>' +
+      '<p style="margin:0;color:#475569;font-size:.72rem;">' +
+        'Billed is what Anthropic actually charged your org. Logged is what beacons_usage_log captured. ' +
+        'A gap means usage-logger writes are silently dropping (check DATABASE_URL on each project) or that the call site has no logUsage wired in.' +
+      '</p>';
+
+    var byKey = d.by_api_key || [];
+    if (byKey.length === 0) {
+      byKeyCard.style.display = 'none';
+    } else {
+      byKeyCard.style.display = '';
+      var maxKeyCost = byKey.reduce(function(m, k) { return Math.max(m, k.estimated_cost_usd || 0); }, 0) || 1;
+      document.getElementById('anthropicByKeyBody').innerHTML = byKey.map(function(k) {
+        var pct = ((k.estimated_cost_usd || 0) / maxKeyCost) * 100;
+        var keyLabel = k.api_key_id === '(console/unknown)'
+          ? '<em style="color:#94a3b8;">Console / unattributed</em>'
+          : '<code style="color:#cbd5e1;font-size:.72rem;">' + k.api_key_id + '</code>';
+        return '<tr>' +
+          '<td>' + keyLabel + '</td>' +
+          '<td>' + fmtNum(k.tokens) + '</td>' +
+          '<td>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span style="color:var(--gold);min-width:60px;">' + fmtUsd(k.estimated_cost_usd) + '</span>' +
+              '<div style="flex:1;height:4px;background:#1e293b;border-radius:2px;overflow:hidden;">' +
+                '<div style="width:' + pct + '%;height:100%;background:var(--gold);"></div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+  }
+
+  function _billingCell(label, value, color) {
+    return '<div style="padding:10px 12px;background:var(--dark);border:1px solid var(--border);border-radius:8px;">' +
+             '<div style="font-family:\'Outfit\',sans-serif;font-size:1.1rem;font-weight:700;color:' + (color || '#fff') + ';">' + value + '</div>' +
+             '<div style="font-size:.65rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">' + label + '</div>' +
+           '</div>';
   }
 
   function fmtUsd(n) {
