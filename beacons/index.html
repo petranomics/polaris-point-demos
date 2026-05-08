@@ -10,6 +10,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
+<script type="module">
+  // Vercel Blob client SDK — exposed to the main inline script via window.
+  // Used for >3MB file uploads which exceed the serverless body cap.
+  import { upload } from 'https://esm.sh/@vercel/blob@0.27.0/client';
+  window.__blobUpload = upload;
+</script>
 <style>
 :root {
   --space: #050D1E;
@@ -148,6 +154,57 @@ button {
   display: none;
 }
 .lock-error.show { display: block; }
+.lock-alt { margin-top: 18px; font-size: .82rem; color: var(--muted); }
+.lock-alt a { color: var(--gold); text-decoration: none; cursor: pointer; }
+.lock-alt a:hover { text-decoration: underline; }
+.lock-form.legacy-mode #emailInput { display: none; }
+
+/* Settings modal toggle */
+.setting-toggle-label {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.setting-toggle-label input[type="checkbox"] {
+  width: 18px; height: 18px; cursor: pointer; accent-color: var(--gold);
+}
+.setting-help {
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: 6px;
+  margin-left: 28px;
+}
+.settings-pw-hint {
+  font-size: .76rem;
+  color: var(--muted);
+  margin-top: -4px;
+}
+.settings-pw-hint.error { color: var(--red); }
+.settings-pw-hint.ok    { color: #5acf8d; }
+
+.budget-meter { display: flex; flex-direction: column; gap: 6px; }
+.budget-meter-bar {
+  width: 100%; height: 8px;
+  background: rgba(255,255,255,.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.budget-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  width: 0;
+  transition: width .3s, background .3s;
+}
+.budget-meter-fill.near { background: linear-gradient(90deg, var(--gold), #f59e0b); }
+.budget-meter-fill.over { background: var(--red); }
+.budget-meter-row {
+  display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  color: var(--text);
+}
 
 /* ====================================================
    APP SHELL
@@ -711,6 +768,61 @@ main {
 .section-bar-actions { display: flex; gap: 8px; align-items: center; }
 
 .section-block { margin-bottom: 36px; }
+
+.findings-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+.finding-card {
+  background: rgba(20, 28, 45, 0.55);
+  border: 1px solid rgba(91, 141, 239, .14);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, transform .12s;
+}
+.finding-card:hover {
+  background: rgba(91, 141, 239, .08);
+  border-color: rgba(91, 141, 239, .35);
+  transform: translateY(-1px);
+}
+.finding-card .fc-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+}
+.finding-card .fc-top .fc-icon { font-size: .9rem; opacity: .9; }
+.finding-card .fc-title {
+  color: #e2e8f0;
+  font-size: .88rem;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.finding-card .fc-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  color: var(--muted);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.finding-card .fc-meta .fc-source {
+  color: var(--gold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ====================================================
    DIRECTIONS CARD
@@ -1895,12 +2007,16 @@ main {
   <div class="lock-card">
     <div class="lock-mark"><svg class="lock-mark-svg"><use href="#lighthouse-mark"/></svg></div>
     <h1>Beacon</h1>
-    <p>Personal workspace · enter your passcode to continue</p>
-    <form class="lock-form" id="lockForm">
-      <input type="password" id="passcodeInput" placeholder="passcode" autocomplete="off" autofocus>
-      <button type="submit">Unlock</button>
+    <p id="lockPrompt">Sign in to your workspace</p>
+    <form class="lock-form" id="lockForm" autocomplete="on">
+      <input type="email" id="emailInput" placeholder="email" autocomplete="username" autofocus>
+      <input type="password" id="passwordInput" placeholder="password" autocomplete="current-password">
+      <button type="submit">Sign in</button>
     </form>
-    <div class="lock-error" id="lockError">Wrong passcode. Try again.</div>
+    <div class="lock-error" id="lockError">Wrong email or password.</div>
+    <div class="lock-alt">
+      <a href="#" id="lockToggleLegacy">Or use a legacy passcode</a>
+    </div>
   </div>
 </div>
 
@@ -1922,6 +2038,7 @@ main {
         <div class="cost-wheel-text" id="costWheelAmount">$0</div>
       </div>
       <span class="topbar-link mono" style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase">Local-only</span>
+      <button class="topbar-link" id="settingsBtn">Settings</button>
       <button class="topbar-link" id="signOutBtn">Sign out</button>
     </div>
   </header>
@@ -2019,6 +2136,17 @@ main {
       </div>
     </div>
 
+    <!-- ============== LATEST FINDINGS ============== -->
+    <div class="section-block" id="findingsBlock" style="display:none">
+      <div class="section-bar">
+        <div>
+          <h2>Latest findings</h2>
+          <div class="section-sub" id="findingsSub">Most recent outputs from Beacon</div>
+        </div>
+      </div>
+      <div class="findings-strip" id="findingsStrip"></div>
+    </div>
+
     <!-- ============== PROJECTS ============== -->
     <div class="section-block">
       <div class="section-bar">
@@ -2083,7 +2211,7 @@ main {
         <label class="dropzone" id="dropzone">
           <div class="dropzone-icon">↑</div>
           <div class="dropzone-prim">Drop files here, or click to browse</div>
-          <div class="dropzone-sec">Full text extraction for .pdf, .docx, .pptx, .xlsx, plus all common text formats (.txt, .md, .csv, .json, .html, .eml, .mbox). Office files up to ~3MB; larger uploads coming with the blob path.</div>
+          <div class="dropzone-sec">Full text extraction for .pdf, .docx, .pptx, .xlsx, plus all common text formats (.txt, .md, .csv, .json, .html, .eml, .mbox). Up to 50MB per file.</div>
           <input type="file" id="fileInput" multiple>
         </label>
       </section>
@@ -2300,6 +2428,74 @@ main {
   </div>
 </div>
 
+<!-- ===================== SETTINGS MODAL ===================== -->
+<div class="modal" id="settingsModal">
+  <div class="modal-card" style="max-width:560px">
+    <div class="modal-head">
+      <div>
+        <h3>Account settings</h3>
+        <div class="modal-meta" id="settingsTenantMeta">—</div>
+      </div>
+      <button class="modal-close" data-close-modal="settingsModal">×</button>
+    </div>
+    <form class="modal-form" id="settingsForm" onsubmit="return false">
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" id="settingsEmail" disabled>
+      </div>
+      <div class="form-field">
+        <label>Plan</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="text" id="settingsTier" disabled style="flex:1">
+          <button type="button" class="btn btn-ghost" id="settingsUpgradeBtn">Upgrade</button>
+        </div>
+      </div>
+      <div class="form-field" id="settingsBudgetBlock" style="display:none">
+        <label>Usage this month</label>
+        <div class="budget-meter">
+          <div class="budget-meter-bar"><div class="budget-meter-fill" id="settingsBudgetFill"></div></div>
+          <div class="budget-meter-row">
+            <span id="settingsBudgetText">$0 of $0</span>
+            <span id="settingsBudgetPct">0%</span>
+          </div>
+          <div class="setting-help" id="settingsBudgetStatus"></div>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="setting-toggle-label">
+          <input type="checkbox" id="settingWebSearch">
+          <span>Allow Beacon to search the internet</span>
+        </label>
+        <div class="setting-help">When off, Beacon will rely on your library only and won't make web search calls.</div>
+      </div>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:20px 0">
+      <h4 style="margin:0 0 10px">Change password</h4>
+      <div class="form-field">
+        <label>Current password</label>
+        <input type="password" id="settingsCurrentPw" autocomplete="current-password">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>New password (8+ chars)</label>
+          <input type="password" id="settingsNewPw" autocomplete="new-password">
+        </div>
+        <div class="form-field">
+          <label>Confirm new password</label>
+          <input type="password" id="settingsConfirmPw" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="settings-pw-hint" id="settingsPwHint"></div>
+    </form>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="settingsSignOutBtn" style="color:var(--red);border-color:rgba(248,113,113,.3)">Sign out</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-ghost" data-close-modal="settingsModal">Close</button>
+        <button class="btn btn-primary" id="settingsSaveBtn">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== USAGE / COST MODAL ===================== -->
 <div class="modal" id="usageModal">
   <div class="modal-card" style="max-width:680px">
@@ -2341,8 +2537,9 @@ main {
    CONFIG
    ============================================================ */
 const SESSION_KEY = 'beacons_session_v1';
-const PASSCODE_HASH_KEY = 'beacons_passcode_hash';
-const DEFAULT_PASSCODE = 'rfa-canopy-2026';
+const PASSCODE_HASH_KEY = 'beacons_passcode_hash';            // legacy
+const AUTH_TOKEN_KEY = 'beacons_auth_token_v1';               // JWT (preferred)
+const DEFAULT_PASSCODE = 'rfa-canopy-2026';                    // legacy
 const DB_NAME = 'beacons_db_v1';
 const DB_STORE = 'items';
 const API_BASE = '/api/beacons';
@@ -2352,7 +2549,8 @@ const API_BASE = '/api/beacons';
    ============================================================ */
 let db = null;
 let cloudMode = false;
-let authHash = null;
+let authHash = null;          // either JWT (preferred) or sha256 passcode (legacy)
+let currentTenant = null;     // populated after successful login or token refresh
 let items = [];
 let projects = [];
 let tasks = [];
@@ -2415,12 +2613,26 @@ function iconLabel(item) {
   if (!ext) return 'F';
   return ext.slice(0, 3).toUpperCase();
 }
+let _toastTimer = null;
 function showToast(msg, isError) {
   const t = $('#toast');
   $('#toastText').textContent = msg;
   t.classList.toggle('error', !!isError);
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2400);
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function showStickyToast(msg) {
+  const t = $('#toast');
+  $('#toastText').textContent = msg;
+  t.classList.remove('error');
+  t.classList.add('show');
+  if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+}
+function hideToast() {
+  const t = $('#toast');
+  t.classList.remove('show');
+  if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
 }
 function authHeaders() { return { 'x-beacons-auth': authHash || '' }; }
 
@@ -2441,6 +2653,7 @@ function renderMarkdown(text) {
    AUTH
    ============================================================ */
 async function initPasscode() {
+  // Legacy: seeds the local fallback passcode hash so offline mode still works.
   if (!localStorage.getItem(PASSCODE_HASH_KEY)) {
     const h = await sha256(DEFAULT_PASSCODE);
     localStorage.setItem(PASSCODE_HASH_KEY, h);
@@ -2448,7 +2661,33 @@ async function initPasscode() {
 }
 function isUnlocked() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
 
-async function attemptUnlock(code) {
+// Modern login: email + password → JWT.
+async function attemptLogin(email, password) {
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) {
+      authHash = null; currentTenant = null;
+      return false;
+    }
+    const data = await res.json();
+    authHash = data.token;
+    currentTenant = data.tenant || null;
+    localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+    cloudMode = true;
+    return true;
+  } catch (e) {
+    console.warn('login error', e);
+    authHash = null; currentTenant = null;
+    return false;
+  }
+}
+
+// Legacy: passcode hash. Kept for Pete's existing personal access flow.
+async function attemptLegacyUnlock(code) {
   const hash = await sha256(code);
   authHash = hash;
   try {
@@ -2462,6 +2701,26 @@ async function attemptUnlock(code) {
   return false;
 }
 
+// On boot, if we have a stored JWT, hydrate currentTenant via /auth/me.
+async function tryRestoreSession() {
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  if (!token) return false;
+  authHash = token;
+  try {
+    const res = await fetch(`${API_BASE}/auth/me`, { headers: authHeaders() });
+    if (res.status === 200) {
+      const data = await res.json();
+      currentTenant = data.tenant || null;
+      cloudMode = true;
+      return true;
+    }
+  } catch (e) {}
+  // Token rejected — clear and bail.
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  authHash = null;
+  return false;
+}
+
 function showApp() {
   sessionStorage.setItem(SESSION_KEY, '1');
   $('#lockScreen').classList.add('hidden');
@@ -2470,7 +2729,9 @@ function showApp() {
 }
 function signOut() {
   sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(AUTH_TOKEN_KEY);
   authHash = null;
+  currentTenant = null;
   cloudMode = false;
   location.reload();
 }
@@ -2576,7 +2837,9 @@ async function loadAll() {
    ============================================================ */
 const TEXT_EXTENSIONS = ['txt','md','csv','json','html','htm','xml','eml','mbox','log','tsv','rtf','srt','vtt'];
 const EXTRACT_EXTENSIONS = ['pdf','docx','pptx','xlsx','xls'];
-const EXTRACT_MAX_BYTES = 3 * 1024 * 1024; // ~3MB original; base64 inflates ~33% to fit Vercel's 4.5MB body cap
+const EXTRACT_MAX_BYTES = 3 * 1024 * 1024;        // inline base64 cap (Vercel body limit)
+const BLOB_EXTRACT_MAX_BYTES = 50 * 1024 * 1024;  // server-side blob extraction cap
+const BEACONS_TENANT = 'pete';                    // single-tenant for personal Beacons; SMB users get their own
 
 function readFileAsText(file) {
   return new Promise((resolve, reject) => {
@@ -2599,6 +2862,65 @@ function readFileAsBase64(file) {
   });
 }
 
+function safeFilenameForBlob(name) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120);
+}
+
+async function extractViaBlob(file) {
+  if (!window.__blobUpload) throw new Error('Blob client SDK failed to load.');
+  const ym = new Date().toISOString().slice(0, 7); // yyyy-mm
+  const pathname = `beacons/${BEACONS_TENANT}/${ym}/${safeFilenameForBlob(file.name)}`;
+
+  const sizeStr = fmtSize(file.size);
+  showStickyToast(`Uploading ${file.name} — 0% of ${sizeStr}`);
+
+  let blob;
+  try {
+    blob = await window.__blobUpload(pathname, file, {
+      access: 'public',
+      handleUploadUrl: `${API_BASE}/blob-upload-token`,
+      contentType: file.type || 'application/octet-stream',
+      clientPayload: JSON.stringify({ tenant: BEACONS_TENANT }),
+      headers: {
+        'x-beacons-auth': authHash || '',
+        'x-beacons-tenant': BEACONS_TENANT
+      },
+      onUploadProgress: (ev) => {
+        const pct = Math.min(99, Math.round(ev && ev.percentage != null ? ev.percentage : 0));
+        showStickyToast(`Uploading ${file.name} — ${pct}% of ${sizeStr}`);
+      }
+    });
+  } catch (e) {
+    hideToast();
+    throw e;
+  }
+
+  showStickyToast(`Extracting ${file.name}...`);
+  let res;
+  try {
+    res = await fetch(`${API_BASE}/extract-blob`, {
+      method: 'POST',
+      headers: {
+        ...authHeaders(),
+        'x-beacons-tenant': BEACONS_TENANT,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ blobUrl: blob.url, filename: file.name, mime: file.type })
+    });
+  } catch (e) {
+    hideToast();
+    throw e;
+  }
+  if (!res.ok) {
+    hideToast();
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || ('extract-blob HTTP ' + res.status));
+  }
+  const out = await res.json();
+  hideToast();
+  return out;
+}
+
 async function ingestFile(file) {
   const ext = (file.name.split('.').pop() || '').toLowerCase();
   const isText = TEXT_EXTENSIONS.includes(ext);
@@ -2613,8 +2935,18 @@ async function ingestFile(file) {
     try { content = await readFileAsText(file); extracted = true; }
     catch (e) { extractError = e.message; }
   } else if (isExtractable && cloudMode) {
-    if (file.size > EXTRACT_MAX_BYTES) {
-      extractError = 'File too large for inline extraction (' + fmtSize(file.size) + ' > ' + fmtSize(EXTRACT_MAX_BYTES) + '). Larger uploads need the Blob path — coming next.';
+    if (file.size > BLOB_EXTRACT_MAX_BYTES) {
+      extractError = 'File too large (' + fmtSize(file.size) + ' > ' + fmtSize(BLOB_EXTRACT_MAX_BYTES) + ').';
+    } else if (file.size > EXTRACT_MAX_BYTES) {
+      // Large file: upload directly to Vercel Blob, then ask server to extract.
+      try {
+        const out = await extractViaBlob(file);
+        content = out.content || '';
+        extracted = !!out.extracted;
+        extractMeta = out.meta || null;
+      } catch (e) {
+        extractError = e.message;
+      }
     } else {
       try {
         const base64 = await readFileAsBase64(file);
@@ -3105,64 +3437,63 @@ function renderTaskWorkspace(t) {
   const host = $('#taskWorkspace');
   if (!host) return;
   if (!t) { host.style.display = 'none'; host.innerHTML = ''; return; }
+
   const allItems = items || [];
-  // Threads tagged to this task
-  const threads = allItems.filter(it => it.kind === 'thread' && it.task_id === t.id)
+  const threads = allItems
+    .filter(it => it.kind === 'thread' && it.task_id === t.id)
     .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
-  // Saved thoughts tagged to this task
-  const saves = allItems.filter(it => it.kind === 'thought' && it.task_id === t.id)
+  const saves = allItems
+    .filter(it => it.kind === 'thought' && it.task_id === t.id)
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  // Drive exports stamped on messages within those threads
-  const exports = [];
+
+  const outputs = [];
   const seen = new Set();
   for (const th of threads) {
     let msgs = [];
-    try { msgs = typeof th.content === 'string' ? JSON.parse(th.content) : (th.content || []); } catch (_) {}
+    try { msgs = typeof th.content === 'string' ? JSON.parse(th.content) : (th.content || []); } catch {}
     for (const m of msgs) {
       if (Array.isArray(m && m.exports)) for (const ex of m.exports) {
-        const key = (ex.webViewLink || ex.name) + '|' + ex.format;
-        if (!seen.has(key)) { seen.add(key); exports.push(ex); }
+        const key = (ex.webViewLink || '') + '|' + (ex.created_at || '') + '|' + (ex.name || '');
+        if (seen.has(key)) continue; seen.add(key);
+        outputs.push({ ...ex, thread_id: th.id, thread_title: th.title });
       }
     }
   }
-  exports.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-  if (!threads.length && !saves.length && !exports.length) {
-    host.style.display = 'block';
-    host.innerHTML = '<div class="pw-empty">No outputs yet. Click ⚡ Run with Beacon to generate work tied to this task.</div>';
-    return;
-  }
-  const fmt = (iso) => fmtDate(iso);
-  let html = '<h4 class="pw-h">Latest outputs</h4>';
-  if (threads.length) {
-    html += '<div class="pw-sec"><div class="pw-sec-h">Chats</div><ul class="pw-list">' +
-      threads.slice(0, 5).map(th => `<li class="pw-row" data-thread-id="${th.id}"><span>${escapeHtml(th.title || 'Thread')}</span><span class="pw-meta">${fmt(th.updated_at || th.created_at)}</span></li>`).join('') +
-      '</ul></div>';
-  }
-  if (saves.length) {
-    html += '<div class="pw-sec"><div class="pw-sec-h">Saved to library</div><ul class="pw-list">' +
-      saves.slice(0, 5).map(s => `<li class="pw-row" data-item-id="${s.id}"><span>${escapeHtml(s.title)}</span><span class="pw-meta">${fmt(s.created_at)}</span></li>`).join('') +
-      '</ul></div>';
-  }
-  if (exports.length) {
-    html += '<div class="pw-sec"><div class="pw-sec-h">Drive exports</div><ul class="pw-list">' +
-      exports.slice(0, 5).map(ex => `<li class="pw-row"><a href="${escapeHtml(ex.webViewLink || '#')}" target="_blank" rel="noopener">${escapeHtml(ex.name || '(untitled)')} ↗</a><span class="pw-meta">${escapeHtml(ex.format || '')} · ${fmt(ex.created_at)}</span></li>`).join('') +
-      '</ul></div>';
-  }
-  host.style.display = 'block';
-  host.innerHTML = html;
-  // Click handlers: thread → load thread; item → open detail
-  host.querySelectorAll('[data-thread-id]').forEach(el => {
-    el.addEventListener('click', () => {
-      $('#taskModal').classList.remove('show');
-      loadThread(el.dataset.threadId);
-    });
-  });
-  host.querySelectorAll('[data-item-id]').forEach(el => {
-    el.addEventListener('click', () => {
-      $('#taskModal').classList.remove('show');
-      openDetail(el.dataset.itemId);
-    });
-  });
+  outputs.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  const exportIcons = { doc: '📄', sheet: '📊', slides: '📽' };
+
+  const threadsHtml = threads.length
+    ? threads.slice(0, 5).map(th => `<div class="pw-row clickable" onclick="event.stopPropagation();$('#taskModal').classList.remove('show');setTimeout(()=>loadThread('${escapeHtml(th.id)}'),100);">
+        <span class="pw-icon">◌</span>
+        <span class="pw-title">${escapeHtml(th.title || 'Untitled chat')}</span>
+        <span class="pw-meta">${th.message_count || 0} msgs · ${fmtDate(th.updated_at || th.created_at)}</span>
+      </div>`).join('')
+    : '<div class="pw-empty">No chats tagged to this task yet. Click ⚡ Run with Beacon to start one.</div>';
+
+  const savesHtml = saves.length
+    ? saves.slice(0, 5).map(s => `<div class="pw-row clickable" onclick="event.stopPropagation();$('#taskModal').classList.remove('show');setTimeout(()=>openDetail('${escapeHtml(s.id)}'),100);">
+        <span class="pw-icon">★</span>
+        <span class="pw-title">${escapeHtml(s.title || 'Saved')}</span>
+        <span class="pw-meta">${fmtDate(s.created_at)}</span>
+      </div>`).join('')
+    : '<div class="pw-empty">No saves yet. Star a Beacon reply to keep it.</div>';
+
+  const outputsHtml = outputs.length
+    ? outputs.slice(0, 10).map(o => `<div class="pw-row">
+        <span class="pw-icon">${exportIcons[o.format] || '📄'}</span>
+        <span class="pw-title">${escapeHtml(o.name || o.format)}</span>
+        <span class="pw-meta">${fmtDate(o.created_at)}</span>
+        ${o.webViewLink ? `<a href="${escapeHtml(o.webViewLink)}" target="_blank" rel="noopener">Open</a>` : ''}
+      </div>`).join('')
+    : '<div class="pw-empty">No Drive exports yet.</div>';
+
+  host.innerHTML = `
+    <div class="pw-section"><h4>Recent chats (${threads.length})</h4>${threadsHtml}</div>
+    <div class="pw-section"><h4>Saved (${saves.length})</h4>${savesHtml}</div>
+    <div class="pw-section"><h4>Outputs (${outputs.length})</h4>${outputsHtml}</div>
+  `;
+  host.style.display = 'flex';
 }
 async function saveTask() {
   const title = $('#taskTitle').value.trim();
@@ -3253,11 +3584,93 @@ function renderAll() {
   renderStats();
   renderDirections();
   renderChat();
+  renderFindings();
   renderProjects();
   refreshTaskFilters();
   renderTasks();
   renderLibrary();
   refreshBanner();
+}
+
+function renderFindings() {
+  const block = $('#findingsBlock');
+  const strip = $('#findingsStrip');
+  const sub = $('#findingsSub');
+  if (!block || !strip) return;
+
+  const exportIcons = { doc: '📄', sheet: '📊', slides: '📽' };
+  const projectById = Object.fromEntries((projects || []).map(p => [p.id, p]));
+  const taskById = Object.fromEntries((tasks || []).map(t => [t.id, t]));
+
+  const all = [];
+
+  for (const it of (items || [])) {
+    if (it.kind === 'thought') {
+      all.push({
+        kind: 'save',
+        icon: '★',
+        label: 'Save',
+        title: it.title || 'Untitled save',
+        date: it.created_at,
+        project_id: it.project_id || null,
+        task_id: it.task_id || null,
+        item_id: it.id
+      });
+    } else if (it.kind === 'thread') {
+      let msgs = [];
+      try { msgs = typeof it.content === 'string' ? JSON.parse(it.content) : (it.content || []); } catch {}
+      const seen = new Set();
+      for (const m of msgs) {
+        if (Array.isArray(m && m.exports)) for (const ex of m.exports) {
+          const key = (ex.webViewLink || '') + '|' + (ex.created_at || '') + '|' + (ex.name || '');
+          if (seen.has(key)) continue; seen.add(key);
+          all.push({
+            kind: 'export',
+            icon: exportIcons[ex.format] || '📄',
+            label: ex.format || 'export',
+            title: ex.name || '(untitled)',
+            date: ex.created_at || it.updated_at || it.created_at,
+            project_id: it.project_id || null,
+            task_id: it.task_id || null,
+            webViewLink: ex.webViewLink,
+            thread_id: it.id
+          });
+        }
+      }
+    }
+  }
+
+  all.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+  const top = all.slice(0, 6);
+
+  if (!top.length) { block.style.display = 'none'; strip.innerHTML = ''; return; }
+
+  block.style.display = 'block';
+  if (sub) sub.textContent = `${all.length} total · ${top.length} shown`;
+
+  strip.innerHTML = top.map(f => {
+    const proj = f.project_id && projectById[f.project_id];
+    const task = f.task_id && taskById[f.task_id];
+    const sourceLabel = task ? task.title : (proj ? proj.title : '');
+    const sourceHtml = sourceLabel ? `<span class="fc-source">${escapeHtml(sourceLabel)}</span>` : '';
+    const data = f.kind === 'export'
+      ? `data-link="${escapeHtml(f.webViewLink || '')}"`
+      : `data-item-id="${escapeHtml(f.item_id || '')}"`;
+    return `<div class="finding-card" ${data}>
+      <div class="fc-top"><span class="fc-icon">${f.icon}</span><span>${escapeHtml(f.label)}</span></div>
+      <div class="fc-title">${escapeHtml(f.title)}</div>
+      <div class="fc-meta"><span>${fmtDate(f.date)}</span>${sourceHtml ? '·' : ''}${sourceHtml}</div>
+    </div>`;
+  }).join('');
+
+  strip.querySelectorAll('.finding-card').forEach(el => {
+    el.addEventListener('click', () => {
+      const link = el.dataset.link;
+      const itemId = el.dataset.itemId;
+      if (link) window.open(link, '_blank', 'noopener');
+      else if (itemId) openDetail(itemId);
+    });
+  });
 }
 
 function renderStats() {
@@ -4440,6 +4853,158 @@ async function clearChat() {
 }
 
 /* ============================================================
+   SETTINGS MODAL
+   ============================================================ */
+async function openSettingsModal() {
+  if (!cloudMode) {
+    showToast('Settings need cloud sync — sign in with email + password.', true);
+    return;
+  }
+  $('#settingsPwHint').textContent = '';
+  $('#settingsPwHint').className = 'settings-pw-hint';
+  $('#settingsCurrentPw').value = '';
+  $('#settingsNewPw').value = '';
+  $('#settingsConfirmPw').value = '';
+
+  // Load latest from server
+  try {
+    const res = await fetch(`${API_BASE}/settings`, { headers: authHeaders() });
+    if (!res.ok) throw new Error('Settings load failed: ' + res.status);
+    const data = await res.json();
+    const tenant = data.tenant_summary || currentTenant || {};
+    const settings = data.settings || {};
+    currentTenant = tenant;
+
+    $('#settingsTenantMeta').textContent = tenant.id === 'pete'
+      ? 'Personal account · legacy passcode'
+      : `Account ${tenant.id || ''}`;
+    $('#settingsEmail').value = tenant.email || '';
+    const tierLabel = tenant.tier
+      ? tenant.tier.charAt(0).toUpperCase() + tenant.tier.slice(1) +
+        (tenant.tier_info && tenant.tier_info.monthly_price_usd
+          ? ` · $${tenant.tier_info.monthly_price_usd}/mo`
+          : '')
+      : '—';
+    $('#settingsTier').value = tierLabel;
+    $('#settingWebSearch').checked = settings.web_search_enabled !== false;
+
+    const b = data.budget;
+    const budgetBlock = $('#settingsBudgetBlock');
+    if (b && b.allocation_usd > 0) {
+      budgetBlock.style.display = '';
+      const fill = $('#settingsBudgetFill');
+      fill.style.width = Math.min(100, b.used_pct) + '%';
+      fill.classList.toggle('near', b.near_cap && !b.over_cap);
+      fill.classList.toggle('over', b.over_cap);
+      $('#settingsBudgetText').textContent = `$${b.spent_usd.toFixed(2)} of $${b.allocation_usd.toFixed(2)}`;
+      $('#settingsBudgetPct').textContent = `${b.used_pct.toFixed(1)}%`;
+      const statusEl = $('#settingsBudgetStatus');
+      if (b.over_cap) {
+        statusEl.textContent = 'Monthly cap reached. Chat is paused until your allocation resets or you upgrade.';
+        statusEl.style.color = 'var(--red)';
+      } else if (b.near_cap) {
+        statusEl.textContent = `Heads up — ${(100 - b.used_pct).toFixed(1)}% of your monthly allocation left.`;
+        statusEl.style.color = 'var(--gold)';
+      } else {
+        statusEl.textContent = `$${b.remaining_usd.toFixed(2)} remaining this month.`;
+        statusEl.style.color = '';
+      }
+    } else {
+      budgetBlock.style.display = 'none';
+    }
+
+    // Pete's account uses legacy passcode — disable change-password fields.
+    const isPete = tenant.id === 'pete';
+    $('#settingsCurrentPw').disabled = isPete;
+    $('#settingsNewPw').disabled = isPete;
+    $('#settingsConfirmPw').disabled = isPete;
+    if (isPete) {
+      $('#settingsPwHint').textContent = 'Pete\'s account uses the legacy passcode (rotate via BEACONS_PASSCODE_HASH in Vercel).';
+    }
+  } catch (e) {
+    console.warn('settings load failed', e);
+    showToast('Could not load settings: ' + e.message, true);
+    return;
+  }
+
+  $('#settingsModal').classList.add('show');
+}
+
+async function saveSettings() {
+  const newSettings = {
+    web_search_enabled: $('#settingWebSearch').checked
+  };
+  let savedSettings = false;
+  try {
+    const res = await fetch(`${API_BASE}/settings`, {
+      method: 'PUT',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ settings: newSettings })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Settings save failed');
+    }
+    const data = await res.json();
+    if (data.tenant_summary) currentTenant = data.tenant_summary;
+    savedSettings = true;
+  } catch (e) {
+    showToast('Settings save failed: ' + e.message, true);
+  }
+
+  // Change password if all three fields are filled
+  const cur = $('#settingsCurrentPw').value;
+  const next = $('#settingsNewPw').value;
+  const confirm = $('#settingsConfirmPw').value;
+  if (cur || next || confirm) {
+    const hint = $('#settingsPwHint');
+    hint.className = 'settings-pw-hint';
+    if (!cur || !next || !confirm) {
+      hint.textContent = 'Fill all three password fields to change password.';
+      hint.classList.add('error');
+      return;
+    }
+    if (next !== confirm) {
+      hint.textContent = 'New passwords don\'t match.';
+      hint.classList.add('error');
+      return;
+    }
+    if (next.length < 8) {
+      hint.textContent = 'New password must be 8+ characters.';
+      hint.classList.add('error');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/auth/change-password`, {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_password: cur, new_password: next })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        hint.textContent = err.error || 'Password change failed.';
+        hint.classList.add('error');
+        return;
+      }
+      hint.textContent = 'Password updated.';
+      hint.classList.add('ok');
+      $('#settingsCurrentPw').value = '';
+      $('#settingsNewPw').value = '';
+      $('#settingsConfirmPw').value = '';
+    } catch (e) {
+      hint.textContent = 'Password change failed: ' + e.message;
+      hint.classList.add('error');
+      return;
+    }
+  }
+
+  if (savedSettings) {
+    showToast('Settings saved');
+    setTimeout(() => $('#settingsModal').classList.remove('show'), 600);
+  }
+}
+
+/* ============================================================
    BANNER
    ============================================================ */
 function refreshBanner() {
@@ -4478,25 +5043,91 @@ async function bootstrap() {
 async function init() {
   await initPasscode();
 
-  $('#lockForm').addEventListener('submit', async (e) => {
+  // Lock form: email + password by default, legacy passcode toggle below.
+  const lockForm = $('#lockForm');
+  let legacyMode = false;
+  lockForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const code = $('#passcodeInput').value;
-    const ok = await attemptUnlock(code);
+    const email = $('#emailInput').value.trim();
+    const password = $('#passwordInput').value;
+    let ok = false;
+    if (legacyMode) {
+      // Legacy: password field carries the passcode.
+      ok = await attemptLegacyUnlock(password);
+    } else {
+      if (!email || !password) {
+        $('#lockError').textContent = 'Email and password required.';
+        $('#lockError').classList.add('show');
+        return;
+      }
+      ok = await attemptLogin(email, password);
+    }
     if (ok) showApp();
-    else { $('#lockError').classList.add('show'); $('#passcodeInput').value = ''; }
+    else {
+      $('#lockError').textContent = legacyMode ? 'Wrong passcode.' : 'Wrong email or password.';
+      $('#lockError').classList.add('show');
+      $('#passwordInput').value = '';
+    }
   });
-  $('#passcodeInput').addEventListener('input', () => $('#lockError').classList.remove('show'));
+  $('#emailInput').addEventListener('input', () => $('#lockError').classList.remove('show'));
+  $('#passwordInput').addEventListener('input', () => $('#lockError').classList.remove('show'));
 
+  $('#lockToggleLegacy').addEventListener('click', (e) => {
+    e.preventDefault();
+    legacyMode = !legacyMode;
+    lockForm.classList.toggle('legacy-mode', legacyMode);
+    if (legacyMode) {
+      $('#lockPrompt').textContent = 'Enter your legacy passcode';
+      $('#passwordInput').placeholder = 'passcode';
+      $('#lockToggleLegacy').textContent = 'Use email + password instead';
+      $('#passwordInput').focus();
+    } else {
+      $('#lockPrompt').textContent = 'Sign in to your workspace';
+      $('#emailInput').placeholder = 'email';
+      $('#passwordInput').placeholder = 'password';
+      $('#lockToggleLegacy').textContent = 'Or use a legacy passcode';
+      $('#emailInput').focus();
+    }
+    $('#lockError').classList.remove('show');
+  });
+
+  // Restore JWT session on page load if present.
   if (isUnlocked()) {
-    authHash = localStorage.getItem(PASSCODE_HASH_KEY);
-    try {
-      const res = await fetch(`${API_BASE}/items`, { headers: authHeaders() });
-      if (res.status === 200) cloudMode = true;
-    } catch (e) {}
-    showApp();
+    const restored = await tryRestoreSession();
+    if (restored) {
+      showApp();
+    } else {
+      // Try legacy fallback
+      const legacy = localStorage.getItem(PASSCODE_HASH_KEY);
+      if (legacy) {
+        authHash = legacy;
+        try {
+          const res = await fetch(`${API_BASE}/items`, { headers: authHeaders() });
+          if (res.status === 200) { cloudMode = true; showApp(); return; }
+        } catch (e) {}
+      }
+      // Stale session — wipe and present login.
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+  } else {
+    // No session yet — but if a JWT is still in localStorage, try to restore silently.
+    const restored = await tryRestoreSession();
+    if (restored) showApp();
   }
 
   $('#signOutBtn').addEventListener('click', signOut);
+
+  // Settings modal wiring
+  const settingsBtn = $('#settingsBtn');
+  if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
+  const settingsSave = $('#settingsSaveBtn');
+  if (settingsSave) settingsSave.addEventListener('click', saveSettings);
+  const settingsSignOut = $('#settingsSignOutBtn');
+  if (settingsSignOut) settingsSignOut.addEventListener('click', signOut);
+  const settingsUpgrade = $('#settingsUpgradeBtn');
+  if (settingsUpgrade) settingsUpgrade.addEventListener('click', () => {
+    window.location.href = 'mailto:pete@polarispoint.io?subject=Beacon%20plan%20upgrade';
+  });
 
   // Cost wheel (top-right of topbar)
   const costWheel = $('#costWheel');

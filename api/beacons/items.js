@@ -9,6 +9,7 @@
 //   PUT    /api/beacons/items          → upsert one item (body is the full item JSON, must include `id`)
 //   DELETE /api/beacons/items?id=xxx   → delete one item by id
 const { neon } = require('@neondatabase/serverless');
+const Auth = require('../../lib/auth');
 
 let _tableEnsured = false;
 
@@ -28,19 +29,6 @@ async function ensureTable(sql) {
   _tableEnsured = true;
 }
 
-function checkAuth(req) {
-  const expected = process.env.BEACONS_PASSCODE_HASH;
-  if (!expected) return false;
-  const got = (req.headers['x-beacons-auth'] || '').toString();
-  // constant-time comparison
-  if (got.length !== expected.length) return false;
-  let mismatch = 0;
-  for (let i = 0; i < got.length; i++) {
-    mismatch |= got.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-  return mismatch === 0;
-}
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS');
@@ -50,11 +38,12 @@ module.exports = async function handler(req, res) {
   if (!process.env.DATABASE_URL) {
     return res.status(500).json({ error: 'DATABASE_URL not configured' });
   }
-  if (!process.env.BEACONS_PASSCODE_HASH) {
-    return res.status(500).json({ error: 'BEACONS_PASSCODE_HASH not configured. See beacons/README.md.' });
+  if (!process.env.BEACONS_JWT_SECRET) {
+    return res.status(500).json({ error: 'BEACONS_JWT_SECRET not configured.' });
   }
 
-  if (!checkAuth(req)) {
+  const tenant = await Auth.resolveTenant(req);
+  if (!tenant) {
     return res.status(401).json({ error: 'Invalid or missing auth' });
   }
 

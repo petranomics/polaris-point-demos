@@ -1,15 +1,16 @@
-// /api/beacons/extract.js — Server-side text extraction for binary uploads
+// /api/beacons/extract.js — Server-side text extraction for SMALL uploads.
 //
 // POST  body: { filename, mime?, base64 }
-//   - Decodes base64 → Buffer
-//   - Routes by extension to pdf-parse / mammoth / pizzip-based PPTX parser
-//   - Returns { content, extracted, meta, size }
+//   - Decodes base64 → Buffer → /lib/extract.js
+//   - Returns { content, extracted, meta, size, chars }
 //
-// Auth: same x-beacons-auth header used elsewhere.
+// Auth: x-beacons-auth (passcode hash) header.
 //
-// Vercel body-size cap is ~4.5MB by default; with base64 inflation that means
-// the original file must be under ~3.3MB. For larger files we'll add a
-// Vercel Blob upload path later.
+// Body cap: Vercel serverless ~4.5MB. Base64 inflates ~33%, so original file
+// must be under ~3.3MB. For larger files the client uses /api/beacons/blob-upload-token
+// + /api/beacons/extract-blob.
+
+const { extractBuffer } = require('../../lib/extract');
 
 function checkAuth(req) {
   const expected = process.env.BEACONS_PASSCODE_HASH;
@@ -21,44 +22,10 @@ function checkAuth(req) {
   return mismatch === 0;
 }
 
-function extractPptxText(buffer) {
-  const PizZip = require('pizzip');
-  const zip = new PizZip(buffer);
-  const slides = [];
-  Object.keys(zip.files)
-    .filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f))
-    .sort((a, b) => parseInt(a.match(/slide(\d+)/)[1], 10) - parseInt(b.match(/slide(\d+)/)[1], 10))
-    .forEach(f => {
-      const xml = zip.files[f].asText();
-      const matches = xml.match(/<a:t[^>]*>([^<]*)<\/a:t>/g) || [];
-      const texts = matches.map(t => t.replace(/<a:t[^>]*>|<\/a:t>/g, '').trim()).filter(Boolean);
-      slides.push(texts.join(' '));
-    });
-
-  // Also pick up speaker notes
-  const notes = [];
-  Object.keys(zip.files)
-    .filter(f => /^ppt\/notesSlides\/notesSlide\d+\.xml$/.test(f))
-    .sort((a, b) => parseInt(a.match(/notesSlide(\d+)/)[1], 10) - parseInt(b.match(/notesSlide(\d+)/)[1], 10))
-    .forEach(f => {
-      const xml = zip.files[f].asText();
-      const matches = xml.match(/<a:t[^>]*>([^<]*)<\/a:t>/g) || [];
-      const texts = matches.map(t => t.replace(/<a:t[^>]*>|<\/a:t>/g, '').trim()).filter(Boolean);
-      notes.push(texts.join(' '));
-    });
-
-  const out = slides.map((s, i) => `--- Slide ${i + 1} ---\n${s}`).join('\n\n');
-  if (notes.some(Boolean)) {
-    return out + '\n\n=== Speaker notes ===\n' +
-      notes.map((n, i) => n ? `[Slide ${i + 1}] ${n}` : '').filter(Boolean).join('\n');
-  }
-  return out;
-}
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-beacons-auth');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-beacons-auth, x-beacons-tenant');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
@@ -71,75 +38,13 @@ module.exports = async function handler(req, res) {
   const base64 = (body.base64 || '').toString();
   if (!base64) return res.status(400).json({ error: 'Missing base64 file content' });
 
-  const buffer = Buffer.from(base64, 'base64');
-  const ext = (filename.split('.').pop() || '').toLowerCase();
-
   try {
-    let content = '';
-    let meta = {};
-
-    if (ext === 'pdf' || mime === 'application/pdf') {
-      // Lazy require to avoid cold-start side effects (pdf-parse runs a test
-      // parse on import unless its package.json sentinel files are present).
-      const pdfParse = require('pdf-parse');
-      const data = await pdfParse(buffer);
-      content = (data.text || '').trim();
-      meta = { pages: data.numpages, info: data.info ? { title: data.info.Title, author: data.info.Author } : null };
-    } else if (
-      ext === 'docx' ||
-      mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ) {
-      const mammoth = require('mammoth');
-      const result = await mammoth.extractRawText({ buffer });
-      content = (result.value || '').trim();
-    } else if (
-      ext === 'pptx' ||
-      mime === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-    ) {
-      content = extractPptxText(buffer).trim();
-    } else if (
-      ext === 'xlsx' || ext === 'xls' ||
-      mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      mime === 'application/vnd.ms-excel'
-    ) {
-      const ExcelJS = require('exceljs');
-      const wb = new ExcelJS.Workbook();
-      await wb.xlsx.load(buffer);
-      const sheetTexts = [];
-      wb.eachSheet((sheet) => {
-        const rows = [];
-        sheet.eachRow({ includeEmpty: false }, (row) => {
-          const cells = [];
-          row.eachCell({ includeEmpty: true }, (cell) => {
-            let v = cell.value;
-            if (v && typeof v === 'object') {
-              if (v.richText) v = v.richText.map(t => t.text).join('');
-              else if (v.formula) v = v.result != null ? String(v.result) : '=' + v.formula;
-              else if (v.text) v = v.text;
-              else if (v instanceof Date) v = v.toISOString().slice(0, 10);
-              else v = JSON.stringify(v);
-            }
-            cells.push(v == null ? '' : String(v));
-          });
-          rows.push(cells.join('\t'));
-        });
-        if (rows.length) sheetTexts.push(`=== Sheet: ${sheet.name} ===\n${rows.join('\n')}`);
-      });
-      content = sheetTexts.join('\n\n').trim();
-      meta = { sheetCount: wb.worksheets.length };
-    } else {
-      return res.status(400).json({ error: 'Unsupported file type: ' + (ext || mime || 'unknown') });
-    }
-
-    return res.status(200).json({
-      content,
-      extracted: true,
-      meta,
-      size: buffer.length,
-      chars: content.length
-    });
+    const buffer = Buffer.from(base64, 'base64');
+    const result = await extractBuffer(buffer, filename, mime);
+    return res.status(200).json({ extracted: true, ...result });
   } catch (err) {
     console.error('beacons/extract error', err);
-    return res.status(500).json({ error: err.message || 'Extraction failed' });
+    const code = /Unsupported file type/.test(err.message) ? 400 : 500;
+    return res.status(code).json({ error: err.message || 'Extraction failed' });
   }
 };

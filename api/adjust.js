@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
       var apiKey = process.env.ANTHROPIC_API_KEY;
       if (!apiKey) return res.status(500).json({ error: 'No AI backend available (VPS down, no Anthropic key)' });
 
-      var claudeModel = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
+      var claudeModel = 'claude-haiku-4-5-20251001';
       var t0 = Date.now();
       var response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',

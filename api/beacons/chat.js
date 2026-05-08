@@ -14,6 +14,9 @@ const { neon } = require('@neondatabase/serverless');
 const Pricing = require('../../lib/pricing');
 const G = require('../../lib/google');
 const Tools = require('../../lib/tools');
+const Auth = require('../../lib/auth');
+const Budget = require('../../lib/budget');
+const ModelRouter = require('../../lib/model-router');
 
 // Model routing: Haiku 4.5 across the board. The mode lanes differ only by
 // how much of the library we pack in (see LIBRARY_BUDGET below). If a task
@@ -34,16 +37,6 @@ const LIBRARY_BUDGET = {
 };
 // Backwards-compat: older clients may still send mode='fast'. Map to default.
 const MODE_ALIASES = { fast: 'default' };
-
-function checkAuth(req) {
-  const expected = process.env.BEACONS_PASSCODE_HASH;
-  if (!expected) return false;
-  const got = (req.headers['x-beacons-auth'] || '').toString();
-  if (got.length !== expected.length) return false;
-  let mismatch = 0;
-  for (let i = 0; i < got.length; i++) mismatch |= got.charCodeAt(i) ^ expected.charCodeAt(i);
-  return mismatch === 0;
-}
 
 function tagLine(item) {
   if (item.kind === 'thought') return `[Thought · ${item.title || 'untitled'}]`;
@@ -278,7 +271,7 @@ function buildLibraryPrompt(items, budget, message, history) {
   return lines.join('');
 }
 
-async function callClaude({ model, systemPrompt, libraryPrompt, history, message }) {
+async function callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled = true }) {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not configured on the server');
   }
@@ -308,11 +301,15 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
 
   // Server-side web search tool. Anthropic runs the search loop; we get the
   // final answer back with citations embedded in the text blocks.
-  const tools = [{
-    type: 'web_search_20250305',
-    name: 'web_search',
-    max_uses: 6
-  }];
+  // Tenant can disable web_search in Settings → toggle.
+  const tools = [];
+  if (webSearchEnabled) {
+    tools.push({
+      type: 'web_search_20250305',
+      name: 'web_search',
+      max_uses: 6
+    });
+  }
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -364,7 +361,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
 // to prevent runaway loops.
 const MAX_AGENT_TURNS = 6;
 
-async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken }) {
+async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled = true }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
   const systemBlocks = [{ type: 'text', text: systemPrompt }];
@@ -381,12 +378,15 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   }
   messages.push({ role: 'user', content: String(message) });
 
-  const tools = [{
-    type: 'web_search_20250305',
-    name: 'web_search',
-    max_uses: 6,
-    user_location: { type: 'approximate', country: 'US' }
-  }];
+  const tools = [];
+  if (webSearchEnabled) {
+    tools.push({
+      type: 'web_search_20250305',
+      name: 'web_search',
+      max_uses: 6,
+      user_location: { type: 'approximate', country: 'US' }
+    });
+  }
   if (accessToken) {
     Tools.TOOL_DEFINITIONS.forEach(d => tools.push(d));
   }
@@ -586,7 +586,8 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
       costUsd = await Pricing.logUsage(sql, {
         app: 'beacons',
         endpoint: '/api/beacons/chat',
-        userId: null,
+        tenant: tenant ? tenant.id : null,
+        userId: tenant ? tenant.id : null,
         model: resolvedModel,
         mode,
         provider: 'anthropic',
@@ -618,10 +619,12 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
   if (!process.env.DATABASE_URL) return res.status(500).json({ error: 'DATABASE_URL not configured' });
-  if (!process.env.BEACONS_PASSCODE_HASH) return res.status(500).json({ error: 'BEACONS_PASSCODE_HASH not configured' });
+  if (!process.env.BEACONS_JWT_SECRET) return res.status(500).json({ error: 'BEACONS_JWT_SECRET not configured' });
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
 
-  if (!checkAuth(req)) return res.status(401).json({ error: 'Invalid or missing auth' });
+  const tenant = await Auth.resolveTenant(req);
+  if (!tenant) return res.status(401).json({ error: 'Invalid or missing auth' });
+  const webSearchEnabled = Auth.effectiveSettings(tenant).web_search_enabled !== false;
 
   const body = req.body || {};
   const message = (body.message || '').toString().trim();
@@ -630,11 +633,38 @@ module.exports = async function handler(req, res) {
   const requestedMode = (body.mode || 'default').toString();
   const aliasedMode = MODE_ALIASES[requestedMode] || requestedMode;
   const mode = MODELS[aliasedMode] ? aliasedMode : 'default';
-  const model = MODELS[mode];
   const budget = LIBRARY_BUDGET[mode];
 
   try {
     const sql = neon(process.env.DATABASE_URL);
+
+    // Pre-flight budget check. Pull the tenant's MTD spend before letting
+    // them spend more. If over_cap, surface a clear error so the client can
+    // show "monthly limit reached, upgrade for more."
+    await Pricing.ensureUsageTable(sql);
+    const budgetState = await Budget.checkBudget(sql, tenant);
+    Budget.applyBudgetHeaders(res, budgetState);
+    if (budgetState.over_cap) {
+      return res.status(402).json({
+        error: 'Monthly usage cap reached for this account.',
+        budget: budgetState
+      });
+    }
+
+    // Triage to a model based on tenant tier + budget left + requested mode.
+    // Replaces the static MODELS map with dynamic routing.
+    const routed = ModelRouter.selectModel({
+      task: body.task || 'chat',
+      tenant,
+      budgetLeftPct: 100 - budgetState.used_pct,
+      mode
+    });
+    const model = routed.provider === 'anthropic' ? routed.model : MODELS[mode];
+    // Note: Ollama provider routing isn't wired through streamClaude yet —
+    // the Ollama path needs its own call branch. For now, if the router picks
+    // Ollama, we still call Anthropic Haiku to keep the chat experience
+    // working. The router is in place; the Ollama execution layer comes next.
+
     // Make sure the table exists (in case chat is hit before items endpoint)
     await sql`
       CREATE TABLE IF NOT EXISTS beacons_items (
@@ -651,9 +681,6 @@ module.exports = async function handler(req, res) {
     const systemPrompt = buildSystemPrompt(items);
     const libraryPrompt = buildLibraryPrompt(items, budget, message, history);
 
-    // Make sure the usage log table exists before either call path needs it.
-    await Pricing.ensureUsageTable(sql);
-
     // If Google is connected, the agent can wield Drive/Sheets/Slides tools.
     // Pull a fresh access token (auto-refreshes if expired) before kicking
     // off the chat call. Failure here is non-fatal — chat still works
@@ -667,17 +694,18 @@ module.exports = async function handler(req, res) {
     }
 
     if (body.stream === true) {
-      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken });
+      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled });
       return;
     }
 
-    const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message });
+    const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled });
     let costUsd = 0;
     try {
       costUsd = await Pricing.logUsage(sql, {
         app: 'beacons',
         endpoint: '/api/beacons/chat',
-        userId: null,
+        tenant: tenant ? tenant.id : null,
+        userId: tenant ? tenant.id : null,
         model: result.model,
         mode,
         provider: 'anthropic',
