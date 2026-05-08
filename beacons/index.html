@@ -3780,7 +3780,7 @@ function renderFindings() {
   const seenExports = new Set();
 
   for (const it of (items || [])) {
-    if (it.kind === 'thread' && (it.task_id || it.project_id)) {
+    if (it.kind === 'thread') {
       // Find the most recent assistant turn — that's the visible "output".
       let msgs = [];
       try { msgs = typeof it.content === 'string' ? JSON.parse(it.content) : (it.content || []); } catch {}
@@ -3789,10 +3789,14 @@ function renderFindings() {
       );
       if (lastAssistant) {
         const preview = (lastAssistant.content || '').toString().replace(/\s+/g, ' ').slice(0, 140);
+        // Threads tied to a project or task get the ⚡ icon ("Run with Beacon").
+        // Free-form chats use a chat icon. Either way, the assistant's last
+        // message is the "conclusion" of that thread.
+        const isRunWithBeacon = !!(it.task_id || it.project_id);
         all.push({
           kind: 'thread',
-          icon: '⚡',
-          label: 'Run with Beacon',
+          icon: isRunWithBeacon ? '⚡' : '◌',
+          label: isRunWithBeacon ? 'Run with Beacon' : 'Chat',
           title: it.title || 'Beacon run',
           preview,
           date: it.updated_at || it.created_at,
