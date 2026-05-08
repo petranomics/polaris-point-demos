@@ -3837,6 +3837,22 @@ function renderFindings() {
         task_id: it.id,
         item_id: it.id
       });
+    } else if (it.kind === 'thought') {
+      // Saved thoughts (typed or voice-recorded) are outputs the user produced
+      // in Beacon. Include them. Uploaded files (kind='file') and synced email
+      // (kind='email_thread') stay excluded — those are inputs from outside.
+      const preview = (it.content || '').toString().replace(/\s+/g, ' ').slice(0, 140);
+      all.push({
+        kind: 'thought',
+        icon: '✎',
+        label: it.source === 'voice' ? 'Recording' : 'Note',
+        title: it.title || 'Saved thought',
+        preview,
+        date: it.created_at || it.updated_at,
+        project_id: it.project_id || null,
+        task_id: it.task_id || null,
+        item_id: it.id
+      });
     }
   }
 
@@ -3862,6 +3878,7 @@ function renderFindings() {
     let data;
     if (f.kind === 'export')         data = `data-link="${escapeHtml(f.webViewLink || '')}"`;
     else if (f.kind === 'thread')    data = `data-thread-id="${escapeHtml(f.thread_id || '')}"`;
+    else if (f.kind === 'thought')   data = `data-item-id="${escapeHtml(f.item_id || '')}"`;
     else                              data = `data-task-id="${escapeHtml(f.task_id || '')}"`;
     return `<div class="finding-card" ${data}>
       <div class="fc-top"><span class="fc-icon">${f.icon}</span><span>${escapeHtml(f.label)}</span></div>
@@ -3875,6 +3892,7 @@ function renderFindings() {
     el.addEventListener('click', () => {
       if (el.dataset.link)          window.open(el.dataset.link, '_blank', 'noopener');
       else if (el.dataset.threadId) loadThread(el.dataset.threadId);
+      else if (el.dataset.itemId)   openDetail(el.dataset.itemId);
       else if (el.dataset.taskId)   openTaskModal(el.dataset.taskId);
     });
   });
