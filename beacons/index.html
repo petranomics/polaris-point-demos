@@ -823,6 +823,25 @@ main {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.finding-card .fc-preview {
+  font-size: .76rem;
+  color: var(--muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.finding-empty {
+  grid-column: 1 / -1;
+  font-size: .8rem;
+  color: var(--muted);
+  font-style: italic;
+  padding: 12px 14px;
+  background: rgba(20, 28, 45, 0.35);
+  border: 1px dashed rgba(91, 141, 239, .14);
+  border-radius: 10px;
+}
 
 /* ====================================================
    DIRECTIONS CARD
@@ -3598,36 +3617,53 @@ function renderFindings() {
   const sub = $('#findingsSub');
   if (!block || !strip) return;
 
+  // Findings = OUTPUTS Beacon produced. A finding is one of:
+  //   1. A "Run with Beacon" thread (a chat tied to a project or task) — the
+  //      assistant produced something for that task/project.
+  //   2. A Drive export (Doc/Sheet/Slides) — generated inside any thread.
+  //   3. A completed task (status='done') that came from a recurring/Run with
+  //      Beacon flow.
+  // Excludes: free-form thoughts, untagged saves, library context, raw
+  // uploaded files. Those are inputs, not findings.
   const exportIcons = { doc: '📄', sheet: '📊', slides: '📽' };
   const projectById = Object.fromEntries((projects || []).map(p => [p.id, p]));
-  const taskById = Object.fromEntries((tasks || []).map(t => [t.id, t]));
+  const taskById    = Object.fromEntries((tasks    || []).map(t => [t.id, t]));
 
   const all = [];
+  const seenExports = new Set();
 
   for (const it of (items || [])) {
-    if (it.kind === 'thought') {
-      all.push({
-        kind: 'save',
-        icon: '★',
-        label: 'Save',
-        title: it.title || 'Untitled save',
-        date: it.created_at,
-        project_id: it.project_id || null,
-        task_id: it.task_id || null,
-        item_id: it.id
-      });
-    } else if (it.kind === 'thread') {
+    if (it.kind === 'thread' && (it.task_id || it.project_id)) {
+      // Find the most recent assistant turn — that's the visible "output".
       let msgs = [];
       try { msgs = typeof it.content === 'string' ? JSON.parse(it.content) : (it.content || []); } catch {}
-      const seen = new Set();
+      const lastAssistant = [...msgs].reverse().find(m =>
+        m && m.role === 'assistant' && (m.content || '').toString().trim().length > 0
+      );
+      if (lastAssistant) {
+        const preview = (lastAssistant.content || '').toString().replace(/\s+/g, ' ').slice(0, 140);
+        all.push({
+          kind: 'thread',
+          icon: '⚡',
+          label: 'Run with Beacon',
+          title: it.title || 'Beacon run',
+          preview,
+          date: it.updated_at || it.created_at,
+          project_id: it.project_id || null,
+          task_id: it.task_id || null,
+          thread_id: it.id
+        });
+      }
+      // Drive exports stamped on messages within this thread
       for (const m of msgs) {
         if (Array.isArray(m && m.exports)) for (const ex of m.exports) {
           const key = (ex.webViewLink || '') + '|' + (ex.created_at || '') + '|' + (ex.name || '');
-          if (seen.has(key)) continue; seen.add(key);
+          if (seenExports.has(key)) continue;
+          seenExports.add(key);
           all.push({
             kind: 'export',
             icon: exportIcons[ex.format] || '📄',
-            label: ex.format || 'export',
+            label: ex.format ? ex.format.toUpperCase() : 'EXPORT',
             title: ex.name || '(untitled)',
             date: ex.created_at || it.updated_at || it.created_at,
             project_id: it.project_id || null,
@@ -3637,13 +3673,31 @@ function renderFindings() {
           });
         }
       }
+    } else if (it.kind === 'task' && it.status === 'done') {
+      // Completed tasks that were tied to a project or had Beacon work attached
+      // count as findings — they show "what got done."
+      all.push({
+        kind: 'task_done',
+        icon: '✓',
+        label: 'Task done',
+        title: it.title || 'Completed task',
+        date: it.updated_at || it.created_at,
+        project_id: it.project_id || null,
+        task_id: it.id,
+        item_id: it.id
+      });
     }
   }
 
   all.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
   const top = all.slice(0, 6);
 
-  if (!top.length) { block.style.display = 'none'; strip.innerHTML = ''; return; }
+  if (!top.length) {
+    block.style.display = 'block';
+    if (sub) sub.textContent = 'No outputs yet';
+    strip.innerHTML = `<div class="finding-empty">Run a project or task with Beacon (⚡) and the output will land here.</div>`;
+    return;
+  }
 
   block.style.display = 'block';
   if (sub) sub.textContent = `${all.length} total · ${top.length} shown`;
@@ -3653,22 +3707,24 @@ function renderFindings() {
     const task = f.task_id && taskById[f.task_id];
     const sourceLabel = task ? task.title : (proj ? proj.title : '');
     const sourceHtml = sourceLabel ? `<span class="fc-source">${escapeHtml(sourceLabel)}</span>` : '';
-    const data = f.kind === 'export'
-      ? `data-link="${escapeHtml(f.webViewLink || '')}"`
-      : `data-item-id="${escapeHtml(f.item_id || '')}"`;
+    const previewHtml = f.preview ? `<div class="fc-preview">${escapeHtml(f.preview)}${f.preview.length >= 140 ? '…' : ''}</div>` : '';
+    let data;
+    if (f.kind === 'export')         data = `data-link="${escapeHtml(f.webViewLink || '')}"`;
+    else if (f.kind === 'thread')    data = `data-thread-id="${escapeHtml(f.thread_id || '')}"`;
+    else                              data = `data-task-id="${escapeHtml(f.task_id || '')}"`;
     return `<div class="finding-card" ${data}>
       <div class="fc-top"><span class="fc-icon">${f.icon}</span><span>${escapeHtml(f.label)}</span></div>
       <div class="fc-title">${escapeHtml(f.title)}</div>
+      ${previewHtml}
       <div class="fc-meta"><span>${fmtDate(f.date)}</span>${sourceHtml ? '·' : ''}${sourceHtml}</div>
     </div>`;
   }).join('');
 
   strip.querySelectorAll('.finding-card').forEach(el => {
     el.addEventListener('click', () => {
-      const link = el.dataset.link;
-      const itemId = el.dataset.itemId;
-      if (link) window.open(link, '_blank', 'noopener');
-      else if (itemId) openDetail(itemId);
+      if (el.dataset.link)          window.open(el.dataset.link, '_blank', 'noopener');
+      else if (el.dataset.threadId) loadThread(el.dataset.threadId);
+      else if (el.dataset.taskId)   openTaskModal(el.dataset.taskId);
     });
   });
 }
