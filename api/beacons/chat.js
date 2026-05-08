@@ -15,12 +15,11 @@ const Pricing = require('../../lib/pricing');
 const G = require('../../lib/google');
 const Tools = require('../../lib/tools');
 
-// Model routing: Haiku is the daily driver — fast and cheap, good enough for
-// drafts, summaries, quick Q&A. Sonnet for everything that needs reasoning,
-// including the heavy "deep" lane (which gets the larger library budget below).
-// Opus is intentionally not in rotation — at 5x Sonnet's rate it was eating
-// the budget on one-shot queries that never re-read the cache. If a task
-// genuinely needs Opus, opt in by passing model in the request body.
+// Model routing: Haiku for the default lane (drafts, summaries, quick Q&A),
+// Sonnet for everything that needs reasoning. The heavy "deep" lane stays on
+// Sonnet too — it just gets the larger library budget below. Opus is not
+// used: at 5x Sonnet's rate it was burning ~$14.50/day on one-shot queries
+// that never re-read the cache.
 const MODELS = {
   default: 'claude-haiku-4-5',
   smart: 'claude-sonnet-4-6',
