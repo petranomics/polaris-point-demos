@@ -2263,6 +2263,7 @@ main {
           <input type="text" id="taskDue" placeholder="e.g. Apr 30 · Friday · this week">
         </div>
       </div>
+      <div id="taskWorkspace" class="project-workspace" style="display:none"></div>
     </form>
     <div class="modal-foot">
       <div style="display:flex;gap:8px">
@@ -3095,8 +3096,73 @@ function openTaskModal(id) {
   fillProjectSelect($('#taskProject'), t ? t.project_id : '');
   $('#taskDeleteBtn').style.display = t ? 'inline-flex' : 'none';
   $('#taskRunBtn').style.display = t ? 'inline-flex' : 'none';
+  renderTaskWorkspace(t);
   $('#taskModal').classList.add('show');
   setTimeout(() => $('#taskTitle').focus(), 50);
+}
+
+function renderTaskWorkspace(t) {
+  const host = $('#taskWorkspace');
+  if (!host) return;
+  if (!t) { host.style.display = 'none'; host.innerHTML = ''; return; }
+  const allItems = items || [];
+  // Threads tagged to this task
+  const threads = allItems.filter(it => it.kind === 'thread' && it.task_id === t.id)
+    .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
+  // Saved thoughts tagged to this task
+  const saves = allItems.filter(it => it.kind === 'thought' && it.task_id === t.id)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  // Drive exports stamped on messages within those threads
+  const exports = [];
+  const seen = new Set();
+  for (const th of threads) {
+    let msgs = [];
+    try { msgs = typeof th.content === 'string' ? JSON.parse(th.content) : (th.content || []); } catch (_) {}
+    for (const m of msgs) {
+      if (Array.isArray(m && m.exports)) for (const ex of m.exports) {
+        const key = (ex.webViewLink || ex.name) + '|' + ex.format;
+        if (!seen.has(key)) { seen.add(key); exports.push(ex); }
+      }
+    }
+  }
+  exports.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  if (!threads.length && !saves.length && !exports.length) {
+    host.style.display = 'block';
+    host.innerHTML = '<div class="pw-empty">No outputs yet. Click ⚡ Run with Beacon to generate work tied to this task.</div>';
+    return;
+  }
+  const fmt = (iso) => fmtDate(iso);
+  let html = '<h4 class="pw-h">Latest outputs</h4>';
+  if (threads.length) {
+    html += '<div class="pw-sec"><div class="pw-sec-h">Chats</div><ul class="pw-list">' +
+      threads.slice(0, 5).map(th => `<li class="pw-row" data-thread-id="${th.id}"><span>${escapeHtml(th.title || 'Thread')}</span><span class="pw-meta">${fmt(th.updated_at || th.created_at)}</span></li>`).join('') +
+      '</ul></div>';
+  }
+  if (saves.length) {
+    html += '<div class="pw-sec"><div class="pw-sec-h">Saved to library</div><ul class="pw-list">' +
+      saves.slice(0, 5).map(s => `<li class="pw-row" data-item-id="${s.id}"><span>${escapeHtml(s.title)}</span><span class="pw-meta">${fmt(s.created_at)}</span></li>`).join('') +
+      '</ul></div>';
+  }
+  if (exports.length) {
+    html += '<div class="pw-sec"><div class="pw-sec-h">Drive exports</div><ul class="pw-list">' +
+      exports.slice(0, 5).map(ex => `<li class="pw-row"><a href="${escapeHtml(ex.webViewLink || '#')}" target="_blank" rel="noopener">${escapeHtml(ex.name || '(untitled)')} ↗</a><span class="pw-meta">${escapeHtml(ex.format || '')} · ${fmt(ex.created_at)}</span></li>`).join('') +
+      '</ul></div>';
+  }
+  host.style.display = 'block';
+  host.innerHTML = html;
+  // Click handlers: thread → load thread; item → open detail
+  host.querySelectorAll('[data-thread-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      $('#taskModal').classList.remove('show');
+      loadThread(el.dataset.threadId);
+    });
+  });
+  host.querySelectorAll('[data-item-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      $('#taskModal').classList.remove('show');
+      openDetail(el.dataset.itemId);
+    });
+  });
 }
 async function saveTask() {
   const title = $('#taskTitle').value.trim();
@@ -3755,6 +3821,11 @@ function consumeOAuthHash() {
 let chatHistory = [];
 let chatBusy = false;
 let currentThreadId = null;
+// When the user clicks "Run with Beacon" on a task or project, we stash the
+// link here so subsequent assistant replies + saves carry the parent id.
+// Cleared on New chat / sign out.
+let currentChatContext = null; // { taskId } | { projectId } | null
+let currentThreadTaskId = null;    // set when chat is started from "Run with Beacon" on a task
 let currentThreadProjectId = null; // set when chat is started from "Run with Beacon" — propagates to thread + exports
 
 async function autoSaveThread() {
@@ -3774,7 +3845,8 @@ async function autoSaveThread() {
       last_message_at: now,
       created_at: now,
       updated_at: now,
-      project_id: currentThreadProjectId || null
+      project_id: currentThreadProjectId || null,
+      task_id: currentThreadTaskId || null
     });
   } catch (e) { /* non-fatal */ }
 }
@@ -3791,6 +3863,7 @@ async function loadMostRecentThread() {
       chatHistory = messages;
       currentThreadId = t.id;
       currentThreadProjectId = t.project_id || null;
+      currentThreadTaskId = t.task_id || null;
     }
   } catch (e) { /* ignore */ }
 }
@@ -3836,6 +3909,7 @@ async function loadThread(id) {
       chatHistory = messages;
       currentThreadId = id;
       currentThreadProjectId = t.project_id || null;
+      currentThreadTaskId = t.task_id || null;
       renderChat();
       $('#threadsModal').classList.remove('show');
       scrollToChat();
@@ -4183,6 +4257,8 @@ async function saveAssistantToLibrary(idx) {
     title,
     content: (userMsg ? '> ' + userMsg.content + '\n\n' : '') + msg.content,
     size: new Blob([msg.content]).size,
+    project_id: currentThreadProjectId || null,
+    task_id: currentThreadTaskId || null,
     created_at: now
   });
   await loadAll();
@@ -4342,6 +4418,12 @@ async function runTaskInChat() {
   }
 
   $('#taskModal').classList.remove('show');
+  // Fresh thread tagged to this task — outputs accumulate against it.
+  if (chatHistory.length) await autoSaveThread().catch(() => {});
+  chatHistory = [];
+  currentThreadId = null;
+  currentThreadTaskId = t.id;
+  currentThreadProjectId = t.project_id || null;
   scrollToChat();
   sendChat(prompt, 'default');
 }
@@ -4353,6 +4435,7 @@ async function clearChat() {
   chatHistory = [];
   currentThreadId = null;
   currentThreadProjectId = null;
+  currentThreadTaskId = null;
   renderChat();
 }
 
