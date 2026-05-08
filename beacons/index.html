@@ -832,6 +832,43 @@ main {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.finding-card .fc-refine {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(91,141,239,.08);
+}
+.finding-card .fc-refine-input {
+  flex: 1;
+  background: rgba(20, 28, 45, 0.5);
+  border: 1px solid rgba(91, 141, 239, .14);
+  color: var(--text);
+  padding: 6px 9px;
+  font-size: .72rem;
+  border-radius: 6px;
+  outline: 0;
+  transition: border-color .12s;
+  cursor: text;
+}
+.finding-card .fc-refine-input:focus { border-color: var(--gold); background: rgba(20, 28, 45, 0.75); }
+.finding-card .fc-refine-input:disabled { opacity: .5; cursor: not-allowed; }
+.finding-card .fc-refine-input::placeholder { color: var(--muted); font-style: italic; }
+.finding-card .fc-refine-btn {
+  background: rgba(232, 197, 71, .12);
+  border: 1px solid rgba(232, 197, 71, .25);
+  color: var(--gold);
+  padding: 0 10px;
+  font-size: .8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.finding-card .fc-refine-btn:hover:not(:disabled) {
+  background: rgba(232, 197, 71, .22);
+  border-color: rgba(232, 197, 71, .45);
+}
+.finding-card .fc-refine-btn:disabled { opacity: .5; cursor: not-allowed; }
 .finding-empty {
   grid-column: 1 / -1;
   font-size: .8rem;
@@ -3825,8 +3862,7 @@ function renderFindings() {
         }
       }
     } else if (it.kind === 'task' && it.status === 'done') {
-      // Completed tasks that were tied to a project or had Beacon work attached
-      // count as findings — they show "what got done."
+      // Completed tasks count as findings — they show what work got done.
       all.push({
         kind: 'task_done',
         icon: '✓',
@@ -3837,23 +3873,11 @@ function renderFindings() {
         task_id: it.id,
         item_id: it.id
       });
-    } else if (it.kind === 'thought') {
-      // Saved thoughts (typed or voice-recorded) are outputs the user produced
-      // in Beacon. Include them. Uploaded files (kind='file') and synced email
-      // (kind='email_thread') stay excluded — those are inputs from outside.
-      const preview = (it.content || '').toString().replace(/\s+/g, ' ').slice(0, 140);
-      all.push({
-        kind: 'thought',
-        icon: '✎',
-        label: it.source === 'voice' ? 'Recording' : 'Note',
-        title: it.title || 'Saved thought',
-        preview,
-        date: it.created_at || it.updated_at,
-        project_id: it.project_id || null,
-        task_id: it.task_id || null,
-        item_id: it.id
-      });
     }
+    // Excluded by design: kind='thought' (user-typed or voice-recorded notes —
+    // those are inputs/context, not material work Beacon produced),
+    // kind='file' (uploads), kind='email_thread' (synced from Gmail),
+    // kind='direction'/'project'/'task' (state, not output).
   }
 
   all.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
@@ -3875,27 +3899,71 @@ function renderFindings() {
     const sourceLabel = task ? task.title : (proj ? proj.title : '');
     const sourceHtml = sourceLabel ? `<span class="fc-source">${escapeHtml(sourceLabel)}</span>` : '';
     const previewHtml = f.preview ? `<div class="fc-preview">${escapeHtml(f.preview)}${f.preview.length >= 140 ? '…' : ''}</div>` : '';
+    // Threads get an inline refine box — a way to ask Beacon to revise the
+    // output without opening the thread. Submitting loads the thread, appends
+    // the request as a new user turn, and Beacon iterates from there.
+    const refineHtml = f.kind === 'thread' && f.thread_id
+      ? `<div class="fc-refine" data-thread-id="${escapeHtml(f.thread_id)}">
+          <input type="text" class="fc-refine-input" placeholder="Request a change — e.g. 'shorter, more direct'">
+          <button class="fc-refine-btn" type="button" title="Send refinement to Beacon">↵</button>
+        </div>`
+      : '';
     let data;
     if (f.kind === 'export')         data = `data-link="${escapeHtml(f.webViewLink || '')}"`;
     else if (f.kind === 'thread')    data = `data-thread-id="${escapeHtml(f.thread_id || '')}"`;
-    else if (f.kind === 'thought')   data = `data-item-id="${escapeHtml(f.item_id || '')}"`;
     else                              data = `data-task-id="${escapeHtml(f.task_id || '')}"`;
     return `<div class="finding-card" ${data}>
       <div class="fc-top"><span class="fc-icon">${f.icon}</span><span>${escapeHtml(f.label)}</span></div>
       <div class="fc-title">${escapeHtml(f.title)}</div>
       ${previewHtml}
       <div class="fc-meta"><span>${fmtDate(f.date)}</span>${sourceHtml ? '·' : ''}${sourceHtml}</div>
+      ${refineHtml}
     </div>`;
   }).join('');
 
+  // Card body click → open thread / link / task. The refine box stops
+  // propagation so typing/clicking inside it doesn't trigger the card open.
   strip.querySelectorAll('.finding-card').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.fc-refine')) return;
       if (el.dataset.link)          window.open(el.dataset.link, '_blank', 'noopener');
       else if (el.dataset.threadId) loadThread(el.dataset.threadId);
-      else if (el.dataset.itemId)   openDetail(el.dataset.itemId);
       else if (el.dataset.taskId)   openTaskModal(el.dataset.taskId);
     });
   });
+
+  strip.querySelectorAll('.fc-refine').forEach(box => {
+    const input = box.querySelector('.fc-refine-input');
+    const btn   = box.querySelector('.fc-refine-btn');
+    const submit = async () => {
+      const text = (input.value || '').trim();
+      if (!text) return;
+      const threadId = box.dataset.threadId;
+      input.value = '';
+      input.disabled = true;
+      btn.disabled = true;
+      try {
+        await refineFinding(threadId, text);
+      } finally {
+        input.disabled = false;
+        btn.disabled = false;
+      }
+    };
+    btn.addEventListener('click', (e) => { e.stopPropagation(); submit(); });
+    input.addEventListener('click', (e) => e.stopPropagation());
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); submit(); }
+    });
+  });
+}
+
+async function refineFinding(threadId, requestText) {
+  // Load the thread (sets chatHistory + currentThreadId, scrolls to chat).
+  // Then send the refine request as a new user turn — Beacon iterates from
+  // the existing context and produces a revised output.
+  await loadThread(threadId);
+  // Small delay so the chat UI settles before we kick off the next message.
+  setTimeout(() => sendChat(requestText), 250);
 }
 
 function renderStats() {
