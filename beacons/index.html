@@ -5091,11 +5091,15 @@ async function init() {
     $('#lockError').classList.remove('show');
   });
 
-  // Restore JWT session on page load if present.
+  // Restore JWT session on page load if present. NOTE: never `return` here —
+  // the event-wiring below must run regardless of whether we restored a
+  // session or are showing the lock screen.
   if (isUnlocked()) {
+    let shown = false;
     const restored = await tryRestoreSession();
     if (restored) {
       showApp();
+      shown = true;
     } else {
       // Try legacy fallback
       const legacy = localStorage.getItem(PASSCODE_HASH_KEY);
@@ -5103,11 +5107,17 @@ async function init() {
         authHash = legacy;
         try {
           const res = await fetch(`${API_BASE}/items`, { headers: authHeaders() });
-          if (res.status === 200) { cloudMode = true; showApp(); return; }
+          if (res.status === 200) {
+            cloudMode = true;
+            showApp();
+            shown = true;
+          }
         } catch (e) {}
       }
-      // Stale session — wipe and present login.
-      sessionStorage.removeItem(SESSION_KEY);
+      if (!shown) {
+        // Stale session — wipe and let the lock screen render.
+        sessionStorage.removeItem(SESSION_KEY);
+      }
     }
   } else {
     // No session yet — but if a JWT is still in localStorage, try to restore silently.
