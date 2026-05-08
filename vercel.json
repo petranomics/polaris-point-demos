@@ -1,6 +1,10 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/beacon",  "destination": "/beacons/index.html" },
+    { "source": "/beacon/", "destination": "/beacons/index.html" }
+  ],
   "functions": {
     "api/*.js": {
       "memory": 256,
