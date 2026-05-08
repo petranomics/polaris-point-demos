@@ -12,7 +12,7 @@ const Auth = require('../../lib/auth');
 const Budget = require('../../lib/budget');
 const Pricing = require('../../lib/pricing');
 
-const ALLOWED_SETTINGS_KEYS = ['web_search_enabled'];
+const ALLOWED_SETTINGS_KEYS = ['web_search_enabled', 'onboarded'];
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

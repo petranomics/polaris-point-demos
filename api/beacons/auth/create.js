@@ -56,13 +56,16 @@ module.exports = async function handler(req, res) {
   const id = Auth.shortId('t');
   const passwordHash = await Auth.hashPassword(password);
 
+  // New tenants start with onboarded:false so the wizard auto-fires on first
+  // sign-in. The wizard sets it to true after the user completes (or skips).
+  const initialSettings = { ...Auth.DEFAULT_SETTINGS, onboarded: false };
   await sql`
     INSERT INTO beacons_tenants
       (id, email, password_hash, display_name, tier, allocation_pct, settings, is_admin)
     VALUES
       (${id}, ${email.toLowerCase()}, ${passwordHash}, ${display_name || null},
        ${requestedTier}, ${requestedAllocation},
-       ${JSON.stringify(Auth.DEFAULT_SETTINGS)}::jsonb, FALSE)
+       ${JSON.stringify(initialSettings)}::jsonb, FALSE)
   `;
 
   const tenant = await Auth.findTenantById(sql, id);

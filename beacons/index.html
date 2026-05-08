@@ -2487,6 +2487,11 @@ main {
         </label>
         <div class="setting-help">When off, Beacon will rely on your library only and won't make web search calls.</div>
       </div>
+      <div class="form-field">
+        <label>Onboarding</label>
+        <button type="button" class="btn btn-ghost" id="settingsOnboardingBtn" style="width:fit-content">Re-run onboarding wizard</button>
+        <div class="setting-help">Walks you through priming Beacon — role, voice, focus, and avoidances. Replaces your current Standing Directions.</div>
+      </div>
       <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:20px 0">
       <h4 style="margin:0 0 10px">Change password</h4>
       <div class="form-field">
@@ -2510,6 +2515,51 @@ main {
       <div style="display:flex;gap:8px;margin-left:auto">
         <button class="btn btn-ghost" data-close-modal="settingsModal">Close</button>
         <button class="btn btn-primary" id="settingsSaveBtn">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ONBOARDING WIZARD MODAL ===================== -->
+<div class="modal" id="onboardingModal">
+  <div class="modal-card" style="max-width:640px">
+    <div class="modal-head">
+      <div>
+        <h3>Welcome to Beacon</h3>
+        <div class="modal-meta">A few questions so Beacon can actually be useful for you. Takes 2-3 minutes.</div>
+      </div>
+      <button class="modal-close" id="onboardingCloseBtn" title="Skip — you can do this later">×</button>
+    </div>
+    <form class="modal-form" id="onboardingForm" onsubmit="return false">
+      <div class="form-field">
+        <label>Your role and company</label>
+        <input type="text" id="onbRole" placeholder="e.g. Sustainability lead at Patagonia covering supplier programs">
+      </div>
+      <div class="form-field">
+        <label>What you're focused on right now</label>
+        <textarea id="onbFocus" rows="3" placeholder="e.g. Q3 supplier audits, new soy moratorium rollout, prepping for board update"></textarea>
+      </div>
+      <div class="form-field">
+        <label>How you want Beacon to write for you</label>
+        <textarea id="onbVoice" rows="2" placeholder="e.g. direct, no fluff, no jargon, no exclamation points, third-person when referring to me"></textarea>
+      </div>
+      <div class="form-field">
+        <label>Who you usually communicate with</label>
+        <input type="text" id="onbAudience" placeholder="e.g. internal sustainability team, supplier reps, occasional regulators">
+      </div>
+      <div class="form-field">
+        <label>Things to avoid</label>
+        <textarea id="onbAvoid" rows="2" placeholder="e.g. don't make up numbers, don't quote me without checking, never use 'leverage' or 'synergy'"></textarea>
+      </div>
+      <div class="form-field">
+        <label>Industry shorthand or proper nouns Beacon should know</label>
+        <textarea id="onbVocab" rows="2" placeholder="e.g. RSPO = Roundtable on Sustainable Palm Oil; Carlos = my counterpart at supplier X"></textarea>
+      </div>
+    </form>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="onboardingSkipBtn" style="color:var(--muted)">Skip for now</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-primary" id="onboardingSaveBtn">Save and start</button>
       </div>
     </div>
   </div>
@@ -3568,6 +3618,103 @@ async function cycleTaskStatus(id) {
   const now = new Date().toISOString();
   await storagePut({ ...t, status: next, updated_at: now, done_at: next === 'done' ? now : null });
   await loadAll(); renderAll();
+}
+
+/* ============================================================
+   ONBOARDING WIZARD
+   ============================================================ */
+function openOnboardingModal() {
+  // Pre-fill from existing directions if any (so re-opening doesn't lose work).
+  // Light parsing: we only restore if the directions text was authored by this
+  // wizard (sentinel marker), otherwise leave the fields blank.
+  const existing = (directionsText || '').trim();
+  const fromWizard = existing.includes('<!-- onboarding-wizard:v1 -->');
+  if (fromWizard) {
+    const grab = (label) => {
+      const re = new RegExp('### ' + label + '\\n([\\s\\S]*?)(?=\\n### |\\n<!-- |$)', 'm');
+      const m = existing.match(re);
+      return m ? m[1].trim() : '';
+    };
+    $('#onbRole').value     = grab('Role');
+    $('#onbFocus').value    = grab('Focus');
+    $('#onbVoice').value    = grab('Voice');
+    $('#onbAudience').value = grab('Audience');
+    $('#onbAvoid').value    = grab('Avoid');
+    $('#onbVocab').value    = grab('Vocabulary');
+  } else {
+    ['#onbRole','#onbFocus','#onbVoice','#onbAudience','#onbAvoid','#onbVocab'].forEach(s => $(s).value = '');
+  }
+  $('#onboardingModal').classList.add('show');
+  setTimeout(() => $('#onbRole').focus(), 60);
+}
+
+async function saveOnboarding(skip) {
+  if (!skip) {
+    const role     = $('#onbRole').value.trim();
+    const focus    = $('#onbFocus').value.trim();
+    const voice    = $('#onbVoice').value.trim();
+    const audience = $('#onbAudience').value.trim();
+    const avoid    = $('#onbAvoid').value.trim();
+    const vocab    = $('#onbVocab').value.trim();
+
+    // Compose into a directions block. Sentinel comment lets us re-parse later.
+    const composed = [
+      '<!-- onboarding-wizard:v1 -->',
+      role     ? '### Role\n' + role             : '',
+      focus    ? '### Focus\n' + focus           : '',
+      voice    ? '### Voice\n' + voice           : '',
+      audience ? '### Audience\n' + audience     : '',
+      avoid    ? '### Avoid\n' + avoid           : '',
+      vocab    ? '### Vocabulary\n' + vocab      : ''
+    ].filter(Boolean).join('\n\n');
+
+    if (composed.length > '<!-- onboarding-wizard:v1 -->'.length) {
+      // Save as the directions item. If one already exists, update it.
+      const all = await storageAll();
+      const existing = all.find(i => i.kind === 'direction');
+      const now = new Date().toISOString();
+      await storagePut({
+        id: existing ? existing.id : '_directions',
+        kind: 'direction',
+        title: 'Standing directions',
+        content: composed,
+        created_at: existing ? existing.created_at : now,
+        updated_at: now
+      });
+      await loadAll();
+      renderAll();
+    }
+  }
+
+  // Mark tenant as onboarded so the wizard doesn't auto-fire next session.
+  // Even if user skipped — we don't nag. They can re-open from Settings.
+  if (cloudMode) {
+    try {
+      const res = await fetch(`${API_BASE}/settings`, {
+        method: 'PUT',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: { onboarded: true } })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.tenant_summary) currentTenant = data.tenant_summary;
+      }
+    } catch (e) { console.warn('onboarding flag save failed', e); }
+  }
+
+  $('#onboardingModal').classList.remove('show');
+  showToast(skip ? 'You can complete onboarding from Settings any time.' : 'Beacon is primed. Try a chat now.');
+}
+
+function maybeAutoOpenOnboarding() {
+  // Auto-fire only when the tenant explicitly has settings.onboarded === false.
+  // Pete (legacy) has onboarded: true. Existing customers without the flag set
+  // (legacy field absence) are NOT prompted. Only newly-created tenants from
+  // /auth/create see this.
+  if (!currentTenant || !currentTenant.settings) return;
+  if (currentTenant.settings.onboarded === false) {
+    setTimeout(openOnboardingModal, 600);  // small delay so the app settles first
+  }
 }
 
 /* ============================================================
@@ -5091,6 +5238,9 @@ async function bootstrap() {
   consumeOAuthHash();
   // Cost wheel: only meaningful in cloud mode (usage logs are server-side)
   if (cloudMode) loadUsage();
+  // Onboarding wizard: auto-fire if the tenant was just created and hasn't
+  // been primed yet. No-op for Pete (his tenant is marked onboarded:true).
+  maybeAutoOpenOnboarding();
 }
 
 /* ============================================================
@@ -5193,6 +5343,19 @@ async function init() {
   const settingsUpgrade = $('#settingsUpgradeBtn');
   if (settingsUpgrade) settingsUpgrade.addEventListener('click', () => {
     window.location.href = 'mailto:pete@polarispoint.io?subject=Beacon%20plan%20upgrade';
+  });
+
+  // Onboarding wizard wiring
+  const onbSave = $('#onboardingSaveBtn');
+  if (onbSave) onbSave.addEventListener('click', () => saveOnboarding(false));
+  const onbSkip = $('#onboardingSkipBtn');
+  if (onbSkip) onbSkip.addEventListener('click', () => saveOnboarding(true));
+  const onbClose = $('#onboardingCloseBtn');
+  if (onbClose) onbClose.addEventListener('click', () => saveOnboarding(true));
+  const settingsOnboarding = $('#settingsOnboardingBtn');
+  if (settingsOnboarding) settingsOnboarding.addEventListener('click', () => {
+    $('#settingsModal').classList.remove('show');
+    setTimeout(openOnboardingModal, 200);
   });
 
   // Cost wheel (top-right of topbar)
