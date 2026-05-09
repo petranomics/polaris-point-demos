@@ -6501,23 +6501,31 @@
         host.innerHTML = '<p style="color:#475569;font-size:.78rem;text-align:center;padding:50px 0;">No usage data in the last 14 days. Apps will appear here once they receive traffic post-deploy.</p>';
         return;
       }
-      var h = 160, padX = 1, padBot = 18;
+      var h = 140;
       var max = days.reduce(function(m, d) { return Math.max(m, d.cost); }, 0) || 1;
-      var bw = (100 - padX * 2) / days.length;
-      var bars = days.map(function(d, i) {
-        var bh = (d.cost / max) * (h - padBot - 8);
-        var x = padX + i * bw;
-        var y = h - padBot - bh;
-        // d.day comes from Postgres as a UTC timestamp; reading the YYYY-MM-DD prefix
-        // avoids a tz-shift that pushed every label one day earlier in non-UTC zones.
+      var slotPct = 100 / days.length;
+      // Labels via YYYY-MM-DD prefix to avoid tz-shift from new Date(...)
+      var labelFor = function(d) {
         var ymd = String(d.day).slice(0, 10).split('-');
-        var label = parseInt(ymd[1], 10) + '/' + parseInt(ymd[2], 10);
-        return '<rect x="' + (x + 0.3) + '%" y="' + y + '" width="' + (bw - 0.6) + '%" height="' + Math.max(bh, 1) + '" fill="#5B8DEF" rx="1">' +
-                 '<title>' + label + ': ' + auFmtUsd(d.cost) + ' (' + d.calls + ' calls)</title>' +
-               '</rect>' +
-               '<text x="' + (x + bw / 2) + '%" y="' + (h - 4) + '" text-anchor="middle" font-size="9" fill="#475569">' + label + '</text>';
+        return parseInt(ymd[1], 10) + '/' + parseInt(ymd[2], 10);
+      };
+      // Bars in SVG (stretches with viewBox); labels in HTML below (real CSS pixels)
+      // so non-uniform SVG scaling can't mangle them.
+      var bars = days.map(function(d, i) {
+        var bh = (d.cost / max) * h;
+        var x = i * slotPct + slotPct * 0.1;
+        var w = slotPct * 0.8;
+        var y = h - Math.max(bh, 1);
+        return '<rect x="' + x + '%" y="' + y + '" width="' + w + '%" height="' + Math.max(bh, 1) + '" fill="#5B8DEF" rx="1">' +
+                 '<title>' + labelFor(d) + ': ' + auFmtUsd(d.cost) + ' (' + d.calls + ' calls)</title>' +
+               '</rect>';
       }).join('');
-      host.innerHTML = '<svg viewBox="0 0 100 ' + h + '" preserveAspectRatio="none" style="width:100%;height:' + h + 'px;display:block;">' + bars + '</svg>';
+      var labels = days.map(function(d) {
+        return '<span>' + labelFor(d) + '</span>';
+      }).join('');
+      host.innerHTML =
+        '<svg viewBox="0 0 100 ' + h + '" preserveAspectRatio="none" style="width:100%;height:' + h + 'px;display:block;">' + bars + '</svg>' +
+        '<div style="display:grid;grid-template-columns:repeat(' + days.length + ',1fr);font-size:.62rem;color:#475569;margin-top:6px;text-align:center;">' + labels + '</div>';
     }
 
     function renderAuAppTable(rows) {
