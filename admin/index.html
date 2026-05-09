@@ -3630,24 +3630,32 @@
       }
 
       // === IDENTITY ===
+      // Additive: don't overwrite a field the user (or buildSiteFromLead)
+      // already populated. Google is for enrichment, not replacement.
+      function setIfEmpty(id, value) {
+        var el = document.getElementById(id);
+        if (el && !el.value && value) el.value = value;
+      }
       if (place.name) {
-        document.getElementById('intBizName').value = place.name;
-        // Smart short name: remove generic suffixes, keep the distinctive part
+        setIfEmpty('intBizName', place.name);
         var short = place.name
           .replace(/\s*(LLC|Inc|Co|Corp|Ltd|Plumbing|Services?|Solutions?|Company|Group|Enterprises?)\s*\.?$/gi, '')
           .trim();
-        document.getElementById('intBizShort').value = short || place.name;
+        setIfEmpty('intBizShort', short || place.name);
       }
-      if (place.address) document.getElementById('intAddress').value = place.address;
+      setIfEmpty('intAddress', place.address);
       if (place.phone) {
-        document.getElementById('intPhone').value = place.phone;
-        var digits = place.phone.replace(/\D/g, '');
-        document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
+        var phEl = document.getElementById('intPhone');
+        if (phEl && !phEl.value) {
+          phEl.value = place.phone;
+          var digits = place.phone.replace(/\D/g, '');
+          document.getElementById('intPhoneTel').value = digits ? 'tel:+1' + digits : '';
+        }
       }
-      if (place.website) document.getElementById('intWebsite').value = place.website;
+      setIfEmpty('intWebsite', place.website);
       if (place.hoursFormatted || place.hours) {
         var h = place.hoursFormatted || (Array.isArray(place.hours) ? place.hours.join(' | ') : place.hours);
-        document.getElementById('intHours').value = h;
+        setIfEmpty('intHours', h);
       }
 
       // === HERO & ABOUT ===
