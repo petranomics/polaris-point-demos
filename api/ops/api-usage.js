@@ -20,6 +20,11 @@ module.exports = async function handler(req, res) {
 
   const sql = neon(process.env.DATABASE_URL);
 
+  // Optional ?app=xxx filter applies to every query except by_app (which is the
+  // dropdown's source list and must always show all apps).
+  const appRaw = (req.query.app || '').toString().trim();
+  const appFilter = appRaw && appRaw !== 'all' ? appRaw : null;
+
   try {
     const [totalsRow, todayRow, last24Row, prevMonthRow, byAppRows, byModelRows, byDayRows, recentRows, providerRows] = await Promise.all([
       sql`
@@ -27,23 +32,27 @@ module.exports = async function handler(req, res) {
                COUNT(*)::int                    AS calls,
                COALESCE(SUM(input_tokens+output_tokens+cache_creation_tokens+cache_read_tokens),0)::bigint AS tokens
           FROM beacons_usage_log
-         WHERE created_at >= date_trunc('month', NOW())`,
+         WHERE created_at >= date_trunc('month', NOW())
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int AS calls
           FROM beacons_usage_log
-         WHERE created_at >= date_trunc('day', NOW())`,
+         WHERE created_at >= date_trunc('day', NOW())
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int AS calls
           FROM beacons_usage_log
-         WHERE created_at >= NOW() - INTERVAL '24 hours'`,
+         WHERE created_at >= NOW() - INTERVAL '24 hours'
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int AS calls
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW() - INTERVAL '1 month')
-           AND created_at <  date_trunc('month', NOW())`,
+           AND created_at <  date_trunc('month', NOW())
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
       sql`
         SELECT COALESCE(app,'beacons')                        AS app,
                COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours')::int  AS calls_24h,
@@ -63,6 +72,7 @@ module.exports = async function handler(req, res) {
                COALESCE(SUM(cost_usd),0)::float AS cost
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW())
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
          GROUP BY model, provider
          ORDER BY cost DESC, calls DESC
          LIMIT 20`,
@@ -72,6 +82,7 @@ module.exports = async function handler(req, res) {
                COUNT(*)::int                        AS calls
           FROM beacons_usage_log
          WHERE created_at >= NOW() - INTERVAL '14 days'
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
          GROUP BY day
          ORDER BY day ASC`,
       sql`
@@ -80,6 +91,7 @@ module.exports = async function handler(req, res) {
                latency_ms,
                (input_tokens + output_tokens + cache_creation_tokens + cache_read_tokens) AS tokens
           FROM beacons_usage_log
+         WHERE (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
          ORDER BY created_at DESC
          LIMIT 30`,
       sql`
@@ -88,12 +100,14 @@ module.exports = async function handler(req, res) {
                COALESCE(SUM(cost_usd),0)::float  AS cost
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW())
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
          GROUP BY provider
          ORDER BY cost DESC`,
     ]);
 
     return res.status(200).json({
       generated_at: new Date().toISOString(),
+      app_filter: appFilter,
       totals: {
         mtd:       { cost: totalsRow[0].cost, calls: totalsRow[0].calls, tokens: Number(totalsRow[0].tokens) },
         today:     { cost: todayRow[0].cost,  calls: todayRow[0].calls },

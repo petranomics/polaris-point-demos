@@ -2573,7 +2573,12 @@
           <h2 style="margin:0;color:#fff;font-family:'Outfit',sans-serif;">API Usage &amp; Cost</h2>
           <p style="margin:4px 0 0;font-size:.78rem;color:#64748b;">Anthropic + Mistral spend across all 5 apps. Data from <code style="color:#5B8DEF;">beacons_usage_log</code> via <code style="color:#5B8DEF;">/api/ops/api-usage</code>.</p>
         </div>
-        <button class="btn-export secondary" onclick="loadAdminApiUsage()" style="font-size:.75rem;padding:8px 16px;">Refresh</button>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select id="auAppFilter" onchange="loadAdminApiUsage()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.78rem;outline:none;min-width:160px;">
+            <option value="all">All apps</option>
+          </select>
+          <button class="btn-export secondary" onclick="loadAdminApiUsage()" style="font-size:.75rem;padding:8px 16px;">Refresh</button>
+        </div>
       </div>
 
       <!-- KPI cards -->
@@ -5076,15 +5081,18 @@
     }
 
     function scrapeOneCity(ind, cs, cb) {
-      // Use Google Places for real scraping
-      fetch('/api/places?q=' + encodeURIComponent(ind + ' ' + cs))
+      // Google Places text search — returns up to ~20 results per city.
+      // Phone/website are not in the search payload; "Enrich Selected" fills those in via /api/places.
+      fetch('/api/places-search?q=' + encodeURIComponent(ind + ' ' + cs))
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          if (d.error || !d.name) { cb(generateDemoScrapeResults(ind, cs)); return; }
-          // Google Places returns a single result; wrap in array
-          var arr = [{ name: d.name, phone: d.phone || null, email: null,
-            website: d.website || null, address: d.address || cs,
-            rating: d.rating || null, mapsUrl: d.mapsUrl || null, _city: cs }];
+          if (d.error || !d.results || !d.results.length) { cb(generateDemoScrapeResults(ind, cs)); return; }
+          var arr = d.results.map(function(p) {
+            return { name: p.name, phone: null, email: null, website: null,
+              address: p.address || cs, rating: p.rating || null,
+              reviewCount: p.reviewCount || 0, mapsUrl: p.mapsUrl || null,
+              placeId: p.placeId || null, _city: cs };
+          });
           cb(arr);
         }).catch(function() { cb(generateDemoScrapeResults(ind, cs)); });
     }
@@ -5127,69 +5135,32 @@
         '<span style="font-size:.72rem;color:#64748b;">' + (results.length - noSite) + ' with website</span>' +
         (results[0]._demo ? '<span style="font-size:.62rem;color:#f59e0b;margin-left:auto;">Demo data \u2014 connect agent for real results</span>' : '') + '</div>';
       html += '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">' +
-        '<button class="btn-export" onclick="importSelectedScraped(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;">Import Selected</button>' +
+        '<button id="moveToLeadsBtn" class="btn-export" onclick="importSelectedScraped(\'' + ind + '\')" style="font-size:.72rem;padding:6px 14px;opacity:.5;cursor:not-allowed;" disabled>Move to Leads (0)</button>' +
         '<button class="btn-export secondary" onclick="selectScrapeFilter(\'no_website\')" style="font-size:.72rem;padding:6px 14px;">Select No-Website (' + noSite + ')</button>' +
         '<button class="btn-export secondary" onclick="selectScrapeFilter(\'all\')" style="font-size:.72rem;padding:6px 14px;">Select All</button>' +
         '<button class="btn-export secondary" onclick="selectScrapeFilter(\'none\')" style="font-size:.72rem;padding:6px 14px;">Deselect All</button>' +
         '<button class="btn-export" onclick="enrichSelectedScraped()" style="font-size:.72rem;padding:6px 14px;background:#D4A853;">Enrich Selected</button>' +
         '</div>';
-      html += '<div style="font-size:.7rem;color:#64748b;margin-bottom:8px;font-style:italic;">Tip: Check boxes for batch import or enrichment. To skip the import step, click &ldquo;Build Site&rdquo; on a single result to go straight to the site builder.</div>';
+      html += '<div style="font-size:.7rem;color:#64748b;margin-bottom:8px;font-style:italic;">Tip: Check boxes to enrich or move prospects to Leads. Build the demo site from the My Leads tab after importing.</div>';
       html += '<div class="scrape-results">';
       results.forEach(function(r, i) {
         var enrichedBadges = '';
         if (r._enriched) enrichedBadges = ' <span style="font-size:.58rem;color:#22c55e;background:rgba(34,197,94,.1);padding:1px 6px;border-radius:4px;">Enriched</span>';
+        var siteHref = r.website ? (r.website.match(/^https?:\/\//) ? r.website : 'https://' + r.website) : '';
         html += '<div class="scrape-result-item">' +
-          '<input type="checkbox" class="scrape-select" data-idx="' + i + '" style="accent-color:#5B8DEF;width:16px;height:16px;flex-shrink:0;margin-right:8px;">' +
+          '<input type="checkbox" class="scrape-select" data-idx="' + i + '" onchange="updateMoveCount()" style="accent-color:#5B8DEF;width:16px;height:16px;flex-shrink:0;margin-right:8px;">' +
           '<div style="flex:1;min-width:0;">' +
           '<div class="biz-name">' + r.name + (!r.website ? ' <span class="outreach-badge no-site">No Site</span>' : '') + enrichedBadges + '</div>' +
           '<div class="biz-meta">' + [r.phone, r.email, r.address].filter(Boolean).join(' \u00B7 ') + '</div>' +
-          (r.website ? '<div class="biz-meta" style="color:#5B8DEF;">' + r.website + '</div>' : '') +
+          (r.website ? '<div class="biz-meta"><a href="' + siteHref + '" target="_blank" rel="noopener" style="color:#5B8DEF;text-decoration:none;">' + r.website + ' \u2197</a></div>' : '') +
           (r.rating ? '<div class="biz-meta" style="color:#f59e0b;">\u2605 ' + r.rating + (r.reviewCount ? ' (' + r.reviewCount + ' reviews)' : '') + '</div>' : '') +
           '</div>' +
-          '<button onclick="buildSiteFromScrape(' + i + ',\'' + ind + '\')" class="btn-export" style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.25);color:#5B8DEF;font-size:.68rem;padding:5px 12px;white-space:nowrap;flex-shrink:0;">Build Site \u2192</button>' +
           '</div>';
       });
       div.innerHTML = html + '</div>';
+      updateMoveCount();
     }
 
-    // One-click: import scrape result as a lead AND open Site Builder pre-filled
-    async function buildSiteFromScrape(idx, ind) {
-      var r = _scrapeResults[idx];
-      if (!r) return;
-      try {
-        var owner = currentUser || sessionStorage.getItem('pp_user') || 'unknown';
-        var notes = 'Quick-built from agent scrape' + (r._enriched ? ' (enriched)' : '');
-        if (r.yelpUrl) notes += '\nYelp: ' + r.yelpUrl;
-        if (r.mapsUrl) notes += '\nMaps: ' + r.mapsUrl;
-        var resp = await fetch('/api/leads', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            biz_name: r.name, industry: ind, address: r.address || '', website: r.website || 'none',
-            phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '',
-            rank: r.website ? 'warm' : 'hot', source: 'agent-scrape', notes: notes,
-            listing_url: r.yelpUrl || r.mapsUrl || '', owner: owner
-          })
-        });
-        var data = await resp.json();
-        var leadId = (data.lead && data.lead.id) ? data.lead.id : (data.id || null);
-        // Reload leads cache so buildSiteFromLead can find the new one
-        if (typeof loadLeads === 'function') { try { await loadLeads(); } catch (e) {} }
-        if (leadId && typeof buildSiteFromLead === 'function') {
-          buildSiteFromLead(leadId);
-        } else {
-          // Fallback: switch to intake and pre-fill from scrape data directly
-          switchTab('intake');
-          setTimeout(function() {
-            var nameEl = document.getElementById('intBizName'); if (nameEl && r.name) nameEl.value = r.name;
-            var phoneEl = document.getElementById('intPhone'); if (phoneEl && r.phone) phoneEl.value = r.phone;
-            var emailEl = document.getElementById('intEmail'); if (emailEl && r.email) emailEl.value = r.email;
-            var addrEl = document.getElementById('intAddress'); if (addrEl && r.address) addrEl.value = r.address;
-            var webEl = document.getElementById('intWebsite'); if (webEl && r.website && r.website !== 'none') webEl.value = r.website;
-          }, 200);
-        }
-      } catch (e) { alert('Failed to import & build: ' + e.message); }
-    }
 
     function selectScrapeFilter(filter) {
       document.querySelectorAll('.scrape-select').forEach(function(cb) {
@@ -5199,6 +5170,17 @@
         else if (filter === 'none') cb.checked = false;
         else if (filter === 'no_website') cb.checked = !r.website;
       });
+      updateMoveCount();
+    }
+
+    function updateMoveCount() {
+      var n = document.querySelectorAll('.scrape-select:checked').length;
+      var btn = document.getElementById('moveToLeadsBtn');
+      if (!btn) return;
+      btn.textContent = 'Move to Leads (' + n + ')';
+      btn.disabled = n === 0;
+      btn.style.opacity = n === 0 ? '.5' : '1';
+      btn.style.cursor = n === 0 ? 'not-allowed' : 'pointer';
     }
 
     function getSelectedScrapeIdxs() {
@@ -6434,7 +6416,10 @@
 
     // === API USAGE TAB (admin) ===
     function loadAdminApiUsage() {
-      fetch('/api/ops/api-usage')
+      var sel = document.getElementById('auAppFilter');
+      var app = sel ? sel.value : 'all';
+      var url = '/api/ops/api-usage' + (app && app !== 'all' ? '?app=' + encodeURIComponent(app) : '');
+      fetch(url)
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.error) {
@@ -6442,6 +6427,7 @@
               '<tr><td colspan="7" style="color:#ef4444;text-align:center;padding:20px;">' + data.error + '</td></tr>';
             return;
           }
+          syncAuAppFilter(data.by_app, data.app_filter);
           renderAuKpis(data.totals);
           renderAuChart(data.by_day);
           renderAuAppTable(data.by_app);
@@ -6452,6 +6438,22 @@
           document.getElementById('auAppBody').innerHTML =
             '<tr><td colspan="7" style="color:#ef4444;text-align:center;padding:20px;">Failed to load: ' + err.message + '</td></tr>';
         });
+    }
+
+    function syncAuAppFilter(byApp, currentFilter) {
+      var sel = document.getElementById('auAppFilter');
+      if (!sel || !byApp) return;
+      var apps = byApp.map(function(r) { return r.app; }).sort();
+      var existing = Array.prototype.slice.call(sel.options).map(function(o) { return o.value; });
+      // Only rebuild if the app set changed, so we don't fight the user's selection.
+      var same = apps.length === existing.length - 1 && apps.every(function(a, i) { return a === existing[i + 1]; });
+      if (!same) {
+        var keep = sel.value;
+        sel.innerHTML = '<option value="all">All apps</option>' +
+          apps.map(function(a) { return '<option value="' + a + '">' + a + '</option>'; }).join('');
+        sel.value = (currentFilter && apps.indexOf(currentFilter) >= 0) ? currentFilter
+                  : (apps.indexOf(keep) >= 0 ? keep : 'all');
+      }
     }
 
     function auFmtUsd(n) {
@@ -6506,7 +6508,10 @@
         var bh = (d.cost / max) * (h - padBot - 8);
         var x = padX + i * bw;
         var y = h - padBot - bh;
-        var label = new Date(d.day).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+        // d.day comes from Postgres as a UTC timestamp; reading the YYYY-MM-DD prefix
+        // avoids a tz-shift that pushed every label one day earlier in non-UTC zones.
+        var ymd = String(d.day).slice(0, 10).split('-');
+        var label = parseInt(ymd[1], 10) + '/' + parseInt(ymd[2], 10);
         return '<rect x="' + (x + 0.3) + '%" y="' + y + '" width="' + (bw - 0.6) + '%" height="' + Math.max(bh, 1) + '" fill="#5B8DEF" rx="1">' +
                  '<title>' + label + ': ' + auFmtUsd(d.cost) + ' (' + d.calls + ' calls)</title>' +
                '</rect>' +
