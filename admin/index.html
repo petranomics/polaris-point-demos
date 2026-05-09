@@ -3436,7 +3436,9 @@
           if (nameMatch) {
             searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
           } else {
-            // Short URL (maps.app.goo.gl/...) — resolve server-side first
+            // Short URL (maps.app.goo.gl/...) — resolve server-side first.
+            // /api/resolve also peeks at the destination's <title> as a fallback
+            // for CID-style URLs that don't include /place/ in the path.
             listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Resolving short URL...</p>';
             resultsDiv.style.display = 'block';
             fetch('/api/resolve?url=' + encodeURIComponent(urlInput))
@@ -3444,11 +3446,20 @@
               .then(function(data) {
                 var resolved = data.resolved || '';
                 var rMatch = resolved.match(/place\/([^\/\?]+)/);
+                var resolvedName = '';
                 if (rMatch) {
-                  document.getElementById('searchUrl').value = resolved;
-                  searchName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
-                  document.getElementById('searchBizName').value = searchName;
+                  resolvedName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
+                } else if (data.name) {
+                  resolvedName = data.name;
                 }
+                if (!resolvedName) {
+                  // Don't recurse — that loops forever when the resolved URL
+                  // also lacks /place/. Show an actionable message instead.
+                  listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t pull a business name from that link. Type the business name in the field above and click Search again.</p>';
+                  return;
+                }
+                document.getElementById('searchUrl').value = '';
+                document.getElementById('searchBizName').value = resolvedName;
                 searchPlaces();
               }).catch(function() {
                 listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t resolve short URL. Enter the business name manually and search again.</p>';
