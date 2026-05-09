@@ -20,39 +20,45 @@ module.exports = async function handler(req, res) {
 
   const sql = neon(process.env.DATABASE_URL);
 
-  // Optional ?app=xxx filter applies to every query except by_app (which is the
-  // dropdown's source list and must always show all apps).
+  // Optional ?app=xxx and ?tenant_id=xxx filters apply to every query except
+  // by_app and by_tenant (those drive the dropdowns and must show all options).
   const appRaw = (req.query.app || '').toString().trim();
   const appFilter = appRaw && appRaw !== 'all' ? appRaw : null;
+  const tenantRaw = (req.query.tenant_id || '').toString().trim();
+  const tenantFilter = tenantRaw && tenantRaw !== 'all' ? tenantRaw : null;
 
   try {
-    const [totalsRow, todayRow, last24Row, prevMonthRow, byAppRows, byModelRows, byDayRows, recentRows, providerRows] = await Promise.all([
+    const [totalsRow, todayRow, last24Row, prevMonthRow, byAppRows, byModelRows, byDayRows, recentRows, providerRows, byTenantRows] = await Promise.all([
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int                    AS calls,
                COALESCE(SUM(input_tokens+output_tokens+cache_creation_tokens+cache_read_tokens),0)::bigint AS tokens
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW())
-           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})`,
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int AS calls
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('day', NOW())
-           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})`,
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int AS calls
           FROM beacons_usage_log
          WHERE created_at >= NOW() - INTERVAL '24 hours'
-           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})`,
       sql`
         SELECT COALESCE(SUM(cost_usd),0)::float AS cost,
                COUNT(*)::int AS calls
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW() - INTERVAL '1 month')
            AND created_at <  date_trunc('month', NOW())
-           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})`,
+           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})`,
       sql`
         SELECT COALESCE(app,'beacons')                        AS app,
                COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours')::int  AS calls_24h,
@@ -73,6 +79,7 @@ module.exports = async function handler(req, res) {
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW())
            AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})
          GROUP BY model, provider
          ORDER BY cost DESC, calls DESC
          LIMIT 20`,
@@ -83,16 +90,20 @@ module.exports = async function handler(req, res) {
           FROM beacons_usage_log
          WHERE created_at >= NOW() - INTERVAL '14 days'
            AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})
          GROUP BY day
          ORDER BY day ASC`,
       sql`
-        SELECT created_at, app, endpoint, model, provider,
-               cost_usd::float                              AS cost_usd,
-               latency_ms,
-               (input_tokens + output_tokens + cache_creation_tokens + cache_read_tokens) AS tokens
-          FROM beacons_usage_log
-         WHERE (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
-         ORDER BY created_at DESC
+        SELECT u.created_at, u.app, u.endpoint, u.model, u.provider, u.tenant_id,
+               t.display_name                               AS tenant_name,
+               u.cost_usd::float                            AS cost_usd,
+               u.latency_ms,
+               (u.input_tokens + u.output_tokens + u.cache_creation_tokens + u.cache_read_tokens) AS tokens
+          FROM beacons_usage_log u
+          LEFT JOIN beacons_tenants t ON t.id = u.tenant_id
+         WHERE (${appFilter}::text IS NULL OR COALESCE(u.app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR u.tenant_id = ${tenantFilter})
+         ORDER BY u.created_at DESC
          LIMIT 30`,
       sql`
         SELECT COALESCE(provider,'anthropic')    AS provider,
@@ -101,13 +112,31 @@ module.exports = async function handler(req, res) {
           FROM beacons_usage_log
          WHERE created_at >= date_trunc('month', NOW())
            AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})
          GROUP BY provider
          ORDER BY cost DESC`,
+      sql`
+        SELECT u.tenant_id                                                AS tenant_id,
+               COALESCE(t.display_name, t.email, u.tenant_id)             AS display_name,
+               COALESCE(t.tier, '—')                                      AS tier,
+               COUNT(*) FILTER (WHERE u.created_at >= NOW() - INTERVAL '24 hours')::int  AS calls_24h,
+               COUNT(*) FILTER (WHERE u.created_at >= date_trunc('month', NOW()))::int   AS calls_mtd,
+               COALESCE(SUM(u.cost_usd) FILTER (WHERE u.created_at >= NOW() - INTERVAL '24 hours'),0)::float AS cost_24h,
+               COALESCE(SUM(u.cost_usd) FILTER (WHERE u.created_at >= date_trunc('month', NOW())),0)::float AS cost_mtd,
+               MAX(u.created_at)                                          AS last_seen
+          FROM beacons_usage_log u
+          LEFT JOIN beacons_tenants t ON t.id = u.tenant_id
+         WHERE u.tenant_id IS NOT NULL
+           AND u.created_at >= NOW() - INTERVAL '30 days'
+           AND (${appFilter}::text IS NULL OR COALESCE(u.app,'beacons') = ${appFilter})
+         GROUP BY u.tenant_id, t.display_name, t.email, t.tier
+         ORDER BY cost_mtd DESC, calls_mtd DESC`,
     ]);
 
     return res.status(200).json({
       generated_at: new Date().toISOString(),
       app_filter: appFilter,
+      tenant_filter: tenantFilter,
       totals: {
         mtd:       { cost: totalsRow[0].cost, calls: totalsRow[0].calls, tokens: Number(totalsRow[0].tokens) },
         today:     { cost: todayRow[0].cost,  calls: todayRow[0].calls },
@@ -115,6 +144,7 @@ module.exports = async function handler(req, res) {
         prevMonth: { cost: prevMonthRow[0].cost, calls: prevMonthRow[0].calls },
       },
       by_app:      byAppRows,
+      by_tenant:   byTenantRows,
       by_model:    byModelRows,
       by_provider: providerRows,
       by_day:      byDayRows,

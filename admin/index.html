@@ -2574,8 +2574,11 @@
           <p style="margin:4px 0 0;font-size:.78rem;color:#64748b;">Anthropic + Mistral spend across all 5 apps. Data from <code style="color:#5B8DEF;">beacons_usage_log</code> via <code style="color:#5B8DEF;">/api/ops/api-usage</code>.</p>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <select id="auAppFilter" onchange="loadAdminApiUsage()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.78rem;outline:none;min-width:160px;">
+          <select id="auAppFilter" onchange="onAuAppChange()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.78rem;outline:none;min-width:160px;">
             <option value="all">All apps</option>
+          </select>
+          <select id="auTenantFilter" onchange="loadAdminApiUsage()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.78rem;outline:none;min-width:180px;display:none;">
+            <option value="all">All profiles</option>
           </select>
           <button class="btn-export secondary" onclick="loadAdminApiUsage()" style="font-size:.75rem;padding:8px 16px;">Refresh</button>
         </div>
@@ -2626,6 +2629,25 @@
               <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Last Seen</th>
             </tr></thead>
             <tbody id="auAppBody"><tr><td colspan="7" style="text-align:center;color:#475569;padding:20px;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Per-profile (Beacon tenants) -->
+      <div id="auTenantSection" style="background:#111827;border:1px solid rgba(91,141,239,.08);border-radius:12px;padding:20px;margin-bottom:16px;display:none;">
+        <h3 style="margin:0 0 12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:#fff;">Per-Profile Breakdown</h3>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;">
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Profile</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Tier</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Calls 24h</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Calls MTD</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Cost 24h</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Cost MTD</th>
+              <th style="text-align:left;padding:8px 12px;border-bottom:1px solid #1e293b;">Last Seen</th>
+            </tr></thead>
+            <tbody id="auTenantBody"></tbody>
           </table>
         </div>
       </div>
@@ -6416,9 +6438,14 @@
 
     // === API USAGE TAB (admin) ===
     function loadAdminApiUsage() {
-      var sel = document.getElementById('auAppFilter');
-      var app = sel ? sel.value : 'all';
-      var url = '/api/ops/api-usage' + (app && app !== 'all' ? '?app=' + encodeURIComponent(app) : '');
+      var appSel = document.getElementById('auAppFilter');
+      var tenSel = document.getElementById('auTenantFilter');
+      var app = appSel ? appSel.value : 'all';
+      var tenant = tenSel ? tenSel.value : 'all';
+      var qs = [];
+      if (app && app !== 'all') qs.push('app=' + encodeURIComponent(app));
+      if (tenant && tenant !== 'all') qs.push('tenant_id=' + encodeURIComponent(tenant));
+      var url = '/api/ops/api-usage' + (qs.length ? '?' + qs.join('&') : '');
       fetch(url)
         .then(function(r) { return r.json(); })
         .then(function(data) {
@@ -6428,9 +6455,11 @@
             return;
           }
           syncAuAppFilter(data.by_app, data.app_filter);
+          syncAuTenantFilter(data.by_tenant, data.tenant_filter, data.app_filter);
           renderAuKpis(data.totals);
           renderAuChart(data.by_day);
           renderAuAppTable(data.by_app);
+          renderAuTenantTable(data.by_tenant);
           renderAuModelTable(data.by_model);
           renderAuRecent(data.recent);
         })
@@ -6438,6 +6467,14 @@
           document.getElementById('auAppBody').innerHTML =
             '<tr><td colspan="7" style="color:#ef4444;text-align:center;padding:20px;">Failed to load: ' + err.message + '</td></tr>';
         });
+    }
+
+    // App-dropdown change clears any active tenant filter (a tenant only makes
+    // sense within an app — switching app should reset profile selection).
+    function onAuAppChange() {
+      var ten = document.getElementById('auTenantFilter');
+      if (ten) ten.value = 'all';
+      loadAdminApiUsage();
     }
 
     function syncAuAppFilter(byApp, currentFilter) {
@@ -6454,6 +6491,58 @@
         sel.value = (currentFilter && apps.indexOf(currentFilter) >= 0) ? currentFilter
                   : (apps.indexOf(keep) >= 0 ? keep : 'all');
       }
+    }
+
+    function syncAuTenantFilter(byTenant, currentTenant, currentApp) {
+      var sel = document.getElementById('auTenantFilter');
+      if (!sel) return;
+      var hasTenants = byTenant && byTenant.length > 0;
+      // The tenant filter only makes sense for apps that log a tenant_id (today
+      // that's beacons). Hide the dropdown when no tenant data is available.
+      if (!hasTenants) {
+        sel.style.display = 'none';
+        sel.value = 'all';
+        return;
+      }
+      sel.style.display = '';
+      var ids = byTenant.map(function(r) { return r.tenant_id; });
+      var existing = Array.prototype.slice.call(sel.options).map(function(o) { return o.value; });
+      var same = ids.length === existing.length - 1 && ids.every(function(id, i) { return id === existing[i + 1]; });
+      if (!same) {
+        var keep = sel.value;
+        sel.innerHTML = '<option value="all">All profiles</option>' +
+          byTenant.map(function(r) {
+            var name = r.display_name || r.tenant_id;
+            return '<option value="' + r.tenant_id + '">' + name + '</option>';
+          }).join('');
+        sel.value = (currentTenant && ids.indexOf(currentTenant) >= 0) ? currentTenant
+                  : (ids.indexOf(keep) >= 0 ? keep : 'all');
+      }
+    }
+
+    function renderAuTenantTable(rows) {
+      var section = document.getElementById('auTenantSection');
+      var body = document.getElementById('auTenantBody');
+      if (!rows || rows.length === 0) {
+        if (section) section.style.display = 'none';
+        return;
+      }
+      if (section) section.style.display = '';
+      body.innerHTML = rows.map(function(r) {
+        var costColor = r.cost_mtd > 1 ? '#D4A853' : '#cbd5e1';
+        return '<tr style="font-size:.82rem;color:#cbd5e1;">' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' +
+            '<strong style="color:#fff;">' + (r.display_name || r.tenant_id) + '</strong>' +
+            (r.display_name && r.display_name !== r.tenant_id ? '<div style="font-size:.66rem;color:#475569;font-family:\'JetBrains Mono\',monospace;">' + r.tenant_id + '</div>' : '') +
+          '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (r.tier || '—') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtNum(r.calls_24h) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtNum(r.calls_mtd) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtUsd(r.cost_24h) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);color:' + costColor + ';">' + auFmtUsd(r.cost_mtd) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + auFmtAgo(r.last_seen) + '</td>' +
+        '</tr>';
+      }).join('');
     }
 
     function auFmtUsd(n) {
@@ -6520,12 +6609,19 @@
                  '<title>' + labelFor(d) + ': ' + auFmtUsd(d.cost) + ' (' + d.calls + ' calls)</title>' +
                '</rect>';
       }).join('');
+      var amounts = days.map(function(d) {
+        var v = Number(d.cost) || 0;
+        var txt = v === 0 ? '' : (v < 0.01 ? '<$0.01' : '$' + v.toFixed(2));
+        return '<span style="color:' + (v === 0 ? '#334155' : '#cbd5e1') + ';">' + txt + '</span>';
+      }).join('');
       var labels = days.map(function(d) {
         return '<span>' + labelFor(d) + '</span>';
       }).join('');
+      var gridStyle = 'display:grid;grid-template-columns:repeat(' + days.length + ',1fr);text-align:center;';
       host.innerHTML =
         '<svg viewBox="0 0 100 ' + h + '" preserveAspectRatio="none" style="width:100%;height:' + h + 'px;display:block;">' + bars + '</svg>' +
-        '<div style="display:grid;grid-template-columns:repeat(' + days.length + ',1fr);font-size:.62rem;color:#475569;margin-top:6px;text-align:center;">' + labels + '</div>';
+        '<div style="' + gridStyle + 'font-size:.62rem;font-weight:600;color:#cbd5e1;margin-top:4px;">' + amounts + '</div>' +
+        '<div style="' + gridStyle + 'font-size:.62rem;color:#475569;margin-top:2px;">' + labels + '</div>';
     }
 
     function renderAuAppTable(rows) {
