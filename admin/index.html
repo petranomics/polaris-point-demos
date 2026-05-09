@@ -4444,7 +4444,10 @@
 
     function deleteLead(id) {
       if (!confirm('Delete this lead?')) return;
-      fetch('/api/leads?id=' + id, { method: 'DELETE' }).then(function() { renderLeads(); });
+      fetch('/api/leads?id=' + id, { method: 'DELETE' }).then(function() {
+        if (typeof renderLeads === 'function') { try { renderLeads(); } catch (e) {} }
+        if (typeof loadOutreachQueue === 'function') loadOutreachQueue();
+      });
     }
 
     function renderLeadCard(lead) {
@@ -5104,16 +5107,17 @@
 
     function scrapeOneCity(ind, cs, cb) {
       // Google Places text search — returns up to ~20 results per city.
-      // Phone/website are not in the search payload; "Enrich Selected" fills those in via /api/places.
+      // The endpoint auto-fetches Place Details for each result, so phone and
+      // website come back populated when Google has them.
       fetch('/api/places-search?q=' + encodeURIComponent(ind + ' ' + cs))
         .then(function(r) { return r.json(); })
         .then(function(d) {
           if (d.error || !d.results || !d.results.length) { cb(generateDemoScrapeResults(ind, cs)); return; }
           var arr = d.results.map(function(p) {
-            return { name: p.name, phone: null, email: null, website: null,
+            return { name: p.name, phone: p.phone || null, email: null, website: p.website || null,
               address: p.address || cs, rating: p.rating || null,
               reviewCount: p.reviewCount || 0, mapsUrl: p.mapsUrl || null,
-              placeId: p.placeId || null, _city: cs };
+              hours: p.hours || [], placeId: p.placeId || null, _city: cs };
           });
           cb(arr);
         }).catch(function() { cb(generateDemoScrapeResults(ind, cs)); });
@@ -5367,6 +5371,7 @@
           '<button class="outreach-btn call-btn" id="callBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'call\')">' + (oData.callPrep ? '\u260E View Script' : '\u260E Call Prep') + '</button>' +
           (hasWeb ? '<button class="outreach-btn audit-btn" id="auditBtn-' + L.id + '" onclick="toggleOrGenerate(' + L.id + ',\'audit\')">' + (oData.audit ? '\u26A1 View Audit' : '\u26A1 Audit Site') + '</button>' : '') +
           (hasEmail ? '<a href="mailto:' + L.email + '" class="outreach-btn" style="text-decoration:none;background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:#a855f7;">Direct Email</a>' : '') +
+          '<button class="outreach-btn" onclick="deleteLead(' + L.id + ')" style="background:none;border:1px solid rgba(239,68,68,.25);color:#ef4444;margin-left:auto;">\u2715 Delete</button>' +
         '</div>' +
         '<div class="outreach-drawer" id="outreach-enrich-' + L.id + '"></div>' +
         '<div class="outreach-drawer" id="outreach-email-' + L.id + '"></div>' +
