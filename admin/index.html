@@ -1946,7 +1946,9 @@
           <div style="display:flex;gap:8px;align-items:center;">
             <input type="text" id="previewUrl" readonly style="flex:1;background:#111827;border:1px solid #1e293b;border-radius:6px;padding:8px 10px;color:#5B8DEF;font-size:.8rem;font-family:monospace;">
             <button class="btn-export" onclick="navigator.clipboard.writeText(document.getElementById('previewUrl').value);this.textContent='Copied!';var b=this;setTimeout(function(){b.textContent='Copy'},1500)" style="padding:8px 14px;font-size:.75rem;">Copy</button>
+            <a id="previewEditLink" href="#" target="_blank" rel="noopener" style="display:none;padding:8px 14px;font-size:.75rem;background:rgba(212,168,83,.12);border:1px solid rgba(212,168,83,.3);border-radius:6px;color:#D4A853;text-decoration:none;font-weight:600;white-space:nowrap;">Edit Photos →</a>
           </div>
+          <p style="font-size:.7rem;color:#475569;margin-top:8px;">Tweak photos and copy in the editor — saves persist to this same preview link.</p>
         </div>
 
         <!-- AI Adjustments -->
@@ -4063,6 +4065,11 @@
         if (data.error) throw new Error(data.error);
         document.getElementById('previewUrl').value = data.url;
         document.getElementById('previewLink').style.display = 'block';
+        var editLink = document.getElementById('previewEditLink');
+        if (editLink && data.id) {
+          editLink.href = '/' + template + '/admin?p=' + encodeURIComponent(data.id);
+          editLink.style.display = '';
+        }
         window.open(data.url, '_blank');
         btn.disabled = false;
         btn.textContent = btn.dataset.label || 'Preview Live Site';
@@ -4073,6 +4080,8 @@
         var fallbackUrl = window.location.origin + '/' + template + '?preview=local';
         document.getElementById('previewUrl').value = fallbackUrl + ' (local only)';
         document.getElementById('previewLink').style.display = 'block';
+        var editLink2 = document.getElementById('previewEditLink');
+        if (editLink2) editLink2.style.display = 'none';
         window.open(fallbackUrl, '_blank');
         btn.disabled = false;
         btn.textContent = btn.dataset.label || 'Preview Live Site';

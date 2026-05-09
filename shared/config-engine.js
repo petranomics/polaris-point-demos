@@ -72,6 +72,12 @@
           window.SITE_CONFIG = fn0();
         }
       }
+      // Persist the preview ID across same-tab navigation so the per-site admin
+      // (a different page that may not carry ?p=) can detect preview mode.
+      try {
+        sessionStorage.setItem('pp_preview_id', previewId);
+        window.PP_PREVIEW_ID = previewId;
+      } catch (e) {}
     }
 
     // Legacy: base64 preview or localStorage preview

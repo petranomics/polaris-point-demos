@@ -11,14 +11,48 @@
   var useDbConfig = !!clientSlug;                // DB mode vs localStorage mode
   var authHash = '';                             // Stored after successful login
   var STORAGE_KEY = 'pp_config_' + demoName;
+
+  // Preview mode — set when this admin is loaded under a preview URL. Edits
+  // are saved back to /api/preview so the same preview link reflects them
+  // for prospects.
+  var previewId = '';
+  var usePreview = false;
+  try {
+    var qsId = new URLSearchParams(location.search).get('p');
+    previewId = qsId || sessionStorage.getItem('pp_preview_id') || window.PP_PREVIEW_ID || '';
+    usePreview = !useDbConfig && !!previewId;
+  } catch (e) {}
+
+  // In preview mode, fetch the preview's config and let it override SITE_CONFIG
+  // before originalConfig snapshots it.
+  if (usePreview) {
+    try {
+      var pxhr = new XMLHttpRequest();
+      pxhr.open('GET', '/api/preview?id=' + encodeURIComponent(previewId), false);
+      pxhr.send();
+      if (pxhr.status === 200) {
+        var pdata = JSON.parse(pxhr.responseText);
+        if (pdata && pdata.config) {
+          var pfn = new Function(pdata.config + '\nreturn SITE_CONFIG;');
+          window.SITE_CONFIG = pfn();
+        }
+      } else {
+        usePreview = false; // preview gone — fall back to file/localStorage
+      }
+    } catch (e) {
+      usePreview = false;
+    }
+  }
+
   var originalConfig = JSON.parse(JSON.stringify(window.SITE_CONFIG || {}));
   var config = Object.assign({}, originalConfig);
 
   // Restore auth hash from session (persists across page reloads within tab)
   try { authHash = sessionStorage.getItem('pp_auth_hash') || ''; } catch(e) {}
 
-  // Merge localStorage overrides (demo mode only)
-  if (!useDbConfig) {
+  // Merge localStorage overrides only in plain demo mode — DB and preview have
+  // their own source of truth.
+  if (!useDbConfig && !usePreview) {
     try {
       var stored = localStorage.getItem(STORAGE_KEY);
       if (stored) Object.assign(config, JSON.parse(stored));
@@ -385,6 +419,30 @@
       return;
     }
 
+    // Preview mode: save back to the same preview ID so the link reflects edits
+    if (usePreview) {
+      var configSrc = 'window.SITE_CONFIG = ' + JSON.stringify(data) + ';';
+      fetch('/api/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: previewId,
+          config: configSrc,
+          template: demoName,
+          name: data.businessName || demoName
+        })
+      }).then(function(r) { return r.json(); }).then(function(result) {
+        if (result.id) {
+          notify('Preview updated! Reload the site to see changes.', 'success');
+        } else {
+          notify('Save failed: ' + (result.error || 'unknown error'), 'error');
+        }
+      }).catch(function(err) {
+        notify('Save failed: ' + err.message, 'error');
+      });
+      return;
+    }
+
     // Demo mode: save to localStorage
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -437,8 +495,18 @@
     // Header
     var header = el('div', 'sa-header');
     header.innerHTML = '<h1>Site Editor</h1>';
-    var sub = el('p', '', { text: demoName.charAt(0).toUpperCase() + demoName.slice(1) + ' Demo Configuration' });
+    var subText = usePreview
+      ? 'Editing preview · changes save back to this preview link'
+      : (demoName.charAt(0).toUpperCase() + demoName.slice(1) + ' Demo Configuration');
+    var sub = el('p', '', { text: subText });
     header.appendChild(sub);
+    if (usePreview) {
+      var banner = el('div', '', {
+        text: 'Preview Mode — edits persist to /api/preview (id: ' + previewId + ')'
+      });
+      banner.style.cssText = 'margin-top:10px;padding:8px 14px;background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.25);border-radius:8px;color:#D4A853;font-size:.78rem;font-weight:600;';
+      header.appendChild(banner);
+    }
     wrap.appendChild(header);
 
     // 1. Business Info

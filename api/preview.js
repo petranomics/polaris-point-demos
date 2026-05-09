@@ -89,15 +89,30 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // POST — create a new preview
+  // POST — create a new preview, OR update an existing one if body.id is given.
+  // Updates require the existing file's SHA per the GitHub Contents API.
   if (req.method === 'POST') {
     var body = req.body;
     if (!body || !body.config) return res.status(400).json({ error: 'Missing config' });
 
     try {
-      var nameSlug = (body.name || 'preview').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 30);
-      var suffix = Math.random().toString(36).substring(2, 8);
-      var id = nameSlug + '-' + suffix;
+      var id;
+      var existingSha = null;
+      var providedId = body.id && /^[a-z0-9-]+$/.test(body.id) ? body.id : null;
+
+      if (providedId) {
+        id = providedId;
+        var existing = await gh('_previews/' + id + '.json?ref=' + branch);
+        if (existing.status === 200) {
+          var fileData = await existing.json();
+          existingSha = fileData.sha;
+        }
+        // If the file is gone, fall through and create it under the same id.
+      } else {
+        var nameSlug = (body.name || 'preview').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 30);
+        var suffix = Math.random().toString(36).substring(2, 8);
+        id = nameSlug + '-' + suffix;
+      }
 
       var payload = JSON.stringify({
         config: body.config,
@@ -106,27 +121,31 @@ module.exports = async function handler(req, res) {
         created: new Date().toISOString()
       });
 
+      var ghBody = {
+        message: (existingSha ? 'Update preview: ' : 'Preview: ') + (body.name || id),
+        content: Buffer.from(payload).toString('base64'),
+        branch: branch
+      };
+      if (existingSha) ghBody.sha = existingSha;
+
       var resp = await gh('_previews/' + id + '.json', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: 'Preview: ' + (body.name || id),
-          content: Buffer.from(payload).toString('base64'),
-          branch: branch
-        })
+        body: JSON.stringify(ghBody)
       });
 
-      if (resp.status !== 201) {
+      if (resp.status !== 201 && resp.status !== 200) {
         var errData = await resp.json();
         return res.status(500).json({ error: 'Failed to save preview: ' + (errData.message || resp.status) });
       }
 
       return res.status(200).json({
         id: id,
-        url: 'https://polarispoint.io/' + (body.template || 'plumber') + '?p=' + id
+        url: 'https://polarispoint.io/' + (body.template || 'plumber') + '?p=' + id,
+        updated: !!existingSha
       });
     } catch(err) {
-      return res.status(500).json({ error: 'Failed to create preview: ' + err.message });
+      return res.status(500).json({ error: 'Failed to save preview: ' + err.message });
     }
   }
 
