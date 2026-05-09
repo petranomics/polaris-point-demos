@@ -184,6 +184,66 @@ button {
 .settings-pw-hint.error { color: var(--red); }
 .settings-pw-hint.ok    { color: #5acf8d; }
 
+.task-picker {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(20, 28, 45, .35);
+  padding: 6px;
+}
+.task-picker-empty {
+  font-size: .76rem;
+  color: var(--muted);
+  font-style: italic;
+  padding: 14px 10px;
+  text-align: center;
+}
+.task-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.task-picker-row:hover { background: rgba(91, 141, 239, .06); }
+.task-picker-row input[type="checkbox"] {
+  width: 16px; height: 16px; cursor: pointer; accent-color: var(--gold); flex-shrink: 0;
+}
+.task-picker-row .tp-status { font-size: .82rem; opacity: .7; flex-shrink: 0; width: 14px; }
+.task-picker-row .tp-title {
+  flex: 1;
+  font-size: .82rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-picker-row .tp-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.task-picker-row .tp-current-project {
+  font-size: .65rem;
+  color: var(--blue);
+  background: rgba(91,141,239,.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.task-picker-row .tp-current-project.moving { color: var(--gold); background: rgba(232,197,71,.1); }
+.task-picker-row.task-picker-done .tp-title { color: var(--muted); text-decoration: line-through; }
+.task-picker-hint {
+  font-size: .65rem;
+  color: var(--muted);
+  font-weight: normal;
+  margin-left: 8px;
+}
+
 .budget-meter { display: flex; flex-direction: column; gap: 6px; }
 .budget-meter-bar {
   width: 100%; height: 8px;
@@ -2386,6 +2446,13 @@ main {
           </select>
         </div>
       </div>
+      <div class="form-field">
+        <label>Tasks in this project <span class="task-picker-hint" id="projectTaskHint"></span></label>
+        <div class="task-picker" id="projectTaskPicker">
+          <div class="task-picker-empty">No tasks yet. Create tasks first, then come back here to relate them.</div>
+        </div>
+        <div class="setting-help">Check tasks to relate them to this project. Unchecking removes the link. Tasks already in another project will be moved here when checked.</div>
+      </div>
     </form>
     <div class="modal-foot">
       <div style="display:flex;gap:8px">
@@ -3413,8 +3480,64 @@ function openProjectModal(id) {
   $('#projectDeleteBtn').style.display = p ? 'inline-flex' : 'none';
   $('#projectRunBtn').style.display = p ? 'inline-flex' : 'none';
   renderProjectWorkspace(p);
+  renderProjectTaskPicker(p);
   $('#projectModal').classList.add('show');
   setTimeout(() => $('#projectName').focus(), 50);
+}
+
+function renderProjectTaskPicker(p) {
+  const host = $('#projectTaskPicker');
+  const hint = $('#projectTaskHint');
+  if (!host) return;
+  const allTasks = (tasks || []).slice().sort((a, b) => {
+    // Order: in this project first, then in_progress, todo, done
+    const aIn = (p && a.project_id === p.id) ? 0 : 1;
+    const bIn = (p && b.project_id === p.id) ? 0 : 1;
+    if (aIn !== bIn) return aIn - bIn;
+    const order = { in_progress: 0, todo: 1, done: 2 };
+    const ao = order[a.status] != null ? order[a.status] : 1;
+    const bo = order[b.status] != null ? order[b.status] : 1;
+    if (ao !== bo) return ao - bo;
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  });
+
+  if (!allTasks.length) {
+    host.innerHTML = '<div class="task-picker-empty">No tasks yet. Create tasks first, then come back here to relate them.</div>';
+    if (hint) hint.textContent = '';
+    return;
+  }
+
+  const projectsById = Object.fromEntries((projects || []).map(pr => [pr.id, pr]));
+  const linkedCount = allTasks.filter(t => p && t.project_id === p.id).length;
+  if (hint) hint.textContent = p ? `${linkedCount} of ${allTasks.length} linked` : `${allTasks.length} available`;
+
+  host.innerHTML = allTasks.map(t => {
+    const checked = !!(p && t.project_id === p.id);
+    const inOther = t.project_id && (!p || t.project_id !== p.id);
+    const otherProj = inOther ? (projectsById[t.project_id] || null) : null;
+    const dot = t.status === 'done' ? '✓' : t.status === 'in_progress' ? '◐' : '☐';
+    const due = t.due_date ? `<span class="tp-meta">due ${escapeHtml(t.due_date)}</span>` : '';
+    const otherTag = otherProj
+      ? `<span class="tp-current-project">in ${escapeHtml(otherProj.title)}</span>`
+      : '';
+    const doneCls = t.status === 'done' ? ' task-picker-done' : '';
+    return `<label class="task-picker-row${doneCls}">
+      <input type="checkbox" data-task-id="${escapeHtml(t.id)}" ${checked ? 'checked' : ''}>
+      <span class="tp-status">${dot}</span>
+      <span class="tp-title">${escapeHtml(t.title)}</span>
+      ${otherTag}${due}
+    </label>`;
+  }).join('');
+
+  // Visual feedback: when a task in another project gets checked, flag it as
+  // "moving" so the user sees what's about to happen on save.
+  host.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const row = cb.closest('.task-picker-row');
+      const tag = row.querySelector('.tp-current-project');
+      if (tag) tag.classList.toggle('moving', cb.checked);
+    });
+  });
 }
 
 function renderProjectWorkspace(p) {
@@ -3489,8 +3612,9 @@ async function saveProject() {
   if (!name) { $('#projectName').focus(); return; }
   const p = editingProjectId ? projects.find(x => x.id === editingProjectId) : null;
   const now = new Date().toISOString();
+  const projectId = p ? p.id : uid();
   await storagePut({
-    id: p ? p.id : uid(), kind: 'project',
+    id: projectId, kind: 'project',
     title: name,
     content: $('#projectDesc').value.trim(),
     cadence: $('#projectCadence').value,
@@ -3498,9 +3622,37 @@ async function saveProject() {
     created_at: p ? p.created_at : now,
     updated_at: now
   });
+
+  // Apply task ↔ project relationships from the picker.
+  // For each checkbox: if checked, ensure task.project_id === projectId; if
+  // unchecked AND the task currently points at this project, unlink it.
+  // Tasks in OTHER projects that get unchecked stay where they are.
+  const checkboxes = $('#projectTaskPicker').querySelectorAll('input[type="checkbox"][data-task-id]');
+  let movedCount = 0, unlinkedCount = 0, addedCount = 0;
+  for (const cb of checkboxes) {
+    const taskId = cb.dataset.taskId;
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) continue;
+    const wasInThis = task.project_id === projectId;
+    if (cb.checked && !wasInThis) {
+      const wasMoved = !!task.project_id;
+      await storagePut({ ...task, project_id: projectId, updated_at: now });
+      if (wasMoved) movedCount++; else addedCount++;
+    } else if (!cb.checked && wasInThis) {
+      await storagePut({ ...task, project_id: null, updated_at: now });
+      unlinkedCount++;
+    }
+  }
+
   await loadAll(); renderAll();
   $('#projectModal').classList.remove('show');
-  showToast(p ? 'Project updated' : 'Project added');
+  let msg = p ? 'Project updated' : 'Project added';
+  const taskNotes = [];
+  if (addedCount)    taskNotes.push(`+${addedCount} linked`);
+  if (movedCount)    taskNotes.push(`${movedCount} moved here`);
+  if (unlinkedCount) taskNotes.push(`-${unlinkedCount} unlinked`);
+  if (taskNotes.length) msg += ' · ' + taskNotes.join(', ');
+  showToast(msg);
 }
 async function deleteProject() {
   if (!editingProjectId) return;
