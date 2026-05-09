@@ -5265,7 +5265,6 @@
       var idxs = getSelectedScrapeIdxs();
       if (!idxs.length) { alert('Select businesses to import first.'); return; }
       var importedNames = [];
-      var importedIds = [];
       var prog = document.getElementById('scrapeProgress');
       if (prog) prog.textContent = 'Importing 0/' + idxs.length + '...';
 
@@ -5282,33 +5281,28 @@
               phone: r.phone || '', email: r.email || '', rating: r.rating ? String(r.rating) : '', rank: r.website ? 'warm' : 'hot', source: 'agent-scrape',
               notes: notes, listing_url: r.mapsUrl || '', owner: currentUser || sessionStorage.getItem('pp_user') || 'unknown' })
           });
-          var data = await resp.json();
-          var leadId = (data.lead && data.lead.id) ? data.lead.id : (data.id || null);
-          if (leadId) importedIds.push(leadId);
+          await resp.json();
           importedNames.push(r.name);
         } catch (e) { /* skip individual failures */ }
       }
       if (prog) prog.textContent = 'Imported ' + importedNames.length + ' leads';
       if (typeof loadLeads === 'function') { try { await loadLeads(); } catch (e) {} }
-      renderImportedConfirmation(importedNames, importedIds);
+      renderImportedConfirmation(importedNames);
     }
 
     // Inline confirmation panel after import — keeps user in flow, no alert
-    function renderImportedConfirmation(names, ids) {
+    function renderImportedConfirmation(names) {
       var div = document.getElementById('scrapeResults');
       if (!div || !names.length) return;
       // Insert at the top of the results
       var nameList = names.slice(0, 5).map(function(n) { return '<span style=\"display:inline-block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#22c55e;font-size:.7rem;padding:2px 8px;border-radius:5px;margin-right:6px;margin-bottom:4px;\">' + n + '</span>'; }).join('');
       if (names.length > 5) nameList += '<span style=\"font-size:.7rem;color:#64748b;margin-left:4px;\">+ ' + (names.length - 5) + ' more</span>';
-      var firstId = ids[0];
-      var quickBuildBtn = firstId ? '<button onclick=\"buildSiteFromLead(' + firstId + ')\" style=\"background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);color:#5B8DEF;font-size:.78rem;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;\">Build Site for First Lead →</button>' : '';
       var html = '<div id=\"importedConfirm\" style=\"background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;\">' +
         '<div style=\"display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;\">' +
         '<div><div style=\"color:#22c55e;font-weight:600;font-size:.88rem;margin-bottom:2px;\">✓ ' + names.length + ' lead' + (names.length === 1 ? '' : 's') + ' imported</div>' +
-        '<div style=\"font-size:.72rem;color:#94a3b8;\">Now in your leads database. Continue with outreach or jump straight into building a site.</div></div>' +
+        '<div style=\"font-size:.72rem;color:#94a3b8;\">Now in your leads database. Open My Leads to continue.</div></div>' +
         '<div style=\"display:flex;gap:8px;flex-wrap:wrap;\">' +
-        quickBuildBtn +
-        '<button onclick="switchTab(\'leads\')" style="background:transparent;border:1px solid #1e293b;color:#94a3b8;font-size:.78rem;padding:7px 14px;border-radius:7px;cursor:pointer;">View All Leads</button>' +
+        '<button onclick="switchTab(\'leads\')" style="background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.3);color:#5B8DEF;font-size:.78rem;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;">Open My Leads →</button>' +
         '</div></div>' +
         '<div>' + nameList + '</div>' +
         '</div>';
