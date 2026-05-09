@@ -4541,6 +4541,7 @@ async function autoSaveThread() {
   const titleSeed = firstUser ? firstUser.content : 'Chat thread';
   const title = titleSeed.replace(/\s+/g, ' ').slice(0, 90) + (titleSeed.length > 90 ? '…' : '');
   const now = new Date().toISOString();
+  let saved = false;
   try {
     await storagePut({
       id: currentThreadId,
@@ -4554,7 +4555,15 @@ async function autoSaveThread() {
       project_id: currentThreadProjectId || null,
       task_id: currentThreadTaskId || null
     });
+    saved = true;
   } catch (e) { /* non-fatal */ }
+
+  // Refresh the dashboard so Latest Findings and other panels reflect the
+  // new/updated thread without needing a page reload. Cheap — items array
+  // is small for a single user.
+  if (saved) {
+    try { await loadAll(); renderAll(); } catch (e) { /* non-fatal */ }
+  }
 }
 
 async function loadMostRecentThread() {
