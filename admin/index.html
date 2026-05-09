@@ -3486,10 +3486,13 @@
           phone: google.phone,
           website: google.website,
           hoursFormatted: google.hoursFormatted,
+          hours: google.hours || [],
           reviews: google.reviews || [],
           mapsUrl: google.mapsUrl,
           photos: google.photos || [],
-          imageUrl: google.imageUrl
+          imageUrl: google.imageUrl,
+          types: google.types || [],
+          editorialSummary: google.editorialSummary || ''
         };
 
         showResult(merged, listDiv);
@@ -3498,17 +3501,109 @@
       });
     }
 
+    // Pull a template's baseline service list from its config.js. Used as a
+    // smarter fallback than Google's generic `types` field.
+    function loadTemplateDefaultServices(template) {
+      var sl = document.getElementById('servicesList');
+      if (!sl) return;
+      fetch('/' + template + '/config.js').then(function(r) { return r.ok ? r.text() : ''; }).then(function(text) {
+        if (!text) return;
+        var pulled = [];
+        for (var i = 1; i <= 5; i++) {
+          var nm = text.match(new RegExp('service' + i + 'Name:\\s*"([^"]+)"'));
+          var ds = text.match(new RegExp('service' + i + 'Desc:\\s*"([^"]+)"'));
+          if (nm) pulled.push({ name: nm[1], desc: ds ? ds[1] : '' });
+        }
+        if (!pulled.length) return;
+        // Re-check — caller raced our fetch and the user may have typed.
+        var existing = sl.querySelectorAll('.svc-name');
+        var stillEmpty = true;
+        existing.forEach(function(inp) { if (inp.value.trim()) stillEmpty = false; });
+        if (!stillEmpty) return;
+        sl.innerHTML = '';
+        pulled.forEach(function(svc) {
+          addServiceRow(sl);
+          var items = sl.querySelectorAll('.dynamic-item');
+          var last = items[items.length - 1];
+          last.querySelector('.svc-name').value = svc.name;
+          last.querySelector('.svc-desc').value = svc.desc;
+        });
+      }).catch(function() {});
+    }
+
+    // Send pulled Google photos to /api/photo-classify (Haiku 4.5 vision) and
+    // (a) update each thumbnail's category label and (b) slot photos by role
+    // so the generated config uses a vehicle/storefront for hero, a logo for
+    // theme.logoUrl, and a people photo for the about section.
+    function classifyPhotos(photos) {
+      if (!photos || !photos.length) return;
+      var origin = location.origin;
+      var urls = photos.slice(0, 10).map(function(p) {
+        return /^https?:/.test(p) ? p : (origin + p);
+      });
+      fetch('/api/photo-classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photos: urls })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (!data || !Array.isArray(data.results)) return;
+        var gallery = document.getElementById('googlePhotosGallery');
+        data.results.forEach(function(c, i) {
+          if (gallery) {
+            var slot = gallery.querySelector('[data-photo-idx="' + i + '"] .photo-cat-label');
+            if (slot) slot.textContent = c.category || 'other';
+          }
+        });
+        // Pick best photo per role
+        var byCat = {};
+        data.results.forEach(function(c, i) {
+          var cat = (c.category || 'other').toLowerCase();
+          if (!byCat[cat]) byCat[cat] = [];
+          byCat[cat].push(photos[i]);
+        });
+        var heroCandidate = (byCat.vehicle || byCat.service || byCat.storefront || byCat.exterior || byCat.interior || byCat.other || photos)[0];
+        var aboutCandidate = (byCat.storefront || byCat.interior || byCat.exterior || byCat.people || byCat.other || photos)[0];
+        if (heroCandidate && aboutCandidate === heroCandidate) {
+          aboutCandidate = (byCat.storefront || byCat.interior || byCat.exterior || byCat.people || byCat.other || photos)[1] || aboutCandidate;
+        }
+        var logoCandidate = (byCat.logo || [])[0];
+        var teamCandidate = (byCat.people || [])[0];
+        window._placeHeroPhoto = heroCandidate || (window._placePhotos && window._placePhotos[0]) || '';
+        window._placeAboutPhoto = aboutCandidate || (window._placePhotos && window._placePhotos[1]) || '';
+        window._placeLogoUrl = logoCandidate || '';
+        window._placeTeamPhoto = teamCandidate || '';
+      }).catch(function() {});
+    }
+
     function showResult(data, listDiv) {
-      // Show confirmation of what was found
+      var photoCount = (data.photos || []).length;
+      var reviewCount = (data.reviews || []).length;
+      var typesList = (data.types || []).filter(function(t) { return t !== 'point_of_interest' && t !== 'establishment'; });
+
+      var photosHtml = photoCount ? (
+        '<div style="margin-top:10px;">' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;" id="googlePhotosGallery">' +
+            data.photos.slice(0, 10).map(function(p, i) {
+              return '<div data-photo-idx="' + i + '" style="position:relative;width:96px;height:72px;border-radius:6px;border:1px solid #1e293b;overflow:hidden;background:#0B1120;">' +
+                '<img src="' + p + '" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />' +
+                '<div class="photo-cat-label" style="position:absolute;bottom:0;left:0;right:0;background:rgba(11,17,32,.85);color:#94a3b8;font-size:.6rem;padding:2px 4px;text-align:center;text-transform:uppercase;letter-spacing:.5px;">analyzing\u2026</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>'
+      ) : '';
+
       listDiv.innerHTML = '<div style="padding:10px;border-radius:8px;background:#111827;">' +
         '<div style="color:#fff;font-weight:600;font-size:.9rem;">\u2705 ' + escHtml(data.name || '') + '</div>' +
         '<div style="color:#64748b;font-size:.78rem;margin-top:2px;">' + escHtml(data.address || '') + '</div>' +
         (data.rating ? '<div style="color:#f59e0b;font-size:.78rem;margin-top:2px;">\u2605 ' + data.rating + ' (' + (data.reviewCount || 0) + ' reviews)</div>' : '') +
-        (data.categories ? '<div style="color:#5B8DEF;font-size:.75rem;margin-top:2px;">' + escHtml(data.categories.join(', ')) + '</div>' : '') +
-        '<div style="color:#16a34a;font-size:.72rem;margin-top:6px;">Auto-filled all fields below \u2193</div>' +
+        (typesList.length ? '<div style="color:#5B8DEF;font-size:.72rem;margin-top:2px;">' + escHtml(typesList.slice(0, 4).join(' \u00B7 ')) + '</div>' : '') +
+        '<div style="color:#94a3b8;font-size:.7rem;margin-top:6px;">Pulled from Google: ' + reviewCount + ' reviews \u00B7 ' + photoCount + ' photos \u00B7 ' + typesList.length + ' categories' + (data.editorialSummary ? ' \u00B7 description' : '') + '</div>' +
+        photosHtml +
+        '<div style="color:#16a34a;font-size:.72rem;margin-top:8px;">Auto-filled fields below \u2193</div>' +
         '</div>';
-      // Auto-fill immediately — no click needed
       fillFromPlace(data);
+      if (photoCount) classifyPhotos(data.photos);
     }
 
     function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -3549,7 +3644,8 @@
       document.getElementById('intHeroHeadline').value = place.name || ('Your Trusted ' + template);
       document.getElementById('intHeroSubtext').value = 'Licensed & insured ' + template.toLowerCase() + ' proudly serving ' + (city || 'the community') + ' and surrounding areas.' + (place.rating ? ' Rated ' + place.rating + ' stars by ' + (place.reviewCount || '') + '+ customers.' : '') + ' Call today for a free estimate.';
       document.getElementById('intAboutTitle').value = (city || 'Your Community') + ' Trusts ' + shortName;
-      document.getElementById('intAboutText').value = place.name + ' has been serving ' + (city || 'the community') + ' with reliable, professional ' + template.toLowerCase() + ' services.' + (place.rating ? ' With a ' + place.rating + '-star rating from ' + (place.reviewCount || '') + ' customers, we take pride in quality work and honest pricing.' : '') + ' Every job is treated with care and respect.';
+      var aboutFallback = place.name + ' has been serving ' + (city || 'the community') + ' with reliable, professional ' + template.toLowerCase() + ' services.' + (place.rating ? ' With a ' + place.rating + '-star rating from ' + (place.reviewCount || '') + ' customers, we take pride in quality work and honest pricing.' : '') + ' Every job is treated with care and respect.';
+      document.getElementById('intAboutText').value = (place.editorialSummary && place.editorialSummary.length > 30) ? place.editorialSummary : aboutFallback;
 
       // === REVIEWS ===
       console.log('fillFromPlace reviews:', place.reviews ? place.reviews.length : 0);
@@ -3575,26 +3671,14 @@
         if (!areasField.value) areasField.value = city;
       }
 
-      // === CATEGORIES → SERVICES ===
-      if (place.categories && place.categories.length) {
-        var sl = document.getElementById('servicesList');
-        // Only overwrite if the services are still the default empty rows
-        var existingNames = sl.querySelectorAll('.svc-name');
-        var allEmpty = true;
-        existingNames.forEach(function(inp) { if (inp.value.trim()) allEmpty = false; });
-        if (allEmpty && place.categories.length > 0) {
-          sl.innerHTML = '';
-          place.categories.forEach(function(cat) {
-            addServiceRow(sl);
-            var items = sl.querySelectorAll('.dynamic-item');
-            var last = items[items.length - 1];
-            last.querySelector('.svc-name').value = cat;
-            last.querySelector('.svc-desc').value = 'Professional ' + cat.toLowerCase() + ' services for residential and commercial customers.';
-          });
-          // Pad to at least 3 services
-          while (sl.querySelectorAll('.dynamic-item').length < 3) addServiceRow(sl);
-        }
-      }
+      // === SERVICES — fall back to template defaults when the form is empty.
+      // Google's `types` field is too generic to be useful as services, so we
+      // pull the template's own service list (loaded async from its config.js).
+      var sl = document.getElementById('servicesList');
+      var existingNames = sl.querySelectorAll('.svc-name');
+      var allEmpty = true;
+      existingNames.forEach(function(inp) { if (inp.value.trim()) allEmpty = false; });
+      if (allEmpty) loadTemplateDefaultServices(template.toLowerCase().replace(/\s+/g, '-'));
 
       // === STORE DATA FOR CONFIG GENERATOR ===
       window._placeRating = place.rating || null;
@@ -3732,7 +3816,7 @@
       var smsNum = digits;
 
       var T = selectedTheme;
-      var logoUrl = document.getElementById('intLogoData').value || document.getElementById('intLogoUrl').value.trim();
+      var logoUrl = document.getElementById('intLogoData').value || document.getElementById('intLogoUrl').value.trim() || window._placeLogoUrl || '';
       var r = parseInt(T.text.slice(1,3),16), g = parseInt(T.text.slice(3,5),16), b = parseInt(T.text.slice(5,7),16);
       var mutedColor = 'rgba(' + r + ',' + g + ',' + b + ',.55)';
 
@@ -3771,7 +3855,7 @@
         '  // === HERO ===\n' +
         '  heroHeadline: ' + JSON.stringify(heroHeadline) + ',\n' +
         '  heroSubtext: ' + JSON.stringify(heroSubtext) + ',\n' +
-        '  heroImage: ' + JSON.stringify((window._placePhotos && window._placePhotos[0]) || window._placeImageUrl || '') + ',\n' +
+        '  heroImage: ' + JSON.stringify(window._placeHeroPhoto || (window._placePhotos && window._placePhotos[0]) || window._placeImageUrl || '') + ',\n' +
         '  heroImageAlt: ' + JSON.stringify(bizName + ' - professional service') + ',\n' +
         '  heroCta1: ' + JSON.stringify('Call ' + phone) + ',\n' +
         '  heroCta2: "Get a Free Estimate",\n\n' +
@@ -3785,7 +3869,7 @@
         '  servicesTitle: "Our Services",\n' +
         svcLines + '\n' +
         '  // === ABOUT ===\n' +
-        '  aboutImage: ' + JSON.stringify((window._placePhotos && window._placePhotos[1]) || window._placeImageUrl || '') + ',\n' +
+        '  aboutImage: ' + JSON.stringify(window._placeAboutPhoto || (window._placePhotos && window._placePhotos[1]) || window._placeImageUrl || '') + ',\n' +
         '  aboutImageAlt: ' + JSON.stringify(bizName + ' team') + ',\n' +
         '  aboutLabel: "Why Choose Us",\n' +
         '  aboutTitle: ' + JSON.stringify(aboutTitle) + ',\n' +

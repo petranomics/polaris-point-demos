@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
     var placeId = findData.candidates[0].place_id;
     var detailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json'
       + '?place_id=' + placeId
-      + '&fields=name,formatted_address,formatted_phone_number,international_phone_number,website,url,rating,user_ratings_total,opening_hours,reviews,photos,types,business_status'
+      + '&fields=name,formatted_address,formatted_phone_number,international_phone_number,website,url,rating,user_ratings_total,opening_hours,reviews,photos,types,business_status,editorial_summary'
       + '&key=' + apiKey;
 
     var detailsResp = await fetch(detailsUrl);
@@ -88,6 +88,7 @@ module.exports = async function handler(req, res) {
       photos: photos,
       imageUrl: photos[0] || '',
       types: place.types || [],
+      editorialSummary: (place.editorial_summary && place.editorial_summary.overview) || '',
       status: place.business_status || 'OPERATIONAL',
       placeId: placeId
     };
