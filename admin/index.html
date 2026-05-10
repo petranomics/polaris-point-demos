@@ -3588,7 +3588,46 @@
         window._placeAboutPhoto = aboutCandidate || (window._placePhotos && window._placePhotos[1]) || '';
         window._placeLogoUrl = logoCandidate || '';
         window._placeTeamPhoto = teamCandidate || '';
+        syncPhotoRoleDropdowns();
       }).catch(function() {});
+    }
+
+    // Read each .photo-role select, decode the photo URL it points at, and
+    // mirror window._place{Hero,About,Logo,Team}Photo. setPhotoRole is called
+    // when the user changes any dropdown; syncPhotoRoleDropdowns runs the
+    // reverse — push role globals back into the visible UI.
+    function decodePhotoUrl(b64) {
+      try { return decodeURIComponent(escape(atob(b64 || ''))); } catch (e) { return ''; }
+    }
+    function syncPhotoRoleDropdowns() {
+      var hero = window._placeHeroPhoto || '';
+      var about = window._placeAboutPhoto || '';
+      var logo = window._placeLogoUrl || '';
+      var team = window._placeTeamPhoto || '';
+      document.querySelectorAll('.photo-role').forEach(function(sel) {
+        var url = decodePhotoUrl(sel.dataset.photoUrlB64);
+        if (url === hero) sel.value = 'hero';
+        else if (url === about) sel.value = 'about';
+        else if (url === logo) sel.value = 'logo';
+        else if (url === team) sel.value = 'team';
+        else sel.value = '';
+      });
+    }
+    function setPhotoRole(sel) {
+      var url = decodePhotoUrl(sel.dataset.photoUrlB64);
+      var role = sel.value;
+      if (!url) return;
+      // Clear this photo from every slot (a photo can only fill one role).
+      if (window._placeHeroPhoto === url) window._placeHeroPhoto = '';
+      if (window._placeAboutPhoto === url) window._placeAboutPhoto = '';
+      if (window._placeLogoUrl === url) window._placeLogoUrl = '';
+      if (window._placeTeamPhoto === url) window._placeTeamPhoto = '';
+      // Assign the new role; this will also displace whoever was there.
+      if (role === 'hero') window._placeHeroPhoto = url;
+      else if (role === 'about') window._placeAboutPhoto = url;
+      else if (role === 'logo') window._placeLogoUrl = url;
+      else if (role === 'team') window._placeTeamPhoto = url;
+      syncPhotoRoleDropdowns();
     }
 
     function showResult(data, listDiv) {
@@ -3598,11 +3637,20 @@
 
       var photosHtml = photoCount ? (
         '<div style="margin-top:10px;">' +
-          '<div style="display:flex;gap:6px;flex-wrap:wrap;" id="googlePhotosGallery">' +
+          '<div style="font-size:.68rem;color:#94a3b8;margin-bottom:6px;">Pick which photo plays which role on the site (Haiku\u2019s guess is pre-selected — change as needed):</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;" id="googlePhotosGallery">' +
             data.photos.slice(0, 10).map(function(p, i) {
-              return '<div data-photo-idx="' + i + '" style="position:relative;width:96px;height:72px;border-radius:6px;border:1px solid #1e293b;overflow:hidden;background:#0B1120;">' +
-                '<img src="' + p + '" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />' +
-                '<div class="photo-cat-label" style="position:absolute;bottom:0;left:0;right:0;background:rgba(11,17,32,.85);color:#94a3b8;font-size:.6rem;padding:2px 4px;text-align:center;text-transform:uppercase;letter-spacing:.5px;">analyzing\u2026</div>' +
+              var encoded = (window.btoa ? btoa(unescape(encodeURIComponent(p))) : p);
+              return '<div data-photo-idx="' + i + '" data-photo-url-b64="' + encoded + '" style="position:relative;width:124px;border-radius:6px;border:1px solid #1e293b;overflow:hidden;background:#0B1120;">' +
+                '<img src="' + p + '" style="width:100%;height:80px;object-fit:cover;display:block;" loading="lazy" />' +
+                '<div class="photo-cat-label" style="position:absolute;top:3px;right:3px;background:rgba(11,17,32,.85);color:#94a3b8;font-size:.55rem;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;">analyzing\u2026</div>' +
+                '<select class="photo-role" data-photo-url-b64="' + encoded + '" onchange="setPhotoRole(this)" style="width:100%;background:#0B1120;color:#cbd5e1;border:0;border-top:1px solid #1e293b;font-size:.7rem;padding:4px 6px;outline:none;">' +
+                  '<option value="">Unused</option>' +
+                  '<option value="hero">Hero</option>' +
+                  '<option value="about">About</option>' +
+                  '<option value="logo">Logo</option>' +
+                  '<option value="team">Team</option>' +
+                '</select>' +
               '</div>';
             }).join('') +
           '</div>' +
