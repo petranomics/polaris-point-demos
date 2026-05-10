@@ -10,8 +10,9 @@ module.exports = async function handler(req, res) {
   }
 
   var query = req.query.q;
-  if (!query) {
-    return res.status(400).json({ error: 'Missing query parameter: q' });
+  var explicitPlaceId = req.query.placeId;
+  if (!query && !explicitPlaceId) {
+    return res.status(400).json({ error: 'Missing query parameter: q or placeId' });
   }
 
   var apiKey = process.env.GOOGLE_PLACES_API_KEY;
@@ -20,27 +21,34 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Step 1: Find Place from text
-    var findUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
-      + '?input=' + encodeURIComponent(query)
-      + '&inputtype=textquery'
-      + '&fields=place_id,name,formatted_address'
-      + '&key=' + apiKey;
+    var placeId;
 
-    var findResp = await fetch(findUrl);
-    var findData = await findResp.json();
+    if (explicitPlaceId) {
+      // Caller gave us a place_id from a Google Maps URL — skip the fuzzy
+      // findplacefromtext step entirely. This is the deterministic path.
+      placeId = explicitPlaceId;
+    } else {
+      // Step 1: Find Place from text
+      var findUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
+        + '?input=' + encodeURIComponent(query)
+        + '&inputtype=textquery'
+        + '&fields=place_id,name,formatted_address'
+        + '&key=' + apiKey;
 
-    if (!findData.candidates || !findData.candidates.length) {
-      return res.status(404).json({
-        error: 'No results found',
-        query: query,
-        status: findData.status || 'UNKNOWN',
-        debug: findData.error_message || null
-      });
+      var findResp = await fetch(findUrl);
+      var findData = await findResp.json();
+
+      if (!findData.candidates || !findData.candidates.length) {
+        return res.status(404).json({
+          error: 'No results found',
+          query: query,
+          status: findData.status || 'UNKNOWN',
+          debug: findData.error_message || null
+        });
+      }
+
+      placeId = findData.candidates[0].place_id;
     }
-
-    // Step 2: Get Place Details
-    var placeId = findData.candidates[0].place_id;
     // editorial_summary is an "Atmosphere" SKU field — requesting it on a key
     // without that SKU enabled makes Google reject the whole call. Stick to
     // fields known to work on a Basic + Contact key.

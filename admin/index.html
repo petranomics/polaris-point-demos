@@ -3429,58 +3429,81 @@
       // Determine search query
       var searchName = '';
       var searchLocation = city;
+      // Extracting place_id from a Maps URL (when present) gives a deterministic
+      // anchor — Google's findplacefromtext can match the wrong business when
+      // the name is generic, but place_id always returns the right one.
+      var directPlaceId = '';
+
+      function extractPlaceId(u) {
+        if (!u) return '';
+        var m = u.match(/[?&]q=place_id:([^&\s]+)/);
+        if (m) return m[1];
+        m = u.match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i);
+        if (m) return m[1];
+        return '';
+      }
 
       if (urlInput) {
         if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
-          var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
-          if (nameMatch) {
-            searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
-          } else {
-            // Short URL (maps.app.goo.gl/...) — resolve server-side first.
-            // /api/resolve also peeks at the destination's <title> as a fallback
-            // for CID-style URLs that don't include /place/ in the path.
-            listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Resolving short URL...</p>';
-            resultsDiv.style.display = 'block';
-            fetch('/api/resolve?url=' + encodeURIComponent(urlInput))
-              .then(function(r) { return r.json(); })
-              .then(function(data) {
-                var resolved = data.resolved || '';
-                var rMatch = resolved.match(/place\/([^\/\?]+)/);
-                var resolvedName = '';
-                if (rMatch) {
-                  resolvedName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
-                } else if (data.name) {
-                  resolvedName = data.name;
-                }
-                if (!resolvedName) {
-                  // Don't recurse — that loops forever when the resolved URL
-                  // also lacks /place/. Show an actionable message instead.
-                  listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t pull a business name from that link. Type the business name in the field above and click Search again.</p>';
-                  return;
-                }
-                document.getElementById('searchUrl').value = '';
-                document.getElementById('searchBizName').value = resolvedName;
-                searchPlaces();
-              }).catch(function() {
-                listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t resolve short URL. Enter the business name manually and search again.</p>';
-              });
-            return;
+          directPlaceId = extractPlaceId(urlInput);
+          if (!directPlaceId) {
+            var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
+            if (nameMatch) {
+              searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+            } else {
+              // Short URL (maps.app.goo.gl/...) — resolve server-side first.
+              // /api/resolve returns a name (filtered against junk like
+              // "Google Maps") and a place_id when it can find one.
+              listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Resolving short URL...</p>';
+              resultsDiv.style.display = 'block';
+              fetch('/api/resolve?url=' + encodeURIComponent(urlInput))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                  var resolved = data.resolved || '';
+                  var resolvedPlaceId = data.placeId || extractPlaceId(resolved);
+                  var rMatch = resolved.match(/place\/([^\/\?]+)/);
+                  var resolvedName = '';
+                  if (rMatch) {
+                    resolvedName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
+                  } else if (data.name) {
+                    resolvedName = data.name;
+                  }
+                  if (!resolvedPlaceId && !resolvedName) {
+                    listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t pull a business from that link. Type the business name in the field above and click Search again.</p>';
+                    return;
+                  }
+                  document.getElementById('searchUrl').value = '';
+                  if (resolvedName) document.getElementById('searchBizName').value = resolvedName;
+                  // Stash the place_id on the input so the next iteration uses it.
+                  if (resolvedPlaceId) document.getElementById('searchUrl').dataset.placeId = resolvedPlaceId;
+                  searchPlaces();
+                }).catch(function() {
+                  listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t resolve short URL. Enter the business name manually and search again.</p>';
+                });
+              return;
+            }
           }
         }
-        if (!searchName) searchName = urlInput;
+        if (!searchName && !directPlaceId) searchName = urlInput;
       } else if (biz) {
         searchName = biz;
-        // If no city provided, default to Texas
         if (!searchLocation) searchLocation = 'TX';
       } else {
-        alert('Enter a business name or paste a Google Maps URL.');
-        return;
+        // Recursive call may have stashed a place_id on the dataset.
+        directPlaceId = document.getElementById('searchUrl').dataset.placeId || '';
+        if (!directPlaceId) {
+          alert('Enter a business name or paste a Google Maps URL.');
+          return;
+        }
+        delete document.getElementById('searchUrl').dataset.placeId;
       }
 
-      listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Searching for "' + escHtml(searchName) + '"...</p>';
+      listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">' + (directPlaceId ? 'Looking up by place ID...' : ('Searching for "' + escHtml(searchName) + '"...')) + '</p>';
       resultsDiv.style.display = 'block';
 
-      var placesUrl = '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
+      var placesUrl = directPlaceId
+        ? '/api/places?placeId=' + encodeURIComponent(directPlaceId)
+        : '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
 
       // Fetch Google Places data
       fetch(placesUrl).then(function(r) { return r.json(); }).then(function(google) {

@@ -24,16 +24,32 @@ module.exports = async function handler(req, res) {
 
     // For destinations without /place/ in the path (CID-style URLs), peek at
     // the HTML title — Google usually emits "Business Name - Google Maps".
+    // Some URLs render the title via JavaScript so the server-side fetch
+    // only sees the generic "<title>Google Maps</title>" — filter those so
+    // we don't feed garbage into the search.
     var name = '';
     try {
       var html = await resp.text();
       var m = html.match(/<title[^>]*>([^<]+)<\/title>/i);
       if (m) {
-        name = m[1].replace(/\s*[-|]\s*Google Maps.*$/i, '').trim();
+        var candidate = m[1].replace(/\s*[-|]\s*Google Maps.*$/i, '').trim();
+        if (candidate && !/^(google\s*maps?|maps?|google)$/i.test(candidate)) {
+          name = candidate;
+        }
       }
     } catch (_) { /* ignore — title is best-effort */ }
 
-    return res.status(200).json({ resolved: resolved, name: name });
+    // Pull place_id from the resolved URL when present — both ?q=place_id:CID
+    // and the !1s0xCID:0xCID hex form. This is the deterministic anchor.
+    var placeId = '';
+    var pid1 = resolved.match(/[?&]q=place_id:([^&\s]+)/);
+    if (pid1) placeId = pid1[1];
+    if (!placeId) {
+      var pid2 = resolved.match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i);
+      if (pid2) placeId = pid2[1];
+    }
+
+    return res.status(200).json({ resolved: resolved, name: name, placeId: placeId });
   } catch (err) {
     return res.status(500).json({ error: 'Failed to resolve URL', resolved: url });
   }
