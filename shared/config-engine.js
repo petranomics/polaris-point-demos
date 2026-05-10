@@ -113,7 +113,23 @@
     if (T.fontBody) root.style.setProperty('--pp-font-body', T.fontBody);
     // Apply header/nav background color
     var header = document.querySelector('.site-header') || document.querySelector('header');
-    if (header && T.primary) header.style.background = 'rgba(' + parseInt(T.primary.slice(1,3),16) + ',' + parseInt(T.primary.slice(3,5),16) + ',' + parseInt(T.primary.slice(5,7),16) + ',.97)';
+    if (header && T.primary) {
+      var pr = parseInt(T.primary.slice(1,3),16), pg = parseInt(T.primary.slice(3,5),16), pb = parseInt(T.primary.slice(5,7),16);
+      header.style.background = 'rgba(' + pr + ',' + pg + ',' + pb + ',.97)';
+      // Templates like pest-control assume a white header and color logo/nav text dark.
+      // When the theme paints the header dark, force light foreground so brand name
+      // and nav links stay readable. Per WCAG relative-luminance approximation.
+      var lum = (0.299 * pr + 0.587 * pg + 0.114 * pb) / 255;
+      if (lum < 0.55) {
+        var s = document.createElement('style');
+        s.textContent = '.site-header .logo, .site-header .logo-name, .site-header .logo-tagline,' +
+                        '.site-header .main-nav a, .site-header .nav-links a, .site-header .header-phone' +
+                        '{color:#fff !important;}' +
+                        '.site-header .logo-tagline{color:rgba(255,255,255,.78) !important;}' +
+                        '.site-header .main-nav a:hover, .site-header .nav-links a:hover{color:rgba(255,255,255,.78) !important;}';
+        document.head.appendChild(s);
+      }
+    }
     var topbar = document.querySelector('.topbar');
     if (topbar && T.primaryDark) topbar.style.background = T.primaryDark;
     // Apply body font
