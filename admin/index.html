@@ -3426,14 +3426,6 @@
       var resultsDiv = document.getElementById('searchResults');
       var listDiv = document.getElementById('searchResultsList');
 
-      // Determine search query
-      var searchName = '';
-      var searchLocation = city;
-      // Extracting place_id from a Maps URL (when present) gives a deterministic
-      // anchor — Google's findplacefromtext can match the wrong business when
-      // the name is generic, but place_id always returns the right one.
-      var directPlaceId = '';
-
       function extractPlaceId(u) {
         if (!u) return '';
         var m = u.match(/[?&]q=place_id:([^&\s]+)/);
@@ -3443,96 +3435,86 @@
         return '';
       }
 
-      if (urlInput) {
-        if (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app')) {
-          directPlaceId = extractPlaceId(urlInput);
-          if (!directPlaceId) {
-            var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
-            if (nameMatch) {
-              searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
-            } else {
-              // Short URL (maps.app.goo.gl/...) — resolve server-side first.
-              // /api/resolve returns a name (filtered against junk like
-              // "Google Maps") and a place_id when it can find one.
-              listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Resolving short URL...</p>';
-              resultsDiv.style.display = 'block';
-              fetch('/api/resolve?url=' + encodeURIComponent(urlInput))
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                  var resolved = data.resolved || '';
-                  var resolvedPlaceId = data.placeId || extractPlaceId(resolved);
-                  var rMatch = resolved.match(/place\/([^\/\?]+)/);
-                  var resolvedName = '';
-                  if (rMatch) {
-                    resolvedName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
-                  } else if (data.name) {
-                    resolvedName = data.name;
-                  }
-                  if (!resolvedPlaceId && !resolvedName) {
-                    listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t pull a business from that link. Type the business name in the field above and click Search again.</p>';
-                    return;
-                  }
-                  document.getElementById('searchUrl').value = '';
-                  if (resolvedName) document.getElementById('searchBizName').value = resolvedName;
-                  // Stash the place_id on the input so the next iteration uses it.
-                  if (resolvedPlaceId) document.getElementById('searchUrl').dataset.placeId = resolvedPlaceId;
-                  searchPlaces();
-                }).catch(function() {
-                  listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t resolve short URL. Enter the business name manually and search again.</p>';
-                });
-              return;
-            }
+      // Single place where the actual /api/places call happens. Resolve and
+      // direct-URL paths both feed into this — keeps the form inputs alone
+      // (no shuffling text between the URL box and the biz-name box).
+      function runPlacesLookup(opts) {
+        var pUrl = opts.placeId
+          ? '/api/places?placeId=' + encodeURIComponent(opts.placeId)
+          : '/api/places?q=' + encodeURIComponent(opts.query);
+        listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">' + (opts.placeId ? 'Looking up by place ID\u2026' : ('Searching for "' + escHtml(opts.query) + '"\u2026')) + '</p>';
+        resultsDiv.style.display = 'block';
+        fetch(pUrl).then(function(r) { return r.json(); }).then(function(google) {
+          if (!google || google.error) {
+            listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
+            return;
           }
-        }
-        if (!searchName && !directPlaceId) searchName = urlInput;
-      } else if (biz) {
-        searchName = biz;
-        if (!searchLocation) searchLocation = 'TX';
-      } else {
-        // Recursive call may have stashed a place_id on the dataset.
-        directPlaceId = document.getElementById('searchUrl').dataset.placeId || '';
-        if (!directPlaceId) {
-          alert('Enter a business name or paste a Google Maps URL.');
-          return;
-        }
-        delete document.getElementById('searchUrl').dataset.placeId;
+          var merged = {
+            name: google.name,
+            rating: google.rating,
+            reviewCount: google.reviewCount,
+            address: google.address,
+            phone: google.phone,
+            website: google.website,
+            hoursFormatted: google.hoursFormatted,
+            hours: google.hours || [],
+            reviews: google.reviews || [],
+            mapsUrl: google.mapsUrl,
+            photos: google.photos || [],
+            imageUrl: google.imageUrl,
+            types: google.types || [],
+            editorialSummary: google.editorialSummary || ''
+          };
+          showResult(merged, listDiv);
+        }).catch(function() {
+          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
+        });
       }
 
-      listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">' + (directPlaceId ? 'Looking up by place ID...' : ('Searching for "' + escHtml(searchName) + '"...')) + '</p>';
-      resultsDiv.style.display = 'block';
-
-      var placesUrl = directPlaceId
-        ? '/api/places?placeId=' + encodeURIComponent(directPlaceId)
-        : '/api/places?q=' + encodeURIComponent(searchName + ' ' + searchLocation);
-
-      // Fetch Google Places data
-      fetch(placesUrl).then(function(r) { return r.json(); }).then(function(google) {
-        if (!google || google.error) {
-          listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">No results found. Check spelling or fill in details manually.</p>';
+      // 1) URL input — prefer place_id (deterministic), fall back to /place/<name>,
+      //    fall back to /api/resolve for short / CID-style URLs.
+      if (urlInput && (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app'))) {
+        var directPlaceId = extractPlaceId(urlInput);
+        if (directPlaceId) { runPlacesLookup({ placeId: directPlaceId }); return; }
+        var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
+        if (nameMatch) {
+          var nameFromUrl = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
+          runPlacesLookup({ query: nameFromUrl + ' ' + (city || 'TX') });
           return;
         }
+        listDiv.innerHTML = '<p style="color:#e2e8f0;font-size:.85rem;">Resolving short URL\u2026</p>';
+        resultsDiv.style.display = 'block';
+        fetch('/api/resolve?url=' + encodeURIComponent(urlInput))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var resolved = data.resolved || '';
+            var resolvedPlaceId = data.placeId || extractPlaceId(resolved);
+            if (resolvedPlaceId) { runPlacesLookup({ placeId: resolvedPlaceId }); return; }
+            var rMatch = resolved.match(/place\/([^\/\?]+)/);
+            var resolvedName = '';
+            if (rMatch) resolvedName = decodeURIComponent(rMatch[1]).replace(/\+/g, ' ');
+            else if (data.name && !/^https?:\/\//i.test(data.name)) resolvedName = data.name;
+            if (resolvedName) { runPlacesLookup({ query: resolvedName + ' ' + (city || 'TX') }); return; }
+            listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t pull a business from that link. Type the business name above and click Search again.</p>';
+          }).catch(function() {
+            listDiv.innerHTML = '<p style="color:#f59e0b;font-size:.85rem;">Couldn\'t resolve short URL. Enter the business name manually and search again.</p>';
+          });
+        return;
+      }
 
-        var merged = {
-          name: google.name,
-          rating: google.rating,
-          reviewCount: google.reviewCount,
-          address: google.address,
-          phone: google.phone,
-          website: google.website,
-          hoursFormatted: google.hoursFormatted,
-          hours: google.hours || [],
-          reviews: google.reviews || [],
-          mapsUrl: google.mapsUrl,
-          photos: google.photos || [],
-          imageUrl: google.imageUrl,
-          types: google.types || [],
-          editorialSummary: google.editorialSummary || ''
-        };
+      // 2) Plain URL pasted (not a Google Maps URL) — treat as a free-text query.
+      if (urlInput) {
+        runPlacesLookup({ query: urlInput + ' ' + (city || 'TX') });
+        return;
+      }
 
-        showResult(merged, listDiv);
-      }).catch(function() {
-        listDiv.innerHTML = '<p style="color:#64748b;font-size:.8rem;">Search failed. Fill in details manually below.</p>';
-      });
+      // 3) Business name typed.
+      if (biz) {
+        runPlacesLookup({ query: biz + ' ' + (city || 'TX') });
+        return;
+      }
+
+      alert('Enter a business name or paste a Google Maps URL.');
     }
 
     // Pull a template's baseline service list from its config.js. Used as a
