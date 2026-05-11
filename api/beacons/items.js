@@ -1,13 +1,17 @@
-// /api/beacons/items.js — Personal Beacons workspace storage (single-user)
+// /api/beacons/items.js — Multi-tenant per-user workspace storage.
 //
-// Auth: client sends header `x-beacons-auth: <sha256(passcode)>`.
-//       Server compares against env var BEACONS_PASSCODE_HASH.
-// Storage: Neon Postgres (DATABASE_URL). Single table `beacons_items` auto-created on first call.
+// SECURITY: every row is owned by a tenant. Reads and writes are filtered
+// by tenant_id resolved from the auth header. No cross-tenant visibility.
 //
 // Endpoints:
-//   GET    /api/beacons/items          → returns array of all items
-//   PUT    /api/beacons/items          → upsert one item (body is the full item JSON, must include `id`)
-//   DELETE /api/beacons/items?id=xxx   → delete one item by id
+//   GET    /api/beacons/items          → array of items owned by caller's tenant
+//   PUT    /api/beacons/items          → upsert one item (server stamps tenant_id;
+//                                         updating someone else's id 404s)
+//   DELETE /api/beacons/items?id=xxx   → delete one of caller's items
+//
+// Storage: Neon Postgres. tenant_id column added 2026-05-10 to enforce
+// containerization. Existing rows backfilled as 'pete' on first cold start.
+
 const { neon } = require('@neondatabase/serverless');
 const Auth = require('../../lib/auth');
 
@@ -24,8 +28,13 @@ async function ensureTable(sql) {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
-  await sql`CREATE INDEX IF NOT EXISTS idx_beacons_items_kind ON beacons_items (kind)`;
+  // Multi-tenant column. Additive — existing single-user data is backfilled
+  // as 'pete' so Pete's workspace keeps working.
+  await sql`ALTER TABLE beacons_items ADD COLUMN IF NOT EXISTS tenant_id TEXT`;
+  await sql`UPDATE beacons_items SET tenant_id = 'pete' WHERE tenant_id IS NULL`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_beacons_items_kind   ON beacons_items (kind)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_beacons_items_updated ON beacons_items (updated_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_beacons_items_tenant  ON beacons_items (tenant_id, updated_at DESC)`;
   _tableEnsured = true;
 }
 
@@ -46,6 +55,7 @@ module.exports = async function handler(req, res) {
   if (!tenant) {
     return res.status(401).json({ error: 'Invalid or missing auth' });
   }
+  const tenantId = tenant.id;
 
   const sql = neon(process.env.DATABASE_URL);
   await ensureTable(sql);
@@ -54,6 +64,7 @@ module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
       const rows = await sql`
         SELECT data FROM beacons_items
+        WHERE tenant_id = ${tenantId}
         ORDER BY created_at DESC
       `;
       const items = rows.map(r => r.data);
@@ -68,12 +79,26 @@ module.exports = async function handler(req, res) {
       const kind = item.kind ? String(item.kind) : null;
       const createdAt = item.created_at ? new Date(item.created_at) : new Date();
       const updatedAt = item.updated_at ? new Date(item.updated_at) : new Date();
+
+      // Server stamps tenant_id — the client cannot spoof it. If a row with
+      // this id already exists owned by a different tenant, the upsert is
+      // rejected (preserves isolation even with predictable IDs).
+      const existing = await sql`SELECT tenant_id FROM beacons_items WHERE id = ${id}`;
+      if (existing.length && existing[0].tenant_id && existing[0].tenant_id !== tenantId) {
+        return res.status(403).json({ error: 'Item id belongs to another tenant' });
+      }
+
+      // Embed tenant_id in the JSONB payload too so client reads see it.
+      const enriched = { ...item, tenant_id: tenantId };
+
       await sql`
-        INSERT INTO beacons_items (id, data, kind, created_at, updated_at)
-        VALUES (${id}, ${JSON.stringify(item)}::jsonb, ${kind}, ${createdAt.toISOString()}, ${updatedAt.toISOString()})
+        INSERT INTO beacons_items (id, data, kind, tenant_id, created_at, updated_at)
+        VALUES (${id}, ${JSON.stringify(enriched)}::jsonb, ${kind}, ${tenantId},
+                ${createdAt.toISOString()}, ${updatedAt.toISOString()})
         ON CONFLICT (id) DO UPDATE
           SET data = EXCLUDED.data,
               kind = EXCLUDED.kind,
+              tenant_id = EXCLUDED.tenant_id,
               updated_at = EXCLUDED.updated_at
       `;
       return res.status(200).json({ ok: true });
@@ -82,7 +107,15 @@ module.exports = async function handler(req, res) {
     if (req.method === 'DELETE') {
       const id = (req.query && req.query.id) ? String(req.query.id) : null;
       if (!id) return res.status(400).json({ error: 'Missing id' });
-      await sql`DELETE FROM beacons_items WHERE id = ${id}`;
+      // Scoped delete — can only delete your own items.
+      const result = await sql`
+        DELETE FROM beacons_items
+        WHERE id = ${id} AND tenant_id = ${tenantId}
+        RETURNING id
+      `;
+      if (!result.length) {
+        return res.status(404).json({ error: 'Item not found or not owned by this tenant' });
+      }
       return res.status(200).json({ ok: true });
     }
 

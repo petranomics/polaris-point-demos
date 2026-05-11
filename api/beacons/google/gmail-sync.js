@@ -120,6 +120,12 @@ async function runSync({ db, accessToken, accountEmail }) {
     return { ok: true, ingested: 0, skipped: 0, total: 0, isInitial };
   }
 
+  // Google OAuth is currently single-tenant (beacons_oauth has one row total,
+  // not per-tenant). All sync imports get tagged to Pete. When multi-user
+  // Google OAuth ships, change this to look up the tenant that owns the
+  // connection.
+  const ownerTenantId = 'pete';
+
   // De-dup against existing items in beacons_items so re-runs don't dupe.
   const existing = await db`
     SELECT id FROM beacons_items
@@ -153,12 +159,14 @@ async function runSync({ db, accessToken, accountEmail }) {
       created_at: formatted.date || new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
+    item.tenant_id = ownerTenantId;
     try {
       await db`
-        INSERT INTO beacons_items (id, data, kind, created_at, updated_at)
-        VALUES (${id}, ${JSON.stringify(item)}::jsonb, 'email_thread', ${item.created_at}, ${item.updated_at})
+        INSERT INTO beacons_items (id, data, kind, tenant_id, created_at, updated_at)
+        VALUES (${id}, ${JSON.stringify(item)}::jsonb, 'email_thread', ${ownerTenantId}, ${item.created_at}, ${item.updated_at})
         ON CONFLICT (id) DO UPDATE SET
           data = EXCLUDED.data,
+          tenant_id = EXCLUDED.tenant_id,
           updated_at = EXCLUDED.updated_at
       `;
       ingested++;

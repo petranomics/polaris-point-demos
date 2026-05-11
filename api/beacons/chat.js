@@ -665,7 +665,8 @@ module.exports = async function handler(req, res) {
     // Ollama, we still call Anthropic Haiku to keep the chat experience
     // working. The router is in place; the Ollama execution layer comes next.
 
-    // Make sure the table exists (in case chat is hit before items endpoint)
+    // Make sure the table exists + tenant_id column is in place (items.js
+    // also runs this on cold start; idempotent).
     await sql`
       CREATE TABLE IF NOT EXISTS beacons_items (
         id TEXT PRIMARY KEY,
@@ -675,7 +676,16 @@ module.exports = async function handler(req, res) {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `;
-    const rows = await sql`SELECT data FROM beacons_items ORDER BY created_at DESC`;
+    await sql`ALTER TABLE beacons_items ADD COLUMN IF NOT EXISTS tenant_id TEXT`;
+
+    // CRITICAL: library + system prompt context must only include items
+    // belonging to the calling tenant. Without this filter every tenant
+    // would see every other tenant's projects, tasks, files, and threads.
+    const rows = await sql`
+      SELECT data FROM beacons_items
+      WHERE tenant_id = ${tenant.id}
+      ORDER BY created_at DESC
+    `;
     const items = rows.map(r => r.data);
 
     const systemPrompt = buildSystemPrompt(items);

@@ -46,6 +46,9 @@ async function setSyncState(sql, service, { lastSyncAt, threadCount, meta }) {
 
 async function ingestFile(sql, accessToken, file) {
   const id = 'gdrive_' + file.id;
+  // Google OAuth is currently single-tenant — all synced files belong to Pete.
+  // When per-tenant Google OAuth ships, look this up from the connection owner.
+  const ownerTenantId = 'pete';
 
   // Skip if we already have it AND modifiedTime is the same.
   const existing = await sql`SELECT data FROM beacons_items WHERE id = ${id}`;
@@ -102,15 +105,17 @@ async function ingestFile(sql, accessToken, file) {
     drive_file_id: file.id,
     drive_modified_time: file.modifiedTime,
     drive_link: file.webViewLink,
+    tenant_id: ownerTenantId,
     created_at: file.modifiedTime || new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
 
   await sql`
-    INSERT INTO beacons_items (id, data, kind, created_at, updated_at)
-    VALUES (${id}, ${JSON.stringify(item)}::jsonb, 'file', ${item.created_at}, ${item.updated_at})
+    INSERT INTO beacons_items (id, data, kind, tenant_id, created_at, updated_at)
+    VALUES (${id}, ${JSON.stringify(item)}::jsonb, 'file', ${ownerTenantId}, ${item.created_at}, ${item.updated_at})
     ON CONFLICT (id) DO UPDATE SET
       data = EXCLUDED.data,
+      tenant_id = EXCLUDED.tenant_id,
       updated_at = EXCLUDED.updated_at
   `;
   return { ok: true };

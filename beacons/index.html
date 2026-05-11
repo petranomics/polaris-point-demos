@@ -2656,6 +2656,14 @@ main {
         <textarea id="onbAvoid" rows="2" placeholder="e.g. don't make up numbers, don't quote me without checking, never use 'leverage' or 'synergy'"></textarea>
       </div>
       <div class="form-field">
+        <label>Competitors</label>
+        <textarea id="onbCompetitors" rows="2" placeholder="e.g. UTZ Certified, Fair Trade USA, Bonsucro — who you're benchmarked against, who steals attention from prospects"></textarea>
+      </div>
+      <div class="form-field">
+        <label>Partners and collaborators</label>
+        <textarea id="onbPartners" rows="2" placeholder="e.g. WWF on landscape work, IDH on supply-chain coalitions, Conservation International on biodiversity — orgs you ship work with"></textarea>
+      </div>
+      <div class="form-field">
         <label>Industry shorthand or proper nouns Beacon should know</label>
         <textarea id="onbVocab" rows="2" placeholder="e.g. RSPO = Roundtable on Sustainable Palm Oil; Carlos = my counterpart at supplier X"></textarea>
       </div>
@@ -3817,21 +3825,25 @@ function openOnboardingModal() {
   // Light parsing: we only restore if the directions text was authored by this
   // wizard (sentinel marker), otherwise leave the fields blank.
   const existing = (directionsText || '').trim();
-  const fromWizard = existing.includes('<!-- onboarding-wizard:v1 -->');
+  // Accept any wizard version (v1 had 6 fields, v2 added competitors + partners).
+  const fromWizard = /<!-- onboarding-wizard:v\d+ -->/.test(existing);
   if (fromWizard) {
     const grab = (label) => {
       const re = new RegExp('### ' + label + '\\n([\\s\\S]*?)(?=\\n### |\\n<!-- |$)', 'm');
       const m = existing.match(re);
       return m ? m[1].trim() : '';
     };
-    $('#onbRole').value     = grab('Role');
-    $('#onbFocus').value    = grab('Focus');
-    $('#onbVoice').value    = grab('Voice');
-    $('#onbAudience').value = grab('Audience');
-    $('#onbAvoid').value    = grab('Avoid');
-    $('#onbVocab').value    = grab('Vocabulary');
+    $('#onbRole').value        = grab('Role');
+    $('#onbFocus').value       = grab('Focus');
+    $('#onbVoice').value       = grab('Voice');
+    $('#onbAudience').value    = grab('Audience');
+    $('#onbAvoid').value       = grab('Avoid');
+    $('#onbCompetitors').value = grab('Competitors');
+    $('#onbPartners').value    = grab('Partners');
+    $('#onbVocab').value       = grab('Vocabulary');
   } else {
-    ['#onbRole','#onbFocus','#onbVoice','#onbAudience','#onbAvoid','#onbVocab'].forEach(s => $(s).value = '');
+    ['#onbRole','#onbFocus','#onbVoice','#onbAudience','#onbAvoid','#onbCompetitors','#onbPartners','#onbVocab']
+      .forEach(s => $(s).value = '');
   }
   $('#onboardingModal').classList.add('show');
   setTimeout(() => $('#onbRole').focus(), 60);
@@ -3839,22 +3851,27 @@ function openOnboardingModal() {
 
 async function saveOnboarding(skip) {
   if (!skip) {
-    const role     = $('#onbRole').value.trim();
-    const focus    = $('#onbFocus').value.trim();
-    const voice    = $('#onbVoice').value.trim();
-    const audience = $('#onbAudience').value.trim();
-    const avoid    = $('#onbAvoid').value.trim();
-    const vocab    = $('#onbVocab').value.trim();
+    const role        = $('#onbRole').value.trim();
+    const focus       = $('#onbFocus').value.trim();
+    const voice       = $('#onbVoice').value.trim();
+    const audience    = $('#onbAudience').value.trim();
+    const avoid       = $('#onbAvoid').value.trim();
+    const competitors = $('#onbCompetitors').value.trim();
+    const partners    = $('#onbPartners').value.trim();
+    const vocab       = $('#onbVocab').value.trim();
 
     // Compose into a directions block. Sentinel comment lets us re-parse later.
+    // Bumped to v2 to include Competitors + Partners sections.
     const composed = [
-      '<!-- onboarding-wizard:v1 -->',
-      role     ? '### Role\n' + role             : '',
-      focus    ? '### Focus\n' + focus           : '',
-      voice    ? '### Voice\n' + voice           : '',
-      audience ? '### Audience\n' + audience     : '',
-      avoid    ? '### Avoid\n' + avoid           : '',
-      vocab    ? '### Vocabulary\n' + vocab      : ''
+      '<!-- onboarding-wizard:v2 -->',
+      role        ? '### Role\n' + role                : '',
+      focus       ? '### Focus\n' + focus              : '',
+      voice       ? '### Voice\n' + voice              : '',
+      audience    ? '### Audience\n' + audience        : '',
+      avoid       ? '### Avoid\n' + avoid              : '',
+      competitors ? '### Competitors\n' + competitors  : '',
+      partners    ? '### Partners\n' + partners        : '',
+      vocab       ? '### Vocabulary\n' + vocab         : ''
     ].filter(Boolean).join('\n\n');
 
     if (composed.length > '<!-- onboarding-wizard:v1 -->'.length) {
