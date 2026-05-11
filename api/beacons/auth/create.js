@@ -15,6 +15,7 @@
 
 const { neon } = require('@neondatabase/serverless');
 const Auth = require('../../../lib/auth');
+const Email = require('../../../lib/email');
 
 function adminAuthOk(req) {
   const expected = process.env.BEACONS_ADMIN_KEY;
@@ -69,5 +70,26 @@ module.exports = async function handler(req, res) {
   `;
 
   const tenant = await Auth.findTenantById(sql, id);
-  return res.status(201).json({ tenant: Auth.publicTenant(tenant) });
+
+  // Send welcome email with the temp password. Non-fatal — if email fails,
+  // the tenant is still created and admin can resend manually. We surface
+  // the email status in the response so the admin curl shows what happened.
+  let emailStatus = { sent: false };
+  try {
+    const r = await Email.sendWelcomeEmail({
+      to: email.toLowerCase(),
+      displayName: display_name || null,
+      tempPassword: password,
+      signinUrl: 'https://polarispoint.io/beacon'
+    });
+    emailStatus = { sent: true, id: r && r.id };
+  } catch (e) {
+    console.warn('[auth/create] welcome email failed (non-fatal):', e.message);
+    emailStatus = { sent: false, error: e.message };
+  }
+
+  return res.status(201).json({
+    tenant: Auth.publicTenant(tenant),
+    welcome_email: emailStatus
+  });
 };
