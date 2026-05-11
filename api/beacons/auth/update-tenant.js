@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
   if (!process.env.BEACONS_ADMIN_KEY) return res.status(500).json({ error: 'BEACONS_ADMIN_KEY not configured' });
   if (!adminAuthOk(req))              return res.status(401).json({ error: 'Invalid admin key' });
 
-  const { tenant_id, tier, allocation_pct, display_name, settings, is_admin } = req.body || {};
+  const { tenant_id, tier, allocation_pct, display_name, settings, is_admin, email, password } = req.body || {};
   if (!tenant_id) return res.status(400).json({ error: 'Missing tenant_id' });
 
   const sql = neon(process.env.DATABASE_URL);
@@ -62,6 +62,22 @@ module.exports = async function handler(req, res) {
   }
   if (display_name !== undefined) updates.display_name = display_name || null;
   if (typeof is_admin === 'boolean') updates.is_admin = is_admin;
+  if (email !== undefined) {
+    const e = String(email || '').toLowerCase().trim();
+    if (!e || !e.includes('@')) return res.status(400).json({ error: 'Invalid email' });
+    // Prevent collision with another tenant's email.
+    const conflict = await Auth.findTenantByEmail(sql, e);
+    if (conflict && conflict.id !== tenant_id) {
+      return res.status(409).json({ error: 'Email already in use by another tenant', tenant_id: conflict.id });
+    }
+    updates.email = e;
+  }
+  if (password !== undefined) {
+    if (typeof password !== 'string' || password.length < 8) {
+      return res.status(400).json({ error: 'Password must be 8+ characters' });
+    }
+    updates.password_hash = await Auth.hashPassword(password);
+  }
   if (settings && typeof settings === 'object') {
     const merged = { ...(existing.settings || {}) };
     for (const k of ALLOWED_SETTINGS_KEYS) {
@@ -79,6 +95,8 @@ module.exports = async function handler(req, res) {
   if (updates.allocation_pct !== undefined)  await sql`UPDATE beacons_tenants SET allocation_pct = ${updates.allocation_pct}, updated_at = NOW() WHERE id = ${tenant_id}`;
   if (updates.display_name !== undefined)    await sql`UPDATE beacons_tenants SET display_name = ${updates.display_name}, updated_at = NOW() WHERE id = ${tenant_id}`;
   if (updates.is_admin !== undefined)        await sql`UPDATE beacons_tenants SET is_admin = ${updates.is_admin}, updated_at = NOW() WHERE id = ${tenant_id}`;
+  if (updates.email !== undefined)           await sql`UPDATE beacons_tenants SET email = ${updates.email}, updated_at = NOW() WHERE id = ${tenant_id}`;
+  if (updates.password_hash !== undefined)   await sql`UPDATE beacons_tenants SET password_hash = ${updates.password_hash}, updated_at = NOW() WHERE id = ${tenant_id}`;
   if (updates.settings !== undefined)        await sql`UPDATE beacons_tenants SET settings = ${JSON.stringify(updates.settings)}::jsonb, updated_at = NOW() WHERE id = ${tenant_id}`;
 
   const updated = await Auth.findTenantById(sql, tenant_id);
