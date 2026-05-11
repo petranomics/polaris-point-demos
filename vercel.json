@@ -2,8 +2,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/beacon",  "destination": "/beacons/index.html" },
-    { "source": "/beacon/", "destination": "/beacons/index.html" }
+    { "source": "/beacon",  "destination": "/beacons" },
+    { "source": "/beacon/", "destination": "/beacons" }
   ],
   "functions": {
     "api/*.js": {
