@@ -81,11 +81,14 @@ module.exports = async function handler(req, res) {
       const updatedAt = item.updated_at ? new Date(item.updated_at) : new Date();
 
       // Server stamps tenant_id — the client cannot spoof it. If a row with
-      // this id already exists owned by a different tenant, the upsert is
-      // rejected (preserves isolation even with predictable IDs).
+      // this id already exists, it must be owned by the calling tenant.
+      // We also treat NULL tenant_id as "rejected, not yet claimed" — earlier
+      // versions of this check let NULL rows through, which is how the
+      // _directions collision in 2026-05-11 wiped Pete's standing directions
+      // when a different tenant ran the wizard.
       const existing = await sql`SELECT tenant_id FROM beacons_items WHERE id = ${id}`;
-      if (existing.length && existing[0].tenant_id && existing[0].tenant_id !== tenantId) {
-        return res.status(403).json({ error: 'Item id belongs to another tenant' });
+      if (existing.length && existing[0].tenant_id !== tenantId) {
+        return res.status(403).json({ error: 'Item id belongs to another tenant or is unowned' });
       }
 
       // Embed tenant_id in the JSONB payload too so client reads see it.

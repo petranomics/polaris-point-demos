@@ -3949,12 +3949,15 @@ async function saveOnboarding(skip) {
     ].filter(Boolean).join('\n\n');
 
     if (composed.length > '<!-- onboarding-wizard:v1 -->'.length) {
-      // Save as the directions item. If one already exists, update it.
+      // Save as the directions item. If one already exists, update it; if not,
+      // generate a fresh uid (NEVER use a hardcoded shared ID like '_directions'
+      // — those collide across tenants and 2026-05-11 we lost Pete's directions
+      // exactly this way).
       const all = await storageAll();
       const existing = all.find(i => i.kind === 'direction');
       const now = new Date().toISOString();
       await storagePut({
-        id: existing ? existing.id : '_directions',
+        id: existing ? existing.id : uid(),
         kind: 'direction',
         title: 'Standing directions',
         content: composed,
@@ -4011,7 +4014,7 @@ async function saveDirections() {
   const existing = all.find(i => i.kind === 'direction');
   const now = new Date().toISOString();
   await storagePut({
-    id: existing ? existing.id : '_directions',
+    id: existing ? existing.id : uid(),  // NEVER hardcode shared IDs across tenants
     kind: 'direction',
     title: 'Standing directions',
     content: txt,
