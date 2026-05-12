@@ -14,9 +14,10 @@ module.exports = async function handler(req, res) {
   const missing = G.checkConfig();
   const configured = missing.length === 0;
 
-  if (!process.env.BEACONS_PASSCODE_HASH) {
-    return res.status(200).json({ connected: false, configured: false, missing });
-  }
+  // checkBeaconsAuth accepts both JWT (new) and legacy passcode hash, so the
+  // earlier "if no BEACONS_PASSCODE_HASH, misconfigured" short-circuit is
+  // removed — the unified auth covers both. checkConfig already reports
+  // missing auth env vars if neither is set.
   if (!G.checkBeaconsAuth(req)) return res.status(401).json({ error: 'Invalid auth' });
 
   if (!configured) {
