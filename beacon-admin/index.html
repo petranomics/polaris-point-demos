@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon · Admin</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space: #050D1E;
+      --surface: rgba(20,28,45,.55);
+      --surface-solid: #0c1422;
+      --border: rgba(91,141,239,.14);
+      --blue: #5B8DEF;
+      --gold: #E8C547;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #f87171;
+      --text: #e2e8f0;
+      --muted: #8494a7;
+      --dim: #475569;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--space);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--gold);
+      font-size: 18px;
+    }
+    .brand small {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      margin-left: 10px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 28px 32px; }
+    .gate {
+      max-width: 460px;
+      margin: 80px auto;
+      padding: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+    }
+    .gate h1 { font-size: 22px; margin: 0 0 8px; }
+    .gate p { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+    .gate input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: .04em;
+      outline: 0;
+      margin-bottom: 12px;
+    }
+    .gate input:focus { border-color: var(--blue); }
+    .gate button {
+      width: 100%;
+      padding: 12px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+    }
+    .gate button:hover { background: #6B9BF5; }
+    .gate .err { color: var(--red); font-size: 13px; margin-top: 12px; }
+
+    .section-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 24px 0 18px;
+    }
+    .section-bar h2 { font-size: 16px; margin: 0; font-weight: 600; }
+    .section-bar .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--muted);
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      transition: background .12s, border-color .12s;
+    }
+    .btn:hover { background: rgba(91,141,239,.08); border-color: rgba(91,141,239,.35); }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.primary:hover { background: #6B9BF5; }
+    .btn.danger { color: var(--red); border-color: rgba(248,113,113,.3); }
+    .btn.danger:hover { background: rgba(248,113,113,.08); }
+    .btn.tiny { padding: 5px 9px; font-size: 11px; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    thead { background: rgba(91,141,239,.05); }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: rgba(91,141,239,.04); }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .tier-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .tier-pill.pete    { background: rgba(232,197,71,.12); color: var(--gold); }
+    .tier-pill.basic   { background: rgba(91,141,239,.12); color: var(--blue); }
+    .tier-pill.pro     { background: rgba(34,197,94,.12); color: var(--green); }
+    .tier-pill.premium { background: rgba(167,139,250,.15); color: #a78bfa; }
+    .tier-pill.free    { background: rgba(132,148,167,.15); color: var(--muted); }
+    .spend-bar {
+      display: inline-block;
+      width: 60px;
+      height: 6px;
+      background: rgba(255,255,255,.06);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .spend-bar > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--gold));
+    }
+    .spend-bar > i.over { background: var(--red); }
+    .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+    .empty {
+      padding: 36px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* Modal */
+    .modal { position: fixed; inset: 0; background: rgba(5,13,30,.8); display: none; align-items: center; justify-content: center; z-index: 50; }
+    .modal.show { display: flex; }
+    .modal-card {
+      background: #0c1422;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 520px;
+      padding: 24px 28px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h3 { margin: 0 0 6px; }
+    .modal .modal-sub { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+    .form-field { margin-bottom: 14px; }
+    .form-field label { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 6px; }
+    .form-field input, .form-field select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 14px;
+      outline: 0;
+    }
+    .form-field input:focus, .form-field select:focus { border-color: var(--blue); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-foot { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+    .field-help { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .modal .err { color: var(--red); font-size: 13px; margin: 8px 0; }
+    .modal .ok { color: var(--green); font-size: 13px; margin: 8px 0; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      padding: 12px 18px;
+      background: #0c1422;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .2s, transform .2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.3); }
+  </style>
+</head>
+<body>
+
+<!-- ===================== GATE (admin key prompt) ===================== -->
+<div id="gateScreen" class="gate">
+  <h1>Beacon Admin</h1>
+  <p>Paste the <span class="mono">BEACONS_ADMIN_KEY</span> from Vercel to continue.</p>
+  <form id="gateForm">
+    <input type="password" id="adminKeyInput" placeholder="admin key" autocomplete="off" autofocus>
+    <button type="submit">Unlock</button>
+    <div class="err" id="gateErr" style="display:none">Invalid admin key.</div>
+  </form>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div class="brand">Beacon <small>Admin · Polaris Point</small></div>
+    <div>
+      <button class="btn" id="signOutBtn">Lock</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="section-bar">
+      <div>
+        <h2>Tenants</h2>
+        <div class="meta" id="tenantsMeta">—</div>
+      </div>
+      <div>
+        <button class="btn" id="refreshBtn">Refresh</button>
+        <button class="btn primary" id="newTenantBtn">+ Add customer</button>
+      </div>
+    </div>
+
+    <table id="tenantsTable">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Tier</th>
+          <th>Allocation</th>
+          <th>MTD spend</th>
+          <th>Last activity</th>
+          <th>Created</th>
+          <th style="text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tenantsBody">
+        <tr><td colspan="8" class="empty">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================== ADD/EDIT MODAL ===================== -->
+<div class="modal" id="tenantModal">
+  <div class="modal-card">
+    <h3 id="modalTitle">Add customer</h3>
+    <div class="modal-sub" id="modalSub">A welcome email auto-sends on create.</div>
+    <form id="tenantForm" onsubmit="return false">
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" id="t_email" placeholder="customer@theircompany.com" autocomplete="off">
+      </div>
+      <div class="form-field" id="passwordField">
+        <label>Temporary password (8+ chars)</label>
+        <input type="text" id="t_password" placeholder="auto-generated if left blank" autocomplete="off">
+        <div class="field-help">If blank, a random TempPass-XXXXX is generated. Customer can change it via Settings or forgot-password.</div>
+      </div>
+      <div class="form-field">
+        <label>Display name</label>
+        <input type="text" id="t_display_name" placeholder="First Last">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Tier</label>
+          <select id="t_tier">
+            <option value="basic">Basic ($50/mo)</option>
+            <option value="pro">Pro ($100/mo)</option>
+            <option value="premium">Premium ($200/mo)</option>
+            <option value="free">Free</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Allocation %</label>
+          <input type="number" id="t_allocation" min="0" max="100" value="10">
+          <div class="field-help">% of global cap (BEACONS_MONTHLY_CAP_USD).</div>
+        </div>
+      </div>
+      <div class="err" id="formErr" style="display:none"></div>
+      <div class="ok"  id="formOk"  style="display:none"></div>
+      <div class="modal-foot">
+        <button class="btn" type="button" id="closeModalBtn">Cancel</button>
+        <button class="btn primary" type="button" id="saveTenantBtn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+const API_BASE = '/api/beacons';
+const KEY_STORAGE = 'beacons_admin_key_v1';
+
+let adminKey = null;
+let tenants = [];
+let editingTenantId = null;
+
+const $ = (s) => document.querySelector(s);
+
+function showToast(msg, isErr) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function fmtMoney(n) { return '$' + (Number(n) || 0).toFixed(2); }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function fmtRelative(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60)     return Math.floor(diff) + 's ago';
+  if (diff < 3600)   return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400)  return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+function adminHeaders() {
+  return { 'x-beacons-admin-key': adminKey };
+}
+
+async function tryUnlock(key) {
+  adminKey = key;
+  try {
+    const r = await fetch(`${API_BASE}/auth/list-tenants`, { headers: adminHeaders() });
+    if (r.ok) return true;
+    adminKey = null;
+    return false;
+  } catch (e) {
+    adminKey = null;
+    return false;
+  }
+}
+
+async function loadTenants() {
+  const body = $('#tenantsBody');
+  body.innerHTML = '<tr><td colspan="8" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API_BASE}/auth/list-tenants`, { headers: adminHeaders() });
+    if (!r.ok) { body.innerHTML = '<tr><td colspan="8" class="empty">Load failed: HTTP ' + r.status + '</td></tr>'; return; }
+    const data = await r.json();
+    tenants = data.tenants || [];
+    $('#tenantsMeta').textContent = `${tenants.length} total`;
+    renderTenants();
+  } catch (e) {
+    body.innerHTML = '<tr><td colspan="8" class="empty">Load failed: ' + (e.message || 'unknown') + '</td></tr>';
+  }
+}
+
+function renderTenants() {
+  const body = $('#tenantsBody');
+  if (!tenants.length) {
+    body.innerHTML = '<tr><td colspan="8" class="empty">No tenants yet. Click + Add customer to create one.</td></tr>';
+    return;
+  }
+  body.innerHTML = tenants.map(t => {
+    // Bar reflects spend vs allocation (anchored to BEACONS_MONTHLY_CAP_USD default of $500).
+    const allocationUsd = 500 * (t.allocation_pct / 100);
+    const pct = allocationUsd > 0 ? Math.min(100, (t.mtd_spend_usd / allocationUsd) * 100) : 0;
+    const overCap = t.mtd_spend_usd >= allocationUsd && allocationUsd > 0;
+    return `<tr>
+      <td>${escapeHtml(t.email || '')}${t.is_admin ? ' <span style="color:var(--gold);font-size:10px">★ admin</span>' : ''}</td>
+      <td>${escapeHtml(t.display_name || '')}</td>
+      <td><span class="tier-pill ${escapeAttr(t.tier)}">${escapeHtml(t.tier)}</span></td>
+      <td class="mono">${t.allocation_pct}% <span class="field-help" style="color:var(--muted)">(~${fmtMoney(allocationUsd)})</span></td>
+      <td class="mono">${fmtMoney(t.mtd_spend_usd)} <span class="spend-bar"><i style="width:${pct}%" class="${overCap ? 'over' : ''}"></i></span> <span style="color:var(--muted);font-size:11px">${t.mtd_calls} calls</span></td>
+      <td class="mono">${fmtRelative(t.last_activity)}</td>
+      <td class="mono">${fmtDate(t.created_at)}</td>
+      <td><div class="row-actions">
+        <button class="btn tiny" data-act="reset" data-id="${escapeAttr(t.id)}" ${t.id === 'pete' ? 'disabled title="Pete uses legacy passcode"' : ''}>Reset pw</button>
+        <button class="btn tiny" data-act="edit" data-id="${escapeAttr(t.id)}">Edit</button>
+        <button class="btn tiny danger" data-act="delete" data-id="${escapeAttr(t.id)}" ${t.id === 'pete' ? 'disabled title="Cannot delete Pete"' : ''}>Delete</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('button[data-act]').forEach(b => {
+    b.addEventListener('click', () => {
+      const id = b.dataset.id;
+      const act = b.dataset.act;
+      if (act === 'edit')   openEditModal(id);
+      else if (act === 'delete') deleteTenant(id);
+      else if (act === 'reset')  resetPassword(id);
+    });
+  });
+}
+
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeAttr(s) { return escapeHtml(s); }
+
+function openAddModal() {
+  editingTenantId = null;
+  $('#modalTitle').textContent = 'Add customer';
+  $('#modalSub').textContent = 'A welcome email auto-sends on create.';
+  $('#passwordField').style.display = '';
+  $('#t_email').value = '';
+  $('#t_password').value = '';
+  $('#t_display_name').value = '';
+  $('#t_tier').value = 'basic';
+  $('#t_allocation').value = 10;
+  $('#t_email').disabled = false;
+  $('#formErr').style.display = 'none';
+  $('#formOk').style.display = 'none';
+  $('#tenantModal').classList.add('show');
+  setTimeout(() => $('#t_email').focus(), 60);
+}
+
+function openEditModal(id) {
+  const t = tenants.find(x => x.id === id);
+  if (!t) return;
+  editingTenantId = id;
+  $('#modalTitle').textContent = 'Edit · ' + (t.display_name || t.email);
+  $('#modalSub').textContent = 'Email cannot be changed here. Use "Reset pw" to send a fresh password reset email.';
+  $('#passwordField').style.display = 'none';
+  $('#t_email').value = t.email;
+  $('#t_email').disabled = true;
+  $('#t_display_name').value = t.display_name || '';
+  $('#t_tier').value = t.tier;
+  $('#t_allocation').value = t.allocation_pct;
+  $('#formErr').style.display = 'none';
+  $('#formOk').style.display = 'none';
+  $('#tenantModal').classList.add('show');
+  setTimeout(() => $('#t_display_name').focus(), 60);
+}
+
+async function saveTenant() {
+  const errEl = $('#formErr'); errEl.style.display = 'none';
+  const okEl  = $('#formOk');  okEl.style.display  = 'none';
+  $('#saveTenantBtn').disabled = true;
+  try {
+    if (editingTenantId) {
+      // PATCH existing tenant — only allow tier/allocation/display_name from this UI.
+      const body = {
+        tenant_id: editingTenantId,
+        display_name: $('#t_display_name').value || null,
+        tier: $('#t_tier').value,
+        allocation_pct: parseInt($('#t_allocation').value, 10) || 0
+      };
+      const r = await fetch(`${API_BASE}/auth/update-tenant`, {
+        method: 'PATCH',
+        headers: { ...adminHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        errEl.textContent = e.error || ('Update failed (' + r.status + ')');
+        errEl.style.display = '';
+        return;
+      }
+      showToast('Tenant updated');
+      $('#tenantModal').classList.remove('show');
+    } else {
+      // POST create.
+      const email = ($('#t_email').value || '').trim();
+      let password = ($('#t_password').value || '').trim();
+      if (!password) password = 'TempPass-' + Math.random().toString(36).slice(2, 10);
+      if (!email) { errEl.textContent = 'Email required'; errEl.style.display = ''; return; }
+      const body = {
+        email,
+        password,
+        display_name: $('#t_display_name').value || null,
+        tier: $('#t_tier').value,
+        allocation_pct: parseInt($('#t_allocation').value, 10) || 10
+      };
+      const r = await fetch(`${API_BASE}/auth/create`, {
+        method: 'POST',
+        headers: { ...adminHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        errEl.textContent = e.error || ('Create failed (' + r.status + ')');
+        errEl.style.display = '';
+        return;
+      }
+      const data = await r.json();
+      const sent = data.welcome_email && data.welcome_email.sent;
+      okEl.innerHTML = `Created. Temp password: <strong class="mono">${escapeHtml(password)}</strong>. ${sent ? 'Welcome email sent.' : 'Welcome email FAILED — share creds manually.'}`;
+      okEl.style.display = '';
+      // Keep the create modal open so admin can copy the temp password from the success message.
+    }
+    await loadTenants();
+  } catch (e) {
+    errEl.textContent = e.message || 'Save failed';
+    errEl.style.display = '';
+  } finally {
+    $('#saveTenantBtn').disabled = false;
+  }
+}
+
+async function deleteTenant(id) {
+  const t = tenants.find(x => x.id === id);
+  if (!t) return;
+  if (!confirm(`Delete tenant ${t.email}? Their workspace data is removed; usage log entries are kept for billing history. Can't be undone.`)) return;
+  try {
+    const r = await fetch(`${API_BASE}/auth/delete-tenant?tenant_id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: adminHeaders()
+    });
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      showToast(e.error || 'Delete failed', true);
+      return;
+    }
+    const data = await r.json();
+    showToast(`Deleted ${data.deleted.email} (${data.deleted.items_removed} items)`);
+    await loadTenants();
+  } catch (e) {
+    showToast(e.message || 'Delete failed', true);
+  }
+}
+
+async function resetPassword(id) {
+  const t = tenants.find(x => x.id === id);
+  if (!t) return;
+  if (!confirm(`Send password reset email to ${t.email}?`)) return;
+  try {
+    // Uses the public endpoint (same flow any user gets via "Forgot password" on the lock screen).
+    const r = await fetch(`${API_BASE}/auth/request-password-reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: t.email })
+    });
+    if (!r.ok) { showToast('Reset request failed', true); return; }
+    showToast('Reset email sent to ' + t.email);
+  } catch (e) {
+    showToast(e.message || 'Reset failed', true);
+  }
+}
+
+function lock() {
+  sessionStorage.removeItem(KEY_STORAGE);
+  adminKey = null;
+  location.reload();
+}
+
+// ---- Boot ---------------------------------------------------------------
+
+(async function init() {
+  $('#gateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const key = $('#adminKeyInput').value.trim();
+    const ok = await tryUnlock(key);
+    if (ok) {
+      sessionStorage.setItem(KEY_STORAGE, key);
+      $('#gateScreen').style.display = 'none';
+      $('#app').style.display = 'block';
+      loadTenants();
+    } else {
+      $('#gateErr').style.display = 'block';
+    }
+  });
+
+  $('#signOutBtn').addEventListener('click', lock);
+  $('#refreshBtn').addEventListener('click', loadTenants);
+  $('#newTenantBtn').addEventListener('click', openAddModal);
+  $('#closeModalBtn').addEventListener('click', () => $('#tenantModal').classList.remove('show'));
+  $('#saveTenantBtn').addEventListener('click', saveTenant);
+
+  // Auto-unlock if we have a stored key from this session.
+  const stored = sessionStorage.getItem(KEY_STORAGE);
+  if (stored) {
+    const ok = await tryUnlock(stored);
+    if (ok) {
+      $('#gateScreen').style.display = 'none';
+      $('#app').style.display = 'block';
+      loadTenants();
+    } else {
+      sessionStorage.removeItem(KEY_STORAGE);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
