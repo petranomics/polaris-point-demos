@@ -112,7 +112,7 @@ function buildSystemPrompt(items) {
     '  • Help them STRUCTURE work into projects and tasks when they\'re thinking out loud — propose names, descriptions, and cadences they can save with one click.',
     '  • Stay specific and concrete. Use the actual names, dates, and details from their context — never generic placeholders.',
     '',
-    'You have web access via the web_search tool — you ARE connected to the internet. Use the tool whenever the user asks for current info, research, news, market intel, competitor moves, or pricing. Don\'t hedge or say "I can\'t access the internet" — the tool exists, use it. If the tool returns an error, say PLAINLY what failed (e.g., "web search returned a network_error — I\'ll try a different query / fall back to your library") rather than claiming you don\'t have access. Try a different query if the first errors. Don\'t search for things already covered in the library. Cite source URLs inline. 2–4 searches per question is plenty.',
+    'You have web access via the web_search tool — you ARE connected to the internet. Use the tool whenever the user asks for current info, research, news, market intel, competitor moves, or pricing. Don\'t hedge or say "I can\'t access the internet" — the tool exists, use it. If the tool returns an error, say PLAINLY what failed (e.g., "web search returned a network_error — I\'ll try a different query / fall back to your library") rather than claiming you don\'t have access. Try a different query if the first errors. Don\'t search for things already covered in the library. Cite source URLs inline. Use web_search sparingly — 1–2 searches per turn is the target. Most questions don\'t need a search at all.',
     '',
     'Tone: direct, professional, peer-to-peer. Skip throat-clearing ("Great question!"). Lead with the answer. When drafting on their behalf, match the voice they\'ve described in their directions.',
     '',
@@ -280,7 +280,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
   // library block. 1-hour TTL fits ad-hoc usage (chat through the workday,
   // not just in 5-min bursts) — initial cache write costs 2x but each hit
   // pays back fast vs. the 5-min default.
-  const systemBlocks = [{ type: 'text', text: systemPrompt }];
+  const systemBlocks = [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral', ttl: '1h' } }];
   if (libraryPrompt) {
     systemBlocks.push({
       type: 'text',
@@ -307,7 +307,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
     tools.push({
       type: 'web_search_20250305',
       name: 'web_search',
-      max_uses: 6
+      max_uses: parseInt(process.env.BEACONS_CHAT_MAX_SEARCHES || '4', 10)
     });
   }
 
@@ -364,7 +364,7 @@ const MAX_AGENT_TURNS = 6;
 async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled = true }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
-  const systemBlocks = [{ type: 'text', text: systemPrompt }];
+  const systemBlocks = [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral', ttl: '1h' } }];
   if (libraryPrompt) {
     systemBlocks.push({ type: 'text', text: libraryPrompt, cache_control: { type: 'ephemeral', ttl: '1h' } });
   }
@@ -383,7 +383,7 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
     tools.push({
       type: 'web_search_20250305',
       name: 'web_search',
-      max_uses: 6,
+      max_uses: parseInt(process.env.BEACONS_CHAT_MAX_SEARCHES || '4', 10),
       user_location: { type: 'approximate', country: 'US' }
     });
   }
