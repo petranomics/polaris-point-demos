@@ -3078,7 +3078,10 @@ function taskCompare(a, b) {
 
 async function loadAll() {
   const all = await storageAll();
-  items = all.filter(i => i.kind === 'file' || i.kind === 'thought' || i.kind === 'email_thread')
+  // 'thread' included so Latest Findings can surface chat outputs — they ARE
+  // the value. Other consumers of `items` (counters, library list) filter by
+  // specific kinds so threads don't bleed into file/thought/email lists.
+  items = all.filter(i => i.kind === 'file' || i.kind === 'thought' || i.kind === 'email_thread' || i.kind === 'thread')
              .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
   projects = all.filter(i => i.kind === 'project')
                 .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
