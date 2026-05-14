@@ -5821,7 +5821,11 @@
         // Fetch subscriptions
         var res = await fetch('/api/beacon/subscriptions');
         var data = await res.json();
-        _beaconSubsCache = data.subscriptions || data || [];
+        if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+        // Only accept arrays — an error object would otherwise get assigned
+        // and break renderBeaconSubs() with `.filter is not a function`.
+        var subs = data.subscriptions || data;
+        _beaconSubsCache = Array.isArray(subs) ? subs : [];
         renderBeaconSubs();
         // Referrals are often derived from subscriptions — refresh the table
         if (typeof loadBeaconReferrals === 'function') loadBeaconReferrals();
