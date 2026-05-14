@@ -6399,9 +6399,13 @@
       if (!grid) return;
       try {
         var res = await fetch('/api/beacon/trial-codes');
-        if (!res.ok) throw new Error('Server returned ' + res.status);
+        if (!res.ok) {
+          var errBody = await res.json().catch(function() { return {}; });
+          throw new Error(errBody.error || ('Server returned ' + res.status));
+        }
         var data = await res.json();
-        _trialCodesCache = data.codes || data.trial_codes || data || [];
+        var codes = data.codes || data.trial_codes || data;
+        _trialCodesCache = Array.isArray(codes) ? codes : [];
         renderTrialCodes();
       } catch (e) {
         grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;font-size:.78rem;padding:16px 0;">Failed to load trial codes: ' + e.message + '</p>';
