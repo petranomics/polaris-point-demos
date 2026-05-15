@@ -502,6 +502,109 @@ button {
 }
 .modal-category-select:focus { outline: 0; border-color: var(--gold); }
 
+/* Plan & billing — current-plan card + 3-tier comparison */
+.plan-current {
+  background: rgba(20, 28, 45, 0.5);
+  border: 1px solid rgba(232, 197, 71, .22);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.plan-current-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.plan-current-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+.plan-current-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.plan-comparison {
+  margin-top: 14px;
+  padding: 14px;
+  background: rgba(20, 28, 45, 0.4);
+  border: 1px solid rgba(91, 141, 239, .14);
+  border-radius: 10px;
+}
+.plan-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.plan-tile {
+  background: rgba(20, 28, 45, 0.65);
+  border: 1px solid rgba(91, 141, 239, .15);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.plan-tile.current {
+  border-color: rgba(232, 197, 71, .55);
+  background: rgba(232, 197, 71, .05);
+}
+.plan-tile-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.plan-tile-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.plan-tile-price-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+.plan-tile-features {
+  font-size: .72rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin: 4px 0 6px;
+  list-style: none;
+  padding: 0;
+}
+.plan-tile-features li::before { content: '· '; color: var(--gold); }
+.plan-tile-cta {
+  margin-top: auto;
+  padding: 7px 10px;
+  background: rgba(91, 141, 239, .12);
+  border: 1px solid rgba(91, 141, 239, .3);
+  color: var(--text);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: .72rem;
+  cursor: pointer;
+}
+.plan-tile-cta.primary {
+  background: rgba(232, 197, 71, .15);
+  border-color: rgba(232, 197, 71, .5);
+  color: var(--gold);
+  font-weight: 500;
+}
+.plan-tile-cta.current {
+  background: transparent;
+  border-color: rgba(255,255,255,.08);
+  color: var(--muted);
+  cursor: default;
+}
+.plan-tile-cta:hover:not(.current) { background: rgba(91, 141, 239, .22); }
+.plan-tile-cta.primary:hover:not(.current) { background: rgba(232, 197, 71, .25); }
+
 .banner {
   background: rgba(232,197,71,.06);
   border-bottom: 1px solid rgba(232,197,71,.18);
@@ -2872,11 +2975,22 @@ main {
         <label>Email</label>
         <input type="email" id="settingsEmail" disabled>
       </div>
-      <div class="form-field">
+      <!-- ============ PLAN & BILLING ============ -->
+      <div class="form-field" id="settingsPlanSection">
         <label>Plan</label>
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="text" id="settingsTier" disabled style="flex:1">
-          <button type="button" class="btn btn-ghost" id="settingsUpgradeBtn">Upgrade</button>
+        <div class="plan-current">
+          <div class="plan-current-row">
+            <div>
+              <div class="plan-current-name" id="settingsTierBadge">Spark</div>
+              <div class="plan-current-sub" id="settingsTierSub">— per month</div>
+            </div>
+            <button type="button" class="btn btn-ghost" id="settingsManageBtn" title="Manage your subscription on Stripe">Manage</button>
+          </div>
+        </div>
+        <!-- Hidden 3-tier comparison — expands when Upgrade is clicked -->
+        <div class="plan-comparison" id="settingsPlanComparison" style="display:none">
+          <div class="plan-comparison-grid" id="settingsPlanGrid"></div>
+          <div class="setting-help" style="margin-top:10px">Switching plans takes effect immediately — your library, projects, and history all carry over.</div>
         </div>
       </div>
       <div class="form-field" id="settingsBudgetBlock" style="display:none">
@@ -5928,6 +6042,53 @@ async function openSettingsModal() {
   $('#settingsConfirmPw').value = '';
 
   // Load latest from server
+  // Plan & billing — descriptors used by renderPlanSection. Single source
+  // of truth for what each tier offers, what it costs, and how it differs
+  // from the others. Numbers should match lib/tier-limits.js.
+  const PLAN_DESCRIPTORS = {
+    spark:      { name: 'Spark',      monthly: 129, sixMo: 99,  features: ['8K library context', '5-turn memory', '200 inquiries/mo'] },
+    beam:       { name: 'Beam',       monthly: 249, sixMo: 199, features: ['15K library context', '12-turn memory', '1,500 inquiries/mo', 'Auto-Sonnet on key drafts'] },
+    lighthouse: { name: 'Lighthouse', monthly: 499, sixMo: 399, features: ['30K library context', '20-turn memory', 'Unlimited inquiries', 'Sonnet by default'] },
+  };
+  function renderPlanSection(tenant) {
+    const tier = (tenant && tenant.tier) || 'spark';
+    // Legacy tier aliasing — frontend mirrors lib/tier-limits.js
+    const aliasMap = { basic: 'spark', premium: 'beam', pro: 'lighthouse' };
+    const normTier = aliasMap[tier] || tier;
+    const desc = PLAN_DESCRIPTORS[normTier] || PLAN_DESCRIPTORS.spark;
+    const badge = $('#settingsTierBadge');
+    const sub = $('#settingsTierSub');
+    if (badge) badge.textContent = desc.name;
+    if (sub) {
+      if (normTier === 'pete') sub.textContent = 'Internal account';
+      else sub.textContent = `$${desc.monthly}/mo · $${desc.sixMo}/mo on 6-month commit`;
+    }
+    // 3-tier comparison grid — built once, refreshes on each openSettings
+    const grid = $('#settingsPlanGrid');
+    if (grid) {
+      const order = ['spark', 'beam', 'lighthouse'];
+      grid.innerHTML = order.map(t => {
+        const p = PLAN_DESCRIPTORS[t];
+        const isCurrent = (t === normTier);
+        const ctaClass = isCurrent ? 'plan-tile-cta current' : (t === 'lighthouse' ? 'plan-tile-cta primary' : 'plan-tile-cta');
+        const ctaText = isCurrent ? 'Current plan' : `Switch to ${p.name}`;
+        return `<div class="plan-tile ${isCurrent ? 'current' : ''}">
+          <div class="plan-tile-name">${p.name}</div>
+          <div class="plan-tile-price">$${p.monthly}<span style="font-size:.6em;color:var(--muted)">/mo</span></div>
+          <div class="plan-tile-price-sub">or $${p.sixMo}/mo · 6-mo commit</div>
+          <ul class="plan-tile-features">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+          <button class="${ctaClass}" data-plan-target="${t}" ${isCurrent ? 'disabled' : ''}>${ctaText}</button>
+        </div>`;
+      }).join('');
+      // Switch buttons are stubs until Stripe wired. Until then, polite toast.
+      grid.querySelectorAll('[data-plan-target]:not(.current)').forEach(btn => {
+        btn.addEventListener('click', () => {
+          showToast('Stripe checkout coming soon — reach out for early access.');
+        });
+      });
+    }
+  }
+
   try {
     const res = await fetch(`${API_BASE}/settings`, { headers: authHeaders() });
     if (!res.ok) throw new Error('Settings load failed: ' + res.status);
@@ -5940,13 +6101,7 @@ async function openSettingsModal() {
       ? 'Personal account · legacy passcode'
       : `Account ${tenant.id || ''}`;
     $('#settingsEmail').value = tenant.email || '';
-    const tierLabel = tenant.tier
-      ? tenant.tier.charAt(0).toUpperCase() + tenant.tier.slice(1) +
-        (tenant.tier_info && tenant.tier_info.monthly_price_usd
-          ? ` · $${tenant.tier_info.monthly_price_usd}/mo`
-          : '')
-      : '—';
-    $('#settingsTier').value = tierLabel;
+    renderPlanSection(tenant);
     $('#settingWebSearch').checked = settings.web_search_enabled !== false;
 
     const b = data.budget;
@@ -6278,17 +6433,24 @@ async function init() {
   // Settings modal wiring
   const settingsBtn = $('#settingsBtn');
   if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
-  const upgradeBtn = $('#upgradeBtn');
-  if (upgradeBtn) upgradeBtn.addEventListener('click', () => {
-    // Opens Settings — the Plan & billing section is where the upgrade
-    // surface lives. (Single source of truth for plan/billing UX.)
+  // Top-nav Upgrade and in-settings Upgrade both open Settings + expand
+  // the plan-comparison grid + scroll it into view.
+  function openPlansInSettings() {
     openSettingsModal();
-    // Scroll the plans section into view if it exists. Falls back to the
-    // top of settings if the section isn't there yet.
     setTimeout(() => {
+      const cmp = document.getElementById('settingsPlanComparison');
+      if (cmp) cmp.style.display = '';
       const planSection = document.getElementById('settingsPlanSection');
       if (planSection) planSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  }
+  const upgradeBtn = $('#upgradeBtn');
+  if (upgradeBtn) upgradeBtn.addEventListener('click', openPlansInSettings);
+  // Manage button — stubs to Stripe customer portal (deferred per Pete).
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#settingsManageBtn')) {
+      showToast('Stripe billing portal — coming soon.');
+    }
   });
   const settingsSave = $('#settingsSaveBtn');
   if (settingsSave) settingsSave.addEventListener('click', saveSettings);
