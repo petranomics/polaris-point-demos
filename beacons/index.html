@@ -380,6 +380,98 @@ button {
 }
 .topbar-link:hover { color: var(--text); }
 
+/* Activity dot — small colored indicator showing monthly usage relative
+   to expected fair-use for the tier. Green/amber/red, no $ shown.
+   Backend computes the level (api/beacons/usage.js → activity.level). */
+.activity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6b7280;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.04);
+  transition: background .25s, box-shadow .25s;
+  cursor: default;
+}
+.activity-dot.green { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,.5); }
+.activity-dot.amber { background: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,.55); }
+.activity-dot.red   { background: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,.6); }
+
+/* Upgrade button — soft gold pill. Visible when tier has a higher tier
+   available (i.e. not pro/pete). Quiet by default; only emphasized when
+   user is at a meaningful usage threshold. */
+.upgrade-btn {
+  background: rgba(232,197,71,.10);
+  color: var(--gold);
+  border: 1px solid rgba(232,197,71,.35);
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: .75rem;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .12s, border-color .12s;
+}
+.upgrade-btn:hover {
+  background: rgba(232,197,71,.18);
+  border-color: rgba(232,197,71,.55);
+}
+.upgrade-btn.emphasized {
+  background: rgba(232,197,71,.22);
+  border-color: rgba(232,197,71,.65);
+  box-shadow: 0 0 14px rgba(232,197,71,.18);
+}
+
+/* Library meter — sits in the library section sub line, intuitive bar
+   showing X of Y documents · used MB. No $ shown. */
+.library-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 12px;
+  vertical-align: middle;
+}
+.library-meter-bar {
+  width: 110px;
+  height: 5px;
+  background: rgba(91,141,239,.10);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.library-meter-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 3px;
+  transition: width .35s ease, background .25s;
+}
+.library-meter-fill.warn  { background: var(--gold); }
+.library-meter-fill.alert { background: #ef4444; }
+.library-meter-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  color: var(--muted);
+}
+
+/* Context indicator under chat replies — "Read 8 of 47 documents".
+   Quiet, sub-content, no $ shown. */
+.chat-context-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  color: var(--muted);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(91,141,239,.06);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: .04em;
+}
+.chat-context-indicator .cci-icon { opacity: .7; }
+.chat-context-indicator-tooltip {
+  border-bottom: 1px dotted var(--muted);
+  cursor: help;
+}
+
 .banner {
   background: rgba(232,197,71,.06);
   border-bottom: 1px solid rgba(232,197,71,.18);
@@ -2297,13 +2389,15 @@ main {
       <span class="topbar-brand-meta">/ Pete</span>
     </div>
     <div class="topbar-actions">
-      <div class="cost-wheel" id="costWheel" title="Click for usage breakdown">
+      <div class="cost-wheel" id="costWheel" title="Click for usage breakdown" style="display:none">
         <svg class="cost-wheel-svg" viewBox="0 0 36 36">
           <circle class="wheel-bg" cx="18" cy="18" r="15.915"></circle>
           <circle class="wheel-fill" cx="18" cy="18" r="15.915" stroke-dasharray="0 100"></circle>
         </svg>
         <div class="cost-wheel-text" id="costWheelAmount">$0</div>
       </div>
+      <span class="activity-dot" id="activityDot" title="" style="display:none"></span>
+      <button class="upgrade-btn" id="upgradeBtn" title="See what other plans unlock" style="display:none">Upgrade</button>
       <span class="topbar-link mono" style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase">Local-only</span>
       <button class="topbar-link" id="settingsBtn">Settings</button>
       <button class="topbar-link" id="signOutBtn">Sign out</button>
@@ -2471,7 +2565,10 @@ main {
         <div class="panel-head">
           <div>
             <h2>Upload Files</h2>
-            <div class="panel-head-sub">Decks · PDFs · Emails · Notes</div>
+            <div class="panel-head-sub">Decks · PDFs · Emails · Notes<span class="library-meter" id="libraryMeter" style="display:none">
+              <span class="library-meter-bar"><span class="library-meter-fill" id="libraryMeterFill" style="width:0%"></span></span>
+              <span class="library-meter-text" id="libraryMeterText">— · — MB</span>
+            </span></div>
           </div>
           <div class="panel-head-count" id="filesCount">0 files</div>
         </div>
@@ -4677,24 +4774,73 @@ async function loadUsage() {
 }
 
 function renderCostWheel() {
-  const el = $('#costWheel');
-  if (!el || !usageData || !usageData.currentMonth) return;
-  const m = usageData.currentMonth;
-  const pct = Math.max(0.5, Math.min(100, m.percentUsed || 0));
-  const fill = el.querySelector('.wheel-fill');
-  fill.setAttribute('stroke-dasharray', `${pct} 100`);
-  fill.classList.toggle('warn', pct >= 50 && pct < 85);
-  fill.classList.toggle('alert', pct >= 85);
-  // Compact display: under $1 show cents (¢), under $10 show one decimal,
-  // otherwise round dollars.
-  const total = m.totalUsd || 0;
-  let shown;
-  if (total < 1) shown = '$' + total.toFixed(2);
-  else if (total < 10) shown = '$' + total.toFixed(1);
-  else shown = '$' + Math.round(total);
-  $('#costWheelAmount').textContent = shown;
-  el.classList.add('show');
-  el.title = `$${total.toFixed(2)} of $${(m.limitUsd || 0).toFixed(0)} this month — click for breakdown`;
+  if (!usageData) return;
+  const tier = usageData.tier || 'basic';
+  const isAdmin = (tier === 'pete'); // admin-only $ visibility
+
+  // ─── Cost wheel ($ display) — admin-only ────────────────────────────────
+  const wheel = $('#costWheel');
+  if (wheel) {
+    if (isAdmin && usageData.currentMonth) {
+      const m = usageData.currentMonth;
+      const pct = Math.max(0.5, Math.min(100, m.percentUsed || 0));
+      const fill = wheel.querySelector('.wheel-fill');
+      fill.setAttribute('stroke-dasharray', `${pct} 100`);
+      fill.classList.toggle('warn', pct >= 50 && pct < 85);
+      fill.classList.toggle('alert', pct >= 85);
+      const total = m.totalUsd || 0;
+      let shown;
+      if (total < 1) shown = '$' + total.toFixed(2);
+      else if (total < 10) shown = '$' + total.toFixed(1);
+      else shown = '$' + Math.round(total);
+      $('#costWheelAmount').textContent = shown;
+      wheel.style.display = '';
+      wheel.classList.add('show');
+      wheel.title = `$${total.toFixed(2)} of $${(m.limitUsd || 0).toFixed(0)} this month — click for breakdown`;
+    } else {
+      wheel.style.display = 'none';
+    }
+  }
+
+  // ─── Activity dot — colored indicator, no $ shown ───────────────────────
+  const dot = $('#activityDot');
+  if (dot && usageData.activity) {
+    const level = usageData.activity.level || 'green';
+    dot.className = 'activity-dot ' + level;
+    dot.style.display = '';
+    dot.title = level === 'red'   ? 'Heavy usage this month' :
+                level === 'amber' ? 'Active month' :
+                                    'Light usage';
+  }
+
+  // ─── Upgrade button — show for tiers that have a higher tier above ──────
+  const upgrade = $('#upgradeBtn');
+  if (upgrade) {
+    const lower = ['free', 'basic', 'premium'];
+    const showUpgrade = lower.includes(tier);
+    upgrade.style.display = showUpgrade ? '' : 'none';
+    // Quiet by default; emphasized only when usage suggests they're hitting limits
+    const emphasize = usageData.activity && (usageData.activity.level === 'amber' || usageData.activity.level === 'red');
+    upgrade.classList.toggle('emphasized', !!emphasize);
+  }
+
+  // ─── Library meter — X of Y docs · used MB ─────────────────────────────
+  const lm = $('#libraryMeter');
+  if (lm && usageData.library) {
+    const lib = usageData.library;
+    if (lib.sizeLimitMb) {
+      const pct = lib.percentUsed || 0;
+      $('#libraryMeterFill').style.width = pct + '%';
+      $('#libraryMeterFill').className = 'library-meter-fill' + (pct >= 90 ? ' alert' : (pct >= 70 ? ' warn' : ''));
+      const sizeStr = lib.sizeMb < 1 ? (Math.round(lib.sizeMb * 1000) + ' KB') : (lib.sizeMb.toFixed(lib.sizeMb < 10 ? 1 : 0) + ' MB');
+      const limStr  = lib.sizeLimitMb < 1024 ? (lib.sizeLimitMb + ' MB') : ((lib.sizeLimitMb/1024).toFixed(1) + ' GB');
+      $('#libraryMeterText').textContent = `${lib.items} doc${lib.items === 1 ? '' : 's'} · ${sizeStr} of ${limStr}`;
+      lm.style.display = '';
+    } else {
+      // Pro/pete — unlimited storage, hide meter
+      lm.style.display = 'none';
+    }
+  }
 }
 
 function openUsageModal() {
@@ -5258,6 +5404,14 @@ function renderChat() {
             : `<span>${exportIcons[ex.format] || '📄'} ${escapeHtml(ex.name || ex.format)}</span>`
         ).join('')}</div>`
       : '';
+    // Context indicator — "Read X of Y documents from your library." Quiet
+    // sub-content under the bubble. Hidden if no library use happened.
+    const contextHtml = (role === 'assistant' && !m.streaming && Number.isInteger(m.libraryUsed) && m.libraryTotal > 0)
+      ? `<div class="chat-context-indicator" title="Beacon picks the most relevant docs to keep responses fast. Higher plans read deeper into your library.">
+          <span class="cci-icon">📚</span>
+          <span class="chat-context-indicator-tooltip">Read ${m.libraryUsed} of ${m.libraryTotal} documents from your library</span>
+        </div>`
+      : '';
     let bubbleHtml;
     if (role === 'assistant') {
       // While a reply is still streaming in, show plain text so partial markdown
@@ -5276,6 +5430,7 @@ function renderChat() {
       ${toolsHtml}
       <div class="chat-bubble">${bubbleHtml}</div>
       ${sourcesHtml}
+      ${contextHtml}
       ${exportsHtml}
       ${actions}
     </div>`;
@@ -5356,6 +5511,8 @@ async function sendChat(message, modeOverride) {
           } else if (data.type === 'meta') {
             chatHistory[placeholderIdx].model = data.model || chatHistory[placeholderIdx].model;
             chatHistory[placeholderIdx].mode = data.mode || chatHistory[placeholderIdx].mode;
+            if (data.libraryUsed != null) chatHistory[placeholderIdx].libraryUsed = data.libraryUsed;
+            if (data.libraryTotal != null) chatHistory[placeholderIdx].libraryTotal = data.libraryTotal;
           } else if (data.type === 'search_started') {
             $('#chatTypingText').textContent = 'Beacon is searching the web...';
           } else if (data.type === 'tool_started') {
@@ -5991,6 +6148,18 @@ async function init() {
   // Settings modal wiring
   const settingsBtn = $('#settingsBtn');
   if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
+  const upgradeBtn = $('#upgradeBtn');
+  if (upgradeBtn) upgradeBtn.addEventListener('click', () => {
+    // Opens Settings — the Plan & billing section is where the upgrade
+    // surface lives. (Single source of truth for plan/billing UX.)
+    openSettingsModal();
+    // Scroll the plans section into view if it exists. Falls back to the
+    // top of settings if the section isn't there yet.
+    setTimeout(() => {
+      const planSection = document.getElementById('settingsPlanSection');
+      if (planSection) planSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  });
   const settingsSave = $('#settingsSaveBtn');
   if (settingsSave) settingsSave.addEventListener('click', saveSettings);
   const settingsSignOut = $('#settingsSignOutBtn');

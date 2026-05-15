@@ -199,9 +199,11 @@ function scoreRelevance(item, queryTokens) {
   return score;
 }
 
+// Returns { prompt, used, total } so the caller can surface "Read X of Y
+// documents" to the user. prompt may be null if there's no library content.
 function buildLibraryPrompt(items, budget, message, history) {
   const library = items.filter(i => i.kind === 'file' || i.kind === 'thought' || i.kind === 'email_thread');
-  if (!library.length) return null;
+  if (!library.length) return { prompt: null, used: 0, total: 0 };
 
   const queryText = ((message || '') + ' ' +
     (Array.isArray(history) ? history.slice(-3).map(h => h.content || '').join(' ') : ''))
@@ -269,7 +271,11 @@ function buildLibraryPrompt(items, budget, message, history) {
   if (remaining > 0) {
     lines.push(`\n[Note: ${remaining} more library items in your archive — ask about a specific topic, or pin items via the library to anchor them in every chat.]`);
   }
-  return lines.join('');
+  return {
+    prompt: lines.join(''),
+    used: addedIds.size,
+    total: library.filter(i => (i.content || '').trim()).length,
+  };
 }
 
 async function callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled = true, limits = null }) {
@@ -369,7 +375,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
 // to prevent runaway loops.
 const MAX_AGENT_TURNS = 6;
 
-async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled = true, limits = null }) {
+async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled = true, limits = null, libraryUsed = 0, libraryTotal = 0 }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
   const systemBlocks = [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral', ttl: '1h' } }];
@@ -414,7 +420,13 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   if (typeof res.flushHeaders === 'function') res.flushHeaders();
 
   const send = (payload) => res.write('data: ' + JSON.stringify(payload) + '\n\n');
-  send({ type: 'meta', model, mode, toolsAvailable: tools.length });
+  send({
+    type: 'meta',
+    model, mode,
+    toolsAvailable: tools.length,
+    libraryUsed,
+    libraryTotal,
+  });
 
   const totalUsage = {
     input_tokens: 0,
@@ -740,7 +752,10 @@ module.exports = async function handler(req, res) {
     const items = rows.map(r => r.data);
 
     const systemPrompt = buildSystemPrompt(items);
-    const libraryPrompt = buildLibraryPrompt(items, budget, message, history);
+    const libBuilt = buildLibraryPrompt(items, budget, message, history);
+    const libraryPrompt = libBuilt.prompt;
+    const libraryUsed = libBuilt.used;
+    const libraryTotal = libBuilt.total;
 
     // If Google is connected, the agent can wield Drive/Sheets/Slides tools.
     // Pull a fresh access token (auto-refreshes if expired) before kicking
@@ -755,11 +770,13 @@ module.exports = async function handler(req, res) {
     }
 
     if (body.stream === true) {
-      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled, limits });
+      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled, limits, libraryUsed, libraryTotal });
       return;
     }
 
     const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled, limits });
+    result.libraryUsed = libraryUsed;
+    result.libraryTotal = libraryTotal;
     let costUsd = 0;
     try {
       costUsd = await Pricing.logUsage(sql, {
