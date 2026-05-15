@@ -17,6 +17,7 @@ const Tools = require('../../lib/tools');
 const Auth = require('../../lib/auth');
 const Budget = require('../../lib/budget');
 const ModelRouter = require('../../lib/model-router');
+const TierResolver = require('../../lib/resolve-tier');
 
 // Model routing: Haiku 4.5 across the board. The mode lanes differ only by
 // how much of the library we pack in (see LIBRARY_BUDGET below). If a task
@@ -271,7 +272,7 @@ function buildLibraryPrompt(items, budget, message, history) {
   return lines.join('');
 }
 
-async function callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled = true }) {
+async function callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled = true, limits = null }) {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not configured on the server');
   }
@@ -301,15 +302,22 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
 
   // Server-side web search tool. Anthropic runs the search loop; we get the
   // final answer back with citations embedded in the text blocks.
-  // Tenant can disable web_search in Settings → toggle.
+  // Tenant can disable web_search in Settings → toggle. Tier caps via limits.
+  const envMaxSearches = parseInt(process.env.BEACONS_CHAT_MAX_SEARCHES || '4', 10);
+  const tierMaxSearches = (limits && Number.isInteger(limits.web_search)) ? limits.web_search : envMaxSearches;
+  const effectiveMaxSearches = Math.min(envMaxSearches, tierMaxSearches);
   const tools = [];
-  if (webSearchEnabled) {
+  if (webSearchEnabled && effectiveMaxSearches > 0) {
     tools.push({
       type: 'web_search_20250305',
       name: 'web_search',
-      max_uses: parseInt(process.env.BEACONS_CHAT_MAX_SEARCHES || '4', 10)
+      max_uses: effectiveMaxSearches
     });
   }
+
+  // Tier-aware max output tokens. 4096 was the previous hardcoded ceiling.
+  const tierMaxOutput = (limits && limits.max_output) ? limits.max_output : 4096;
+  const effectiveMaxTokens = Math.min(4096, tierMaxOutput);
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -321,7 +329,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
     },
     body: JSON.stringify({
       model,
-      max_tokens: 4096,
+      max_tokens: effectiveMaxTokens,
       tools,
       system: systemBlocks,
       messages
@@ -361,7 +369,7 @@ async function callClaude({ model, systemPrompt, libraryPrompt, history, message
 // to prevent runaway loops.
 const MAX_AGENT_TURNS = 6;
 
-async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled = true }) {
+async function streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled = true, limits = null }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured');
 
   const systemBlocks = [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral', ttl: '1h' } }];
@@ -378,18 +386,25 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
   }
   messages.push({ role: 'user', content: String(message) });
 
+  // Tier-aware web_search cap (env baseline, tier-clamped to limits.web_search).
+  const envMaxSearches = parseInt(process.env.BEACONS_CHAT_MAX_SEARCHES || '4', 10);
+  const tierMaxSearches = (limits && Number.isInteger(limits.web_search)) ? limits.web_search : envMaxSearches;
+  const effectiveMaxSearches = Math.min(envMaxSearches, tierMaxSearches);
   const tools = [];
-  if (webSearchEnabled) {
+  if (webSearchEnabled && effectiveMaxSearches > 0) {
     tools.push({
       type: 'web_search_20250305',
       name: 'web_search',
-      max_uses: parseInt(process.env.BEACONS_CHAT_MAX_SEARCHES || '4', 10),
+      max_uses: effectiveMaxSearches,
       user_location: { type: 'approximate', country: 'US' }
     });
   }
   if (accessToken) {
     Tools.TOOL_DEFINITIONS.forEach(d => tools.push(d));
   }
+  // Tier-aware max output. 4096 was the previous hardcoded ceiling.
+  const tierMaxOutput = (limits && limits.max_output) ? limits.max_output : 4096;
+  const effectiveMaxTokens = Math.min(4096, tierMaxOutput);
 
   // SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
@@ -422,7 +437,7 @@ async function streamClaude({ model, systemPrompt, libraryPrompt, history, messa
       },
       body: JSON.stringify({
         model,
-        max_tokens: 4096,
+        max_tokens: effectiveMaxTokens,
         tools,
         system: systemBlocks,
         messages,
@@ -626,14 +641,27 @@ module.exports = async function handler(req, res) {
   if (!tenant) return res.status(401).json({ error: 'Invalid or missing auth' });
   const webSearchEnabled = Auth.effectiveSettings(tenant).web_search_enabled !== false;
 
+  // Resolve per-tier limits. Pulls tier from beacons_tenants and merges any
+  // per-customer overrides in tenant.settings.limits.
+  const { tier, limits } = TierResolver.fromTenant(tenant);
+  res.setHeader('X-Beacons-Tier', tier);
+
   const body = req.body || {};
   const message = (body.message || '').toString().trim();
   if (!message) return res.status(400).json({ error: 'Missing message' });
-  const history = Array.isArray(body.history) ? body.history.slice(-20) : [];
+  // History truncation per tier — older turns get dropped silently. (Smart
+  // summarization of older turns is a future enhancement.)
+  const historyLimit = limits.history > 0 ? limits.history : 1;
+  const history = Array.isArray(body.history) ? body.history.slice(-historyLimit) : [];
   const requestedMode = (body.mode || 'default').toString();
   const aliasedMode = MODE_ALIASES[requestedMode] || requestedMode;
   const mode = MODELS[aliasedMode] ? aliasedMode : 'default';
-  const budget = LIBRARY_BUDGET[mode];
+  // RAG context cap — the single biggest cost lever. Tier limit caps the
+  // mode's library budget; whichever is smaller wins. ~4 chars per token.
+  const tierBudgetChars = (limits.rag_tokens || 0) * 4;
+  const budget = tierBudgetChars > 0
+    ? Math.min(LIBRARY_BUDGET[mode], tierBudgetChars)
+    : 0; // free tier — no library context
 
   try {
     const sql = neon(process.env.DATABASE_URL);
@@ -649,6 +677,29 @@ module.exports = async function handler(req, res) {
         error: 'Monthly usage cap reached for this account.',
         budget: budgetState
       });
+    }
+
+    // Tier-based inquiry counter. Each chat call writes exactly one row to
+    // beacons_usage_log; counting rows MTD = inquiry count. If a tier has a
+    // limit (inquiries_mo not null) and they're over, refuse with a soft
+    // message. Headers expose used/limit for the UI activity dot.
+    if (limits.inquiries_mo !== null && limits.inquiries_mo !== undefined) {
+      const inqRows = await sql`
+        SELECT COUNT(*)::int AS count
+          FROM beacons_usage_log
+         WHERE tenant_id = ${tenant.id}
+           AND created_at >= date_trunc('month', NOW())
+      `;
+      const monthCount = inqRows[0]?.count || 0;
+      res.setHeader('X-Beacons-Inquiries-Used', String(monthCount));
+      res.setHeader('X-Beacons-Inquiries-Limit', String(limits.inquiries_mo));
+      if (monthCount >= limits.inquiries_mo) {
+        return res.status(402).json({
+          error: 'Monthly inquiry limit reached for this account.',
+          tier,
+          inquiries: { used: monthCount, limit: limits.inquiries_mo }
+        });
+      }
     }
 
     // Triage to a model based on tenant tier + budget left + requested mode.
@@ -704,11 +755,11 @@ module.exports = async function handler(req, res) {
     }
 
     if (body.stream === true) {
-      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled });
+      await streamClaude({ model, systemPrompt, libraryPrompt, history, message, res, mode, sql, accessToken, tenant, webSearchEnabled, limits });
       return;
     }
 
-    const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled });
+    const result = await callClaude({ model, systemPrompt, libraryPrompt, history, message, webSearchEnabled, limits });
     let costUsd = 0;
     try {
       costUsd = await Pricing.logUsage(sql, {

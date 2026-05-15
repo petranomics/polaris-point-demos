@@ -3,6 +3,7 @@
 // GET: fetch chat history
 const { neon } = require('@neondatabase/serverless');
 const { logUsage } = require('../../lib/usage-logger.cjs');
+const TierResolver = require('../../lib/resolve-tier');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -50,6 +51,11 @@ module.exports = async function handler(req, res) {
         });
       }
 
+      // Tier-aware limits. Subscription.plan maps to tier via PLAN_TIER_MAP.
+      var tierInfo = TierResolver.fromSubscription(sub);
+      var subLimits = tierInfo.limits;
+      res.setHeader('X-Beacon-Tier', tierInfo.tier);
+
       // 2. Fetch context documents
       var context = await sql`
         SELECT context_type, title, content
@@ -69,13 +75,14 @@ module.exports = async function handler(req, res) {
         }
       });
 
-      // 3. Fetch recent message history
+      // 3. Fetch recent message history — capped by tier
+      var historyLimit = (subLimits && subLimits.history) ? subLimits.history : 20;
       var history = await sql`
         SELECT role, content
         FROM beacon_messages
         WHERE subscription_id = ${subId}
         ORDER BY created_at DESC
-        LIMIT 20
+        LIMIT ${historyLimit}
       `;
       history = history.reverse(); // chronological order
 
@@ -187,7 +194,8 @@ async function callClaudeDirect(context, history, message, brandVoice) {
     },
     body: JSON.stringify({
       model: beaconChatModel,
-      max_tokens: 2048,
+      // Tier-aware ceiling; previous hardcoded value was 2048.
+      max_tokens: Math.min(2048, (subLimits && subLimits.max_output) ? subLimits.max_output : 2048),
       system: systemParts.join('\n'),
       messages: claudeMessages
     })
