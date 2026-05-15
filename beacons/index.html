@@ -472,6 +472,36 @@ button {
   cursor: help;
 }
 
+/* File category — tag on library items + select inside detail modal */
+.lib-cat-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+  border: 1px solid currentColor;
+  opacity: .85;
+}
+.lib-cat-badge.cat-template  { color: #9b7cff; }
+.lib-cat-badge.cat-sensitive { color: #ef4444; }
+.lib-cat-badge.cat-context   { color: #84a3c4; }
+.lib-cat-badge.cat-news      { color: var(--gold); }
+.modal-category-select {
+  background: rgba(20, 28, 45, 0.6);
+  border: 1px solid rgba(91, 141, 239, .25);
+  color: var(--text);
+  padding: 5px 10px;
+  font-size: .8rem;
+  font-family: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.modal-category-select:focus { outline: 0; border-color: var(--gold); }
+
 .banner {
   background: rgba(232,197,71,.06);
   border-bottom: 1px solid rgba(232,197,71,.18);
@@ -2644,7 +2674,15 @@ main {
     <div class="modal-body" id="modalBody">—</div>
     <div class="modal-foot">
       <span class="modal-meta" id="modalSize">—</span>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;align-items:center">
+        <label class="modal-meta" for="modalCategory" style="margin-right:4px">Category</label>
+        <select id="modalCategory" class="modal-category-select" title="How Beacon should treat this file">
+          <option value="general">General</option>
+          <option value="template">Template</option>
+          <option value="sensitive">Sensitive</option>
+          <option value="context">Context</option>
+          <option value="news">News article</option>
+        </select>
         <button class="btn btn-ghost" id="modalPinBtn">📌 Pin</button>
         <button class="btn btn-ghost" id="modalCopyBtn">Copy text</button>
         <button class="btn btn-ghost" id="modalDeleteBtn" style="color:var(--red);border-color:rgba(248,113,113,.3)">Delete</button>
@@ -4692,10 +4730,12 @@ function renderLibrary() {
       ? `<em style="color:var(--text-dim)">${item.extract_error ? 'Extraction failed: ' + escapeHtml(item.extract_error) : 'Saved as metadata only.'}</em>`
       : '<em style="color:var(--text-dim)">No preview</em>');
     const pinIndicator = item.pinned ? '<span style="color:var(--gold);margin-right:6px" title="Pinned to context">📌</span>' : '';
+    const cat = item.category && item.category !== 'general' ? item.category : null;
+    const catBadge = cat ? `<span class="lib-cat-badge cat-${cat}" title="Category — how Beacon treats this file">${cat === 'news' ? 'News' : (cat[0].toUpperCase() + cat.slice(1))}</span>` : '';
     return `<li class="lib-item" data-id="${item.id}">
       <div class="lib-icon ${iconKind}">${escapeHtml(lbl)}</div>
       <div class="lib-body">
-        <div class="lib-title">${pinIndicator}${escapeHtml(item.title)}</div>
+        <div class="lib-title">${pinIndicator}${escapeHtml(item.title)}${catBadge}</div>
         <div class="lib-preview">${previewText}</div>
       </div>
       <div class="lib-meta">${fmtSize(item.size || 0)}</div>
@@ -4722,6 +4762,24 @@ function openDetail(id) {
     fmtDate(item.created_at)
   ].filter(Boolean).join(' · ');
   $('#modalSize').textContent = fmtSize(item.size || 0);
+  // Category — populate the dropdown with whatever's on the item (default
+  // 'general' if missing). Save on change without closing the modal.
+  const catSel = $('#modalCategory');
+  if (catSel) {
+    catSel.value = item.category || 'general';
+    // Replace listener to avoid stacking handlers across openDetail calls.
+    catSel.onchange = async (e) => {
+      const updated = { ...item, category: e.target.value, updated_at: new Date().toISOString() };
+      try {
+        await storagePut(updated);
+        await loadAll();
+        renderAll();
+        showToast('Category set to ' + e.target.value);
+      } catch (err) {
+        showToast('Could not save category', true);
+      }
+    };
+  }
   const pinBtn = $('#modalPinBtn');
   if (pinBtn) {
     pinBtn.textContent = item.pinned ? '📌 Unpin' : '📌 Pin to context';

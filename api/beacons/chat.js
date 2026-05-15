@@ -39,10 +39,53 @@ const LIBRARY_BUDGET = {
 // Backwards-compat: older clients may still send mode='fast'. Map to default.
 const MODE_ALIASES = { fast: 'default' };
 
+// File / thought "category" is a soft tag the user picks at upload that
+// hints to Beacon how to treat the content:
+//   template   — fillable structure (full template-fill UX is a future feature)
+//   sensitive  — never quote verbatim in outputs; trigger footer note
+//   context    — background material — lower retrieval priority
+//   news       — time-bound — older articles down-weighted
+//   general    — default (no special handling)
+// The category lives in item.category (top-level on the JSONB).
+const VALID_CATEGORIES = ['template', 'sensitive', 'context', 'news', 'general'];
+
+function categoryOf(item) {
+  const c = (item && item.category) || 'general';
+  return VALID_CATEGORIES.includes(c) ? c : 'general';
+}
+
 function tagLine(item) {
-  if (item.kind === 'thought') return `[Thought · ${item.title || 'untitled'}]`;
-  if (item.kind === 'file') return `[File · ${item.title}${item.extension ? ' .' + item.extension : ''}]`;
-  return `[${item.kind} · ${item.title || ''}]`;
+  const cat = categoryOf(item);
+  const catTag = cat && cat !== 'general' ? ` · ${cat.toUpperCase()}` : '';
+  if (item.kind === 'thought') return `[Thought · ${item.title || 'untitled'}${catTag}]`;
+  if (item.kind === 'file') return `[File · ${item.title}${item.extension ? ' .' + item.extension : ''}${catTag}]`;
+  return `[${item.kind} · ${item.title || ''}${catTag}]`;
+}
+
+// Per-category retrieval score multiplier. Applied AFTER token-relevance
+// scoring so the user's category hint nudges (doesn't override) relevance.
+//   template  — neutral (don't bias retrieval — feature is "fill mode")
+//   sensitive — neutral (still searchable but gets footer if cited)
+//   context   — 0.7× (lower priority — only pulled if directly relevant)
+//   news      — age-dependent: recent (<30d) 1.2×, old (>180d) 0.5×
+const CATEGORY_SCORE_MULT = {
+  template:  1.0,
+  sensitive: 1.0,
+  context:   0.7,
+  news:      1.0, // adjusted dynamically by age below
+  general:   1.0,
+};
+
+function categoryScoreMult(item) {
+  const cat = categoryOf(item);
+  if (cat === 'news') {
+    const created = new Date(item.created_at || item.updated_at || 0).getTime();
+    const ageDays = Math.max(0, (Date.now() - created) / (1000 * 60 * 60 * 24));
+    if (ageDays < 30) return 1.2;
+    if (ageDays > 180) return 0.5;
+    return 1.0;
+  }
+  return CATEGORY_SCORE_MULT[cat] || 1.0;
 }
 
 function buildSystemPrompt(items) {
@@ -196,7 +239,9 @@ function scoreRelevance(item, queryTokens) {
       score += hits;
     }
   }
-  return score;
+  // Category multiplier nudges retrieval toward the user's intent (news
+  // recency, context = background, etc.) without overriding relevance.
+  return score * categoryScoreMult(item);
 }
 
 // Returns { prompt, used, total } so the caller can surface "Read X of Y
