@@ -18,14 +18,21 @@ const Pricing = require('../../lib/pricing');
 const TierResolver = require('../../lib/resolve-tier');
 
 // Activity dot thresholds — keyed to expected fair-use spend, NOT hard cap.
-// Expected = (price × 0.25) per Pete's targeting (25% rev as API cost).
+// Expected ≈ 25% of plan price (Pete's targeting — leaves ~75% gross margin).
 // Internal-only — never shown as $ in UI.
+//   Spark      ($129)  → ~$32 expected (paranoid: keep at $25 for headroom)
+//   Beam       ($249)  → ~$62 (keep at $50)
+//   Lighthouse ($499)  → ~$125 (keep at $100)
 const TIER_EXPECTED_USD = {
-  free:    2,
-  basic:   12,
-  premium: 25,
-  pro:     50,
-  pete:    9999, // effectively unlimited internal
+  free:       2,
+  spark:      25,
+  beam:       50,
+  lighthouse: 100,
+  pete:       9999,
+  // Legacy aliases — same numbers, different keys, kept until DB migrates.
+  basic:      25,
+  premium:    50,
+  pro:        100,
 };
 
 function activityLevel(pctOfExpected) {
