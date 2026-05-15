@@ -2443,6 +2443,120 @@ main {
   flex-shrink: 0;
 }
 .toast.error .dot { background: var(--red); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — phone + tablet pass
+   ═══════════════════════════════════════════════════════════════════════════
+   Strategy:
+   - At ≤ 768px: tighten padding, stack grids that don't already, bump
+     touch targets to ≥44px, reorder sections so chat + latest findings
+     come BEFORE stats/connections (users open Beacon to check on output).
+   - At ≤ 480px: further tightening for phone screens — stats 2×2, smaller
+     headings, topbar condensed.
+
+   Note: chat input stays inline (not sticky) for now — sticky-bottom on
+   mobile is a separate change worth doing once base mobile is verified. */
+
+@media (max-width: 768px) {
+  main {
+    padding: 20px 14px 60px;
+  }
+  /* Reorder: chat + outputs first on mobile (users open Beacon to check
+     on their work). Stats / directions / connections move below. */
+  main { display: flex; flex-direction: column; }
+  main > .welcome           { order: 1; }
+  main > #chatBlock         { order: 2; }
+  main > #findingsBlock     { order: 3; }
+  main > #projectsBlock     { order: 4; }
+  main > #tasksBlock        { order: 5; }
+  main > .panel-grid        { order: 6; }   /* library upload */
+  main > .stats             { order: 7; margin-bottom: 20px; }
+  main > #directionsBlock   { order: 8; }
+  main > #connectionsBlock  { order: 9; }
+
+  /* Findings strip: tile each card full width — easier to read on a phone. */
+  .findings-strip { grid-template-columns: 1fr; gap: 12px; }
+  .finding-card.expanded { grid-column: 1; }  /* still full row */
+
+  /* Projects grid: stack 1-col */
+  .projects-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Plan comparison: stack 1-col */
+  .plan-comparison-grid { grid-template-columns: 1fr; }
+  .modal-card { max-width: 100%; margin: 12px; }
+
+  /* Welcome banner: tighter */
+  .welcome { margin-bottom: 18px; }
+
+  /* Topbar: tighter spacing, smaller mark, hide local-only badge */
+  .topbar { padding: 12px 14px; }
+  .topbar-actions { gap: 10px; }
+  .topbar-actions .mono { display: none; }
+
+  /* Touch targets ≥ 44px on common buttons */
+  .btn, .btn-ghost, .btn-primary, .btn-icon, .topbar-link, .upgrade-btn {
+    min-height: 40px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .btn-icon { min-width: 40px; }
+
+  /* Library list items more tappable */
+  .lib-item { padding: 14px 12px; gap: 10px; }
+  .lib-actions .btn-icon.danger { min-width: 36px; min-height: 36px; }
+
+  /* Task rows */
+  .task-row { padding: 14px 10px; }
+
+  /* Chat textarea larger for thumb typing */
+  .chat-composer textarea {
+    font-size: 16px; /* prevents iOS zoom on focus */
+    padding: 14px;
+    min-height: 48px;
+  }
+  .chat-composer { gap: 8px; }
+
+  /* Section margins tighter */
+  .section-block { margin-bottom: 22px; }
+
+  /* Larger upload affordance */
+  .dropzone { padding: 28px 18px; }
+  .dropzone-prim { font-size: .95rem; }
+
+  /* Modal padding */
+  .modal { padding: 12px; }
+}
+
+@media (max-width: 480px) {
+  main { padding: 16px 10px 60px; }
+  /* Welcome heading scales down */
+  .welcome h1 { font-size: 1.5rem; line-height: 1.2; }
+  /* Stats: keep 2x2 from the earlier rule, but reduce label sizes */
+  .stat { padding: 12px 14px; }
+  .stat-num { font-size: 1.4rem; }
+  .stat-lbl { font-size: .7rem; }
+  /* Topbar brand text smaller */
+  .topbar-brand { font-size: .95rem; }
+  .topbar-brand-meta { display: none; } /* "/ Pete" hidden on tiny screens */
+  /* Section headers tighter */
+  .section-bar h2 { font-size: 1rem; }
+  /* Library meter wraps to its own line so the section sub doesn't crowd */
+  .library-meter { display: flex; margin-left: 0; margin-top: 6px; }
+  /* Chat header buttons tighter */
+  .chat-card-head { flex-wrap: wrap; gap: 6px; }
+  /* Finding card padding tighter */
+  .finding-card { padding: 12px; }
+  /* Plan tile text smaller */
+  .plan-tile-name { font-size: .9rem; }
+  .plan-tile-price { font-size: 1rem; }
+}
+
+/* Disable hover transform on touch devices (sticks visually + lags taps) */
+@media (hover: none) {
+  .lib-item:hover, .project-card:hover, .finding-card:hover {
+    transform: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -2560,7 +2674,7 @@ main {
     </div>
 
     <!-- ============== DIRECTIONS ============== -->
-    <div class="section-block">
+    <div class="section-block" id="directionsBlock">
       <div class="directions-card empty" id="directionsCard">
         <div class="directions-head">
           <div class="directions-title">
@@ -2574,7 +2688,7 @@ main {
     </div>
 
     <!-- ============== CONNECTIONS ============== -->
-    <div class="section-block">
+    <div class="section-block" id="connectionsBlock">
       <div class="section-bar">
         <div>
           <h2>Connections</h2>
@@ -2642,7 +2756,7 @@ main {
     </div>
 
     <!-- ============== PROJECTS ============== -->
-    <div class="section-block">
+    <div class="section-block" id="projectsBlock">
       <div class="section-bar">
         <div>
           <h2>Projects</h2>
@@ -2656,7 +2770,7 @@ main {
     </div>
 
     <!-- ============== TASKS ============== -->
-    <div class="section-block">
+    <div class="section-block" id="tasksBlock">
       <div class="section-bar">
         <div>
           <h2>Tasks</h2>
