@@ -951,6 +951,83 @@ main {
   padding-top: 8px;
   border-top: 1px solid rgba(91,141,239,.08);
 }
+/* Expanded state — card spans full row and shows the clean output inline. */
+.finding-card.expanded {
+  grid-column: 1 / -1;
+  background: rgba(20, 28, 45, 0.85);
+  border-color: rgba(232, 197, 71, .35);
+  cursor: default;
+}
+.finding-card.expanded:hover { transform: none; background: rgba(20, 28, 45, 0.85); }
+.finding-card.expanded .fc-preview { display: none; }
+.fc-expanded-body {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(232, 197, 71, .18);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fc-output {
+  font-size: .85rem;
+  color: var(--text);
+  line-height: 1.55;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.fc-output p { margin: 0 0 .7em 0; }
+.fc-output p:last-child { margin-bottom: 0; }
+.fc-output h1, .fc-output h2, .fc-output h3 {
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  margin: .8em 0 .3em 0;
+}
+.fc-output h1 { font-size: 1.1rem; }
+.fc-output h2 { font-size: 1rem; }
+.fc-output h3 { font-size: .92rem; }
+.fc-output ul, .fc-output ol { margin: 0 0 .7em 1.2em; padding: 0; }
+.fc-output li { margin-bottom: .25em; }
+.fc-output strong { color: var(--text); font-weight: 600; }
+.fc-output code {
+  background: rgba(91,141,239,.12);
+  color: var(--blue);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+}
+.fc-expanded-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fc-action-btn {
+  background: rgba(91, 141, 239, .12);
+  border: 1px solid rgba(91, 141, 239, .25);
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: .76rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  font-family: inherit;
+}
+.fc-action-btn:hover:not(:disabled) {
+  background: rgba(91, 141, 239, .22);
+  border-color: rgba(91, 141, 239, .45);
+}
+.fc-action-btn:disabled { opacity: .5; cursor: not-allowed; }
+.fc-action-btn.fc-action-secondary {
+  background: transparent;
+  border-color: rgba(232, 197, 71, .3);
+  color: var(--gold);
+  margin-left: auto;
+}
+.fc-action-btn.fc-action-secondary:hover:not(:disabled) {
+  background: rgba(232, 197, 71, .08);
+  border-color: rgba(232, 197, 71, .55);
+}
 .finding-card .fc-refine-input {
   flex: 1;
   background: rgba(20, 28, 45, 0.5);
@@ -4044,6 +4121,110 @@ function renderAll() {
   refreshBanner();
 }
 
+// Cache of full finding payloads keyed by card data-fid. Populated each
+// time renderFindings() runs. Used by the in-place expand handler.
+let _findingPayloads = {};
+
+function toggleFindingExpand(cardEl) {
+  const fid = cardEl.dataset.fid;
+  const f = _findingPayloads[fid];
+  if (!f) return;
+  const alreadyExpanded = cardEl.classList.contains('expanded');
+  // Collapse any other expanded cards first — one at a time keeps focus.
+  cardEl.parentElement.querySelectorAll('.finding-card.expanded').forEach(el => {
+    if (el !== cardEl) {
+      el.classList.remove('expanded');
+      const body = el.querySelector('.fc-expanded-body');
+      if (body) body.remove();
+    }
+  });
+  if (alreadyExpanded) {
+    cardEl.classList.remove('expanded');
+    const body = cardEl.querySelector('.fc-expanded-body');
+    if (body) body.remove();
+    return;
+  }
+  cardEl.classList.add('expanded');
+  // Build expanded body: full output rendered as markdown + actions
+  const body = document.createElement('div');
+  body.className = 'fc-expanded-body';
+  const fullText = f.fullContent || f.preview || '';
+  const rendered = renderMarkdown(fullText);
+  const sourceLabel = f.task_id || f.project_id ? '' : ''; // already shown above
+  const isThread = f.kind === 'thread' && f.thread_id;
+  const isThought = f.kind === 'thought' && f.item_id;
+  const canExport = isThread || isThought;
+  const exportsHtml = canExport ? `
+    <button class="fc-action-btn" data-export="doc"    title="Save as Google Doc">📄 Doc</button>
+    <button class="fc-action-btn" data-export="sheet"  title="Save as Google Sheet">📊 Sheet</button>
+    <button class="fc-action-btn" data-export="slides" title="Save as Google Slides">📽 Slides</button>` : '';
+  const copyBtn = `<button class="fc-action-btn" data-copy="1" title="Copy output">📋 Copy</button>`;
+  const openHtml = isThread
+    ? `<button class="fc-action-btn fc-action-secondary" data-open-thread="${escapeHtml(f.thread_id)}">Open thread →</button>`
+    : '';
+  body.innerHTML = `
+    <div class="fc-output">${rendered}</div>
+    <div class="fc-expanded-actions">
+      ${copyBtn}
+      ${exportsHtml}
+      ${openHtml}
+    </div>
+  `;
+  cardEl.appendChild(body);
+
+  // Wire actions
+  body.querySelector('[data-copy="1"]')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(fullText).then(
+      () => showToast('Copied output'),
+      () => showToast('Copy failed', true)
+    );
+  });
+  body.querySelectorAll('[data-export]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const format = btn.dataset.export;
+      btn.disabled = true;
+      const old = btn.textContent;
+      btn.textContent = '…';
+      try {
+        await exportFindingOutput(f, format);
+      } catch (err) {
+        showToast('Export failed: ' + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = old;
+      }
+    });
+  });
+  body.querySelector('[data-open-thread]')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    loadThread(e.currentTarget.dataset.openThread);
+  });
+}
+
+async function exportFindingOutput(finding, format) {
+  if (!finding || !finding.fullContent) throw new Error('No output to export');
+  const labels = { doc: 'Doc', sheet: 'Sheet', slides: 'Slides' };
+  showToast(`Creating Google ${labels[format] || 'Doc'}…`);
+  const endpoint = format === 'slides' ? 'save-as-slides' : 'save-as-doc';
+  const payload = format === 'slides'
+    ? { text: finding.fullContent, title: finding.title }
+    : { text: finding.fullContent, title: finding.title, format };
+  const res = await fetch(`${API_BASE}/google/${endpoint}`, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || ('HTTP ' + res.status));
+  }
+  const data = await res.json();
+  showToast(`Saved · opening ${data.name}`);
+  if (data.webViewLink) window.open(data.webViewLink, '_blank', 'noopener');
+}
+
 function renderFindings() {
   const block = $('#findingsBlock');
   const strip = $('#findingsStrip');
@@ -4074,7 +4255,8 @@ function renderFindings() {
         m && m.role === 'assistant' && (m.content || '').toString().trim().length > 0
       );
       if (lastAssistant) {
-        const preview = (lastAssistant.content || '').toString().replace(/\s+/g, ' ').slice(0, 140);
+        const fullContent = (lastAssistant.content || '').toString();
+        const preview = fullContent.replace(/\s+/g, ' ').slice(0, 280);
         // Threads tied to a project or task get the ⚡ icon ("Run with Beacon").
         // Free-form chats use a chat icon. Either way, the assistant's last
         // message is the "conclusion" of that thread.
@@ -4085,6 +4267,7 @@ function renderFindings() {
           label: isRunWithBeacon ? 'Run with Beacon' : 'Chat',
           title: it.title || 'Beacon run',
           preview,
+          fullContent,
           date: it.updated_at || it.created_at,
           project_id: it.project_id || null,
           task_id: it.task_id || null,
@@ -4110,6 +4293,26 @@ function renderFindings() {
           });
         }
       }
+    } else if (it.kind === 'thought') {
+      // Notes (typed or voice-recorded). They ARE outputs in the user's
+      // workflow — call notes, brain-dumps — and Pete wants to find them
+      // alongside Beacon-generated content.
+      const fullContent = (it.content || '').toString();
+      if (fullContent.trim()) {
+        const preview = fullContent.replace(/\s+/g, ' ').slice(0, 280);
+        all.push({
+          kind: 'thought',
+          icon: '📝',
+          label: 'Note',
+          title: it.title || 'Untitled note',
+          preview,
+          fullContent,
+          date: it.updated_at || it.created_at,
+          project_id: it.project_id || null,
+          task_id: it.task_id || null,
+          item_id: it.id
+        });
+      }
     } else if (it.kind === 'task' && it.status === 'done') {
       // Completed tasks count as findings — they show what work got done.
       all.push({
@@ -4123,10 +4326,8 @@ function renderFindings() {
         item_id: it.id
       });
     }
-    // Excluded by design: kind='thought' (user-typed or voice-recorded notes —
-    // those are inputs/context, not material work Beacon produced),
-    // kind='file' (uploads), kind='email_thread' (synced from Gmail),
-    // kind='direction'/'project'/'task' (state, not output).
+    // Excluded by design: kind='file' (uploads), kind='email_thread' (synced
+    // from Gmail), kind='direction'/'project'/'task' (state, not output).
   }
 
   all.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
@@ -4135,19 +4336,29 @@ function renderFindings() {
   if (!top.length) {
     block.style.display = 'block';
     if (sub) sub.textContent = 'No outputs yet';
-    strip.innerHTML = `<div class="finding-empty">Run a project or task with Beacon (⚡) and the output will land here.</div>`;
+    const hasProjects = (projects || []).length > 0;
+    const emptyMsg = hasProjects
+      ? 'Click <strong style="color:var(--gold)">⚡ Run with Beacon</strong> on a project, or jot a note — outputs land here.'
+      : 'Create a project and run it with Beacon. Notes you save and drafts Beacon produces all land here for easy reference.';
+    strip.innerHTML = `<div class="finding-empty">${emptyMsg}</div>`;
     return;
   }
 
   block.style.display = 'block';
   if (sub) sub.textContent = `${all.length} total · ${top.length} shown`;
 
-  strip.innerHTML = top.map(f => {
+  // Stash full-content payloads keyed by finding so the click handler can
+  // render them without re-parsing thread messages.
+  _findingPayloads = {};
+
+  strip.innerHTML = top.map((f, idx) => {
+    const fid = 'f' + idx;
+    _findingPayloads[fid] = f;
     const proj = f.project_id && projectById[f.project_id];
     const task = f.task_id && taskById[f.task_id];
     const sourceLabel = task ? task.title : (proj ? proj.title : '');
     const sourceHtml = sourceLabel ? `<span class="fc-source">${escapeHtml(sourceLabel)}</span>` : '';
-    const previewHtml = f.preview ? `<div class="fc-preview">${escapeHtml(f.preview)}${f.preview.length >= 140 ? '…' : ''}</div>` : '';
+    const previewHtml = f.preview ? `<div class="fc-preview">${escapeHtml(f.preview)}${f.preview.length >= 280 ? '…' : ''}</div>` : '';
     // Threads get an inline refine box — a way to ask Beacon to revise the
     // output without opening the thread. Submitting loads the thread, appends
     // the request as a new user turn, and Beacon iterates from there.
@@ -4160,8 +4371,9 @@ function renderFindings() {
     let data;
     if (f.kind === 'export')         data = `data-link="${escapeHtml(f.webViewLink || '')}"`;
     else if (f.kind === 'thread')    data = `data-thread-id="${escapeHtml(f.thread_id || '')}"`;
+    else if (f.kind === 'thought')   data = `data-item-id="${escapeHtml(f.item_id || '')}"`;
     else                              data = `data-task-id="${escapeHtml(f.task_id || '')}"`;
-    return `<div class="finding-card" ${data}>
+    return `<div class="finding-card" data-fid="${fid}" ${data}>
       <div class="fc-top"><span class="fc-icon">${f.icon}</span><span>${escapeHtml(f.label)}</span></div>
       <div class="fc-title">${escapeHtml(f.title)}</div>
       ${previewHtml}
@@ -4170,14 +4382,25 @@ function renderFindings() {
     </div>`;
   }).join('');
 
-  // Card body click → open thread / link / task. The refine box stops
-  // propagation so typing/clicking inside it doesn't trigger the card open.
+  // Card body click:
+  //   - Exports: still open Drive (the file IS the thing)
+  //   - Threads / thoughts: expand IN PLACE to show the full clean output,
+  //     not a redirect. Click again to collapse. "Open thread →" link inside
+  //     gives the full conversation if user wants it.
+  //   - Task-done: open the task modal as before
   strip.querySelectorAll('.finding-card').forEach(el => {
     el.addEventListener('click', (e) => {
       if (e.target.closest('.fc-refine')) return;
-      if (el.dataset.link)          window.open(el.dataset.link, '_blank', 'noopener');
-      else if (el.dataset.threadId) loadThread(el.dataset.threadId);
-      else if (el.dataset.taskId)   openTaskModal(el.dataset.taskId);
+      if (e.target.closest('.fc-expanded-actions')) return;
+      if (el.dataset.link) {
+        window.open(el.dataset.link, '_blank', 'noopener');
+        return;
+      }
+      if (el.dataset.taskId && !el.dataset.threadId && !el.dataset.itemId) {
+        openTaskModal(el.dataset.taskId);
+        return;
+      }
+      toggleFindingExpand(el);
     });
   });
 
