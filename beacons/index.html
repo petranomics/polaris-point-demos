@@ -2716,6 +2716,26 @@ main {
 </div>
 
 <!-- ===================== TASK MODAL ===================== -->
+<!-- Cadence prompt — shown when a user has run a few recurring tasks today
+     and we want to nudge them toward a cadence instead of one-off clicking.
+     Frames as a feature, not a limit. -->
+<div class="modal" id="cadencePromptModal">
+  <div class="modal-card" style="max-width:460px">
+    <div class="modal-head">
+      <div>
+        <h3>Let's put this on a cadence</h3>
+        <div class="modal-meta">Beacon runs recurring work weekly, monthly, or quarterly — so you don't have to remember.</div>
+      </div>
+      <button class="modal-close" data-close-modal="cadencePromptModal">×</button>
+    </div>
+    <div class="modal-form" style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn" data-cadence-choice="weekly"   style="text-align:left">📅 &nbsp; Add weekly</button>
+      <button class="btn" data-cadence-choice="monthly"  style="text-align:left">🗓 &nbsp; Add monthly</button>
+      <button class="btn btn-ghost" data-cadence-choice="once" style="text-align:left">▶ &nbsp; Run once now</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="taskModal">
   <div class="modal-card">
     <div class="modal-head">
@@ -5713,10 +5733,61 @@ function clearChatProject() {
   autoSaveThread().catch(() => {});
 }
 
+// Returns true if we should proceed with the run, false if cancelled.
+// Soft gate — under cap proceeds silently. Over cap shows a cadence popup
+// framed as a feature ("put this on a cadence") not a limit. The user can
+// always choose "Run once now" to proceed.
+async function gateRecurringRun(projectId) {
+  const limit = usageData?.limits?.recurring_day;
+  if (limit == null) return true; // unlimited tier — proceed
+  // Count today's project/task runs (threads tied to a project or task)
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+  const used = items.filter(it => {
+    if (it.kind !== 'thread') return false;
+    if (!it.task_id && !it.project_id) return false;
+    const created = new Date(it.created_at || it.updated_at || 0);
+    return created >= todayStart;
+  }).length;
+  if (used < limit) return true; // under cap — proceed silently
+  const choice = await new Promise((resolve) => {
+    const modal = $('#cadencePromptModal');
+    modal.classList.add('show');
+    const handler = (e) => {
+      const btn = e.target.closest('[data-cadence-choice]');
+      const close = e.target.closest('[data-close-modal="cadencePromptModal"]');
+      if (btn) {
+        modal.classList.remove('show');
+        modal.removeEventListener('click', handler);
+        resolve(btn.dataset.cadenceChoice);
+      } else if (close) {
+        modal.classList.remove('show');
+        modal.removeEventListener('click', handler);
+        resolve('cancel');
+      }
+    };
+    modal.addEventListener('click', handler);
+  });
+  if (choice === 'cancel') return false;
+  if ((choice === 'weekly' || choice === 'monthly') && projectId) {
+    // Update the parent project's cadence — Beacon notes it for future runs.
+    const proj = projects.find(p => p.id === projectId);
+    if (proj && proj.cadence !== choice) {
+      const now = new Date().toISOString();
+      try {
+        await storagePut({ ...proj, cadence: choice, updated_at: now });
+        await loadAll();
+        renderAll();
+      } catch (e) { /* non-fatal */ }
+    }
+  }
+  return true;
+}
+
 async function runProjectInChat() {
   if (!editingProjectId) return;
   const p = projects.find(x => x.id === editingProjectId);
   if (!p) return;
+  if (!(await gateRecurringRun(p.id))) return;
   const projTasks = tasks.filter(t => t.project_id === p.id);
   const inProgress = projTasks.filter(t => t.status === 'in_progress');
   const todo = projTasks.filter(t => t.status === 'todo');
@@ -5742,6 +5813,7 @@ async function runTaskInChat() {
   if (!editingTaskId) return;
   const t = tasks.find(x => x.id === editingTaskId);
   if (!t) return;
+  if (!(await gateRecurringRun(t.project_id || null))) return;
   const proj = t.project_id ? projects.find(p => p.id === t.project_id) : null;
 
   let prompt = `Help me with this task: "${t.title}".\n`;
