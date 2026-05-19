@@ -1086,6 +1086,7 @@
     <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
     <button class="admin-tab senior-only" onclick="switchTab('stickers')">Stickers</button>
     <button class="admin-tab senior-only" onclick="switchTab('beacon')">Beacon</button>
+    <button class="admin-tab senior-only" onclick="switchTab('marketinghub')">Marketing Hub</button>
     <button class="admin-tab senior-only" onclick="switchTab('apiusage')">API Usage</button>
   </div>
 
@@ -1202,10 +1203,10 @@
         <div class="slide-bg-glow" style="background:radial-gradient(circle,rgba(212,168,83,.2),transparent);top:40%;left:50%;transform:translate(-50%,0);width:600px;height:600px;"></div>
         <svg viewBox="0 0 24 24" fill="none" style="width:60px;height:60px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(91,141,239,.5));"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
         <h2>Let Us Build <span class="accent">Yours</span></h2>
-        <p class="slide-subtitle">Professional website, live in 48 hours. Starting at $699.</p>
+        <p class="slide-subtitle">Professional website, live in 48 hours. Starting at $799.</p>
         <div style="display:flex;gap:16px;margin-top:20px;">
           <div style="background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);border-radius:12px;padding:16px 28px;text-align:center;">
-            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;">$699</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;">$799</div>
             <div style="font-size:.75rem;color:#5B8DEF;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Starter</div>
           </div>
           <div style="background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.25);border-radius:12px;padding:16px 28px;text-align:center;">
@@ -1255,7 +1256,7 @@
             <li>Professional one-page site</li>
             <li>Mobile responsive design</li>
             <li>Contact form &amp; CTAs</li>
-            <li>SEO fundamentals</li>
+            <li>AI-generated content + basic SEO</li>
             <li>Delivered in 2 weeks</li>
             <li>Files handed to you</li>
           </ul>
@@ -1263,7 +1264,7 @@
 
         <div class="offer-tier featured">
           <div class="tier-name">Growth</div>
-          <div class="price">$999</div>
+          <div class="price">$1,299</div>
           <p style="font-size:.75rem;color:#64748b;margin-bottom:8px;">One-time</p>
           <ul>
             <li>Everything in Starter</li>
@@ -1276,8 +1277,8 @@
         </div>
 
         <div class="offer-tier">
-          <div class="tier-name">Custom</div>
-          <div class="price">$1,999+</div>
+          <div class="tier-name">Pro</div>
+          <div class="price">$2,499</div>
           <p style="font-size:.75rem;color:#64748b;margin-bottom:8px;">One-time</p>
           <ul>
             <li>Everything in Growth</li>
@@ -1290,7 +1291,8 @@
         </div>
       </div>
 
-      <!-- HOSTING -->
+      <!-- MONTHLY LADDER — Hosting → Automation → Beacon. Each tier supersedes
+           the previous (single line on invoice). Source: lib/services-pricing.js. -->
       <div class="sales-card" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
         <div>
           <p style="color:#D4A853;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Hosting &amp; Analytics</p>
@@ -1298,51 +1300,56 @@
         </div>
         <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$25<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
       </div>
+      <div class="sales-card" style="margin-top:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+        <div>
+          <p style="color:#5B8DEF;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Business Automation</p>
+          <p style="color:#94a3b8;font-size:.82rem;margin:0 0 4px;">Everything in Hosting + booking widget (Calendly), AI popup chat, lead auto-reply, review-request emails.</p>
+        </div>
+        <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$79<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
+      </div>
 
-      <!-- BEACON -->
+      <!-- BEACON — keep aligned with lib/tier-limits.js (single source of truth) -->
       <div class="sales-card" style="margin-top:20px;padding:6px 16px 16px;">
         <p style="color:#5B8DEF;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:10px 0 4px;">Beacon — Ongoing Marketing</p>
-        <p style="color:#64748b;font-size:.78rem;margin:0;">12-month minimum commitment, billed monthly.</p>
+        <p style="color:#64748b;font-size:.78rem;margin:0;">Month-to-month, or 6-month commit and save up to 31%.</p>
       </div>
       <div class="offer-grid">
         <div class="offer-tier">
-          <div class="tier-name">Beacon Lite</div>
-          <div class="price">$149<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></div>
-          <p style="font-size:.72rem;color:#64748b;margin-bottom:8px;">The content engine</p>
+          <div class="tier-name">Spark</div>
+          <div class="price">$89<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo on 6-mo</span></div>
+          <p style="font-size:.72rem;color:#64748b;margin-bottom:8px;">or $129/mo month-to-month · solo operators</p>
           <ul>
-            <li>Weekly social media posts</li>
-            <li>Monthly newsletter drafts</li>
-            <li>Blog content (2/month)</li>
-            <li>Email templates</li>
-            <li>Written in your brand voice</li>
+            <li>8K context per chat</li>
+            <li>5-turn memory</li>
+            <li>200 inquiries/month</li>
+            <li>50 MB library</li>
+            <li>Default Haiku model</li>
           </ul>
         </div>
 
         <div class="offer-tier featured">
-          <div class="tier-name">Beacon</div>
-          <div class="price">$299<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></div>
-          <p style="font-size:.72rem;color:#64748b;margin-bottom:8px;">Your virtual marketing employee</p>
+          <div class="tier-name">Beam</div>
+          <div class="price">$179<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo on 6-mo</span></div>
+          <p style="font-size:.72rem;color:#64748b;margin-bottom:8px;">or $249/mo month-to-month · working professionals</p>
           <ul>
-            <li>Everything in Lite</li>
-            <li>Dedicated AI workspace</li>
-            <li>Competitor monitoring</li>
-            <li>Review tracking &amp; alerts</li>
-            <li>Campaign strategy</li>
-            <li>On-demand prompting</li>
+            <li>Everything in Spark</li>
+            <li>15K context · 12-turn memory</li>
+            <li>1,500 inquiries/month</li>
+            <li>250 MB library</li>
+            <li>Sonnet auto-upgrade on key drafts</li>
           </ul>
         </div>
 
         <div class="offer-tier">
-          <div class="tier-name">Beacon Pro</div>
-          <div class="price">$499<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></div>
-          <p style="font-size:.72rem;color:#64748b;margin-bottom:8px;">The growth engine</p>
+          <div class="tier-name">Lighthouse</div>
+          <div class="price">$359<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo on 6-mo</span></div>
+          <p style="font-size:.72rem;color:#64748b;margin-bottom:8px;">or $499/mo month-to-month · agencies + power users</p>
           <ul>
-            <li>Everything in Beacon</li>
-            <li>Lead research &amp; lists</li>
-            <li>Outbound email sequences</li>
-            <li>Press release drafts</li>
-            <li>Quarterly growth strategy</li>
-            <li>Priority support</li>
+            <li>Everything in Beam</li>
+            <li>30K context · 20-turn memory</li>
+            <li>Unlimited inquiries</li>
+            <li>1 GB library</li>
+            <li>Sonnet by default · Opus on demand</li>
           </ul>
         </div>
       </div>
@@ -1373,11 +1380,11 @@
       <!-- TALKING POINTS -->
       <div class="sales-card">
         <h3>Talking Points</h3>
-        <p><span class="gold">Starter ($799)</span> — "For the business that just needs to get online. A clean, professional site that shows up on Google and gives customers a way to reach you. No monthly commitment."</p>
-        <p><span class="gold">Growth ($999)</span> — "For the business ready for multiple pages, service breakdowns, and a real SEO foundation. This is the sweet spot for most service businesses."</p>
-        <p><span class="gold">Custom ($1,999+)</span> — "For the business that wants a fully unique design with booking, payments, and advanced features. This replaces a $5K+ agency build."</p>
+        <p><span class="gold">Starter ($799)</span> — "For the business that just needs to get online. A clean, professional site that shows up on Google and gives customers a way to reach you. AI-generated content keeps the cost down."</p>
+        <p><span class="gold">Growth ($1,299)</span> — "For the business ready for multiple pages, service breakdowns, and a real SEO foundation. This is the sweet spot for most service businesses."</p>
+        <p><span class="gold">Pro ($2,499)</span> — "For the business that wants a fully unique design with booking, payments, and advanced features. This replaces a $5K+ agency build."</p>
         <p style="margin-top:12px;"><span class="gold">Hosting ($25/mo)</span> — "We keep your site live, fast, and give you analytics. Think of it like your electricity bill for your digital storefront."</p>
-        <p><span class="gold">Beacon ($149-499/mo)</span> — "Your always-on marketing engine. It writes your social posts, newsletters, and blog content in your brand voice. The $299 tier adds competitor tracking and an AI workspace you can prompt anytime. It's like hiring a marketing person for a fraction of the cost."</p>
+        <p><span class="gold">Beacon ($89–$499/mo)</span> — "Your always-on marketing engine. Spark at $89/mo on a 6-month commit (or $129 month-to-month) writes your social posts, newsletters, and blog drafts in your brand voice. Beam at $179/mo on commit adds an AI workspace, competitor tracking, and review alerts. Lighthouse at $359/mo on commit is the full stack with unlimited inquiries and our smartest model. It's like hiring a marketing person for a fraction of the cost."</p>
       </div>
 
     </div>
@@ -1425,7 +1432,7 @@
           <div class="step-num-lg">5</div>
           <div class="step-content">
             <h4>Make It Easy to Say Yes</h4>
-            <p>Most agencies charge $3-5K. We start at $699. Mention that context — it helps people understand the value. Start with Starter for anyone on the fence. If they're interested in ongoing growth, introduce the Growth plan as the next step. Pro is for businesses that want a full digital partner.</p>
+            <p>Most agencies charge $3-5K. We start at $799. Mention that context — it helps people understand the value. Start with Starter for anyone on the fence. If they're interested in ongoing growth, introduce the Growth plan as the next step. Pro is for businesses that want a full digital partner.</p>
           </div>
         </div>
         <div class="step-card">
@@ -1465,7 +1472,7 @@
           "This is one we built for a [similar business]. See how the reviews are right up front, click-to-call is right there, and the whole thing is built to turn a visitor into a phone call. We'd build yours with your info, your branding — same quality."
 
           <span class="speaker">The Close</span>
-          "The starter package is $699, one-time — no monthly fees, no contract. We handle the design, the copy, the SEO. You just approve it and we push it live. Want to get started?"
+          "The Starter package is $799, one-time — site goes live in two weeks. We can add Business Automation for $79/mo (booking, AI chat, lead auto-reply) or go all the way with Beacon for content and marketing on top. Want to start with just the build?"
         </div>
       </div>
 
@@ -1627,7 +1634,7 @@
               <label>Interested Tier</label>
               <select id="leadTier">
                 <option value="undecided">Undecided</option>
-                <option value="starter">Starter ($699)</option>
+                <option value="starter">Starter ($799)</option>
                 <option value="growth">Growth ($1,299)</option>
                 <option value="pro">Pro ($2,499)</option>
               </select>
@@ -1719,7 +1726,7 @@
         <div style="background:#0B1120;border:1px solid rgba(232,197,71,.2);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
           <div style="flex:1;min-width:200px;">
             <div style="font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px;">Now featured on flyers</div>
-            <div style="font-size:.85rem;color:#fff;font-weight:600;">Beacon — AI Marketing Assistant ($129/mo)</div>
+            <div style="font-size:.85rem;color:#fff;font-weight:600;">Beacon Spark — AI marketing engine ($129/mo · $89/mo on 6-mo)</div>
             <p style="font-size:.7rem;color:#475569;margin:4px 0 0;line-height:1.4;">Both flyers now showcase Beacon as a follow-on offer after a website. Helps justify the upsell at door-knock time.</p>
           </div>
         </div>
@@ -1784,6 +1791,15 @@
             <button class="btn-export" type="button" onclick="try{searchPlaces()}catch(e){alert('Error: '+e.message)}" style="width:100%;">Search &amp; Auto-Fill</button>
           </div>
         </div>
+        <div class="intake-row" style="margin-top:8px;">
+          <div class="intake-field" style="display:flex;align-items:flex-end;">
+            <button class="btn-export secondary" type="button" onclick="useTemplateDefaults(this)" style="width:100%;">Use Template Defaults</button>
+          </div>
+          <div class="intake-field" style="display:flex;align-items:flex-end;">
+            <button class="btn-export secondary" type="button" onclick="composeWithAI(this)" style="width:100%;">Compose with AI</button>
+          </div>
+        </div>
+        <div style="font-size:.7rem;color:#64748b;margin-top:6px;line-height:1.4;">No online footprint? "Use Template Defaults" loads 5 standard services for the selected template plus generic hero/about copy. "Compose with AI" drafts tailored services, hero, about, and sample reviews from the business name + city. Both only fill empty fields.</div>
         <div id="searchResults" class="search-results">
           <div id="searchResultsList"></div>
         </div>
@@ -2285,9 +2301,9 @@
             <div>
               <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Tier</label>
               <select id="tcTier" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
-                <option value="lite">Lite ($149)</option>
-                <option value="beacon" selected>Beacon ($299)</option>
-                <option value="pro">Pro / Enterprise ($499)</option>
+                <option value="spark">Spark ($89–$129/mo)</option>
+                <option value="beam" selected>Beam ($179–$249/mo)</option>
+                <option value="lighthouse">Lighthouse ($359–$499/mo)</option>
               </select>
             </div>
             <div>
@@ -2407,13 +2423,13 @@
             <label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#475569;font-weight:600;margin-bottom:4px;">Plan</label>
             <div style="display:flex;gap:16px;align-items:center;height:38px;">
               <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:#e2e8f0;cursor:pointer;">
-                <input type="radio" name="beaconPlan" value="lite" style="accent-color:#5B8DEF;"> Lite <span style="color:#64748b;font-size:.68rem;">$149</span>
+                <input type="radio" name="beaconPlan" value="spark" style="accent-color:#5B8DEF;"> Spark <span style="color:#64748b;font-size:.68rem;">$129/mo</span>
               </label>
               <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:#e2e8f0;cursor:pointer;">
-                <input type="radio" name="beaconPlan" value="beacon" checked style="accent-color:#5B8DEF;"> Beacon <span style="color:#D4A853;font-size:.68rem;">$299</span>
+                <input type="radio" name="beaconPlan" value="beam" checked style="accent-color:#5B8DEF;"> Beam <span style="color:#D4A853;font-size:.68rem;">$249/mo</span>
               </label>
               <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:#e2e8f0;cursor:pointer;">
-                <input type="radio" name="beaconPlan" value="pro" style="accent-color:#5B8DEF;"> Pro <span style="color:#64748b;font-size:.68rem;">$499</span>
+                <input type="radio" name="beaconPlan" value="lighthouse" style="accent-color:#5B8DEF;"> Lighthouse <span style="color:#64748b;font-size:.68rem;">$499/mo</span>
               </label>
             </div>
           </div>
@@ -2584,6 +2600,145 @@
     </div>
   </div><!-- /tabBeacon -->
 
+  <!-- ============ MARKETING HUB TAB (senior-only) ============ -->
+  <!-- One-stop pitch surface: Armadillo Analytics one-pagers, Beacon
+       collateral, and Polaris Point pitch decks. Each card opens a
+       standalone page in a new tab. Cards are pre-built HTML in
+       /admin/marketing/<product>/<slug> — refresh by re-running
+       /admin/marketing/armadillo/build.mjs from repo root. -->
+  <div id="tabMarketingHub" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2 style="margin:0;color:#fff;font-family:'Outfit',sans-serif;">Marketing Hub</h2>
+          <p style="margin:4px 0 0;font-size:.78rem;color:#64748b;">Pitch decks, one-pagers, and print materials across every product. Senior staff only.</p>
+        </div>
+      </div>
+
+      <!-- Armadillo Analytics one-pagers -->
+      <div class="sales-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#BF5700;"></span>
+          <h3 style="margin:0;">Armadillo Analytics — Creator one-pagers</h3>
+        </div>
+        <p style="margin-bottom:14px;">Visual one-pagers for each platform plus an agency white-label pitch. Each opens in a new tab — letter-size, print-ready, with live charts and a rendered media-kit preview.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+          <a href="/admin/marketing/armadillo/" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid rgba(191,87,0,0.4);border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Index — All Pages</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Start here. Cards for all 7 one-pagers.</p>
+          </a>
+          <a href="/admin/marketing/armadillo/tiktok" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#00F2EA;font-size:.85rem;margin:0 0 4px;">TikTok</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">$2,510 per post · FYP Hit Rate, Sound Strategy</p>
+          </a>
+          <a href="/admin/marketing/armadillo/instagram" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#E1306C;font-size:.85rem;margin:0 0 4px;">Instagram</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">$3,080 per post · Carousel Sweet Spot, Reels Lift</p>
+          </a>
+          <a href="/admin/marketing/armadillo/youtube" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#FF0000;font-size:.85rem;margin:0 0 4px;">YouTube</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">$4,050 per sponsorship · Discovery Rate, Shorts vs Long</p>
+          </a>
+          <a href="/admin/marketing/armadillo/twitter" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#1DA1F2;font-size:.85rem;margin:0 0 4px;">Twitter / X</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">$1,840 per post · Quote:RT, Thread Performance</p>
+          </a>
+          <a href="/admin/marketing/armadillo/linkedin" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#0A66C2;font-size:.85rem;margin:0 0 4px;">LinkedIn</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">$6,240 per post · Document Boost, Reaction Diversity</p>
+          </a>
+          <a href="/admin/marketing/armadillo/all-platforms" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#BF5700;font-size:.85rem;margin:0 0 4px;">All Platforms (unified)</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">For multi-platform creators · 5 networks, one media kit</p>
+          </a>
+          <a href="/admin/marketing/armadillo/agency-white-label" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#BF5700;font-size:.85rem;margin:0 0 4px;">Agency White-Label</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Aspirational pitch · Roster management + branding</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Beacon collateral -->
+      <div class="sales-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E8C547;"></span>
+          <h3 style="margin:0;">Beacon — Marketing collateral</h3>
+        </div>
+        <p style="margin-bottom:14px;">Pitch deck slides, demo videos, and capability docs for the Beacon AI marketing product.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+          <a href="/beacon-one-pager.html" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Beacon One-Pager</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Standalone pitch page</p>
+          </a>
+          <a href="/marketing/beacon-demo/" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Beacon Demo</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Interactive product demo</p>
+          </a>
+          <a href="/marketing/beacon-classic/" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Beacon Classic</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Showcase site with personas</p>
+          </a>
+          <a href="/docs/beacon-capabilities.html" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Capabilities Doc</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Feature inventory</p>
+          </a>
+          <a href="/docs/beacon-real-estate.html" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Beacon for Real Estate</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Industry-specific pitch</p>
+          </a>
+          <a href="/docs/beacon-sales-brain.html" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Beacon Sales Brain</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Pricing + objection handling</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Polaris Point general -->
+      <div class="sales-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#5B8DEF;"></span>
+          <h3 style="margin:0;">Polaris Point — Print &amp; signage</h3>
+        </div>
+        <p style="margin-bottom:14px;">Door-knocking and brand materials. For personalized rep links use the <a href="#" onclick="switchTab('materials');return false;" style="color:#E8C547;text-decoration:underline;">Materials tab</a>.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+          <a href="/flyer" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Full-Page Flyer</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">8.5×11" letter, Beacon callout</p>
+          </a>
+          <a href="/flyer-print" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">2-Up Print Flyer</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Two half-pages per sheet</p>
+          </a>
+          <a href="/business-cards" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Business Cards</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Editable card design</p>
+          </a>
+          <a href="/stickers" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Stickers</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">3 designs with QR codes</p>
+          </a>
+          <a href="/real-estate-report.html" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Real Estate Report</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Industry pitch deck</p>
+          </a>
+          <a href="/logo-options.html" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;display:block;">
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.85rem;margin:0 0 4px;">Logo Options</h4>
+            <p style="font-size:.7rem;color:#94a3b8;margin:0;line-height:1.45;">Brand mark variations</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- How to edit -->
+      <div class="sales-card" style="border-color:rgba(232,197,71,0.25);">
+        <h3>Editing &amp; refreshing materials</h3>
+        <p style="font-size:.78rem;line-height:1.55;color:#94a3b8;">
+          The Armadillo one-pagers are generated by <code style="color:#5B8DEF;">/admin/marketing/armadillo/build.mjs</code> — edit the per-platform data block in that script, run <code style="color:#5B8DEF;">node admin/marketing/armadillo/build.mjs</code> from the repo root, and commit. Beacon and Polaris materials are direct HTML files in <code style="color:#5B8DEF;">/marketing/</code>, <code style="color:#5B8DEF;">/docs/</code>, and the repo root.
+        </p>
+      </div>
+
+    </div>
+  </div><!-- /tabMarketingHub -->
+
   <!-- ============ API USAGE TAB (senior-only) ============ -->
   <div id="tabApiusage" class="tab-content" style="display:none;">
     <div class="sales-section">
@@ -2724,6 +2879,7 @@
       stickers: 'tabStickers',
       outreach: 'tabOutreach',
       beacon: 'tabBeacon',
+      marketinghub: 'tabMarketingHub',
       apiusage: 'tabApiusage'
     };
 
@@ -3491,7 +3647,9 @@
 
       // 1) URL input — prefer place_id (deterministic), fall back to /place/<name>,
       //    fall back to /api/resolve for short / CID-style URLs.
-      if (urlInput && (urlInput.includes('google.com/maps') || urlInput.includes('goo.gl') || urlInput.includes('maps.app'))) {
+      // `maps.google.com` covers cid-style links (maps.google.com/?cid=...) that
+      // don't contain the /maps path segment.
+      if (urlInput && (urlInput.includes('google.com/maps') || urlInput.includes('maps.google.com') || urlInput.includes('goo.gl') || urlInput.includes('maps.app'))) {
         var directPlaceId = extractPlaceId(urlInput);
         if (directPlaceId) { runPlacesLookup({ placeId: directPlaceId }); return; }
         var nameMatch = urlInput.match(/place\/([^\/\?]+)/);
@@ -4694,11 +4852,37 @@
       '</div>';
     }
 
+    function resetSiteBuilder() {
+      var ids = [
+        'intBizName','intBizShort','intPhone','intPhoneTel','intEmail','intAddress',
+        'intHours','intWebsite','intLicense','intFounded','intLogoUrl','intLogoData',
+        'intHeroHeadline','intHeroSubtext','intAboutTitle','intAboutText','intServiceAreas',
+        'searchUrl','searchBizName'
+      ];
+      ids.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      var rl = document.getElementById('reviewsList'); if (rl) rl.innerHTML = '';
+      var sl = document.getElementById('servicesList'); if (sl) sl.innerHTML = '';
+      var sr = document.getElementById('searchResults'); if (sr) sr.style.display = 'none';
+      window._placeRating = null;
+      window._placeReviewCount = null;
+      window._placeMapsUrl = '';
+      window._placeImageUrl = '';
+      window._placePhotos = [];
+      window._placeHeroPhoto = '';
+      window._placeAboutPhoto = '';
+      window._placeLogoUrl = '';
+      window._placeTeamPhoto = '';
+    }
+
     function buildSiteFromLead(id) {
       var lead = _leadsCache.find(function(l) { return l.id === id; });
       if (!lead) return;
       switchTab('intake');
       setTimeout(function() {
+        // Wipe any state from a previous lead pull before populating. Without this,
+        // a leftover searchUrl re-fires the previous Google lookup and fillFromPlace's
+        // setIfEmpty leaves stale fields untouched.
+        resetSiteBuilder();
         if (lead.biz_name) document.getElementById('intBizName').value = lead.biz_name;
         if (lead.biz_name) document.getElementById('intBizShort').value = lead.biz_name.split(' ').slice(0,2).join(' ');
         if (lead.phone) {
@@ -4712,10 +4896,149 @@
         if (lead.years_in_biz) document.getElementById('intFounded').value = String(new Date().getFullYear() - parseInt(lead.years_in_biz));
         var templateMap = { plumber:'plumber', handyman:'handyman', cleaning:'cleaning', 'pest-control':'pest-control', cafe:'cafe', restaurant:'restaurant', salon:'salon' };
         if (templateMap[lead.industry]) document.getElementById('searchTemplate').value = templateMap[lead.industry];
+        // Always populate biz name as a fallback — if the listing_url is something
+        // searchPlaces can't parse (non-Maps domain, malformed cid), the name lets
+        // it still produce a useful free-text query instead of 404ing on the URL.
         if (lead.listing_url) document.getElementById('searchUrl').value = lead.listing_url;
-        else if (lead.biz_name) document.getElementById('searchBizName').value = lead.biz_name;
+        if (lead.biz_name) document.getElementById('searchBizName').value = lead.biz_name;
         setTimeout(function() { searchPlaces(); }, 200);
       }, 100);
+    }
+
+    // Shared by both manual-fill buttons below — pulls city from the search box
+    // first, then falls back to parsing intAddress (e.g. "123 Main St, Austin TX 78701").
+    function _deriveCity() {
+      var city = document.getElementById('searchCityState').value.trim();
+      if (!city) {
+        var addr = document.getElementById('intAddress').value || '';
+        var parts = addr.split(',');
+        if (parts.length >= 2) city = parts[parts.length - 2].trim().replace(/\s+\w{2}\s+\d{5}.*/, '');
+      }
+      return city;
+    }
+
+    // Fills hero/about/services from the selected template — no Google search,
+    // no AI. Use this when a business has no online footprint and you just need
+    // generic-but-presentable copy + the template's baseline 5 services.
+    function useTemplateDefaults(btn) {
+      var templateSelect = document.getElementById('searchTemplate');
+      var templateName = (templateSelect.selectedOptions[0].text || 'business').trim();
+      var templateSlug = (templateSelect.value || '').toLowerCase();
+      var bizName = document.getElementById('intBizName').value.trim();
+      var bizShort = document.getElementById('intBizShort').value.trim() || bizName;
+      var city = _deriveCity();
+
+      function setIfEmpty(id, value) {
+        var el = document.getElementById(id);
+        if (el && !el.value && value) el.value = value;
+      }
+
+      var shortDisplay = bizShort || bizName || 'our team';
+      var bizDisplay = bizName || ('Your local ' + templateName);
+      var cityPart = city ? (' in ' + city) : '';
+      var cityTrust = city || 'the community';
+
+      setIfEmpty('intHeroHeadline', 'Reliable ' + templateName + cityPart);
+      setIfEmpty('intHeroSubtext', 'Licensed & insured ' + templateName.toLowerCase() + ' serving ' + cityTrust + ' with honest pricing, fast response, and a satisfaction guarantee.');
+      setIfEmpty('intAboutTitle', cityTrust + ' Trusts ' + shortDisplay);
+      setIfEmpty('intAboutText', bizDisplay + ' has been serving ' + cityTrust + ' with reliable, professional ' + templateName.toLowerCase() + ' services. Every job is done with care, honest pricing, and a satisfaction guarantee. Our team is licensed, insured, and committed to treating your home like our own.');
+      if (city) setIfEmpty('intServiceAreas', city);
+
+      var sl = document.getElementById('servicesList');
+      var existingNames = sl.querySelectorAll('.svc-name');
+      var allEmpty = true;
+      existingNames.forEach(function(inp) { if (inp.value.trim()) allEmpty = false; });
+      if (allEmpty) loadTemplateDefaultServices(templateSlug);
+
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = 'Defaults loaded ✓';
+        setTimeout(function() { btn.textContent = orig; }, 1600);
+      }
+    }
+
+    // Calls /api/generate with type=site_compose to draft tailored hero/about/
+    // services/reviews for businesses with no online footprint. Only fills
+    // empty fields — manual edits are preserved.
+    function composeWithAI(btn) {
+      var templateSelect = document.getElementById('searchTemplate');
+      var industry = templateSelect.selectedOptions[0].text;
+      var bizName = document.getElementById('intBizName').value.trim() || document.getElementById('searchBizName').value.trim();
+      var city = _deriveCity();
+      if (!bizName) { alert('Enter a business name first (Step 1 or Step 2).'); return; }
+
+      var origLabel = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Composing…'; }
+
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'site_compose', context: { businessName: bizName, industry: industry, city: city } })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) throw new Error(data.error);
+
+        var text = (data.content || '').trim()
+          .replace(/^```(?:json)?\s*/i, '')
+          .replace(/```\s*$/, '')
+          .trim();
+        var json = null;
+        try { json = JSON.parse(text); }
+        catch (e) {
+          var m = text.match(/\{[\s\S]*\}/);
+          if (m) { try { json = JSON.parse(m[0]); } catch (e2) {} }
+        }
+        if (!json) { console.log('compose raw:', text); throw new Error('AI returned unparseable content (check console).'); }
+
+        function setIfEmpty(id, value) {
+          var el = document.getElementById(id);
+          if (el && !el.value && value) el.value = value;
+        }
+
+        if (json.hero) {
+          setIfEmpty('intHeroHeadline', json.hero.headline);
+          setIfEmpty('intHeroSubtext', json.hero.subtext);
+        }
+        if (json.about) {
+          setIfEmpty('intAboutTitle', json.about.title);
+          setIfEmpty('intAboutText', json.about.text);
+        }
+        if (json.service_areas) setIfEmpty('intServiceAreas', json.service_areas);
+
+        if (Array.isArray(json.services) && json.services.length) {
+          var sl = document.getElementById('servicesList');
+          var allEmpty = true;
+          sl.querySelectorAll('.svc-name').forEach(function(inp) { if (inp.value.trim()) allEmpty = false; });
+          if (allEmpty) {
+            sl.innerHTML = '';
+            json.services.forEach(function(s) {
+              addServiceRow(sl);
+              var items = sl.querySelectorAll('.dynamic-item');
+              var last = items[items.length - 1];
+              last.querySelector('.svc-name').value = s.name || '';
+              last.querySelector('.svc-desc').value = s.desc || '';
+            });
+          }
+        }
+
+        if (Array.isArray(json.reviews) && json.reviews.length) {
+          var rl = document.getElementById('reviewsList');
+          if (!rl.querySelectorAll('.dynamic-item').length) {
+            json.reviews.forEach(function(r) {
+              addReviewRow(rl);
+              var items = rl.querySelectorAll('.dynamic-item');
+              var last = items[items.length - 1];
+              last.querySelector('.rev-text').value = r.text || '';
+              last.querySelector('.rev-author').value = r.author || '';
+              last.querySelector('.rev-location').value = r.location || city || '';
+            });
+          }
+        }
+
+        if (btn) { btn.textContent = 'AI compose applied ✓'; setTimeout(function() { btn.disabled = false; btn.textContent = origLabel; }, 1800); }
+      }).catch(function(e) {
+        if (btn) { btn.disabled = false; btn.textContent = origLabel; }
+        alert('Compose failed: ' + (e.message || 'unknown error'));
+      });
     }
 
     function leadQuickFill() {
@@ -4725,7 +5048,7 @@
       var searchName = '';
       var searchLocation = '';
 
-      if (url.includes('google.com/maps') || url.includes('goo.gl') || url.includes('maps.app')) {
+      if (url.includes('google.com/maps') || url.includes('maps.google.com') || url.includes('goo.gl') || url.includes('maps.app')) {
         var nameMatch = url.match(/place\/([^\/\?]+)/);
         if (nameMatch) {
           searchName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
@@ -5135,7 +5458,7 @@
         ],
         objections: [
           { objection: 'I get enough business from word of mouth', response: 'That\'s great \u2014 imagine how much more you\'d get if the 97% searching online could find you too. A website captures customers who don\'t know anyone to ask.' },
-          { objection: 'I can\'t afford a website', response: 'Totally understand \u2014 that\'s why our plans start at $699 one-time. No monthly fees. It pays for itself with one or two new customers.' },
+          { objection: 'I can\'t afford a website', response: 'Totally understand \u2014 that\'s why our plans start at $799 one-time. No monthly fees required. It pays for itself with one or two new customers.' },
           { objection: 'I have a Facebook page', response: 'Facebook is great for existing customers, but it barely shows up in Google searches. When someone searches "' + ind + ' near me", a website ranks. Facebook pages rarely do.' },
           { objection: 'I\'m too busy right now', response: 'I hear you. The good news is we handle everything \u2014 you answer a few questions, we build it. About 15 minutes of your time total.' }
         ],

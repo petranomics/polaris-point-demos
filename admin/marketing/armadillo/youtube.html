@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube — Armadillo Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg: #0F1117;
+    --card: #181B24;
+    --card-light: #1F232E;
+    --text: #E8E6E3;
+    --muted: #8B8D97;
+    --border: #2A2D38;
+    --burnt: #BF5700;
+    --burnt-light: #E8894A;
+    --success: #7EC8A0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #0a0c11;
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: #0a0c11; border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px;
+  }
+  .topnav .brand { font-weight: 700; color: var(--burnt); letter-spacing: 2px; text-transform: uppercase; font-size: 10px; }
+  .topnav a { color: var(--muted); text-decoration: none; margin-left: 14px; }
+  .topnav a:hover { color: var(--text); }
+
+  /* Print-friendly page: ~8.5 x 11 in @ 96dpi = 816 x 1056 but we go a bit
+     wider for screen comfort and let the print stylesheet snap it back. */
+  .page {
+    width: 880px;
+    margin: 28px auto;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  }
+  @media print {
+    @page { size: letter; margin: 0; }
+    html, body { background: #fff; }
+    .topnav, .footer-nav { display: none; }
+    .page { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  }
+
+  .hero {
+    padding: 30px 40px 22px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background: linear-gradient(135deg, rgba(191,87,0,0.08) 0%, transparent 60%);
+  }
+  .hero .eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--burnt); font-weight: 700;
+  }
+  .hero h1 {
+    font-size: 32px; line-height: 1.1; margin: 8px 0 6px;
+    letter-spacing: -0.02em; font-weight: 700;
+  }
+  .hero .sub {
+    font-size: 14px; color: var(--muted); margin: 0; max-width: 640px; line-height: 1.5;
+  }
+  .platform-pill {
+    position: absolute; top: 30px; right: 40px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600;
+  }
+  .platform-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Hero metric callout — the headline price-per-post number */
+  .price-callout {
+    margin: 0; padding: 28px 40px;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .price-big {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .price-big .label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+  }
+  .price-big .figure {
+    font-size: 72px; font-weight: 800; line-height: 1; color: var(--burnt);
+    letter-spacing: -0.03em;
+  }
+  .price-big .range {
+    font-size: 13px; color: var(--muted); margin-top: 4px;
+  }
+  .formula {
+    display: flex; flex-direction: column; gap: 10px;
+    border-left: 1px solid var(--border); padding-left: 28px;
+  }
+  .formula .step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .formula .num {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--burnt); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .formula .step-text { font-size: 12px; line-height: 1.5; }
+  .formula .step-text strong { color: var(--text); }
+  .formula .step-text .muted { color: var(--muted); }
+
+  /* Dashboard preview — multi-chart grid showing what the product produces */
+  .dashboard-preview {
+    padding: 24px 40px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dashboard-preview .dash-header {
+    display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px;
+  }
+  .dashboard-preview h3 {
+    font-size: 16px; font-weight: 700; margin: 0;
+  }
+  .dashboard-preview .dash-sub {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .dash-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .dash-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .dash-card.tall { grid-row: span 2; }
+  .dash-card .ch-label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .dash-card .ch-label .ch-highlight {
+    color: var(--burnt-light); font-size: 12px; font-weight: 700; letter-spacing: 0;
+    text-transform: none;
+  }
+  .dash-card .ch-body { display: flex; align-items: center; flex: 1; }
+
+  /* Punch metrics row */
+  .metrics {
+    padding: 18px 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .metric-card .label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .metric-card .value {
+    font-size: 26px; font-weight: 700; color: var(--burnt-light);
+    letter-spacing: -0.02em;
+  }
+  .metric-card .desc {
+    font-size: 11px; line-height: 1.4; color: var(--muted);
+  }
+  .metric-card .chart { margin-top: auto; }
+
+  /* Media kit preview */
+  .kit-section {
+    padding: 28px 40px 32px;
+    display: grid; grid-template-columns: 0.85fr 1fr; gap: 28px;
+    align-items: start;
+  }
+  .kit-blurb h2 {
+    font-size: 18px; margin: 0 0 8px; font-weight: 700;
+  }
+  .kit-blurb p {
+    font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0 0 10px;
+  }
+  .kit-blurb .kit-features {
+    list-style: none; padding: 0; margin: 12px 0 0;
+    font-size: 12px;
+  }
+  .kit-blurb .kit-features li {
+    padding: 4px 0 4px 18px; position: relative; color: var(--text);
+  }
+  .kit-blurb .kit-features li::before {
+    content: '✓'; position: absolute; left: 0; top: 4px;
+    color: var(--success); font-weight: 700; font-size: 11px;
+  }
+
+  /* The media kit mockup — looks like the OneSheet professional layout */
+  .kit-mock {
+    background: white; color: #1a1a1a;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    font-size: 8px;
+    width: 100%;
+    aspect-ratio: 8.5 / 11;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+  }
+  .kit-mock .kit-header {
+    background: #1B1F23; padding: 14px 16px 10px;
+    position: relative;
+  }
+  .kit-mock .kit-accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kit-mock .kit-header-content { display: flex; align-items: center; gap: 10px; }
+  .kit-mock .kit-avatar {
+    width: 38px; height: 38px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white;
+  }
+  .kit-mock .kit-name { color: white; font-size: 13px; font-weight: 700; line-height: 1.1; }
+  .kit-mock .kit-tag { color: rgba(255,255,255,0.6); font-size: 7px; margin-top: 2px; }
+  .kit-mock .kit-pills { display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap; }
+  .kit-mock .kit-pill {
+    font-size: 5px; padding: 1.5px 5px; border-radius: 2px; color: white; font-weight: 600;
+  }
+  .kit-mock .kit-pill.muted { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+  .kit-mock .kit-stats {
+    padding: 8px 14px; border-bottom: 1px solid #eee;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .kit-mock .kit-stat-tile {
+    background: #fafafa; border-radius: 4px; padding: 6px 4px; text-align: center;
+  }
+  .kit-mock .kit-stat-tile .v { font-size: 11px; font-weight: 700; line-height: 1; }
+  .kit-mock .kit-stat-tile .l { font-size: 5.5px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-body { display: flex; height: calc(100% - 158px); }
+  .kit-mock .kit-left {
+    flex: 1.05; padding: 10px 12px; border-right: 1px solid #f0f0f0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-right {
+    flex: 1; padding: 10px 12px; background: #fafafa;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-section-label {
+    font-size: 5.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700;
+  }
+  .kit-mock .kit-bio { font-size: 7px; line-height: 1.55; color: #444; }
+  .kit-mock .kit-cta-block {
+    border-left: 2px solid; padding: 5px 8px; border-radius: 0 4px 4px 0;
+    font-size: 6.5px; font-style: italic; line-height: 1.4;
+  }
+  .kit-mock .kit-offerings {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .kit-mock .kit-offering {
+    background: #fafafa; padding: 4px 6px; border-radius: 3px;
+  }
+  .kit-mock .kit-offering .n { font-size: 6.5px; font-weight: 700; line-height: 1.2; }
+  .kit-mock .kit-offering .d { font-size: 5.5px; color: #888; line-height: 1.3; margin-top: 1px; }
+  .kit-mock .kit-insight-row { display: flex; gap: 8px; align-items: flex-start; }
+  .kit-mock .kit-badges { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .kit-mock .kit-badge {
+    border-radius: 3px; padding: 4px 6px; text-align: center;
+  }
+  .kit-mock .kit-badge .v { font-size: 9px; font-weight: 800; line-height: 1; }
+  .kit-mock .kit-badge .l { font-size: 5px; color: #aaa; margin-top: 1.5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-bar-row { display: flex; align-items: center; gap: 4px; font-size: 5.5px; }
+  .kit-mock .kit-bar-row .name { color: #666; width: 30px; text-align: right; }
+  .kit-mock .kit-bar-row .bar-track { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .kit-mock .kit-bar-row .bar-fill { height: 100%; border-radius: 3px; }
+  .kit-mock .kit-bar-row .v { font-weight: 700; width: 16px; text-align: left; color: #444; }
+  .kit-mock .kit-hashtags { display: flex; flex-wrap: wrap; gap: 2.5px; }
+  .kit-mock .kit-hashtag {
+    font-size: 6px; padding: 2px 5px; border-radius: 6px; font-weight: 700;
+  }
+  .kit-mock .kit-footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #fafafa; padding: 4px 12px; font-size: 5.5px;
+    color: #999; display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #eee;
+  }
+
+  /* Engagement donut SVG container */
+  .donut-wrap {
+    width: 64px; height: 64px; flex-shrink: 0;
+    position: relative;
+  }
+  .donut-wrap text { font-family: inherit; }
+
+  /* CTA strip */
+  .cta {
+    padding: 18px 40px; display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(90deg, rgba(191,87,0,0.12), transparent);
+    border-top: 1px solid var(--border);
+  }
+  .cta .cta-text { font-size: 13px; }
+  .cta .cta-text strong { font-weight: 700; }
+  .cta .cta-text .muted { color: var(--muted); }
+  .cta .cta-btn {
+    background: var(--burnt); color: white; padding: 10px 18px;
+    border-radius: 8px; font-size: 12px; font-weight: 700;
+    text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px;
+  }
+
+  .footer-nav {
+    max-width: 880px; margin: 16px auto 40px;
+    text-align: center; font-size: 11px; color: var(--muted);
+  }
+  .footer-nav a {
+    color: var(--muted); text-decoration: none; margin: 0 8px;
+  }
+  .footer-nav a:hover { color: var(--burnt); }
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <span class="brand">Armadillo Analytics · Marketing Preview</span>
+    <div>
+      <a href="index.html">All pages</a>
+    </div>
+  </div>
+
+  <div class="page">
+    <section class="hero">
+      <div class="platform-pill">
+        <span class="dot" style="background: #FF0000;"></span>
+        For YouTubers
+      </div>
+      <div class="eyebrow">For YouTubers</div>
+      <h1>YouTube</h1>
+      <p class="sub">Built around the two questions that drive YouTube growth: is the algorithm finding me, and which content format should I make more of? Discovery Rate, Shorts vs Long-form Lift, Title Hook Strength.</p>
+    </section>
+
+    <section class="price-callout">
+      <div class="price-big">
+        <span class="label">Estimated price per post</span>
+        <span class="figure">$4,050</span>
+        <span class="range">Typical range: $1,500 – $18,000 for channels with 50K–500K subscribers</span>
+      </div>
+      <div class="formula">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">How we get there</div>
+        
+          <div class="step">
+            <span class="num">1</span>
+            <span class="step-text">Pull <strong>subscribers</strong> and <strong>engagement rate</strong> from your scrape. <span class="muted">Sample: 218K subs, 3.4% engagement.</span></span>
+          </div>
+        
+          <div class="step">
+            <span class="num">2</span>
+            <span class="step-text">Convert to a <strong>YouTube-tuned CPM</strong> ($10–35 range, premium because YouTube sponsorships pay more than display ads).</span>
+          </div>
+        
+          <div class="step">
+            <span class="num">3</span>
+            <span class="step-text">Multiply <strong>(subs / 1000) × CPM × watch-time multiplier</strong>. <span class="muted">→ ~$4,050 per integrated sponsorship.</span></span>
+          </div>
+        
+      </div>
+    </section>
+
+    <section class="dashboard-preview">
+      <div class="dash-header">
+        <h3>What you see in the dashboard</h3>
+        <span class="dash-sub">Live previews · last 30 days · 8 videos · 12 shorts</span>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card tall">
+          <div class="ch-label">Best time to post <span class="ch-highlight">Tue/Thu 7-9 PM ET</span></div>
+          <div class="ch-body">
+    <svg viewBox="0 0 372 128" width="100%" preserveAspectRatio="xMidYMid meet">
+      <text x="0" y="11" font-size="9" font-weight="600" fill="#8B8D97">M</text><text x="0" y="27" font-size="9" font-weight="600" fill="#8B8D97">T</text><text x="0" y="43" font-size="9" font-weight="600" fill="#8B8D97">W</text><text x="0" y="59" font-size="9" font-weight="600" fill="#8B8D97">T</text><text x="0" y="75" font-size="9" font-weight="600" fill="#8B8D97">F</text><text x="0" y="91" font-size="9" font-weight="600" fill="#8B8D97">S</text><text x="0" y="107" font-size="9" font-weight="600" fill="#8B8D97">S</text><rect x="28" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.07534135546115181)" /><rect x="42" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08700655667609666)" /><rect x="56" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.07409358003686203)" /><rect x="70" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.105815883513665)" /><rect x="84" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10339891990317282)" /><rect x="98" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11252948286925143)" /><rect x="112" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13862340634221207)" /><rect x="126" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09884645330294145)" /><rect x="140" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09423704436733232)" /><rect x="154" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10750687713842416)" /><rect x="168" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.203625)" /><rect x="182" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.3205)" /><rect x="196" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.203625)" /><rect x="210" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13359592994299277)" /><rect x="224" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08993574703665243)" /><rect x="238" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08889211135885051)" /><rect x="252" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11802933503906685)" /><rect x="266" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1390358624336106)" /><rect x="280" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.33749999999999997)" /><rect x="294" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.55)" /><rect x="308" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.33749999999999997)" /><rect x="322" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12499999999999997)" /><rect x="336" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12497795272769735)" /><rect x="350" y="0" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.0741709265223329)" /><rect x="28" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.14148404852541197)" /><rect x="42" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10728882826031691)" /><rect x="56" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09791248246841769)" /><rect x="70" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13705486461077046)" /><rect x="84" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1252685956299483)" /><rect x="98" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11697554035545221)" /><rect x="112" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11957287621669385)" /><rect x="126" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12860482323991795)" /><rect x="140" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12070415754399261)" /><rect x="154" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09405574263223604)" /><rect x="168" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1294336240348082)" /><rect x="182" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10260995529746361)" /><rect x="196" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10107264032554203)" /><rect x="210" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10546073483504162)" /><rect x="224" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08119831779722306)" /><rect x="238" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10009790802332597)" /><rect x="252" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12787227054707404)" /><rect x="266" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.46499999999999997)" /><rect x="280" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.6775)" /><rect x="294" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.89)" /><rect x="308" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.6775)" /><rect x="322" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.46499999999999997)" /><rect x="336" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11310854187158056)" /><rect x="350" y="16" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11634011617757337)" /><rect x="28" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08292964794074822)" /><rect x="42" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1084462419537652)" /><rect x="56" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1384376299326899)" /><rect x="70" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09930443046274498)" /><rect x="84" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09072885121064869)" /><rect x="98" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1305326953162447)" /><rect x="112" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.07504365230717594)" /><rect x="126" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11059989037727522)" /><rect x="140" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08182037832711075)" /><rect x="154" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08114275381722633)" /><rect x="168" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09970399659265178)" /><rect x="182" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10591890341578)" /><rect x="196" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1265502184345796)" /><rect x="210" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10782859178832838)" /><rect x="224" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13870186035840124)" /><rect x="238" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1285980016394447)" /><rect x="252" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.35874999999999996)" /><rect x="266" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.518125)" /><rect x="280" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.6775)" /><rect x="294" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.55)" /><rect x="308" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.5245)" /><rect x="322" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.32262499999999994)" /><rect x="336" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12074999999999997)" /><rect x="350" y="32" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.0883300011219777)" /><rect x="28" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10837683291501957)" /><rect x="42" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10073604480205647)" /><rect x="56" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13825423256826222)" /><rect x="70" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10269933488571614)" /><rect x="84" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12212201342928011)" /><rect x="98" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11156804161012415)" /><rect x="112" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08431723166969549)" /><rect x="126" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11208994362247796)" /><rect x="140" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08577663225749278)" /><rect x="154" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.129670903498311)" /><rect x="168" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11064537511685538)" /><rect x="182" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.07436437794043232)" /><rect x="196" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08178672931647774)" /><rect x="210" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.0756057804716312)" /><rect x="224" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1405725889237356)" /><rect x="238" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08677143125364041)" /><rect x="252" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10374999999999998)" /><rect x="266" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.26312499999999994)" /><rect x="280" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.44375)" /><rect x="294" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.6456249999999999)" /><rect x="308" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.8475)" /><rect x="322" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.6456249999999999)" /><rect x="336" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.44375)" /><rect x="350" y="48" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13867497688808358)" /><rect x="28" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11822250290709041)" /><rect x="42" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08291470229083836)" /><rect x="56" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08840398493113179)" /><rect x="70" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11957147335725293)" /><rect x="84" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08394032109746538)" /><rect x="98" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11904636317130299)" /><rect x="112" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13738707901511682)" /><rect x="126" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09350720116969065)" /><rect x="140" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12231903467673638)" /><rect x="154" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08098653332175078)" /><rect x="168" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12496216873901306)" /><rect x="182" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1068708900227063)" /><rect x="196" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11480387937569059)" /><rect x="210" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.24824999999999997)" /><rect x="224" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.39699999999999996)" /><rect x="238" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.24824999999999997)" /><rect x="252" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13788994334396892)" /><rect x="266" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09849943643896303)" /><rect x="280" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12074999999999997)" /><rect x="294" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.32262499999999994)" /><rect x="308" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.5245)" /><rect x="322" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.32262499999999994)" /><rect x="336" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12074999999999997)" /><rect x="350" y="64" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11437240197372389)" /><rect x="28" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09616452592054195)" /><rect x="42" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1262193717990317)" /><rect x="56" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13555460904164074)" /><rect x="70" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12045960684485674)" /><rect x="84" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12049183192013282)" /><rect x="98" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13480998239871705)" /><rect x="112" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09153269322303673)" /><rect x="126" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10095376967825606)" /><rect x="140" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1043002919595763)" /><rect x="154" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10417610847337583)" /><rect x="168" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.203625)" /><rect x="182" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.3205)" /><rect x="196" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.33749999999999997)" /><rect x="210" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.4862499999999999)" /><rect x="224" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.635)" /><rect x="238" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.4862499999999999)" /><rect x="252" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.33749999999999997)" /><rect x="266" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13417963384453183)" /><rect x="280" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12913486979015895)" /><rect x="294" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.0889746830116423)" /><rect x="308" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08834846586236723)" /><rect x="322" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11964630937863016)" /><rect x="336" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09748599678485725)" /><rect x="350" y="80" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08592972938174835)" /><rect x="28" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.07732322643715744)" /><rect x="42" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1006384170172607)" /><rect x="56" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.1362151864508991)" /><rect x="70" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11619261222155489)" /><rect x="84" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11114878461241554)" /><rect x="98" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08490083264617633)" /><rect x="112" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12652838461139376)" /><rect x="126" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10068066886868846)" /><rect x="140" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.08707983903844672)" /><rect x="154" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.27375)" /><rect x="168" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.390625)" /><rect x="182" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.5075000000000001)" /><rect x="196" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.390625)" /><rect x="210" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.27375)" /><rect x="224" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.39699999999999996)" /><rect x="238" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.24824999999999997)" /><rect x="252" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.10341119060739781)" /><rect x="266" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.09798666519783514)" /><rect x="280" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.07885912779484447)" /><rect x="294" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13733131840283966)" /><rect x="308" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12840538084581218)" /><rect x="322" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.12945788388293578)" /><rect x="336" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.11402036486180006)" /><rect x="350" y="96" width="12" height="14" rx="2" fill="rgba(255, 0, 0, 0.13455669307542)" /><text x="28" y="126" font-size="8" fill="#8B8D97">12a</text><text x="112" y="126" font-size="8" fill="#8B8D97">6a</text><text x="196" y="126" font-size="8" fill="#8B8D97">12p</text><text x="280" y="126" font-size="8" fill="#8B8D97">6p</text>
+    </svg></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Engagement over time <span class="ch-highlight">+12% over 90 days</span></div>
+          <div class="ch-body" style="height: 70px;">
+    <svg viewBox="0 0 220 50" width="100%" height="50">
+      <defs>
+        <linearGradient id="g-FF0000" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FF0000" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#FF0000" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M 0.0 47.0 L 31.4 39.7 L 62.9 32.3 L 94.3 25.0 L 125.7 17.7 L 157.1 10.3 L 188.6 3.0 L 220.0 3.0 L 220 50 L 0 50 Z" fill="url(#g-FF0000)" />
+      <path d="M 0.0 47.0 L 31.4 39.7 L 62.9 32.3 L 94.3 25.0 L 125.7 17.7 L 157.1 10.3 L 188.6 3.0 L 220.0 3.0" stroke="#FF0000" stroke-width="1.8" fill="none" stroke-linecap="round" />
+      <circle cx="220.0" cy="3.0" r="3" fill="#FF0000" />
+    </svg></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Peak hours <span class="ch-highlight">7 PM ET</span></div>
+          <div class="ch-body"><svg viewBox="0 0 320 70" width="100%"><rect x="11" y="49.17515958248778" width="10.5" height="6.82484041751222" rx="2" fill="#FF0000" opacity="0.39187285177420295"/><rect x="23.5" y="50.52942002595174" width="10.5" height="5.470579974048267" rx="2" fill="#FF0000" opacity="0.3736424227275728"/><rect x="36" y="50.418023872705305" width="10.5" height="5.581976127294694" rx="2" fill="#FF0000" opacity="0.375141986328967"/><rect x="48.5" y="52.55577732666696" width="10.5" height="3.44422267333304" rx="2" fill="#FF0000" opacity="0.34636453598717554"/><rect x="61" y="52.51939212651234" width="10.5" height="3.4806078734876666" rx="2" fill="#FF0000" opacity="0.3468543367584878"/><rect x="73.5" y="49.69959578351411" width="10.5" height="6.300404216485888" rx="2" fill="#FF0000" opacity="0.38481313368346387"/><rect x="86" y="49.872896352428796" width="10.5" height="6.127103647571202" rx="2" fill="#FF0000" opacity="0.38248024140961234"/><rect x="98.5" y="50.0079957864794" width="10.5" height="5.992004213520598" rx="2" fill="#FF0000" opacity="0.38066159518200804"/><rect x="111" y="50.24844979458465" width="10.5" height="5.7515502054153504" rx="2" fill="#FF0000" opacity="0.3774247143036682"/><rect x="123.5" y="49.69380661380299" width="10.5" height="6.306193386197007" rx="2" fill="#FF0000" opacity="0.38489106481419044"/><rect x="136" y="50.326220497016386" width="10.5" height="5.673779502983612" rx="2" fill="#FF0000" opacity="0.3763778010017025"/><rect x="148.5" y="45.6" width="10.5" height="10.4" rx="2" fill="#FF0000" opacity="0.43999999999999995"/><rect x="161" y="37.8" width="10.5" height="18.2" rx="2" fill="#FF0000" opacity="0.5449999999999999"/><rect x="173.5" y="30" width="10.5" height="26" rx="2" fill="#FF0000" opacity="0.6499999999999999"/><rect x="186" y="27.4" width="10.5" height="28.6" rx="2" fill="#FF0000" opacity="0.685"/><rect x="198.5" y="35.980000000000004" width="10.5" height="20.02" rx="2" fill="#FF0000" opacity="0.5694999999999999"/><rect x="211" y="38.32" width="10.5" height="17.68" rx="2" fill="#FF0000" opacity="0.538"/><rect x="223.5" y="25.060000000000002" width="10.5" height="30.939999999999998" rx="2" fill="#FF0000" opacity="0.7164999999999999"/><rect x="236" y="11.800000000000004" width="10.5" height="44.199999999999996" rx="2" fill="#FF0000" opacity="0.895"/><rect x="248.5" y="4" width="10.5" height="52" rx="2" fill="#FF0000" opacity="1"/><rect x="261" y="9.199999999999996" width="10.5" height="46.800000000000004" rx="2" fill="#FF0000" opacity="0.9299999999999999"/><rect x="273.5" y="23.240000000000002" width="10.5" height="32.76" rx="2" fill="#FF0000" opacity="0.7409999999999999"/><rect x="286" y="37.28" width="10.5" height="18.720000000000002" rx="2" fill="#FF0000" opacity="0.552"/><rect x="298.5" y="52.03221227443093" width="10.5" height="3.967787725569064" rx="2" fill="#FF0000" opacity="0.3534125270749682"/><text x="10" y="68" font-size="8" fill="#8B8D97">12a</text><text x="85" y="68" font-size="8" fill="#8B8D97">6a</text><text x="160" y="68" font-size="8" fill="#8B8D97">12p</text><text x="235" y="68" font-size="8" fill="#8B8D97">6p</text></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      
+        <div class="metric-card">
+          <span class="label">Discovery Rate</span>
+          <span class="value">46%</span>
+          <span class="desc">Videos where views exceed 1.5× subscribers — proves YouTube’s algorithm is pushing you into Browse/Suggested.</span>
+          <div class="chart">
+    <svg viewBox="0 0 220 50" width="100%" height="50">
+      <defs>
+        <linearGradient id="g-FF0000" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FF0000" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#FF0000" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M 0.0 47.0 L 31.4 37.2 L 62.9 22.6 L 94.3 32.3 L 125.7 12.8 L 157.1 5.4 L 188.6 15.2 L 220.0 3.0 L 220 50 L 0 50 Z" fill="url(#g-FF0000)" />
+      <path d="M 0.0 47.0 L 31.4 37.2 L 62.9 22.6 L 94.3 32.3 L 125.7 12.8 L 157.1 5.4 L 188.6 15.2 L 220.0 3.0" stroke="#FF0000" stroke-width="1.8" fill="none" stroke-linecap="round" />
+      <circle cx="220.0" cy="3.0" r="3" fill="#FF0000" />
+    </svg></div>
+        </div>
+      
+        <div class="metric-card">
+          <span class="label">Shorts vs Long-form</span>
+          <span class="value">+2.4×</span>
+          <span class="desc">Lift in engagement on Shorts vs regular videos. Settles the platform’s biggest strategic question for your channel.</span>
+          <div class="chart">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">Shorts</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 100%; background: #FF0000; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">28K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">Long</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 41%; background: #FF0000; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">11K</div>
+        </div>
+      
+    </div></div>
+        </div>
+      
+        <div class="metric-card">
+          <span class="label">Title Hook</span>
+          <span class="value">30–60 chars</span>
+          <span class="desc">Your titles in the 30–60 character range outperform shorter or longer ones — tested on your last 25 videos.</span>
+          <div class="chart">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;"><30</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 60%; background: #FF0000; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">8.5K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">30-60</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 100%; background: #FF0000; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">14K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">60+</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 44%; background: #FF0000; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">6.3K</div>
+        </div>
+      
+    </div></div>
+        </div>
+      
+    </section>
+
+    <section class="dashboard-preview" style="border-bottom: 1px solid var(--border);">
+      <div class="dash-header">
+        <h3>Content optimization at a glance</h3>
+        <span class="dash-sub">Three more cards from the live dashboard</span>
+      </div>
+      <div class="dash-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="dash-card">
+          <div class="ch-label">Content mix <span class="ch-highlight">Tutorials wins</span></div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <svg viewBox="0 0 100 100" width="92" height="92"><path d="M 50 50 L 50.00 12.00 A 38 38 0 0 1 54.76 87.70 Z" fill="#FF0000" /><path d="M 50 50 L 54.76 87.70 A 38 38 0 0 1 13.86 38.26 Z" fill="rgba(255, 0, 0, 0.6699999999999999)" /><path d="M 50 50 L 13.86 38.26 A 38 38 0 0 1 50.00 12.00 Z" fill="rgba(255, 0, 0, 0.49)" /><circle cx="50" cy="50" r="22" fill="var(--card)" /></svg>
+      <div style="flex:1; display:flex; flex-direction:column; gap:3px;">
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: #FF0000;"></span>
+      <span style="color: var(--text); font-weight: 500;">Tutorials</span>
+      <span style="color: var(--muted); margin-left: auto;">48%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 0, 0, 0.6699999999999999);"></span>
+      <span style="color: var(--text); font-weight: 500;">Reviews</span>
+      <span style="color: var(--muted); margin-left: auto;">32%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 0, 0, 0.49);"></span>
+      <span style="color: var(--text); font-weight: 500;">Shorts</span>
+      <span style="color: var(--muted); margin-left: auto;">20%</span>
+    </div>
+  </div>
+    </div></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Top hashtags</div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:flex; flex-wrap:wrap; gap:5px;">
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: #FF0000; color: white;">
+          #programming <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">24K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(255, 0, 0, 0.12200000000000001); color: #FF0000;">
+          #developer <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">18K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(255, 0, 0, 0.10400000000000001); color: #FF0000;">
+          #tech <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">12K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(255, 0, 0, 0.08600000000000002); color: #FF0000;">
+          #sideproject <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">9.4K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(255, 0, 0, 0.06800000000000002); color: #FF0000;">
+          #startup <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">6.8K</span>
+        </span>
+      
+    </div></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Performance highlights</div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #FF0000;">46%</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Discovery Rate</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #FF0000;">+2.4×</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Shorts Lift</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #FF0000;">30-60</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Title Hook</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #FF0000;">2/wk</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Posting Freq</div>
+        </div>
+      
+    </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kit-section">
+      <div class="kit-blurb">
+        <h2>One-click media kit</h2>
+        <p>Every metric on this page lands in your media kit automatically. Pick what to show, drop in your branding, export to PDF or a 1080×1080 social card. Auto-refreshes when you fetch fresh data.</p>
+        <ul class="kit-features">
+          <li>Live data pulled from your handle</li>
+          <li>Toggle which stats appear, hide the rest</li>
+          <li>Switch between up to 3 accounts</li>
+          <li>PDF + social card + CSV exports</li>
+        </ul>
+      </div>
+      
+    <div class="kit-mock">
+      <div class="kit-header">
+        <div class="kit-accent" style="background: #FF0000;"></div>
+        <div class="kit-header-content">
+          <div class="kit-avatar" style="background: #FF0000;">M</div>
+          <div style="flex: 1;">
+            <div class="kit-name">Marcus Tate</div>
+            <div class="kit-tag">Building software, in public</div>
+            <div class="kit-pills">
+              <span class="kit-pill" style="background: #FF0000;">Tech & Reviews</span>
+              <span class="kit-pill muted">Seattle, WA</span>
+              <span class="kit-pill muted">@marcustate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kit-stats">
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #FF0000;">218K</div>
+            <div class="l">Subscribers</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #FF0000;">3.4%</div>
+            <div class="l">Eng. Rate</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #FF0000;">$4.1K</div>
+            <div class="l">Est. Value</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #FF0000;">495</div>
+            <div class="l">Videos</div>
+          </div>
+        
+      </div>
+      <div class="kit-body">
+        <div class="kit-left">
+          <div class="kit-bio">Software engineer turning side projects into real businesses on camera. 218K subs, three years of weekly content, deep-dive tutorials watched by engineering teams at Stripe, Vercel, and Anthropic.</div>
+          <div class="kit-cta-block" style="border-color: #FF0000; background: rgba(255,0,0,0.05);">
+            Open to integrated sponsorships from developer tools, infra, and tech-adjacent brands.
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Sponsorship Packages</div>
+            <div class="kit-offerings">
+              
+                <div class="kit-offering">
+                  <div class="n">Dedicated Video</div>
+                  <div class="d">Full review of product</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Integrated Sponsor</div>
+                  <div class="d">60s mid-roll segment</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Shorts Mention</div>
+                  <div class="d">Quick feature spot</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Product Placement</div>
+                  <div class="d">Organic integration</div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="kit-right">
+          <div class="kit-section-label">Performance</div>
+          <div class="kit-insight-row">
+            
+    <div class="donut-wrap" style="width:56px; height:56px;">
+      <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform: rotate(-90deg);">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#FF0000" stroke-width="8"
+          stroke-dasharray="85.40799999999999 165.8" stroke-linecap="round"/>
+      </svg>
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <span style="font-size: 12.32px; font-weight: 800; color: #FF0000; line-height: 1;">3.4%</span>
+        <span style="font-size: 4.760000000000001px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1px;">Eng. Rate</span>
+      </div>
+    </div>
+            <div class="kit-badges">
+              <div class="kit-badge" style="background: rgba(255,0,0,0.08);">
+                <div class="v" style="color: #FF0000;">46%</div>
+                <div class="l">Discovery Rate</div>
+              </div>
+              <div class="kit-badge" style="background: rgba(255,0,0,0.05);">
+                <div class="v" style="color: #FF0000;">2.4×</div>
+                <div class="l">Shorts Lift</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Content Mix</div>
+            
+              <div class="kit-bar-row">
+                <span class="name">Tutorials</span>
+                <span class="bar-track"><span class="bar-fill" style="width:48%; background: #FF0000;"></span></span>
+                <span class="v">48%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">Reviews</span>
+                <span class="bar-track"><span class="bar-fill" style="width:32%; background: #FF0000;"></span></span>
+                <span class="v">32%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">Shorts</span>
+                <span class="bar-track"><span class="bar-fill" style="width:20%; background: #FF0000;"></span></span>
+                <span class="v">20%</span>
+              </div>
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Top Hashtags</div>
+            <div class="kit-hashtags">
+              <span class="kit-hashtag" style="background: #FF0000; color: white;">#programming</span><span class="kit-hashtag" style="background: rgba(255,0,0,0.12200000000000001); color: #FF0000;">#developer</span><span class="kit-hashtag" style="background: rgba(255,0,0,0.10400000000000001); color: #FF0000;">#tech</span><span class="kit-hashtag" style="background: rgba(255,0,0,0.08600000000000002); color: #FF0000;">#sideproject</span><span class="kit-hashtag" style="background: rgba(255,0,0,0.06800000000000002); color: #FF0000;">#startup</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kit-footer">
+        <span>Generated by Armadillo Analytics</span>
+        <span>May 2026</span>
+      </div>
+    </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-text">
+        <strong>Try it free.</strong> <span class="muted">No credit card. 30 fresh scrapes per platform per month on any tier.</span>
+      </div>
+      <a class="cta-btn" href="https://armadillo-analytics.app">Get started</a>
+    </section>
+  </div>
+
+  <div class="footer-nav">
+    <a href="index.html">All pages</a> ·
+    <a href="tiktok.html">TikTok</a> ·
+    <a href="instagram.html">Instagram</a> ·
+    <a href="youtube.html">YouTube</a> ·
+    <a href="twitter.html">Twitter</a> ·
+    <a href="linkedin.html">LinkedIn</a> ·
+    <a href="all-platforms.html">All Platforms</a> ·
+    <a href="agency-white-label.html">Agency</a>
+    
+  </div>
+</body>
+</html>

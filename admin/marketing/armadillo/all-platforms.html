@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Every platform you publish on — Armadillo Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg: #0F1117;
+    --card: #181B24;
+    --card-light: #1F232E;
+    --text: #E8E6E3;
+    --muted: #8B8D97;
+    --border: #2A2D38;
+    --burnt: #BF5700;
+    --burnt-light: #E8894A;
+    --success: #7EC8A0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #0a0c11;
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: #0a0c11; border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px;
+  }
+  .topnav .brand { font-weight: 700; color: var(--burnt); letter-spacing: 2px; text-transform: uppercase; font-size: 10px; }
+  .topnav a { color: var(--muted); text-decoration: none; margin-left: 14px; }
+  .topnav a:hover { color: var(--text); }
+
+  /* Print-friendly page: ~8.5 x 11 in @ 96dpi = 816 x 1056 but we go a bit
+     wider for screen comfort and let the print stylesheet snap it back. */
+  .page {
+    width: 880px;
+    margin: 28px auto;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  }
+  @media print {
+    @page { size: letter; margin: 0; }
+    html, body { background: #fff; }
+    .topnav, .footer-nav { display: none; }
+    .page { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  }
+
+  .hero {
+    padding: 30px 40px 22px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background: linear-gradient(135deg, rgba(191,87,0,0.08) 0%, transparent 60%);
+  }
+  .hero .eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--burnt); font-weight: 700;
+  }
+  .hero h1 {
+    font-size: 32px; line-height: 1.1; margin: 8px 0 6px;
+    letter-spacing: -0.02em; font-weight: 700;
+  }
+  .hero .sub {
+    font-size: 14px; color: var(--muted); margin: 0; max-width: 640px; line-height: 1.5;
+  }
+  .platform-pill {
+    position: absolute; top: 30px; right: 40px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600;
+  }
+  .platform-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Hero metric callout — the headline price-per-post number */
+  .price-callout {
+    margin: 0; padding: 28px 40px;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .price-big {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .price-big .label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+  }
+  .price-big .figure {
+    font-size: 72px; font-weight: 800; line-height: 1; color: var(--burnt);
+    letter-spacing: -0.03em;
+  }
+  .price-big .range {
+    font-size: 13px; color: var(--muted); margin-top: 4px;
+  }
+  .formula {
+    display: flex; flex-direction: column; gap: 10px;
+    border-left: 1px solid var(--border); padding-left: 28px;
+  }
+  .formula .step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .formula .num {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--burnt); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .formula .step-text { font-size: 12px; line-height: 1.5; }
+  .formula .step-text strong { color: var(--text); }
+  .formula .step-text .muted { color: var(--muted); }
+
+  /* Dashboard preview — multi-chart grid showing what the product produces */
+  .dashboard-preview {
+    padding: 24px 40px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dashboard-preview .dash-header {
+    display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px;
+  }
+  .dashboard-preview h3 {
+    font-size: 16px; font-weight: 700; margin: 0;
+  }
+  .dashboard-preview .dash-sub {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .dash-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .dash-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .dash-card.tall { grid-row: span 2; }
+  .dash-card .ch-label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .dash-card .ch-label .ch-highlight {
+    color: var(--burnt-light); font-size: 12px; font-weight: 700; letter-spacing: 0;
+    text-transform: none;
+  }
+  .dash-card .ch-body { display: flex; align-items: center; flex: 1; }
+
+  /* Punch metrics row */
+  .metrics {
+    padding: 18px 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .metric-card .label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .metric-card .value {
+    font-size: 26px; font-weight: 700; color: var(--burnt-light);
+    letter-spacing: -0.02em;
+  }
+  .metric-card .desc {
+    font-size: 11px; line-height: 1.4; color: var(--muted);
+  }
+  .metric-card .chart { margin-top: auto; }
+
+  /* Media kit preview */
+  .kit-section {
+    padding: 28px 40px 32px;
+    display: grid; grid-template-columns: 0.85fr 1fr; gap: 28px;
+    align-items: start;
+  }
+  .kit-blurb h2 {
+    font-size: 18px; margin: 0 0 8px; font-weight: 700;
+  }
+  .kit-blurb p {
+    font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0 0 10px;
+  }
+  .kit-blurb .kit-features {
+    list-style: none; padding: 0; margin: 12px 0 0;
+    font-size: 12px;
+  }
+  .kit-blurb .kit-features li {
+    padding: 4px 0 4px 18px; position: relative; color: var(--text);
+  }
+  .kit-blurb .kit-features li::before {
+    content: '✓'; position: absolute; left: 0; top: 4px;
+    color: var(--success); font-weight: 700; font-size: 11px;
+  }
+
+  /* The media kit mockup — looks like the OneSheet professional layout */
+  .kit-mock {
+    background: white; color: #1a1a1a;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    font-size: 8px;
+    width: 100%;
+    aspect-ratio: 8.5 / 11;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+  }
+  .kit-mock .kit-header {
+    background: #1B1F23; padding: 14px 16px 10px;
+    position: relative;
+  }
+  .kit-mock .kit-accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kit-mock .kit-header-content { display: flex; align-items: center; gap: 10px; }
+  .kit-mock .kit-avatar {
+    width: 38px; height: 38px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white;
+  }
+  .kit-mock .kit-name { color: white; font-size: 13px; font-weight: 700; line-height: 1.1; }
+  .kit-mock .kit-tag { color: rgba(255,255,255,0.6); font-size: 7px; margin-top: 2px; }
+  .kit-mock .kit-pills { display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap; }
+  .kit-mock .kit-pill {
+    font-size: 5px; padding: 1.5px 5px; border-radius: 2px; color: white; font-weight: 600;
+  }
+  .kit-mock .kit-pill.muted { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+  .kit-mock .kit-stats {
+    padding: 8px 14px; border-bottom: 1px solid #eee;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .kit-mock .kit-stat-tile {
+    background: #fafafa; border-radius: 4px; padding: 6px 4px; text-align: center;
+  }
+  .kit-mock .kit-stat-tile .v { font-size: 11px; font-weight: 700; line-height: 1; }
+  .kit-mock .kit-stat-tile .l { font-size: 5.5px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-body { display: flex; height: calc(100% - 158px); }
+  .kit-mock .kit-left {
+    flex: 1.05; padding: 10px 12px; border-right: 1px solid #f0f0f0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-right {
+    flex: 1; padding: 10px 12px; background: #fafafa;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-section-label {
+    font-size: 5.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700;
+  }
+  .kit-mock .kit-bio { font-size: 7px; line-height: 1.55; color: #444; }
+  .kit-mock .kit-cta-block {
+    border-left: 2px solid; padding: 5px 8px; border-radius: 0 4px 4px 0;
+    font-size: 6.5px; font-style: italic; line-height: 1.4;
+  }
+  .kit-mock .kit-offerings {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .kit-mock .kit-offering {
+    background: #fafafa; padding: 4px 6px; border-radius: 3px;
+  }
+  .kit-mock .kit-offering .n { font-size: 6.5px; font-weight: 700; line-height: 1.2; }
+  .kit-mock .kit-offering .d { font-size: 5.5px; color: #888; line-height: 1.3; margin-top: 1px; }
+  .kit-mock .kit-insight-row { display: flex; gap: 8px; align-items: flex-start; }
+  .kit-mock .kit-badges { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .kit-mock .kit-badge {
+    border-radius: 3px; padding: 4px 6px; text-align: center;
+  }
+  .kit-mock .kit-badge .v { font-size: 9px; font-weight: 800; line-height: 1; }
+  .kit-mock .kit-badge .l { font-size: 5px; color: #aaa; margin-top: 1.5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-bar-row { display: flex; align-items: center; gap: 4px; font-size: 5.5px; }
+  .kit-mock .kit-bar-row .name { color: #666; width: 30px; text-align: right; }
+  .kit-mock .kit-bar-row .bar-track { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .kit-mock .kit-bar-row .bar-fill { height: 100%; border-radius: 3px; }
+  .kit-mock .kit-bar-row .v { font-weight: 700; width: 16px; text-align: left; color: #444; }
+  .kit-mock .kit-hashtags { display: flex; flex-wrap: wrap; gap: 2.5px; }
+  .kit-mock .kit-hashtag {
+    font-size: 6px; padding: 2px 5px; border-radius: 6px; font-weight: 700;
+  }
+  .kit-mock .kit-footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #fafafa; padding: 4px 12px; font-size: 5.5px;
+    color: #999; display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #eee;
+  }
+
+  /* Engagement donut SVG container */
+  .donut-wrap {
+    width: 64px; height: 64px; flex-shrink: 0;
+    position: relative;
+  }
+  .donut-wrap text { font-family: inherit; }
+
+  /* CTA strip */
+  .cta {
+    padding: 18px 40px; display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(90deg, rgba(191,87,0,0.12), transparent);
+    border-top: 1px solid var(--border);
+  }
+  .cta .cta-text { font-size: 13px; }
+  .cta .cta-text strong { font-weight: 700; }
+  .cta .cta-text .muted { color: var(--muted); }
+  .cta .cta-btn {
+    background: var(--burnt); color: white; padding: 10px 18px;
+    border-radius: 8px; font-size: 12px; font-weight: 700;
+    text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px;
+  }
+
+  .footer-nav {
+    max-width: 880px; margin: 16px auto 40px;
+    text-align: center; font-size: 11px; color: var(--muted);
+  }
+  .footer-nav a {
+    color: var(--muted); text-decoration: none; margin: 0 8px;
+  }
+  .footer-nav a:hover { color: var(--burnt); }
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <span class="brand">Armadillo Analytics · Marketing Preview</span>
+    <div>
+      <a href="index.html">All pages</a>
+    </div>
+  </div>
+
+  <div class="page">
+    <section class="hero">
+      <div class="platform-pill">
+        <span class="dot" style="background: #BF5700;"></span>
+        For multi-platform creators
+      </div>
+      <div class="eyebrow">For multi-platform creators</div>
+      <h1>Every platform you publish on</h1>
+      <p class="sub">One login, five platforms, one media kit that pulls live numbers from all of them. Cross-platform compound metrics calibrated per network. The dashboard built for creators who don’t fit in one box.</p>
+    </section>
+
+    <section class="price-callout">
+      <div class="price-big">
+        <span class="label">Estimated price per post</span>
+        <span class="figure">$3,540</span>
+        <span class="range">Typical range: Calibrated per platform: $1.2K (IG) – $6.2K (LinkedIn)</span>
+      </div>
+      <div class="formula">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">How we get there</div>
+        
+          <div class="step">
+            <span class="num">1</span>
+            <span class="step-text">Connect handles for every platform you publish on — TikTok, Instagram, YouTube, X, LinkedIn.</span>
+          </div>
+        
+          <div class="step">
+            <span class="num">2</span>
+            <span class="step-text">Each platform’s metrics are calibrated to its own CPM range and algorithmic signals. <span class="muted">Same brand-readiness composite, different inputs.</span></span>
+          </div>
+        
+          <div class="step">
+            <span class="num">3</span>
+            <span class="step-text">Your media kit aggregates across all of them. One pitch deck, every platform, every metric a brand asks for.</span>
+          </div>
+        
+      </div>
+    </section>
+
+    <section class="dashboard-preview">
+      <div class="dash-header">
+        <h3>What you see in the dashboard</h3>
+        <span class="dash-sub">Live previews · last 30 days · 5 platforms · 184 posts</span>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card tall">
+          <div class="ch-label">Best time to post <span class="ch-highlight">Mixed schedule per network</span></div>
+          <div class="ch-body">
+    <svg viewBox="0 0 372 128" width="100%" preserveAspectRatio="xMidYMid meet">
+      <text x="0" y="11" font-size="9" font-weight="600" fill="#8B8D97">M</text><text x="0" y="27" font-size="9" font-weight="600" fill="#8B8D97">T</text><text x="0" y="43" font-size="9" font-weight="600" fill="#8B8D97">W</text><text x="0" y="59" font-size="9" font-weight="600" fill="#8B8D97">T</text><text x="0" y="75" font-size="9" font-weight="600" fill="#8B8D97">F</text><text x="0" y="91" font-size="9" font-weight="600" fill="#8B8D97">S</text><text x="0" y="107" font-size="9" font-weight="600" fill="#8B8D97">S</text><rect x="28" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10437923375819333)" /><rect x="42" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11783090707600291)" /><rect x="56" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08414988519267266)" /><rect x="70" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10542231526496021)" /><rect x="84" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1331931674350254)" /><rect x="98" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08307878122971121)" /><rect x="112" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08616579050717643)" /><rect x="126" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09460523243561335)" /><rect x="140" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08848888672179309)" /><rect x="154" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11327752898115404)" /><rect x="168" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09199687114341697)" /><rect x="182" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10307531622821509)" /><rect x="196" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10903055882938609)" /><rect x="210" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.233375)" /><rect x="224" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.3715)" /><rect x="238" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.233375)" /><rect x="252" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09524999999999999)" /><rect x="266" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12074999999999997)" /><rect x="280" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.32262499999999994)" /><rect x="294" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.5245)" /><rect x="308" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.32262499999999994)" /><rect x="322" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12074999999999997)" /><rect x="336" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13049543499981192)" /><rect x="350" y="0" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11636919322472597)" /><rect x="28" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08921091775891529)" /><rect x="42" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13053882149532708)" /><rect x="56" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10401412222509018)" /><rect x="70" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1217649090725837)" /><rect x="84" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09906223604994241)" /><rect x="98" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10759278813746792)" /><rect x="112" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11959323705001557)" /><rect x="126" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11649999999999999)" /><rect x="140" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.30774999999999997)" /><rect x="154" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.499)" /><rect x="168" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.30774999999999997)" /><rect x="182" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11649999999999999)" /><rect x="196" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1235490275324656)" /><rect x="210" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.07952217751125323)" /><rect x="224" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12049479154851772)" /><rect x="238" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09271151726091198)" /><rect x="252" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12650900887356437)" /><rect x="266" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.44375)" /><rect x="280" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.6456249999999999)" /><rect x="294" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.8475)" /><rect x="308" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.6456249999999999)" /><rect x="322" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.44375)" /><rect x="336" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08452733168695853)" /><rect x="350" y="16" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10479008347199509)" /><rect x="28" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11840018947836539)" /><rect x="42" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.07925016127522236)" /><rect x="56" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09212441491862636)" /><rect x="70" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08680110497094484)" /><rect x="84" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09822124344385239)" /><rect x="98" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12412867609054071)" /><rect x="112" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09105136639260988)" /><rect x="126" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.4225)" /><rect x="140" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.61375)" /><rect x="154" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.805)" /><rect x="168" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.61375)" /><rect x="182" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.4225)" /><rect x="196" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12901957932684907)" /><rect x="210" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12405937015354263)" /><rect x="224" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10457243395791857)" /><rect x="238" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08521489774185802)" /><rect x="252" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1329377012723686)" /><rect x="266" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12074999999999997)" /><rect x="280" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.32262499999999994)" /><rect x="294" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.5245)" /><rect x="308" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.4735)" /><rect x="322" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.29287499999999994)" /><rect x="336" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11586813546388772)" /><rect x="350" y="32" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11958284594035598)" /><rect x="28" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09276811861142067)" /><rect x="42" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09461398204263438)" /><rect x="56" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09311776356662868)" /><rect x="70" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1060932071762275)" /><rect x="84" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1208907287316125)" /><rect x="98" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12684951017962492)" /><rect x="112" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10718098721711566)" /><rect x="126" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11649999999999999)" /><rect x="140" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.30774999999999997)" /><rect x="154" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.499)" /><rect x="168" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.30774999999999997)" /><rect x="182" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11649999999999999)" /><rect x="196" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12819873025505743)" /><rect x="210" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10704551984195532)" /><rect x="224" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09043791837535106)" /><rect x="238" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09099999999999998)" /><rect x="252" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.2185)" /><rect x="266" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.346)" /><rect x="280" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.40124999999999994)" /><rect x="294" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.581875)" /><rect x="308" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.7625)" /><rect x="322" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.581875)" /><rect x="336" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.40124999999999994)" /><rect x="350" y="48" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08219367774947842)" /><rect x="28" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12539029527908738)" /><rect x="42" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12933169510740442)" /><rect x="56" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.07749924224202535)" /><rect x="70" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08762298384480202)" /><rect x="84" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13457982182838793)" /><rect x="98" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11178187605688192)" /><rect x="112" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10602008592546847)" /><rect x="126" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1213192703981309)" /><rect x="140" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08306049654614509)" /><rect x="154" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13802594731052734)" /><rect x="168" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.27799999999999997)" /><rect x="182" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.44799999999999995)" /><rect x="196" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.27799999999999997)" /><rect x="210" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10799999999999998)" /><rect x="224" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.0915533092145753)" /><rect x="238" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.295)" /><rect x="252" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.42249999999999993)" /><rect x="266" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.55)" /><rect x="280" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.42249999999999993)" /><rect x="294" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.295)" /><rect x="308" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.4735)" /><rect x="322" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.29287499999999994)" /><rect x="336" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1350606382994728)" /><rect x="350" y="64" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12484184222985625)" /><rect x="28" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.07907768101102347)" /><rect x="42" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12106021830877173)" /><rect x="56" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13892166125076716)" /><rect x="70" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13178527756280414)" /><rect x="84" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09811957736718657)" /><rect x="98" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09090459563407463)" /><rect x="112" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1343697785906126)" /><rect x="126" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13479750953619268)" /><rect x="140" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11866081771337728)" /><rect x="154" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.38)" /><rect x="168" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.55)" /><rect x="182" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.7200000000000001)" /><rect x="196" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.55)" /><rect x="210" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.38)" /><rect x="224" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.3715)" /><rect x="238" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.233375)" /><rect x="252" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.2185)" /><rect x="266" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.346)" /><rect x="280" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.2185)" /><rect x="294" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11749909451851309)" /><rect x="308" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10766997915562607)" /><rect x="322" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.07444230730689802)" /><rect x="336" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11696985234626545)" /><rect x="350" y="80" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11239006912600513)" /><rect x="28" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11900617604519309)" /><rect x="42" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12637548960935788)" /><rect x="56" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.1035652996078297)" /><rect x="70" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.14116570127471573)" /><rect x="84" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10266767191914838)" /><rect x="98" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08842750059050045)" /><rect x="112" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12178137151191099)" /><rect x="126" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08192398410804819)" /><rect x="140" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.11692982532525237)" /><rect x="154" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.10799999999999998)" /><rect x="168" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.27799999999999997)" /><rect x="182" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.44799999999999995)" /><rect x="196" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.31625)" /><rect x="210" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.45437500000000003)" /><rect x="224" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.5925)" /><rect x="238" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.45437500000000003)" /><rect x="252" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.31625)" /><rect x="266" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.09281025498026327)" /><rect x="280" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.102356627296182)" /><rect x="294" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12403359583975629)" /><rect x="308" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.13430846860820952)" /><rect x="322" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.08053578127294939)" /><rect x="336" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.12373502459287614)" /><rect x="350" y="96" width="12" height="14" rx="2" fill="rgba(191, 87, 0, 0.07673464264124955)" /><text x="28" y="126" font-size="8" fill="#8B8D97">12a</text><text x="112" y="126" font-size="8" fill="#8B8D97">6a</text><text x="196" y="126" font-size="8" fill="#8B8D97">12p</text><text x="280" y="126" font-size="8" fill="#8B8D97">6p</text>
+    </svg></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Engagement over time <span class="ch-highlight">+15% across all networks</span></div>
+          <div class="ch-body" style="height: 70px;">
+    <svg viewBox="0 0 220 50" width="100%" height="50">
+      <defs>
+        <linearGradient id="g-BF5700" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#BF5700" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#BF5700" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M 0.0 47.0 L 31.4 38.2 L 62.9 29.4 L 94.3 20.6 L 125.7 16.2 L 157.1 7.4 L 188.6 3.0 L 220.0 3.0 L 220 50 L 0 50 Z" fill="url(#g-BF5700)" />
+      <path d="M 0.0 47.0 L 31.4 38.2 L 62.9 29.4 L 94.3 20.6 L 125.7 16.2 L 157.1 7.4 L 188.6 3.0 L 220.0 3.0" stroke="#BF5700" stroke-width="1.8" fill="none" stroke-linecap="round" />
+      <circle cx="220.0" cy="3.0" r="3" fill="#BF5700" />
+    </svg></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Peak hours <span class="ch-highlight">7-9 PM ET</span></div>
+          <div class="ch-body"><svg viewBox="0 0 320 70" width="100%"><rect x="11" y="52.096664757067195" width="10.5" height="3.903335242932803" rx="2" fill="#BF5700" opacity="0.3525448975010185"/><rect x="23.5" y="49.44241279602544" width="10.5" height="6.5575872039745615" rx="2" fill="#BF5700" opacity="0.388275212361196"/><rect x="36" y="52.528733707939644" width="10.5" height="3.4712662920603576" rx="2" fill="#BF5700" opacity="0.34672858470081247"/><rect x="48.5" y="48.13301975476503" width="10.5" height="7.8669802452349735" rx="2" fill="#BF5700" opacity="0.40590165714739385"/><rect x="61" y="48.90260618176806" width="10.5" height="7.097393818231944" rx="2" fill="#BF5700" opacity="0.3955418398608146"/><rect x="73.5" y="50.93031337894525" width="10.5" height="5.069686621054751" rx="2" fill="#BF5700" opacity="0.3682457814372755"/><rect x="86" y="45.6" width="10.5" height="10.4" rx="2" fill="#BF5700" opacity="0.43999999999999995"/><rect x="98.5" y="37.8" width="10.5" height="18.2" rx="2" fill="#BF5700" opacity="0.5449999999999999"/><rect x="111" y="30" width="10.5" height="26" rx="2" fill="#BF5700" opacity="0.6499999999999999"/><rect x="123.5" y="19.6" width="10.5" height="36.4" rx="2" fill="#BF5700" opacity="0.7899999999999999"/><rect x="136" y="30.520000000000003" width="10.5" height="25.479999999999997" rx="2" fill="#BF5700" opacity="0.6429999999999999"/><rect x="148.5" y="39.620000000000005" width="10.5" height="16.38" rx="2" fill="#BF5700" opacity="0.5205"/><rect x="161" y="32.599999999999994" width="10.5" height="23.400000000000002" rx="2" fill="#BF5700" opacity="0.615"/><rect x="173.5" y="39.620000000000005" width="10.5" height="16.38" rx="2" fill="#BF5700" opacity="0.5205"/><rect x="186" y="46.64" width="10.5" height="9.360000000000001" rx="2" fill="#BF5700" opacity="0.426"/><rect x="198.5" y="48.022324059641974" width="10.5" height="7.977675940358027" rx="2" fill="#BF5700" opacity="0.4073917915048196"/><rect x="211" y="38.32" width="10.5" height="17.68" rx="2" fill="#BF5700" opacity="0.538"/><rect x="223.5" y="25.060000000000002" width="10.5" height="30.939999999999998" rx="2" fill="#BF5700" opacity="0.7164999999999999"/><rect x="236" y="11.800000000000004" width="10.5" height="44.199999999999996" rx="2" fill="#BF5700" opacity="0.895"/><rect x="248.5" y="4" width="10.5" height="52" rx="2" fill="#BF5700" opacity="1"/><rect x="261" y="9.199999999999996" width="10.5" height="46.800000000000004" rx="2" fill="#BF5700" opacity="0.9299999999999999"/><rect x="273.5" y="23.240000000000002" width="10.5" height="32.76" rx="2" fill="#BF5700" opacity="0.7409999999999999"/><rect x="286" y="37.28" width="10.5" height="18.720000000000002" rx="2" fill="#BF5700" opacity="0.552"/><rect x="298.5" y="48.259978701253246" width="10.5" height="7.7400212987467505" rx="2" fill="#BF5700" opacity="0.40419259440620625"/><text x="10" y="68" font-size="8" fill="#8B8D97">12a</text><text x="85" y="68" font-size="8" fill="#8B8D97">6a</text><text x="160" y="68" font-size="8" fill="#8B8D97">12p</text><text x="235" y="68" font-size="8" fill="#8B8D97">6p</text></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      
+        <div class="metric-card">
+          <span class="label">Cross-platform reach</span>
+          <span class="value">548K</span>
+          <span class="desc">Combined audience across all connected platforms. Single number for the "how big is your audience?" question.</span>
+          <div class="chart">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">IG</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 58%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">127K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">TT</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 39%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">84K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">YT</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 100%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">218K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">X</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 44%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">96K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">LI</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 19%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">42K</div>
+        </div>
+      
+    </div></div>
+        </div>
+      
+        <div class="metric-card">
+          <span class="label">Brand Readiness</span>
+          <span class="value">82 / 100</span>
+          <span class="desc">Composite of engagement, consistency, follower tier, content quality. Same score brands underwrite against.</span>
+          <div class="chart">
+    <svg viewBox="0 0 220 50" width="100%" height="50">
+      <defs>
+        <linearGradient id="g-BF5700" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#BF5700" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#BF5700" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M 0.0 47.0 L 31.4 40.4 L 62.9 33.8 L 94.3 27.2 L 125.7 20.6 L 157.1 14.0 L 188.6 7.4 L 220.0 3.0 L 220 50 L 0 50 Z" fill="url(#g-BF5700)" />
+      <path d="M 0.0 47.0 L 31.4 40.4 L 62.9 33.8 L 94.3 27.2 L 125.7 20.6 L 157.1 14.0 L 188.6 7.4 L 220.0 3.0" stroke="#BF5700" stroke-width="1.8" fill="none" stroke-linecap="round" />
+      <circle cx="220.0" cy="3.0" r="3" fill="#BF5700" />
+    </svg></div>
+        </div>
+      
+        <div class="metric-card">
+          <span class="label">Weighted CPM</span>
+          <span class="value">$28</span>
+          <span class="desc">Audience-weighted estimated CPM across all your platforms. Anchors what to charge for a multi-platform campaign.</span>
+          <div class="chart">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">IG</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 34%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">$22</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">TT</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 28%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">$18</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">YT</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 49%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">$32</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">X</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 25%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">$16</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">LI</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 100%; background: #BF5700; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">$65</div>
+        </div>
+      
+    </div></div>
+        </div>
+      
+    </section>
+
+    <section class="dashboard-preview" style="border-bottom: 1px solid var(--border);">
+      <div class="dash-header">
+        <h3>Content optimization at a glance</h3>
+        <span class="dash-sub">Three more cards from the live dashboard</span>
+      </div>
+      <div class="dash-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="dash-card">
+          <div class="ch-label">Content mix <span class="ch-highlight">TikTok wins</span></div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <svg viewBox="0 0 100 100" width="92" height="92"><path d="M 50 50 L 50.00 12.00 A 38 38 0 0 1 84.38 66.18 Z" fill="#BF5700" /><path d="M 50 50 L 84.38 66.18 A 38 38 0 0 1 27.66 80.74 Z" fill="rgba(191, 87, 0, 0.6699999999999999)" /><path d="M 50 50 L 27.66 80.74 A 38 38 0 0 1 12.67 42.88 Z" fill="rgba(191, 87, 0, 0.49)" /><path d="M 50 50 L 12.67 42.88 A 38 38 0 0 1 31.69 16.70 Z" fill="rgba(191, 87, 0, 0.30999999999999994)" /><path d="M 50 50 L 31.69 16.70 A 38 38 0 0 1 50.00 12.00 Z" fill="rgba(191, 87, 0, 0.13)" /><circle cx="50" cy="50" r="22" fill="var(--card)" /></svg>
+      <div style="flex:1; display:flex; flex-direction:column; gap:3px;">
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: #BF5700;"></span>
+      <span style="color: var(--text); font-weight: 500;">TikTok</span>
+      <span style="color: var(--muted); margin-left: auto;">32%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(191, 87, 0, 0.6699999999999999);"></span>
+      <span style="color: var(--text); font-weight: 500;">Instagram</span>
+      <span style="color: var(--muted); margin-left: auto;">28%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(191, 87, 0, 0.49);"></span>
+      <span style="color: var(--text); font-weight: 500;">YouTube</span>
+      <span style="color: var(--muted); margin-left: auto;">18%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(191, 87, 0, 0.30999999999999994);"></span>
+      <span style="color: var(--text); font-weight: 500;">X</span>
+      <span style="color: var(--muted); margin-left: auto;">14%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(191, 87, 0, 0.13);"></span>
+      <span style="color: var(--text); font-weight: 500;">LinkedIn</span>
+      <span style="color: var(--muted); margin-left: auto;">8%</span>
+    </div>
+  </div>
+    </div></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Top hashtags</div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:flex; flex-wrap:wrap; gap:5px;">
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: #BF5700; color: white;">
+          #creator <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">34K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(191, 87, 0, 0.12200000000000001); color: #BF5700;">
+          #lifestyle <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">22K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(191, 87, 0, 0.10400000000000001); color: #BF5700;">
+          #tech <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">14K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(191, 87, 0, 0.08600000000000002); color: #BF5700;">
+          #la <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">9.2K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(191, 87, 0, 0.06800000000000002); color: #BF5700;">
+          #multiplatform <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">6.4K</span>
+        </span>
+      
+    </div></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Performance highlights</div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #BF5700;">548K</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Combined</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #BF5700;">82/100</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Brand Ready</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #BF5700;">$28</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Weighted CPM</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #BF5700;">5</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Platforms</div>
+        </div>
+      
+    </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kit-section">
+      <div class="kit-blurb">
+        <h2>One-click media kit</h2>
+        <p>Every metric on this page lands in your media kit automatically. Pick what to show, drop in your branding, export to PDF or a 1080×1080 social card. Auto-refreshes when you fetch fresh data.</p>
+        <ul class="kit-features">
+          <li>Live data pulled from your handle</li>
+          <li>Toggle which stats appear, hide the rest</li>
+          <li>Switch between up to 3 accounts</li>
+          <li>PDF + social card + CSV exports</li>
+        </ul>
+      </div>
+      
+    <div class="kit-mock">
+      <div class="kit-header">
+        <div class="kit-accent" style="background: #BF5700;"></div>
+        <div class="kit-header-content">
+          <div class="kit-avatar" style="background: #BF5700;">R</div>
+          <div style="flex: 1;">
+            <div class="kit-name">Riley Park</div>
+            <div class="kit-tag">Creator across five platforms</div>
+            <div class="kit-pills">
+              <span class="kit-pill" style="background: #BF5700;">Lifestyle & Tech</span>
+              <span class="kit-pill muted">Los Angeles</span>
+              <span class="kit-pill muted">@rileypark</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kit-stats">
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #BF5700;">548K</div>
+            <div class="l">Combined</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #BF5700;">5.4%</div>
+            <div class="l">Avg Eng.</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #BF5700;">$3.5K</div>
+            <div class="l">Est. Value</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #BF5700;">5</div>
+            <div class="l">Platforms</div>
+          </div>
+        
+      </div>
+      <div class="kit-body">
+        <div class="kit-left">
+          <div class="kit-bio">Cross-platform creator — TikTok skits, Instagram lifestyle, YouTube deep-dives, X commentary, LinkedIn op-eds. Combined audience over 500K, growing 8% monthly across platforms.</div>
+          <div class="kit-cta-block" style="border-color: #BF5700; background: rgba(191,87,0,0.05);">
+            Available for integrated multi-platform campaigns. Single price, every platform.
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Sponsorship Packages</div>
+            <div class="kit-offerings">
+              
+                <div class="kit-offering">
+                  <div class="n">Multi-platform deal</div>
+                  <div class="d">IG + TT + YT integrated</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">TikTok Bundle</div>
+                  <div class="d">3 videos, 30 days</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Newsletter + LI</div>
+                  <div class="d">B2B thought leadership</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Full Suite</div>
+                  <div class="d">All 5 platforms, 60 days</div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="kit-right">
+          <div class="kit-section-label">Performance</div>
+          <div class="kit-insight-row">
+            
+    <div class="donut-wrap" style="width:56px; height:56px;">
+      <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform: rotate(-90deg);">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#BF5700" stroke-width="8"
+          stroke-dasharray="135.648 115.6" stroke-linecap="round"/>
+      </svg>
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <span style="font-size: 12.32px; font-weight: 800; color: #BF5700; line-height: 1;">5.4%</span>
+        <span style="font-size: 4.760000000000001px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1px;">Eng. Rate</span>
+      </div>
+    </div>
+            <div class="kit-badges">
+              <div class="kit-badge" style="background: rgba(191,87,0,0.08);">
+                <div class="v" style="color: #BF5700;">82/100</div>
+                <div class="l">Brand Readiness</div>
+              </div>
+              <div class="kit-badge" style="background: rgba(191,87,0,0.05);">
+                <div class="v" style="color: #BF5700;">$28</div>
+                <div class="l">Weighted CPM</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Content Mix</div>
+            
+              <div class="kit-bar-row">
+                <span class="name">TikTok</span>
+                <span class="bar-track"><span class="bar-fill" style="width:32%; background: #BF5700;"></span></span>
+                <span class="v">32%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">Instagram</span>
+                <span class="bar-track"><span class="bar-fill" style="width:28%; background: #BF5700;"></span></span>
+                <span class="v">28%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">YouTube</span>
+                <span class="bar-track"><span class="bar-fill" style="width:18%; background: #BF5700;"></span></span>
+                <span class="v">18%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">X</span>
+                <span class="bar-track"><span class="bar-fill" style="width:14%; background: #BF5700;"></span></span>
+                <span class="v">14%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">LinkedIn</span>
+                <span class="bar-track"><span class="bar-fill" style="width:8%; background: #BF5700;"></span></span>
+                <span class="v">8%</span>
+              </div>
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Top Hashtags</div>
+            <div class="kit-hashtags">
+              <span class="kit-hashtag" style="background: #BF5700; color: white;">#creator</span><span class="kit-hashtag" style="background: rgba(191,87,0,0.12200000000000001); color: #BF5700;">#multi-platform</span><span class="kit-hashtag" style="background: rgba(191,87,0,0.10400000000000001); color: #BF5700;">#lifestyle</span><span class="kit-hashtag" style="background: rgba(191,87,0,0.08600000000000002); color: #BF5700;">#tech</span><span class="kit-hashtag" style="background: rgba(191,87,0,0.06800000000000002); color: #BF5700;">#la</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kit-footer">
+        <span>Generated by Armadillo Analytics</span>
+        <span>May 2026</span>
+      </div>
+    </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-text">
+        <strong>Try it free.</strong> <span class="muted">No credit card. 30 fresh scrapes per platform per month on any tier.</span>
+      </div>
+      <a class="cta-btn" href="https://armadillo-analytics.app">Get started</a>
+    </section>
+  </div>
+
+  <div class="footer-nav">
+    <a href="index.html">All pages</a> ·
+    <a href="tiktok.html">TikTok</a> ·
+    <a href="instagram.html">Instagram</a> ·
+    <a href="youtube.html">YouTube</a> ·
+    <a href="twitter.html">Twitter</a> ·
+    <a href="linkedin.html">LinkedIn</a> ·
+    <a href="all-platforms.html">All Platforms</a> ·
+    <a href="agency-white-label.html">Agency</a>
+    
+  </div>
+</body>
+</html>

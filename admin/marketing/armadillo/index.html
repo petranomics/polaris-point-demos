@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Marketing Previews — Armadillo Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg: #0F1117;
+    --card: #181B24;
+    --card-light: #1F232E;
+    --text: #E8E6E3;
+    --muted: #8B8D97;
+    --border: #2A2D38;
+    --burnt: #BF5700;
+    --burnt-light: #E8894A;
+    --success: #7EC8A0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #0a0c11;
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: #0a0c11; border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px;
+  }
+  .topnav .brand { font-weight: 700; color: var(--burnt); letter-spacing: 2px; text-transform: uppercase; font-size: 10px; }
+  .topnav a { color: var(--muted); text-decoration: none; margin-left: 14px; }
+  .topnav a:hover { color: var(--text); }
+
+  /* Print-friendly page: ~8.5 x 11 in @ 96dpi = 816 x 1056 but we go a bit
+     wider for screen comfort and let the print stylesheet snap it back. */
+  .page {
+    width: 880px;
+    margin: 28px auto;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  }
+  @media print {
+    @page { size: letter; margin: 0; }
+    html, body { background: #fff; }
+    .topnav, .footer-nav { display: none; }
+    .page { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  }
+
+  .hero {
+    padding: 30px 40px 22px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background: linear-gradient(135deg, rgba(191,87,0,0.08) 0%, transparent 60%);
+  }
+  .hero .eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--burnt); font-weight: 700;
+  }
+  .hero h1 {
+    font-size: 32px; line-height: 1.1; margin: 8px 0 6px;
+    letter-spacing: -0.02em; font-weight: 700;
+  }
+  .hero .sub {
+    font-size: 14px; color: var(--muted); margin: 0; max-width: 640px; line-height: 1.5;
+  }
+  .platform-pill {
+    position: absolute; top: 30px; right: 40px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600;
+  }
+  .platform-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Hero metric callout — the headline price-per-post number */
+  .price-callout {
+    margin: 0; padding: 28px 40px;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .price-big {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .price-big .label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+  }
+  .price-big .figure {
+    font-size: 72px; font-weight: 800; line-height: 1; color: var(--burnt);
+    letter-spacing: -0.03em;
+  }
+  .price-big .range {
+    font-size: 13px; color: var(--muted); margin-top: 4px;
+  }
+  .formula {
+    display: flex; flex-direction: column; gap: 10px;
+    border-left: 1px solid var(--border); padding-left: 28px;
+  }
+  .formula .step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .formula .num {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--burnt); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .formula .step-text { font-size: 12px; line-height: 1.5; }
+  .formula .step-text strong { color: var(--text); }
+  .formula .step-text .muted { color: var(--muted); }
+
+  /* Dashboard preview — multi-chart grid showing what the product produces */
+  .dashboard-preview {
+    padding: 24px 40px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dashboard-preview .dash-header {
+    display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px;
+  }
+  .dashboard-preview h3 {
+    font-size: 16px; font-weight: 700; margin: 0;
+  }
+  .dashboard-preview .dash-sub {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .dash-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .dash-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .dash-card.tall { grid-row: span 2; }
+  .dash-card .ch-label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .dash-card .ch-label .ch-highlight {
+    color: var(--burnt-light); font-size: 12px; font-weight: 700; letter-spacing: 0;
+    text-transform: none;
+  }
+  .dash-card .ch-body { display: flex; align-items: center; flex: 1; }
+
+  /* Punch metrics row */
+  .metrics {
+    padding: 18px 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .metric-card .label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .metric-card .value {
+    font-size: 26px; font-weight: 700; color: var(--burnt-light);
+    letter-spacing: -0.02em;
+  }
+  .metric-card .desc {
+    font-size: 11px; line-height: 1.4; color: var(--muted);
+  }
+  .metric-card .chart { margin-top: auto; }
+
+  /* Media kit preview */
+  .kit-section {
+    padding: 28px 40px 32px;
+    display: grid; grid-template-columns: 0.85fr 1fr; gap: 28px;
+    align-items: start;
+  }
+  .kit-blurb h2 {
+    font-size: 18px; margin: 0 0 8px; font-weight: 700;
+  }
+  .kit-blurb p {
+    font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0 0 10px;
+  }
+  .kit-blurb .kit-features {
+    list-style: none; padding: 0; margin: 12px 0 0;
+    font-size: 12px;
+  }
+  .kit-blurb .kit-features li {
+    padding: 4px 0 4px 18px; position: relative; color: var(--text);
+  }
+  .kit-blurb .kit-features li::before {
+    content: '✓'; position: absolute; left: 0; top: 4px;
+    color: var(--success); font-weight: 700; font-size: 11px;
+  }
+
+  /* The media kit mockup — looks like the OneSheet professional layout */
+  .kit-mock {
+    background: white; color: #1a1a1a;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    font-size: 8px;
+    width: 100%;
+    aspect-ratio: 8.5 / 11;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+  }
+  .kit-mock .kit-header {
+    background: #1B1F23; padding: 14px 16px 10px;
+    position: relative;
+  }
+  .kit-mock .kit-accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kit-mock .kit-header-content { display: flex; align-items: center; gap: 10px; }
+  .kit-mock .kit-avatar {
+    width: 38px; height: 38px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white;
+  }
+  .kit-mock .kit-name { color: white; font-size: 13px; font-weight: 700; line-height: 1.1; }
+  .kit-mock .kit-tag { color: rgba(255,255,255,0.6); font-size: 7px; margin-top: 2px; }
+  .kit-mock .kit-pills { display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap; }
+  .kit-mock .kit-pill {
+    font-size: 5px; padding: 1.5px 5px; border-radius: 2px; color: white; font-weight: 600;
+  }
+  .kit-mock .kit-pill.muted { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+  .kit-mock .kit-stats {
+    padding: 8px 14px; border-bottom: 1px solid #eee;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .kit-mock .kit-stat-tile {
+    background: #fafafa; border-radius: 4px; padding: 6px 4px; text-align: center;
+  }
+  .kit-mock .kit-stat-tile .v { font-size: 11px; font-weight: 700; line-height: 1; }
+  .kit-mock .kit-stat-tile .l { font-size: 5.5px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-body { display: flex; height: calc(100% - 158px); }
+  .kit-mock .kit-left {
+    flex: 1.05; padding: 10px 12px; border-right: 1px solid #f0f0f0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-right {
+    flex: 1; padding: 10px 12px; background: #fafafa;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-section-label {
+    font-size: 5.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700;
+  }
+  .kit-mock .kit-bio { font-size: 7px; line-height: 1.55; color: #444; }
+  .kit-mock .kit-cta-block {
+    border-left: 2px solid; padding: 5px 8px; border-radius: 0 4px 4px 0;
+    font-size: 6.5px; font-style: italic; line-height: 1.4;
+  }
+  .kit-mock .kit-offerings {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .kit-mock .kit-offering {
+    background: #fafafa; padding: 4px 6px; border-radius: 3px;
+  }
+  .kit-mock .kit-offering .n { font-size: 6.5px; font-weight: 700; line-height: 1.2; }
+  .kit-mock .kit-offering .d { font-size: 5.5px; color: #888; line-height: 1.3; margin-top: 1px; }
+  .kit-mock .kit-insight-row { display: flex; gap: 8px; align-items: flex-start; }
+  .kit-mock .kit-badges { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .kit-mock .kit-badge {
+    border-radius: 3px; padding: 4px 6px; text-align: center;
+  }
+  .kit-mock .kit-badge .v { font-size: 9px; font-weight: 800; line-height: 1; }
+  .kit-mock .kit-badge .l { font-size: 5px; color: #aaa; margin-top: 1.5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-bar-row { display: flex; align-items: center; gap: 4px; font-size: 5.5px; }
+  .kit-mock .kit-bar-row .name { color: #666; width: 30px; text-align: right; }
+  .kit-mock .kit-bar-row .bar-track { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .kit-mock .kit-bar-row .bar-fill { height: 100%; border-radius: 3px; }
+  .kit-mock .kit-bar-row .v { font-weight: 700; width: 16px; text-align: left; color: #444; }
+  .kit-mock .kit-hashtags { display: flex; flex-wrap: wrap; gap: 2.5px; }
+  .kit-mock .kit-hashtag {
+    font-size: 6px; padding: 2px 5px; border-radius: 6px; font-weight: 700;
+  }
+  .kit-mock .kit-footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #fafafa; padding: 4px 12px; font-size: 5.5px;
+    color: #999; display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #eee;
+  }
+
+  /* Engagement donut SVG container */
+  .donut-wrap {
+    width: 64px; height: 64px; flex-shrink: 0;
+    position: relative;
+  }
+  .donut-wrap text { font-family: inherit; }
+
+  /* CTA strip */
+  .cta {
+    padding: 18px 40px; display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(90deg, rgba(191,87,0,0.12), transparent);
+    border-top: 1px solid var(--border);
+  }
+  .cta .cta-text { font-size: 13px; }
+  .cta .cta-text strong { font-weight: 700; }
+  .cta .cta-text .muted { color: var(--muted); }
+  .cta .cta-btn {
+    background: var(--burnt); color: white; padding: 10px 18px;
+    border-radius: 8px; font-size: 12px; font-weight: 700;
+    text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px;
+  }
+
+  .footer-nav {
+    max-width: 880px; margin: 16px auto 40px;
+    text-align: center; font-size: 11px; color: var(--muted);
+  }
+  .footer-nav a {
+    color: var(--muted); text-decoration: none; margin: 0 8px;
+  }
+  .footer-nav a:hover { color: var(--burnt); }
+
+    .index-wrap { max-width: 900px; margin: 60px auto 80px; padding: 0 28px; }
+    .index-wrap h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 10px; }
+    .index-wrap > p { font-size: 14px; color: var(--muted); margin: 0 0 32px; max-width: 600px; line-height: 1.6; }
+    .index-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px;
+    }
+    .index-card {
+      display: block; padding: 22px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; text-decoration: none; color: var(--text); transition: all 0.18s;
+    }
+    .index-card:hover { border-color: var(--burnt); transform: translateY(-3px); }
+    .index-card .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+    .index-card .t { font-weight: 700; font-size: 17px; }
+    .index-card .d { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="topnav">
+    <span class="brand">Armadillo Analytics · Marketing Preview</span>
+  </div>
+  <main class="index-wrap">
+    <h1>Marketing one-pagers</h1>
+    <p>Seven visual pitch pages — one per platform, one unified, one agency white-label. Each fits on a printed page, leads with the estimated price-per-post, and includes a rendered media-kit mockup.</p>
+    <div class="index-grid">
+      
+        <a class="index-card" href="tiktok.html">
+          <div class="t"><span class="dot" style="background: #00F2EA;"></span>TikTok</div>
+          <div class="d">$2,510 per post · FYP Hit Rate, Save:Like, Sound Strategy</div>
+        </a>
+      
+        <a class="index-card" href="instagram.html">
+          <div class="t"><span class="dot" style="background: #E1306C;"></span>Instagram</div>
+          <div class="d">$3,080 per post · Carousel Sweet Spot, Reels Lift</div>
+        </a>
+      
+        <a class="index-card" href="youtube.html">
+          <div class="t"><span class="dot" style="background: #FF0000;"></span>YouTube</div>
+          <div class="d">$4,050 per sponsorship · Discovery Rate, Shorts vs Long</div>
+        </a>
+      
+        <a class="index-card" href="twitter.html">
+          <div class="t"><span class="dot" style="background: #1DA1F2;"></span>Twitter / X</div>
+          <div class="d">$1,840 per post · Quote:RT, Thread Performance</div>
+        </a>
+      
+        <a class="index-card" href="linkedin.html">
+          <div class="t"><span class="dot" style="background: #0A66C2;"></span>LinkedIn</div>
+          <div class="d">$6,240 per post · Document Boost, Reaction Diversity</div>
+        </a>
+      
+        <a class="index-card" href="all-platforms.html">
+          <div class="t"><span class="dot" style="background: #BF5700;"></span>All Platforms (unified)</div>
+          <div class="d">Cross-platform creators · 5 networks, one media kit</div>
+        </a>
+      
+        <a class="index-card" href="agency-white-label.html">
+          <div class="t"><span class="dot" style="background: #BF5700;"></span>Agency White-Label</div>
+          <div class="d">Aspirational pitch · Roster management + branding</div>
+        </a>
+      
+    </div>
+  </main>
+</body>
+</html>

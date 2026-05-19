@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twitter / X — Armadillo Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg: #0F1117;
+    --card: #181B24;
+    --card-light: #1F232E;
+    --text: #E8E6E3;
+    --muted: #8B8D97;
+    --border: #2A2D38;
+    --burnt: #BF5700;
+    --burnt-light: #E8894A;
+    --success: #7EC8A0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #0a0c11;
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: #0a0c11; border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px;
+  }
+  .topnav .brand { font-weight: 700; color: var(--burnt); letter-spacing: 2px; text-transform: uppercase; font-size: 10px; }
+  .topnav a { color: var(--muted); text-decoration: none; margin-left: 14px; }
+  .topnav a:hover { color: var(--text); }
+
+  /* Print-friendly page: ~8.5 x 11 in @ 96dpi = 816 x 1056 but we go a bit
+     wider for screen comfort and let the print stylesheet snap it back. */
+  .page {
+    width: 880px;
+    margin: 28px auto;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  }
+  @media print {
+    @page { size: letter; margin: 0; }
+    html, body { background: #fff; }
+    .topnav, .footer-nav { display: none; }
+    .page { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  }
+
+  .hero {
+    padding: 30px 40px 22px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background: linear-gradient(135deg, rgba(191,87,0,0.08) 0%, transparent 60%);
+  }
+  .hero .eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--burnt); font-weight: 700;
+  }
+  .hero h1 {
+    font-size: 32px; line-height: 1.1; margin: 8px 0 6px;
+    letter-spacing: -0.02em; font-weight: 700;
+  }
+  .hero .sub {
+    font-size: 14px; color: var(--muted); margin: 0; max-width: 640px; line-height: 1.5;
+  }
+  .platform-pill {
+    position: absolute; top: 30px; right: 40px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600;
+  }
+  .platform-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Hero metric callout — the headline price-per-post number */
+  .price-callout {
+    margin: 0; padding: 28px 40px;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .price-big {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .price-big .label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+  }
+  .price-big .figure {
+    font-size: 72px; font-weight: 800; line-height: 1; color: var(--burnt);
+    letter-spacing: -0.03em;
+  }
+  .price-big .range {
+    font-size: 13px; color: var(--muted); margin-top: 4px;
+  }
+  .formula {
+    display: flex; flex-direction: column; gap: 10px;
+    border-left: 1px solid var(--border); padding-left: 28px;
+  }
+  .formula .step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .formula .num {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--burnt); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .formula .step-text { font-size: 12px; line-height: 1.5; }
+  .formula .step-text strong { color: var(--text); }
+  .formula .step-text .muted { color: var(--muted); }
+
+  /* Dashboard preview — multi-chart grid showing what the product produces */
+  .dashboard-preview {
+    padding: 24px 40px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dashboard-preview .dash-header {
+    display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px;
+  }
+  .dashboard-preview h3 {
+    font-size: 16px; font-weight: 700; margin: 0;
+  }
+  .dashboard-preview .dash-sub {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .dash-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .dash-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .dash-card.tall { grid-row: span 2; }
+  .dash-card .ch-label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .dash-card .ch-label .ch-highlight {
+    color: var(--burnt-light); font-size: 12px; font-weight: 700; letter-spacing: 0;
+    text-transform: none;
+  }
+  .dash-card .ch-body { display: flex; align-items: center; flex: 1; }
+
+  /* Punch metrics row */
+  .metrics {
+    padding: 18px 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .metric-card .label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .metric-card .value {
+    font-size: 26px; font-weight: 700; color: var(--burnt-light);
+    letter-spacing: -0.02em;
+  }
+  .metric-card .desc {
+    font-size: 11px; line-height: 1.4; color: var(--muted);
+  }
+  .metric-card .chart { margin-top: auto; }
+
+  /* Media kit preview */
+  .kit-section {
+    padding: 28px 40px 32px;
+    display: grid; grid-template-columns: 0.85fr 1fr; gap: 28px;
+    align-items: start;
+  }
+  .kit-blurb h2 {
+    font-size: 18px; margin: 0 0 8px; font-weight: 700;
+  }
+  .kit-blurb p {
+    font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0 0 10px;
+  }
+  .kit-blurb .kit-features {
+    list-style: none; padding: 0; margin: 12px 0 0;
+    font-size: 12px;
+  }
+  .kit-blurb .kit-features li {
+    padding: 4px 0 4px 18px; position: relative; color: var(--text);
+  }
+  .kit-blurb .kit-features li::before {
+    content: '✓'; position: absolute; left: 0; top: 4px;
+    color: var(--success); font-weight: 700; font-size: 11px;
+  }
+
+  /* The media kit mockup — looks like the OneSheet professional layout */
+  .kit-mock {
+    background: white; color: #1a1a1a;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    font-size: 8px;
+    width: 100%;
+    aspect-ratio: 8.5 / 11;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+  }
+  .kit-mock .kit-header {
+    background: #1B1F23; padding: 14px 16px 10px;
+    position: relative;
+  }
+  .kit-mock .kit-accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kit-mock .kit-header-content { display: flex; align-items: center; gap: 10px; }
+  .kit-mock .kit-avatar {
+    width: 38px; height: 38px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white;
+  }
+  .kit-mock .kit-name { color: white; font-size: 13px; font-weight: 700; line-height: 1.1; }
+  .kit-mock .kit-tag { color: rgba(255,255,255,0.6); font-size: 7px; margin-top: 2px; }
+  .kit-mock .kit-pills { display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap; }
+  .kit-mock .kit-pill {
+    font-size: 5px; padding: 1.5px 5px; border-radius: 2px; color: white; font-weight: 600;
+  }
+  .kit-mock .kit-pill.muted { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+  .kit-mock .kit-stats {
+    padding: 8px 14px; border-bottom: 1px solid #eee;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .kit-mock .kit-stat-tile {
+    background: #fafafa; border-radius: 4px; padding: 6px 4px; text-align: center;
+  }
+  .kit-mock .kit-stat-tile .v { font-size: 11px; font-weight: 700; line-height: 1; }
+  .kit-mock .kit-stat-tile .l { font-size: 5.5px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-body { display: flex; height: calc(100% - 158px); }
+  .kit-mock .kit-left {
+    flex: 1.05; padding: 10px 12px; border-right: 1px solid #f0f0f0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-right {
+    flex: 1; padding: 10px 12px; background: #fafafa;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .kit-mock .kit-section-label {
+    font-size: 5.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700;
+  }
+  .kit-mock .kit-bio { font-size: 7px; line-height: 1.55; color: #444; }
+  .kit-mock .kit-cta-block {
+    border-left: 2px solid; padding: 5px 8px; border-radius: 0 4px 4px 0;
+    font-size: 6.5px; font-style: italic; line-height: 1.4;
+  }
+  .kit-mock .kit-offerings {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .kit-mock .kit-offering {
+    background: #fafafa; padding: 4px 6px; border-radius: 3px;
+  }
+  .kit-mock .kit-offering .n { font-size: 6.5px; font-weight: 700; line-height: 1.2; }
+  .kit-mock .kit-offering .d { font-size: 5.5px; color: #888; line-height: 1.3; margin-top: 1px; }
+  .kit-mock .kit-insight-row { display: flex; gap: 8px; align-items: flex-start; }
+  .kit-mock .kit-badges { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .kit-mock .kit-badge {
+    border-radius: 3px; padding: 4px 6px; text-align: center;
+  }
+  .kit-mock .kit-badge .v { font-size: 9px; font-weight: 800; line-height: 1; }
+  .kit-mock .kit-badge .l { font-size: 5px; color: #aaa; margin-top: 1.5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kit-mock .kit-bar-row { display: flex; align-items: center; gap: 4px; font-size: 5.5px; }
+  .kit-mock .kit-bar-row .name { color: #666; width: 30px; text-align: right; }
+  .kit-mock .kit-bar-row .bar-track { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .kit-mock .kit-bar-row .bar-fill { height: 100%; border-radius: 3px; }
+  .kit-mock .kit-bar-row .v { font-weight: 700; width: 16px; text-align: left; color: #444; }
+  .kit-mock .kit-hashtags { display: flex; flex-wrap: wrap; gap: 2.5px; }
+  .kit-mock .kit-hashtag {
+    font-size: 6px; padding: 2px 5px; border-radius: 6px; font-weight: 700;
+  }
+  .kit-mock .kit-footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #fafafa; padding: 4px 12px; font-size: 5.5px;
+    color: #999; display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #eee;
+  }
+
+  /* Engagement donut SVG container */
+  .donut-wrap {
+    width: 64px; height: 64px; flex-shrink: 0;
+    position: relative;
+  }
+  .donut-wrap text { font-family: inherit; }
+
+  /* CTA strip */
+  .cta {
+    padding: 18px 40px; display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(90deg, rgba(191,87,0,0.12), transparent);
+    border-top: 1px solid var(--border);
+  }
+  .cta .cta-text { font-size: 13px; }
+  .cta .cta-text strong { font-weight: 700; }
+  .cta .cta-text .muted { color: var(--muted); }
+  .cta .cta-btn {
+    background: var(--burnt); color: white; padding: 10px 18px;
+    border-radius: 8px; font-size: 12px; font-weight: 700;
+    text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px;
+  }
+
+  .footer-nav {
+    max-width: 880px; margin: 16px auto 40px;
+    text-align: center; font-size: 11px; color: var(--muted);
+  }
+  .footer-nav a {
+    color: var(--muted); text-decoration: none; margin: 0 8px;
+  }
+  .footer-nav a:hover { color: var(--burnt); }
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <span class="brand">Armadillo Analytics · Marketing Preview</span>
+    <div>
+      <a href="index.html">All pages</a>
+    </div>
+  </div>
+
+  <div class="page">
+    <section class="hero">
+      <div class="platform-pill">
+        <span class="dot" style="background: #1DA1F2;"></span>
+        For X creators
+      </div>
+      <div class="eyebrow">For X creators</div>
+      <h1>Twitter / X</h1>
+      <p class="sub">A dashboard that pulls apart what "engagement" means on X. Quote:Retweet ratio, Reply Engagement, Thread Performance — the signals that prove conversation, not just one-tap shares.</p>
+    </section>
+
+    <section class="price-callout">
+      <div class="price-big">
+        <span class="label">Estimated price per post</span>
+        <span class="figure">$1,840</span>
+        <span class="range">Typical range: $600 – $6,800 for accounts with 50K–500K followers</span>
+      </div>
+      <div class="formula">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px;">How we get there</div>
+        
+          <div class="step">
+            <span class="num">1</span>
+            <span class="step-text">Pull <strong>followers</strong> and <strong>engagement rate</strong> from your scrape. <span class="muted">Sample: 96K followers, 5.1% engagement.</span></span>
+          </div>
+        
+          <div class="step">
+            <span class="num">2</span>
+            <span class="step-text">Convert to a <strong>platform-tuned CPM</strong> ($5–25 range; X creator monetization is leaner than IG or TikTok).</span>
+          </div>
+        
+          <div class="step">
+            <span class="num">3</span>
+            <span class="step-text">Multiply <strong>(followers / 1000) × CPM × engagement multiplier</strong>. <span class="muted">→ ~$1,840 per sponsored tweet or thread.</span></span>
+          </div>
+        
+      </div>
+    </section>
+
+    <section class="dashboard-preview">
+      <div class="dash-header">
+        <h3>What you see in the dashboard</h3>
+        <span class="dash-sub">Live previews · last 30 days · 184 tweets · 12 threads</span>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card tall">
+          <div class="ch-label">Best time to post <span class="ch-highlight">Mon-Wed 8-11 AM PT</span></div>
+          <div class="ch-body">
+    <svg viewBox="0 0 372 128" width="100%" preserveAspectRatio="xMidYMid meet">
+      <text x="0" y="11" font-size="9" font-weight="600" fill="#8B8D97">M</text><text x="0" y="27" font-size="9" font-weight="600" fill="#8B8D97">T</text><text x="0" y="43" font-size="9" font-weight="600" fill="#8B8D97">W</text><text x="0" y="59" font-size="9" font-weight="600" fill="#8B8D97">T</text><text x="0" y="75" font-size="9" font-weight="600" fill="#8B8D97">F</text><text x="0" y="91" font-size="9" font-weight="600" fill="#8B8D97">S</text><text x="0" y="107" font-size="9" font-weight="600" fill="#8B8D97">S</text><rect x="28" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11730213038219656)" /><rect x="42" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12095773660154646)" /><rect x="56" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1120327741710655)" /><rect x="70" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08875869205407705)" /><rect x="84" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09775099849421696)" /><rect x="98" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13001425337108993)" /><rect x="112" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08486140720916874)" /><rect x="126" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12499999999999997)" /><rect x="140" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.33749999999999997)" /><rect x="154" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.55)" /><rect x="168" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.33749999999999997)" /><rect x="182" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12499999999999997)" /><rect x="196" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11100247428906862)" /><rect x="210" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.2185)" /><rect x="224" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.346)" /><rect x="238" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.2185)" /><rect x="252" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12266451745813675)" /><rect x="266" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08719438208656033)" /><rect x="280" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13865417281889555)" /><rect x="294" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07835918950436321)" /><rect x="308" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08613578926516306)" /><rect x="322" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10789366455058416)" /><rect x="336" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1291987087658684)" /><rect x="350" y="0" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08517017328736665)" /><rect x="28" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10757152573328413)" /><rect x="42" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09834257652697338)" /><rect x="56" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12688992646436634)" /><rect x="70" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11926634246865978)" /><rect x="84" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11291806697703541)" /><rect x="98" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11868045121180681)" /><rect x="112" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07753493486251262)" /><rect x="126" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.46499999999999997)" /><rect x="140" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.6775)" /><rect x="154" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.89)" /><rect x="168" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.6775)" /><rect x="182" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.46499999999999997)" /><rect x="196" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.295)" /><rect x="210" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.42249999999999993)" /><rect x="224" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.55)" /><rect x="238" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.42249999999999993)" /><rect x="252" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.295)" /><rect x="266" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13350637822223596)" /><rect x="280" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07970854261122039)" /><rect x="294" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.14000308697864502)" /><rect x="308" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10217537687790554)" /><rect x="322" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10346914328279949)" /><rect x="336" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09321234707563561)" /><rect x="350" y="16" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08339073724661093)" /><rect x="28" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09010629073245846)" /><rect x="42" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09494708079741836)" /><rect x="56" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07990318806612828)" /><rect x="70" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10251945945517077)" /><rect x="84" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11751665009930778)" /><rect x="98" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11196583017075301)" /><rect x="112" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09077061042946617)" /><rect x="126" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12499999999999997)" /><rect x="140" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.44375)" /><rect x="154" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.6456249999999999)" /><rect x="168" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.8475)" /><rect x="182" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.6456249999999999)" /><rect x="196" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.44375)" /><rect x="210" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.2185)" /><rect x="224" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.346)" /><rect x="238" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.2185)" /><rect x="252" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1395024818818376)" /><rect x="266" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12197168718282808)" /><rect x="280" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08568572809174382)" /><rect x="294" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09179462037845651)" /><rect x="308" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10679579554824892)" /><rect x="322" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13053028143022255)" /><rect x="336" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09075785522855719)" /><rect x="350" y="32" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09548228999349108)" /><rect x="28" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08233868955734822)" /><rect x="42" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13079561197962639)" /><rect x="56" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1046368924828654)" /><rect x="70" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10315887570257051)" /><rect x="84" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07870247411993966)" /><rect x="98" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12684029884007603)" /><rect x="112" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07633200781330082)" /><rect x="126" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.40124999999999994)" /><rect x="140" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.581875)" /><rect x="154" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.7625)" /><rect x="168" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.581875)" /><rect x="182" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.40124999999999994)" /><rect x="196" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13063240627936032)" /><rect x="210" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1252977622437551)" /><rect x="224" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.203625)" /><rect x="238" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.3205)" /><rect x="252" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.203625)" /><rect x="266" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12616743801919367)" /><rect x="280" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11819779693448823)" /><rect x="294" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10460039288619621)" /><rect x="308" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13164402190157046)" /><rect x="322" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09139567261965563)" /><rect x="336" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09706696973974904)" /><rect x="350" y="48" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.14109322815949463)" /><rect x="28" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13191910193323017)" /><rect x="42" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10395837341899564)" /><rect x="56" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.14097098959457702)" /><rect x="70" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09038689888820778)" /><rect x="84" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1316665251872519)" /><rect x="98" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08752486525936076)" /><rect x="112" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11396263996801848)" /><rect x="126" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12100043456814105)" /><rect x="140" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.29287499999999994)" /><rect x="154" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.4735)" /><rect x="168" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.29287499999999994)" /><rect x="182" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11224999999999999)" /><rect x="196" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12883792541949646)" /><rect x="210" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.27375)" /><rect x="224" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.390625)" /><rect x="238" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.5075000000000001)" /><rect x="252" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.390625)" /><rect x="266" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.27375)" /><rect x="280" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08428342087898821)" /><rect x="294" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09557827183748437)" /><rect x="308" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1397027709742098)" /><rect x="322" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08676430415580076)" /><rect x="336" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07969835517633944)" /><rect x="350" y="64" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08345716784367677)" /><rect x="28" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08336851856199805)" /><rect x="42" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12433236055055616)" /><rect x="56" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13738534473288225)" /><rect x="70" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12478556524919601)" /><rect x="84" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11280752038224295)" /><rect x="98" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10309358372472396)" /><rect x="112" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.0845331794542219)" /><rect x="126" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.13056695964223924)" /><rect x="140" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.103966839439985)" /><rect x="154" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10013403734150517)" /><rect x="168" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12335142487850323)" /><rect x="182" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11087547750989954)" /><rect x="196" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1042252866923297)" /><rect x="210" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12401894556880186)" /><rect x="224" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.203625)" /><rect x="238" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.3205)" /><rect x="252" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.203625)" /><rect x="266" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12290317701989689)" /><rect x="280" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11695999758246631)" /><rect x="294" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.0746230863845618)" /><rect x="308" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11787755701608232)" /><rect x="322" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09814200345956685)" /><rect x="336" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11067069092731491)" /><rect x="350" y="80" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08608917991124476)" /><rect x="28" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12151612874164516)" /><rect x="42" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.14000472729068544)" /><rect x="56" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10747967886544454)" /><rect x="70" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07841057301637078)" /><rect x="84" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12827270164882498)" /><rect x="98" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.0752130233607303)" /><rect x="112" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09433295430478578)" /><rect x="126" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09615849057374776)" /><rect x="140" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1401660210322333)" /><rect x="154" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08101187977472493)" /><rect x="168" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09489929749642059)" /><rect x="182" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.08800057573692849)" /><rect x="196" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07492508700385102)" /><rect x="210" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.07848347692596619)" /><rect x="224" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1191443316364893)" /><rect x="238" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.12826868762653784)" /><rect x="252" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11125202489235866)" /><rect x="266" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.11249847881976033)" /><rect x="280" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09890267005959744)" /><rect x="294" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10429258856456591)" /><rect x="308" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.10738352368934195)" /><rect x="322" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09048909821547073)" /><rect x="336" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.1096744700170699)" /><rect x="350" y="96" width="12" height="14" rx="2" fill="rgba(29, 161, 242, 0.09207084930261777)" /><text x="28" y="126" font-size="8" fill="#8B8D97">12a</text><text x="112" y="126" font-size="8" fill="#8B8D97">6a</text><text x="196" y="126" font-size="8" fill="#8B8D97">12p</text><text x="280" y="126" font-size="8" fill="#8B8D97">6p</text>
+    </svg></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Engagement over time <span class="ch-highlight">+9% over 30 days</span></div>
+          <div class="ch-body" style="height: 70px;">
+    <svg viewBox="0 0 220 50" width="100%" height="50">
+      <defs>
+        <linearGradient id="g-1DA1F2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1DA1F2" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#1DA1F2" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M 0.0 47.0 L 31.4 38.2 L 62.9 29.4 L 94.3 20.6 L 125.7 11.8 L 157.1 11.8 L 188.6 3.0 L 220.0 3.0 L 220 50 L 0 50 Z" fill="url(#g-1DA1F2)" />
+      <path d="M 0.0 47.0 L 31.4 38.2 L 62.9 29.4 L 94.3 20.6 L 125.7 11.8 L 157.1 11.8 L 188.6 3.0 L 220.0 3.0" stroke="#1DA1F2" stroke-width="1.8" fill="none" stroke-linecap="round" />
+      <circle cx="220.0" cy="3.0" r="3" fill="#1DA1F2" />
+    </svg></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Peak hours <span class="ch-highlight">9 AM PT</span></div>
+          <div class="ch-body"><svg viewBox="0 0 320 70" width="100%"><rect x="11" y="49.96282714113245" width="10.5" height="6.037172858867553" rx="2" fill="#1DA1F2" opacity="0.38126963463860164"/><rect x="23.5" y="50.08095928338266" width="10.5" height="5.91904071661734" rx="2" fill="#1DA1F2" opacity="0.37967939426215647"/><rect x="36" y="49.02197280245048" width="10.5" height="6.978027197549521" rx="2" fill="#1DA1F2" opacity="0.3939349815054743"/><rect x="48.5" y="50.34741329744264" width="10.5" height="5.652586702557358" rx="2" fill="#1DA1F2" opacity="0.37609251330365673"/><rect x="61" y="48.28225549782517" width="10.5" height="7.71774450217483" rx="2" fill="#1DA1F2" opacity="0.4038927144523535"/><rect x="73.5" y="50.93979810602146" width="10.5" height="5.060201893978534" rx="2" fill="#1DA1F2" opacity="0.3681181024189418"/><rect x="86" y="41.44" width="10.5" height="14.559999999999999" rx="2" fill="#1DA1F2" opacity="0.496"/><rect x="98.5" y="30.520000000000003" width="10.5" height="25.479999999999997" rx="2" fill="#1DA1F2" opacity="0.6429999999999999"/><rect x="111" y="19.6" width="10.5" height="36.4" rx="2" fill="#1DA1F2" opacity="0.7899999999999999"/><rect x="123.5" y="4" width="10.5" height="52" rx="2" fill="#1DA1F2" opacity="1"/><rect x="136" y="6.600000000000001" width="10.5" height="49.4" rx="2" fill="#1DA1F2" opacity="0.9649999999999999"/><rect x="148.5" y="19.6" width="10.5" height="36.4" rx="2" fill="#1DA1F2" opacity="0.7899999999999999"/><rect x="161" y="30.520000000000003" width="10.5" height="25.479999999999997" rx="2" fill="#1DA1F2" opacity="0.6429999999999999"/><rect x="173.5" y="35.980000000000004" width="10.5" height="20.02" rx="2" fill="#1DA1F2" opacity="0.5694999999999999"/><rect x="186" y="27.4" width="10.5" height="28.6" rx="2" fill="#1DA1F2" opacity="0.685"/><rect x="198.5" y="24.8" width="10.5" height="31.2" rx="2" fill="#1DA1F2" opacity="0.72"/><rect x="211" y="34.16" width="10.5" height="21.84" rx="2" fill="#1DA1F2" opacity="0.594"/><rect x="223.5" y="43.519999999999996" width="10.5" height="12.48" rx="2" fill="#1DA1F2" opacity="0.46799999999999997"/><rect x="236" y="51.28503281366651" width="10.5" height="4.714967186333487" rx="2" fill="#1DA1F2" opacity="0.36347071212372"/><rect x="248.5" y="52.03918023551797" width="10.5" height="3.9608197644820313" rx="2" fill="#1DA1F2" opacity="0.35331872759879657"/><rect x="261" y="52.43090924320549" width="10.5" height="3.569090756794507" rx="2" fill="#1DA1F2" opacity="0.34804545249531066"/><rect x="273.5" y="50.48567565967073" width="10.5" height="5.51432434032927" rx="2" fill="#1DA1F2" opacity="0.37423128919674015"/><rect x="286" y="50.863362625782585" width="10.5" height="5.136637374217418" rx="2" fill="#1DA1F2" opacity="0.3691470415760037"/><rect x="298.5" y="48.260780816598796" width="10.5" height="7.739219183401202" rx="2" fill="#1DA1F2" opacity="0.40418179669963156"/><text x="10" y="68" font-size="8" fill="#8B8D97">12a</text><text x="85" y="68" font-size="8" fill="#8B8D97">6a</text><text x="160" y="68" font-size="8" fill="#8B8D97">12p</text><text x="235" y="68" font-size="8" fill="#8B8D97">6p</text></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      
+        <div class="metric-card">
+          <span class="label">Quote:Retweet Ratio</span>
+          <span class="value">38%</span>
+          <span class="desc">Quotes prove commentary, retweets prove one-tap shares. Higher ratio = stronger algorithmic signal and better brand pitch.</span>
+          <div class="chart">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">Quotes</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 38%; background: #1DA1F2; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">380</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">RTs</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 100%; background: #1DA1F2; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">1K</div>
+        </div>
+      
+    </div></div>
+        </div>
+      
+        <div class="metric-card">
+          <span class="label">Reply Engagement</span>
+          <span class="value">2.3%</span>
+          <span class="desc">Replies per view. Twitter’s algorithm weights discussion density — this is the cleanest measure of your conversation power.</span>
+          <div class="chart">
+    <svg viewBox="0 0 220 50" width="100%" height="50">
+      <defs>
+        <linearGradient id="g-1DA1F2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1DA1F2" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#1DA1F2" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M 0.0 47.0 L 31.4 36.0 L 62.9 21.3 L 94.3 28.7 L 125.7 14.0 L 157.1 6.7 L 188.6 10.3 L 220.0 3.0 L 220 50 L 0 50 Z" fill="url(#g-1DA1F2)" />
+      <path d="M 0.0 47.0 L 31.4 36.0 L 62.9 21.3 L 94.3 28.7 L 125.7 14.0 L 157.1 6.7 L 188.6 10.3 L 220.0 3.0" stroke="#1DA1F2" stroke-width="1.8" fill="none" stroke-linecap="round" />
+      <circle cx="220.0" cy="3.0" r="3" fill="#1DA1F2" />
+    </svg></div>
+        </div>
+      
+        <div class="metric-card">
+          <span class="label">Thread Performance</span>
+          <span class="value">+184%</span>
+          <span class="desc">Engagement lift on thread starters vs standalone tweets. Threads outperform on X — we measure by how much for you.</span>
+          <div class="chart">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">Threads</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 100%; background: #1DA1F2; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">2.8K</div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:8px; font-size:10px;">
+          <div style="width: 50px; color: var(--muted); text-align: right; font-weight: 600;">Single</div>
+          <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: 35%; background: #1DA1F2; border-radius: 4px;"></div>
+          </div>
+          <div style="width: 30px; font-weight: 700; color: var(--text);">1K</div>
+        </div>
+      
+    </div></div>
+        </div>
+      
+    </section>
+
+    <section class="dashboard-preview" style="border-bottom: 1px solid var(--border);">
+      <div class="dash-header">
+        <h3>Content optimization at a glance</h3>
+        <span class="dash-sub">Three more cards from the live dashboard</span>
+      </div>
+      <div class="dash-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="dash-card">
+          <div class="ch-label">Content mix <span class="ch-highlight">Threads wins</span></div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <svg viewBox="0 0 100 100" width="92" height="92"><path d="M 50 50 L 50.00 12.00 A 38 38 0 1 1 38.26 86.14 Z" fill="#1DA1F2" /><path d="M 50 50 L 38.26 86.14 A 38 38 0 0 1 27.66 19.26 Z" fill="rgba(29, 161, 242, 0.6699999999999999)" /><path d="M 50 50 L 27.66 19.26 A 38 38 0 0 1 50.00 12.00 Z" fill="rgba(29, 161, 242, 0.49)" /><circle cx="50" cy="50" r="22" fill="var(--card)" /></svg>
+      <div style="flex:1; display:flex; flex-direction:column; gap:3px;">
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: #1DA1F2;"></span>
+      <span style="color: var(--text); font-weight: 500;">Threads</span>
+      <span style="color: var(--muted); margin-left: auto;">55%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(29, 161, 242, 0.6699999999999999);"></span>
+      <span style="color: var(--text); font-weight: 500;">Singles</span>
+      <span style="color: var(--muted); margin-left: auto;">35%</span>
+    </div>
+  
+    <div style="display:flex; align-items:center; gap:6px; font-size: 11px; line-height: 1.6;">
+      <span style="width: 9px; height: 9px; border-radius: 50%; background: rgba(29, 161, 242, 0.49);"></span>
+      <span style="color: var(--text); font-weight: 500;">Replies</span>
+      <span style="color: var(--muted); margin-left: auto;">10%</span>
+    </div>
+  </div>
+    </div></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Top hashtags</div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:flex; flex-wrap:wrap; gap:5px;">
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: #1DA1F2; color: white;">
+          #saas <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">38K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(29, 161, 242, 0.12200000000000001); color: #1DA1F2;">
+          #startups <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">24K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(29, 161, 242, 0.10400000000000001); color: #1DA1F2;">
+          #b2b <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">14K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(29, 161, 242, 0.08600000000000002); color: #1DA1F2;">
+          #building <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">11K</span>
+        </span>
+      
+        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; background: rgba(29, 161, 242, 0.06800000000000002); color: #1DA1F2;">
+          #product <span style="opacity: 0.7; font-weight: 500; margin-left: 2px;">8.2K</span>
+        </span>
+      
+    </div></div>
+        </div>
+        <div class="dash-card">
+          <div class="ch-label">Performance highlights</div>
+          <div class="ch-body" style="padding: 4px 0;">
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #1DA1F2;">38%</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Quote:RT</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #1DA1F2;">+184%</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Thread Lift</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #1DA1F2;">2.3%</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Reply Eng.</div>
+        </div>
+      
+        <div style="background: var(--card-light); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 800; color: #1DA1F2;">6/wk</div>
+          <div style="font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; line-height: 1.3;">Posting Freq</div>
+        </div>
+      
+    </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kit-section">
+      <div class="kit-blurb">
+        <h2>One-click media kit</h2>
+        <p>Every metric on this page lands in your media kit automatically. Pick what to show, drop in your branding, export to PDF or a 1080×1080 social card. Auto-refreshes when you fetch fresh data.</p>
+        <ul class="kit-features">
+          <li>Live data pulled from your handle</li>
+          <li>Toggle which stats appear, hide the rest</li>
+          <li>Switch between up to 3 accounts</li>
+          <li>PDF + social card + CSV exports</li>
+        </ul>
+      </div>
+      
+    <div class="kit-mock">
+      <div class="kit-header">
+        <div class="kit-accent" style="background: #1DA1F2;"></div>
+        <div class="kit-header-content">
+          <div class="kit-avatar" style="background: #1DA1F2;">J</div>
+          <div style="flex: 1;">
+            <div class="kit-name">Jordan Lee</div>
+            <div class="kit-tag">Startup tactics, no fluff</div>
+            <div class="kit-pills">
+              <span class="kit-pill" style="background: #1DA1F2;">Startup & Tech</span>
+              <span class="kit-pill muted">San Francisco</span>
+              <span class="kit-pill muted">@jordanleewrites</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kit-stats">
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #1DA1F2;">96.4K</div>
+            <div class="l">Followers</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #1DA1F2;">5.1%</div>
+            <div class="l">Eng. Rate</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #1DA1F2;">$1.8K</div>
+            <div class="l">Est. Value</div>
+          </div>
+        
+          <div class="kit-stat-tile">
+            <div class="v" style="color: #1DA1F2;">2.1K</div>
+            <div class="l">Posts</div>
+          </div>
+        
+      </div>
+      <div class="kit-body">
+        <div class="kit-left">
+          <div class="kit-bio">Former early-stage operator at three Series-A startups. Now writing threads on growth, product, and the unglamorous middle of company-building. 96K readers; threads regularly cited by VCs and operators.</div>
+          <div class="kit-cta-block" style="border-color: #1DA1F2; background: rgba(29,161,242,0.05);">
+            Open to sponsored threads for B2B SaaS, dev tools, and startup-adjacent products.
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Sponsorship Packages</div>
+            <div class="kit-offerings">
+              
+                <div class="kit-offering">
+                  <div class="n">Sponsored Thread</div>
+                  <div class="d">8-12 tweet deep-dive</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Single Tweet</div>
+                  <div class="d">Standalone integration</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Newsletter Mention</div>
+                  <div class="d">Feature in monthly</div>
+                </div>
+                <div class="kit-offering">
+                  <div class="n">Space Co-Host</div>
+                  <div class="d">Twitter Spaces feature</div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="kit-right">
+          <div class="kit-section-label">Performance</div>
+          <div class="kit-insight-row">
+            
+    <div class="donut-wrap" style="width:56px; height:56px;">
+      <svg viewBox="0 0 100 100" style="width:100%; height:100%; transform: rotate(-90deg);">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#1DA1F2" stroke-width="8"
+          stroke-dasharray="128.112 123.1" stroke-linecap="round"/>
+      </svg>
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <span style="font-size: 12.32px; font-weight: 800; color: #1DA1F2; line-height: 1;">5.1%</span>
+        <span style="font-size: 4.760000000000001px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1px;">Eng. Rate</span>
+      </div>
+    </div>
+            <div class="kit-badges">
+              <div class="kit-badge" style="background: rgba(29,161,242,0.08);">
+                <div class="v" style="color: #1DA1F2;">38%</div>
+                <div class="l">Quote:RT</div>
+              </div>
+              <div class="kit-badge" style="background: rgba(29,161,242,0.05);">
+                <div class="v" style="color: #1DA1F2;">+184%</div>
+                <div class="l">Thread Lift</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Content Mix</div>
+            
+              <div class="kit-bar-row">
+                <span class="name">Threads</span>
+                <span class="bar-track"><span class="bar-fill" style="width:55%; background: #1DA1F2;"></span></span>
+                <span class="v">55%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">Singles</span>
+                <span class="bar-track"><span class="bar-fill" style="width:35%; background: #1DA1F2;"></span></span>
+                <span class="v">35%</span>
+              </div>
+              <div class="kit-bar-row">
+                <span class="name">Replies</span>
+                <span class="bar-track"><span class="bar-fill" style="width:10%; background: #1DA1F2;"></span></span>
+                <span class="v">10%</span>
+              </div>
+          </div>
+          <div>
+            <div class="kit-section-label" style="margin-bottom: 4px;">Top Hashtags</div>
+            <div class="kit-hashtags">
+              <span class="kit-hashtag" style="background: #1DA1F2; color: white;">#saas</span><span class="kit-hashtag" style="background: rgba(29,161,242,0.12200000000000001); color: #1DA1F2;">#startups</span><span class="kit-hashtag" style="background: rgba(29,161,242,0.10400000000000001); color: #1DA1F2;">#b2b</span><span class="kit-hashtag" style="background: rgba(29,161,242,0.08600000000000002); color: #1DA1F2;">#building</span><span class="kit-hashtag" style="background: rgba(29,161,242,0.06800000000000002); color: #1DA1F2;">#product</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kit-footer">
+        <span>Generated by Armadillo Analytics</span>
+        <span>May 2026</span>
+      </div>
+    </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-text">
+        <strong>Try it free.</strong> <span class="muted">No credit card. 30 fresh scrapes per platform per month on any tier.</span>
+      </div>
+      <a class="cta-btn" href="https://armadillo-analytics.app">Get started</a>
+    </section>
+  </div>
+
+  <div class="footer-nav">
+    <a href="index.html">All pages</a> ·
+    <a href="tiktok.html">TikTok</a> ·
+    <a href="instagram.html">Instagram</a> ·
+    <a href="youtube.html">YouTube</a> ·
+    <a href="twitter.html">Twitter</a> ·
+    <a href="linkedin.html">LinkedIn</a> ·
+    <a href="all-platforms.html">All Platforms</a> ·
+    <a href="agency-white-label.html">Agency</a>
+    
+  </div>
+</body>
+</html>
