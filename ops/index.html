@@ -155,7 +155,7 @@
           <div class="ops-field"><label>Site Name</label><input type="text" id="newSiteName" placeholder="Fast Plumbing LLC"></div>
           <div class="ops-field"><label>Slug</label><input type="text" id="newSiteSlug" placeholder="pp-fast-plumbing"></div>
           <div class="ops-field"><label>Template</label><select id="newSiteTemplate"><option value="plumber">Plumber</option><option value="handyman">Handyman</option><option value="cleaning">Cleaning</option><option value="pest-control">Pest Control</option><option value="cafe">Cafe</option><option value="restaurant">Restaurant</option><option value="salon">Salon</option></select></div>
-          <div class="ops-field"><label>Hosting Plan</label><select id="newSitePlan"><option value="starter">Starter ($699)</option><option value="growth">Growth ($1,299)</option><option value="pro">Pro ($2,499)</option></select></div>
+          <div class="ops-field"><label>Hosting Plan</label><select id="newSitePlan"><option value="starter">Starter ($799)</option><option value="growth">Growth ($1,299)</option><option value="pro">Pro ($2,499)</option></select></div>
           <div class="ops-field"><label>Domain</label><input type="text" id="newSiteDomain" placeholder="fastplumbing.com"></div>
           <div class="ops-field"><label>Monthly Revenue</label><input type="number" id="newSiteMRR" placeholder="0" step="1"></div>
           <div class="ops-field"><label>Assigned To</label><select id="newSiteOwner"></select></div>
@@ -185,16 +185,16 @@
         <button class="ops-btn" onclick="showInvite()">+ Invite Member</button>
       </div>
       <div id="inviteForm" style="display:none;margin-bottom:16px;padding:16px;background:var(--dark);border:1px solid var(--border);border-radius:10px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="ops-field"><label>Username</label><input type="text" id="invUsername" placeholder="email@polarispoint.io"></div>
-          <div class="ops-field"><label>Full Name</label><input type="text" id="invName" placeholder="Jane Doe"></div>
-          <div class="ops-field"><label>Temp Password</label><input type="text" id="invPass" placeholder="changeme123"></div>
-          <div class="ops-field"><label>Role</label><select id="invRole"><option value="junior">Junior</option><option value="senior">Senior</option></select></div>
+        <p style="margin:0 0 10px;font-size:.78rem;color:#94a3b8;">We'll email a one-time link. They set their own name and password — no temp password to share.</p>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;">
+          <div class="ops-field"><label>Email</label><input type="email" id="invUsername" placeholder="email@example.com"></div>
+          <div class="ops-field"><label>Role</label><select id="invRole"><option value="junior">Team Member</option><option value="senior">Senior</option></select></div>
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;">
-          <button class="ops-btn" onclick="inviteUser()">Create Account</button>
+          <button class="ops-btn" onclick="inviteUser()">Send invite</button>
           <button class="ops-btn secondary" onclick="document.getElementById('inviteForm').style.display='none'">Cancel</button>
         </div>
+        <p id="opsInviteStatus" style="font-size:.74rem;margin-top:8px;display:none;line-height:1.5;"></p>
       </div>
       <table class="ops-table">
         <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
@@ -553,23 +553,27 @@
   function showInvite() { document.getElementById('inviteForm').style.display = 'block'; }
 
   function inviteUser() {
-    var pass = document.getElementById('invPass').value;
-    if (!pass) return alert('Set a temporary password');
-    hashPw(pass).then(function(hash) {
-      fetch('/api/users', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: document.getElementById('invUsername').value.trim().toLowerCase(),
-          password_hash: hash,
-          full_name: document.getElementById('invName').value.trim(),
-          role: document.getElementById('invRole').value
-        })
-      }).then(function(r) { return r.json(); }).then(function(data) {
-        if (data.error) return alert(data.error);
-        document.getElementById('inviteForm').style.display = 'none';
-        loadAll();
-      });
-    });
+    var email = document.getElementById('invUsername').value.trim().toLowerCase();
+    var role = document.getElementById('invRole').value;
+    var status = document.getElementById('opsInviteStatus');
+    function show(t, ok){ status.textContent = t; status.style.color = ok ? '#16a34a' : '#ef4444'; status.style.display = 'block'; }
+    if (!email || email.indexOf('@') < 0) return show('Enter a valid email', false);
+    fetch('/api/invitations', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, role: role, invited_by: (currentUser && currentUser.full_name) || 'Ops' })
+    }).then(function(r) { return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+      .then(function(res) {
+        if (!res.ok) return show(res.d.error || 'Could not send invite', false);
+        if (res.d.emailed) {
+          show('Invite emailed to ' + email + '.', true);
+          document.getElementById('invUsername').value = '';
+          setTimeout(function(){ document.getElementById('inviteForm').style.display = 'none'; status.style.display = 'none'; loadAll(); }, 1500);
+        } else {
+          show('Invite created, but email failed. Link: ' + res.d.acceptUrl, false);
+          loadAll();
+        }
+      })
+      .catch(function() { show('Network error', false); });
   }
 
   // === LEADS ===

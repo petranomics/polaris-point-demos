@@ -1046,22 +1046,12 @@
       <h2 style="font-family:'Outfit',sans-serif;font-size:1rem;color:#fff;margin-bottom:4px;">Polaris Point</h2>
       <p style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:#D4A853;margin-bottom:16px;">Admin Portal</p>
 
-      <!-- Sign In form -->
+      <!-- Sign In form (DB-backed via /api/users) -->
       <div id="loginForm">
-        <input type="text" id="loginUser" placeholder="Username" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
-        <input type="password" id="loginPass" placeholder="Password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
+        <input type="text" id="loginUser" placeholder="Email" autocomplete="username" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
+        <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
         <button onclick="doLogin()" style="width:100%;margin-top:10px;background:#5B8DEF;color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">Sign In</button>
-        <p style="color:#475569;font-size:.72rem;margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="toggleSignUp()">New team member? Create an account</p>
-      </div>
-
-      <!-- Sign Up form (hidden) -->
-      <div id="signUpForm" style="display:none;">
-        <input type="text" id="signUpUser" placeholder="Choose a username" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
-        <input type="text" id="signUpFullName" placeholder="Your full name" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
-        <input type="password" id="signUpPass" placeholder="Create a password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
-        <input type="password" id="signUpPassConfirm" placeholder="Confirm password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doSignUp()">
-        <button onclick="doSignUp()" style="width:100%;margin-top:10px;background:#D4A853;color:#0B1120;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">Create Account</button>
-        <p style="color:#475569;font-size:.72rem;margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="toggleSignUp()">Already have an account? Sign in</p>
+        <p style="color:#475569;font-size:.7rem;margin-top:14px;line-height:1.5;">Access is invite-only. Ask a senior admin to send you an invitation by email.</p>
       </div>
 
       <p id="loginError" style="color:#f44336;font-size:.72rem;margin-top:10px;display:none;"></p>
@@ -1087,6 +1077,7 @@
     <button class="admin-tab senior-only" onclick="switchTab('stickers')">Stickers</button>
     <button class="admin-tab senior-only" onclick="switchTab('beacon')">Beacon</button>
     <button class="admin-tab senior-only" onclick="switchTab('marketinghub')">Marketing Hub</button>
+    <button class="admin-tab senior-only" onclick="switchTab('users')">Users</button>
     <button class="admin-tab senior-only" onclick="switchTab('apiusage')">API Usage</button>
   </div>
 
@@ -2600,6 +2591,81 @@
     </div>
   </div><!-- /tabBeacon -->
 
+  <!-- ============ USERS TAB (senior-only) ============ -->
+  <!-- DB-backed team management. Lists everyone in the `users` table,
+       lets seniors email-invite new admins (via /api/invitations), toggle
+       active status, and promote/demote roles (via /api/users PUT). -->
+  <div id="tabUsers" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2 style="margin:0;color:#fff;font-family:'Outfit',sans-serif;">Users &amp; Access</h2>
+          <p style="margin:4px 0 0;font-size:.78rem;color:#64748b;">Everyone with admin access. Invite teammates by email — they set their own password. Senior staff only.</p>
+        </div>
+        <button class="btn-export" onclick="showInviteForm()" style="padding:9px 18px;font-size:.78rem;">+ Invite teammate</button>
+      </div>
+
+      <!-- Invite form (hidden until "+ Invite") -->
+      <div class="sales-card" id="inviteCard" style="display:none;">
+        <h3>Invite a teammate</h3>
+        <p style="margin-bottom:14px;">We'll email them a one-time link to set their name and password. The invite expires in 7 days.</p>
+        <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;">
+          <div class="intake-field" style="margin:0;">
+            <label>Email address</label>
+            <input type="email" id="inviteEmail" placeholder="teammate@example.com" style="text-transform:lowercase;">
+          </div>
+          <div class="intake-field" style="margin:0;">
+            <label>Role</label>
+            <select id="inviteRole" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;">
+              <option value="junior">Team Member (junior)</option>
+              <option value="senior">Senior Admin</option>
+            </select>
+          </div>
+          <button class="btn-export" onclick="sendInvite()" id="sendInviteBtn" style="padding:10px 18px;font-size:.78rem;height:42px;">Send invite</button>
+        </div>
+        <p id="inviteStatus" style="font-size:.74rem;margin-top:10px;display:none;line-height:1.5;"></p>
+      </div>
+
+      <!-- Active users -->
+      <div class="sales-card">
+        <h3>Team</h3>
+        <div style="overflow-x:auto;margin-top:10px;">
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <thead>
+              <tr style="text-align:left;color:#64748b;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;">
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Name</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Email</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Role</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Active</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Joined</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody"><tr><td colspan="5" style="padding:14px 12px;color:#475569;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pending invitations -->
+      <div class="sales-card" id="pendingCard" style="display:none;">
+        <h3>Pending invitations</h3>
+        <div style="overflow-x:auto;margin-top:10px;">
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <thead>
+              <tr style="text-align:left;color:#64748b;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;">
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Email</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Role</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Sent</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Expires</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invitesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tabUsers -->
+
   <!-- ============ MARKETING HUB TAB (senior-only) ============ -->
   <!-- One-stop pitch surface: Armadillo Analytics one-pagers, Beacon
        collateral, and Polaris Point pitch decks. Each card opens a
@@ -2904,6 +2970,7 @@
       outreach: 'tabOutreach',
       beacon: 'tabBeacon',
       marketinghub: 'tabMarketingHub',
+      users: 'tabUsers',
       apiusage: 'tabApiusage'
     };
 
@@ -2970,7 +3037,7 @@
 
     function switchTab(tab) {
       // Senior-only tabs check
-      if ((tab === 'cards' || tab === 'stickers' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon' || tab === 'apiusage') && currentRole !== 'senior') return;
+      if ((tab === 'cards' || tab === 'stickers' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon' || tab === 'apiusage' || tab === 'users') && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
       var targetId = TAB_MAP[tab];
@@ -2986,6 +3053,7 @@
       if (tab === 'beacon') { loadBeaconSubs(); loadTrialCodes(); loadBeaconReferrals(); }
       if (tab === 'materials') loadMaterialsTab();
       if (tab === 'apiusage') loadAdminApiUsage();
+      if (tab === 'users') loadUsersTab();
     }
 
     // ---- Materials / Coupon code ----
@@ -4499,12 +4567,11 @@
     // Store button labels for restore after export
     document.querySelectorAll('.btn-export').forEach(function(b) { b.dataset.label = b.textContent.trim(); });
 
-    // === LOGIN & USER REGISTRATION ===
-    // Senior: hardcoded SHA-256 hash. Junior: user-created accounts stored in localStorage.
-    var SENIOR_ADMINS = {
-      'peter@polarispoint.io': { hash: '95f81a04b0c59efc5ee2a6e0a9883813d42f7ea6c158aaa44c61e1fd9b14d6bb', name: 'Pete' },
-      'michael@polarispoint.io': { hash: 'efc916351c52c40befb6072d73de47a2518a5c19dd966407452b2e6eac7ac857', name: 'Michael' }
-    };
+    // === LOGIN (DB-backed via /api/users) ===
+    // All accounts live in the `users` table. New users are added by a senior
+    // through the Users tab, which emails an invite; there is no self-signup.
+    // _userNames caches username -> full_name for owner display in leads/outreach.
+    var _userNames = {};
 
     function hashPassword(pass) {
       return crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
@@ -4512,76 +4579,44 @@
       });
     }
 
-    function getUsers() {
-      try { return JSON.parse(localStorage.getItem('pp_users')) || {}; } catch(e) { return {}; }
-    }
-    function saveUsers(users) { localStorage.setItem('pp_users', JSON.stringify(users)); }
-
-    function toggleSignUp() {
-      var login = document.getElementById('loginForm');
-      var signup = document.getElementById('signUpForm');
-      var err = document.getElementById('loginError');
-      err.style.display = 'none';
-      if (login.style.display === 'none') {
-        login.style.display = 'block'; signup.style.display = 'none';
-      } else {
-        login.style.display = 'none'; signup.style.display = 'block';
-      }
+    function displayOwner(username) {
+      return _userNames[username] || username || '—';
     }
 
-    function doSignUp() {
-      var username = document.getElementById('signUpUser').value.trim().toLowerCase();
-      var fullName = document.getElementById('signUpFullName').value.trim();
-      var pass = document.getElementById('signUpPass').value;
-      var confirm = document.getElementById('signUpPassConfirm').value;
-      var err = document.getElementById('loginError');
-
-      if (!username || username.length < 3) { err.textContent = 'Username must be at least 3 characters'; err.style.display = 'block'; return; }
-      if (!fullName) { err.textContent = 'Full name is required'; err.style.display = 'block'; return; }
-      if (pass.length < 4) { err.textContent = 'Password must be at least 4 characters'; err.style.display = 'block'; return; }
-      if (pass !== confirm) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; return; }
-
-      var users = getUsers();
-      if (users[username]) { err.textContent = 'Username already taken'; err.style.display = 'block'; return; }
-
-      hashPassword(pass).then(function(hash) {
-        users[username] = { hash: hash, fullName: fullName, created: new Date().toISOString().split('T')[0] };
-        saveUsers(users);
-        sessionStorage.setItem('pp_admin', 'junior');
-        sessionStorage.setItem('pp_user', username);
-        sessionStorage.setItem('pp_fullname', fullName);
-        showAdmin('junior', fullName, username);
-      });
+    // Prime the username -> full_name cache so owner tags render on the
+    // leads/outreach tabs without waiting for the Users tab to be opened.
+    function primeUserNames() {
+      fetch('/api/users').then(function(r){ return r.json(); }).then(function(d){
+        (d.users || []).forEach(function(u){ _userNames[u.username] = u.full_name; });
+      }).catch(function(){});
     }
 
     function doLogin() {
       var username = document.getElementById('loginUser').value.trim().toLowerCase();
       var pass = document.getElementById('loginPass').value;
       var err = document.getElementById('loginError');
-      if (!username || !pass) { err.textContent = 'Enter username and password'; err.style.display = 'block'; return; }
+      if (!username || !pass) { err.textContent = 'Enter email and password'; err.style.display = 'block'; return; }
+      err.style.display = 'none';
 
       hashPassword(pass).then(function(hash) {
-        // Check senior admins
-        var senior = SENIOR_ADMINS[username];
-        if (senior && senior.hash === hash) {
-          sessionStorage.setItem('pp_admin', 'senior');
-          sessionStorage.setItem('pp_user', username);
-          sessionStorage.setItem('pp_fullname', senior.name);
-          showAdmin('senior', senior.name, username);
-          return;
-        }
-        // Check registered junior users
-        var users = getUsers();
-        if (users[username] && users[username].hash === hash) {
-          sessionStorage.setItem('pp_admin', 'junior');
-          sessionStorage.setItem('pp_user', username);
-          sessionStorage.setItem('pp_fullname', users[username].fullName);
-          showAdmin('junior', users[username].fullName, username);
-          return;
-        }
-        err.textContent = 'Incorrect username or password';
-        err.style.display = 'block';
-      });
+        return fetch('/api/users?action=login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username, password_hash: hash })
+        });
+      }).then(function(r) { return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+        .then(function(res) {
+          if (!res.ok || res.d.error) {
+            err.textContent = res.d && res.d.error ? res.d.error : 'Incorrect email or password';
+            err.style.display = 'block';
+            return;
+          }
+          var u = res.d;
+          sessionStorage.setItem('pp_admin', u.role);
+          sessionStorage.setItem('pp_user', u.username);
+          sessionStorage.setItem('pp_fullname', u.full_name);
+          showAdmin(u.role, u.full_name, u.username);
+        })
+        .catch(function() { err.textContent = 'Network error — try again'; err.style.display = 'block'; });
     }
 
     function signOut() {
@@ -4605,6 +4640,7 @@
       document.getElementById('loginGate').style.display = 'none';
       document.getElementById('adminContent').style.display = 'block';
       applyRole(role, displayName);
+      primeUserNames();
       // Check URL hash for deep link (e.g. #leads from ops dashboard)
       var hashTab = location.hash.replace('#', '');
       if (hashTab && TAB_MAP[hashTab]) switchTab(hashTab);
@@ -4828,8 +4864,7 @@
         return '<button onclick="updateLeadStage(' + L.id + ',' + i + ')" style="background:none;border:none;font-size:.68rem;cursor:pointer;padding:2px 6px;border-radius:4px;' + active + '">' + label + '</button>';
       }).join('');
 
-      var ownerName = L.owner;
-      if (SENIOR_ADMINS[L.owner]) ownerName = SENIOR_ADMINS[L.owner].name;
+      var ownerName = displayOwner(L.owner);
       var ownerTag = (!isSelf && currentRole === 'senior') ? '<span style="font-size:.65rem;background:rgba(91,141,239,.12);color:#5B8DEF;padding:2px 8px;border-radius:999px;margin-left:8px;">' + ownerName + '</span>' : '';
       var tierLabel = L.tier && L.tier !== 'undecided' ? ' — <span style="color:#D4A853;">' + L.tier.charAt(0).toUpperCase() + L.tier.slice(1) + '</span>' : '';
       var created = L.created_at ? L.created_at.split('T')[0] : '';
@@ -5150,9 +5185,7 @@
           var owners = {};
           leads.forEach(function(l) {
             if (!owners[l.owner]) {
-              var name = l.owner;
-              if (SENIOR_ADMINS[l.owner]) name = SENIOR_ADMINS[l.owner].name;
-              owners[l.owner] = name;
+              owners[l.owner] = displayOwner(l.owner);
             }
           });
           var filterVal = document.getElementById('leadFilter') ? document.getElementById('leadFilter').value : 'all';
@@ -5189,9 +5222,7 @@
       var owners = {};
       _leadsCache.forEach(function(l) {
         if (!owners[l.owner]) {
-          var name = l.owner;
-          if (SENIOR_ADMINS[l.owner]) name = SENIOR_ADMINS[l.owner].name;
-          owners[l.owner] = name;
+          owners[l.owner] = displayOwner(l.owner);
         }
       });
       var filterHtml = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
@@ -6974,6 +7005,120 @@
     }
 
     // === API USAGE TAB (admin) ===
+    // ---- Users & Access tab (DB-backed) ----
+    function loadUsersTab() {
+      Promise.all([
+        fetch('/api/users').then(function(r){ return r.json(); }),
+        fetch('/api/invitations').then(function(r){ return r.json(); })
+      ]).then(function(res){
+        var users = (res[0].users) || [];
+        var invites = (res[1].invitations) || [];
+        // Refresh the owner-name cache used by leads/outreach display.
+        users.forEach(function(u){ _userNames[u.username] = u.full_name; });
+        renderUsersTable(users);
+        renderInvitesTable(invites);
+      }).catch(function(){
+        document.getElementById('usersBody').innerHTML = '<tr><td colspan="5" style="padding:14px 12px;color:#ef4444;">Could not load users.</td></tr>';
+      });
+    }
+
+    function renderUsersTable(users) {
+      var body = document.getElementById('usersBody');
+      if (!users.length) { body.innerHTML = '<tr><td colspan="5" style="padding:14px 12px;color:#475569;">No users yet.</td></tr>'; return; }
+      var me = sessionStorage.getItem('pp_user');
+      body.innerHTML = users.map(function(u){
+        var isMe = u.username === me;
+        var roleSel = '<select onchange="setUserRole(' + u.id + ', this.value)" ' + (isMe ? 'disabled title="You can\\'t change your own role"' : '') + ' style="background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.76rem;">' +
+          '<option value="junior"' + (u.role === 'junior' ? ' selected' : '') + '>Team Member</option>' +
+          '<option value="senior"' + (u.role === 'senior' ? ' selected' : '') + '>Senior Admin</option>' +
+        '</select>';
+        var activeToggle = '<input type="checkbox"' + (u.active ? ' checked' : '') + (isMe ? ' disabled title="You can\\'t deactivate yourself"' : '') + ' onchange="toggleUserActive(' + u.id + ', this.checked)" style="width:16px;height:16px;cursor:pointer;">';
+        return '<tr>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#fff;font-weight:600;">' + (u.full_name || '—') + (isMe ? ' <span style="color:#5B8DEF;font-size:.68rem;font-weight:500;">(you)</span>' : '') + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#94a3b8;">' + u.username + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;">' + roleSel + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;">' + activeToggle + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#475569;font-size:.75rem;">' + (u.created_at ? u.created_at.split('T')[0] : '—') + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderInvitesTable(invites) {
+      var pending = invites.filter(function(i){ return i.status === 'pending'; });
+      var card = document.getElementById('pendingCard');
+      var body = document.getElementById('invitesBody');
+      if (!pending.length) { card.style.display = 'none'; return; }
+      card.style.display = 'block';
+      body.innerHTML = pending.map(function(i){
+        var roleLabel = i.role === 'senior' ? 'Senior' : 'Team Member';
+        return '<tr>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#fff;">' + i.email + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#94a3b8;">' + roleLabel + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#475569;font-size:.75rem;">' + (i.created_at ? i.created_at.split('T')[0] : '') + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#475569;font-size:.75rem;">' + (i.expires_at ? i.expires_at.split('T')[0] : '') + '</td>' +
+          '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;">' +
+            '<button onclick="resendInvite(' + i.id + ')" style="background:rgba(91,141,239,.12);border:1px solid rgba(91,141,239,.25);color:#5B8DEF;border-radius:6px;padding:4px 10px;font-size:.72rem;cursor:pointer;margin-right:6px;">Resend</button>' +
+            '<button onclick="revokeInvite(' + i.id + ')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:.72rem;cursor:pointer;">Revoke</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function showInviteForm() {
+      var card = document.getElementById('inviteCard');
+      card.style.display = card.style.display === 'none' ? 'block' : 'none';
+      if (card.style.display === 'block') document.getElementById('inviteEmail').focus();
+    }
+
+    function sendInvite() {
+      var email = document.getElementById('inviteEmail').value.trim().toLowerCase();
+      var role = document.getElementById('inviteRole').value;
+      var status = document.getElementById('inviteStatus');
+      var btn = document.getElementById('sendInviteBtn');
+      function show(t, ok){ status.textContent = t; status.style.color = ok ? '#7EC8A0' : '#ef4444'; status.style.display = 'block'; }
+      if (!email || email.indexOf('@') < 0) return show('Enter a valid email', false);
+      btn.disabled = true; btn.textContent = 'Sending…';
+      fetch('/api/invitations', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, role: role, invited_by: sessionStorage.getItem('pp_fullname') || sessionStorage.getItem('pp_user') })
+      }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+        .then(function(res){
+          btn.disabled = false; btn.textContent = 'Send invite';
+          if (!res.ok) return show(res.d.error || 'Could not send invite', false);
+          if (res.d.emailed) {
+            show('Invite emailed to ' + email + '.', true);
+          } else {
+            // Email failed but the invite exists — give them the link to share manually.
+            show('Invite created, but the email didn\\'t send (' + (res.d.emailError || 'unknown') + '). Copy this link to share: ' + res.d.acceptUrl, false);
+          }
+          document.getElementById('inviteEmail').value = '';
+          loadUsersTab();
+        })
+        .catch(function(){ btn.disabled = false; btn.textContent = 'Send invite'; show('Network error', false); });
+    }
+
+    function toggleUserActive(id, active) {
+      fetch('/api/users?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active: active }) })
+        .then(function(){ loadUsersTab(); });
+    }
+
+    function setUserRole(id, role) {
+      fetch('/api/users?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: role }) })
+        .then(function(){ loadUsersTab(); });
+    }
+
+    function revokeInvite(id) {
+      if (!confirm('Revoke this invitation? The link will stop working.')) return;
+      fetch('/api/invitations?action=revoke', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) })
+        .then(function(){ loadUsersTab(); });
+    }
+
+    function resendInvite(id) {
+      fetch('/api/invitations?action=resend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){ alert(d.ok ? 'Invitation re-sent.' : (d.error || 'Could not resend')); });
+    }
+
     function loadAdminApiUsage() {
       var appSel = document.getElementById('auAppFilter');
       var tenSel = document.getElementById('auTenantFilter');

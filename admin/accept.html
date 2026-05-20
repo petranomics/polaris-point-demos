@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accept invitation — Polaris Point</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      background: #050D1E;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: #e2e8f0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #111827; border: 1px solid rgba(91,141,239,.12);
+      border-radius: 14px; padding: 38px 34px; width: 360px; text-align: center;
+    }
+    .logo { width: 38px; height: 38px; margin-bottom: 12px; filter: drop-shadow(0 0 6px rgba(91,141,239,.4)); }
+    h2 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #fff; margin: 0 0 4px; }
+    .eyebrow { font-size: .6rem; text-transform: uppercase; letter-spacing: 2px; color: #D4A853; margin-bottom: 20px; }
+    .invited-as { font-size: .8rem; color: #94a3b8; margin-bottom: 18px; line-height: 1.5; }
+    .invited-as strong { color: #fff; }
+    input {
+      width: 100%; background: #0B1120; border: 1px solid #1e293b; border-radius: 8px;
+      padding: 11px 14px; color: #e2e8f0; font-family: inherit; font-size: .85rem;
+      outline: none; margin-bottom: 9px; text-align: center;
+    }
+    input:focus { border-color: #5B8DEF; }
+    button {
+      width: 100%; margin-top: 8px; background: #5B8DEF; color: #fff; border: none;
+      border-radius: 8px; padding: 11px; font-family: inherit; font-size: .82rem;
+      font-weight: 600; cursor: pointer;
+    }
+    button:disabled { opacity: .55; cursor: default; }
+    .msg { font-size: .74rem; margin-top: 12px; line-height: 1.5; }
+    .msg.err { color: #f44336; }
+    .msg.ok { color: #7EC8A0; }
+    .muted { color: #475569; font-size: .72rem; margin-top: 16px; line-height: 1.5; }
+    .muted a { color: #5B8DEF; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <svg class="logo" viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+    <h2>Polaris Point</h2>
+    <div class="eyebrow">Accept Invitation</div>
+
+    <div id="loading" class="muted">Checking your invitation…</div>
+
+    <div id="form" style="display:none;">
+      <div class="invited-as" id="invitedAs"></div>
+      <input type="text" id="fullName" placeholder="Your full name" autocomplete="name">
+      <input type="password" id="pass" placeholder="Create a password" autocomplete="new-password">
+      <input type="password" id="passConfirm" placeholder="Confirm password" autocomplete="new-password" onkeydown="if(event.key==='Enter')accept()">
+      <button id="acceptBtn" onclick="accept()">Activate my account</button>
+      <p class="msg" id="msg" style="display:none;"></p>
+    </div>
+
+    <div id="invalid" style="display:none;">
+      <p class="msg err" id="invalidMsg"></p>
+      <p class="muted">Need a new invite? Ask a senior admin to resend it, or <a href="/admin">sign in</a> if you already have an account.</p>
+    </div>
+  </div>
+
+  <script>
+    var token = new URLSearchParams(location.search).get('token');
+    var invite = null;
+
+    function hashPw(pass) {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)).then(function(buf) {
+        return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+      });
+    }
+
+    function showInvalid(reason) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('invalid').style.display = 'block';
+      var map = {
+        not_found: 'This invitation link is invalid.',
+        expired: 'This invitation has expired.',
+        accepted: 'This invitation was already used. Try signing in.',
+        revoked: 'This invitation was revoked.'
+      };
+      document.getElementById('invalidMsg').textContent = map[reason] || 'This invitation is no longer valid.';
+    }
+
+    if (!token) {
+      showInvalid('not_found');
+    } else {
+      fetch('/api/invitations?token=' + encodeURIComponent(token))
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (!d.valid) { showInvalid(d.reason); return; }
+          invite = d;
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('form').style.display = 'block';
+          var roleLabel = d.role === 'senior' ? 'Senior Admin' : 'Team Member';
+          document.getElementById('invitedAs').innerHTML = 'Invited as <strong>' + roleLabel + '</strong><br>' + d.email;
+          if (d.full_name) document.getElementById('fullName').value = d.full_name;
+        })
+        .catch(function(){ showInvalid('not_found'); });
+    }
+
+    function accept() {
+      var name = document.getElementById('fullName').value.trim();
+      var pass = document.getElementById('pass').value;
+      var confirm = document.getElementById('passConfirm').value;
+      var msg = document.getElementById('msg');
+      msg.style.display = 'none';
+      function fail(t){ msg.className = 'msg err'; msg.textContent = t; msg.style.display = 'block'; }
+      if (!name) return fail('Enter your full name');
+      if (pass.length < 6) return fail('Password must be at least 6 characters');
+      if (pass !== confirm) return fail('Passwords do not match');
+
+      var btn = document.getElementById('acceptBtn');
+      btn.disabled = true; btn.textContent = 'Activating…';
+
+      hashPw(pass).then(function(hash){
+        return fetch('/api/invitations?action=accept', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, full_name: name, password_hash: hash })
+        });
+      }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+        .then(function(res){
+          if (!res.ok) { btn.disabled = false; btn.textContent = 'Activate my account'; return fail(res.d.error || 'Could not activate account'); }
+          // Log them straight into the admin via the shared session keys.
+          var u = res.d.user;
+          sessionStorage.setItem('pp_admin', u.role);
+          sessionStorage.setItem('pp_user', u.username);
+          sessionStorage.setItem('pp_fullname', u.full_name);
+          msg.className = 'msg ok'; msg.textContent = 'Account activated. Taking you to the admin…'; msg.style.display = 'block';
+          setTimeout(function(){ location.href = '/admin'; }, 900);
+        })
+        .catch(function(){ btn.disabled = false; btn.textContent = 'Activate my account'; fail('Network error — try again'); });
+    }
+  </script>
+</body>
+</html>
