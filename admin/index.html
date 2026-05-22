@@ -1049,7 +1049,12 @@
       <!-- Sign In form (DB-backed via /api/users) -->
       <div id="loginForm">
         <input type="text" id="loginUser" placeholder="Email" autocomplete="username" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;margin-bottom:8px;">
-        <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
+        <div style="position:relative;">
+          <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:10px 40px 10px 14px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;text-align:center;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
+          <button type="button" id="loginPwToggle" onclick="toggleLoginPw()" aria-label="Show password" title="Show password" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#64748b;cursor:pointer;padding:4px;display:flex;align-items:center;">
+            <svg id="loginPwEye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
         <button onclick="doLogin()" style="width:100%;margin-top:10px;background:#5B8DEF;color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">Sign In</button>
         <p style="color:#475569;font-size:.7rem;margin-top:14px;line-height:1.5;">Access is invite-only. Ask a senior admin to send you an invitation by email.</p>
       </div>
@@ -1077,6 +1082,7 @@
     <button class="admin-tab senior-only" onclick="switchTab('stickers')">Stickers</button>
     <button class="admin-tab senior-only" onclick="switchTab('beacon')">Beacon</button>
     <button class="admin-tab senior-only" onclick="switchTab('marketinghub')">Marketing Hub</button>
+    <button class="admin-tab senior-only" onclick="switchTab('sites')">Sites</button>
     <button class="admin-tab senior-only" onclick="switchTab('users')">Users</button>
     <button class="admin-tab senior-only" onclick="switchTab('apiusage')">API Usage</button>
   </div>
@@ -2666,6 +2672,62 @@
     </div>
   </div><!-- /tabUsers -->
 
+  <!-- ============ SITES TAB (senior-only) — ported from /ops ============ -->
+  <div id="tabSites" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2 style="margin:0;color:#fff;font-family:'Outfit',sans-serif;">Sites</h2>
+          <p style="margin:4px 0 0;font-size:.78rem;color:#64748b;">Registered client sites. Toggle Business Automation per site — same controls as the Ops dashboard.</p>
+        </div>
+        <button class="btn-export" onclick="loadSitesTab()" style="padding:9px 18px;font-size:.78rem;">Refresh</button>
+      </div>
+      <div class="sales-card">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <thead>
+              <tr style="text-align:left;color:#64748b;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;">
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Site</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Template</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Status</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Automation</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Plan</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Owner</th>
+              </tr>
+            </thead>
+            <tbody id="adminSitesBody"><tr><td colspan="6" style="padding:14px;text-align:center;color:#475569;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tabSites -->
+
+  <!-- Business Automation modal (Sites tab) -->
+  <div id="adminAutoModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(8,12,22,.7);align-items:center;justify-content:center;padding:16px;">
+    <div style="background:#111827;border:1px solid rgba(91,141,239,.18);border-radius:14px;width:100%;max-width:460px;max-height:90vh;overflow:auto;padding:22px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;color:#fff;margin:0;">Business Automation</h3>
+        <button onclick="closeAdminAuto()" style="background:none;border:none;color:#64748b;font-size:22px;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <p style="font-size:.75rem;color:#64748b;margin:0 0 16px;"><span id="adminAutoSiteName"></span> — switch features on, then fill the fields they need.</p>
+      <input type="hidden" id="adminAutoSiteId">
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:.85rem;color:#e2e8f0;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="adminAutoBooking" style="width:16px;height:16px;accent-color:#5B8DEF;"> Online booking <span style="color:#475569;font-size:.72rem;">(needs Calendly URL)</span></label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="adminAutoChat" style="width:16px;height:16px;accent-color:#5B8DEF;"> AI popup chat <span style="color:#475569;font-size:.72rem;">(site must be registered)</span></label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="adminAutoLead" style="width:16px;height:16px;accent-color:#5B8DEF;"> Lead capture auto-reply</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="adminAutoReview" style="width:16px;height:16px;accent-color:#5B8DEF;"> Review-request emails <span style="color:#475569;font-size:.72rem;">(needs review URL)</span></label>
+      </div>
+      <div style="height:1px;background:#1e293b;margin:18px 0;"></div>
+      <div style="margin-bottom:10px;"><label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;font-weight:600;margin-bottom:4px;">Calendly URL</label><input type="text" id="adminAutoCalendly" placeholder="https://calendly.com/business/30min" style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;"></div>
+      <div style="margin-bottom:10px;"><label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;font-weight:600;margin-bottom:4px;">Google review URL</label><input type="text" id="adminAutoReviewUrl" placeholder="https://g.page/r/..." style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;"></div>
+      <div style="margin-bottom:10px;"><label style="display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#475569;font-weight:600;margin-bottom:4px;">Chat greeting</label><input type="text" id="adminAutoGreeting" placeholder="Hi! Ask us anything about our services." style="width:100%;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;">
+        <button class="btn-export" onclick="closeAdminAuto()" style="background:transparent;border:1px solid #1e293b;color:#94a3b8;padding:9px 16px;">Cancel</button>
+        <button class="btn-export" onclick="saveAdminAuto()" style="padding:9px 16px;">Save</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ MARKETING HUB TAB (senior-only) ============ -->
   <!-- One-stop pitch surface: Armadillo Analytics one-pagers, Beacon
        collateral, and Polaris Point pitch decks. Each card opens a
@@ -2971,7 +3033,8 @@
       beacon: 'tabBeacon',
       marketinghub: 'tabMarketingHub',
       users: 'tabUsers',
-      apiusage: 'tabApiusage'
+      apiusage: 'tabApiusage',
+      sites: 'tabSites'
     };
 
     // === SLIDE DECK ===
@@ -3037,7 +3100,7 @@
 
     function switchTab(tab) {
       // Senior-only tabs check
-      if ((tab === 'cards' || tab === 'stickers' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon' || tab === 'apiusage' || tab === 'users') && currentRole !== 'senior') return;
+      if ((tab === 'cards' || tab === 'stickers' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon' || tab === 'apiusage' || tab === 'users' || tab === 'sites') && currentRole !== 'senior') return;
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
       var targetId = TAB_MAP[tab];
@@ -3054,6 +3117,7 @@
       if (tab === 'materials') loadMaterialsTab();
       if (tab === 'apiusage') loadAdminApiUsage();
       if (tab === 'users') loadUsersTab();
+      if (tab === 'sites') loadSitesTab();
     }
 
     // ---- Materials / Coupon code ----
@@ -4589,6 +4653,21 @@
       fetch('/api/users').then(function(r){ return r.json(); }).then(function(d){
         (d.users || []).forEach(function(u){ _userNames[u.username] = u.full_name; });
       }).catch(function(){});
+    }
+
+    function toggleLoginPw() {
+      var inp = document.getElementById('loginPass');
+      var btn = document.getElementById('loginPwToggle');
+      var eye = document.getElementById('loginPwEye');
+      var show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      btn.setAttribute('title', show ? 'Hide password' : 'Show password');
+      // Open eye ↔ eye-with-slash
+      eye.innerHTML = show
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-7-11-7a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 7 11 7a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>';
+      inp.focus();
     }
 
     function doLogin() {
@@ -7028,11 +7107,11 @@
       var me = sessionStorage.getItem('pp_user');
       body.innerHTML = users.map(function(u){
         var isMe = u.username === me;
-        var roleSel = '<select onchange="setUserRole(' + u.id + ', this.value)" ' + (isMe ? 'disabled title="You can\\'t change your own role"' : '') + ' style="background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.76rem;">' +
+        var roleSel = '<select onchange="setUserRole(' + u.id + ', this.value)" ' + (isMe ? 'disabled title="You can\'t change your own role"' : '') + ' style="background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:4px 8px;color:#e2e8f0;font-size:.76rem;">' +
           '<option value="junior"' + (u.role === 'junior' ? ' selected' : '') + '>Team Member</option>' +
           '<option value="senior"' + (u.role === 'senior' ? ' selected' : '') + '>Senior Admin</option>' +
         '</select>';
-        var activeToggle = '<input type="checkbox"' + (u.active ? ' checked' : '') + (isMe ? ' disabled title="You can\\'t deactivate yourself"' : '') + ' onchange="toggleUserActive(' + u.id + ', this.checked)" style="width:16px;height:16px;cursor:pointer;">';
+        var activeToggle = '<input type="checkbox"' + (u.active ? ' checked' : '') + (isMe ? ' disabled title="You can\'t deactivate yourself"' : '') + ' onchange="toggleUserActive(' + u.id + ', this.checked)" style="width:16px;height:16px;cursor:pointer;">';
         return '<tr>' +
           '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#fff;font-weight:600;">' + (u.full_name || '—') + (isMe ? ' <span style="color:#5B8DEF;font-size:.68rem;font-weight:500;">(you)</span>' : '') + '</td>' +
           '<td style="padding:9px 12px;border-bottom:1px solid #131c2e;color:#94a3b8;">' + u.username + '</td>' +
@@ -7089,7 +7168,7 @@
             show('Invite emailed to ' + email + '.', true);
           } else {
             // Email failed but the invite exists — give them the link to share manually.
-            show('Invite created, but the email didn\\'t send (' + (res.d.emailError || 'unknown') + '). Copy this link to share: ' + res.d.acceptUrl, false);
+            show('Invite created, but the email didn\'t send (' + (res.d.emailError || 'unknown') + '). Copy this link to share: ' + res.d.acceptUrl, false);
           }
           document.getElementById('inviteEmail').value = '';
           loadUsersTab();
@@ -7117,6 +7196,78 @@
       fetch('/api/invitations?action=resend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) })
         .then(function(r){ return r.json(); })
         .then(function(d){ alert(d.ok ? 'Invitation re-sent.' : (d.error || 'Could not resend')); });
+    }
+
+    // ===== SITES TAB (Business Automation) — ported from /ops =====
+    var _adminSites = [];
+    function loadSitesTab() {
+      var body = document.getElementById('adminSitesBody');
+      fetch('/api/sites').then(function(r){ return r.json(); }).then(function(data){
+        _adminSites = (data && data.sites) || [];
+        renderAdminSites();
+      }).catch(function(){
+        body.innerHTML = '<tr><td colspan="6" style="padding:14px;text-align:center;color:#f87171;">Could not load sites.</td></tr>';
+      });
+    }
+    function adminSiteCfg(s) {
+      var c = s.site_config || {};
+      if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
+      return c;
+    }
+    function adminAutoCell(s) {
+      var c = adminSiteCfg(s), f = c.features || {};
+      var on = ['booking','aiChat','leadAutoReply','reviewRequests'].filter(function(k){ return f[k]; }).length;
+      var color = on ? '#16a34a' : '#475569';
+      return '<button onclick="openAdminAuto(' + s.id + ')" style="background:none;border:1px solid #1e293b;border-radius:6px;padding:3px 9px;color:' + color + ';font-size:.72rem;cursor:pointer;">&#9881; ' + (on ? on + '/4 on' : 'Off') + '</button>';
+    }
+    function renderAdminSites() {
+      var body = document.getElementById('adminSitesBody');
+      if (!_adminSites.length) { body.innerHTML = '<tr><td colspan="6" style="padding:14px;text-align:center;color:#475569;">No sites registered yet.</td></tr>'; return; }
+      body.innerHTML = _adminSites.map(function(s){
+        return '<tr>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><strong style="color:#fff;">' + (s.site_name || '') + '</strong><br><span style="font-size:.7rem;color:#475569;">' + (s.domain || s.slug || '') + '</span></td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.template || '—') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.status || '—') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + adminAutoCell(s) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.hosting_plan || '—') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.owner || '—') + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    function openAdminAuto(id) {
+      var s = _adminSites.find(function(x){ return x.id === id; });
+      if (!s) return;
+      var c = adminSiteCfg(s), f = c.features || {}, a = c.automation || {};
+      document.getElementById('adminAutoSiteId').value = id;
+      document.getElementById('adminAutoSiteName').textContent = s.site_name || ('Site ' + id);
+      document.getElementById('adminAutoBooking').checked = !!f.booking;
+      document.getElementById('adminAutoChat').checked = !!f.aiChat;
+      document.getElementById('adminAutoLead').checked = !!f.leadAutoReply;
+      document.getElementById('adminAutoReview').checked = !!f.reviewRequests;
+      document.getElementById('adminAutoCalendly').value = a.calendlyUrl || '';
+      document.getElementById('adminAutoReviewUrl').value = (a.reviewRequest && a.reviewRequest.reviewUrl) || '';
+      document.getElementById('adminAutoGreeting').value = (a.chat && a.chat.greeting) || '';
+      document.getElementById('adminAutoModal').style.display = 'flex';
+    }
+    function closeAdminAuto() { document.getElementById('adminAutoModal').style.display = 'none'; }
+    function saveAdminAuto() {
+      var id = +document.getElementById('adminAutoSiteId').value;
+      var payload = { automation: {
+        features: {
+          booking: document.getElementById('adminAutoBooking').checked,
+          aiChat: document.getElementById('adminAutoChat').checked,
+          leadAutoReply: document.getElementById('adminAutoLead').checked,
+          reviewRequests: document.getElementById('adminAutoReview').checked
+        },
+        config: {
+          calendlyUrl: document.getElementById('adminAutoCalendly').value.trim(),
+          chat: { greeting: document.getElementById('adminAutoGreeting').value.trim() },
+          reviewRequest: { reviewUrl: document.getElementById('adminAutoReviewUrl').value.trim() }
+        }
+      }};
+      fetch('/api/sites?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then(function(r){ return r.json(); })
+        .then(function(){ closeAdminAuto(); loadSitesTab(); });
     }
 
     function loadAdminApiUsage() {

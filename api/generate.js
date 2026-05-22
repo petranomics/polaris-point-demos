@@ -43,6 +43,26 @@ module.exports = async function handler(req, res) {
       return 'Write an SEO meta description for ' + (ctx.businessName || 'a local business') + ', a ' + (ctx.industry || '') + ' in ' + (ctx.city || '') + '.\n' +
         'Services: ' + (ctx.services || '') + '\n' +
         'Max 160 characters. Include a call to action and location.';
+    },
+    site_compose: function(ctx) {
+      return 'Compose website content for a ' + (ctx.industry || 'local business') + ' called "' + (ctx.businessName || 'the business') + '" in ' + (ctx.city || 'their area') + '. ' +
+        'This business has no online footprint yet, so invent plausible, professional content a typical successful business in this industry might publish.\n\n' +
+        'Return ONLY a valid JSON object (no markdown fences, no commentary, no preamble) with this exact shape:\n' +
+        '{\n' +
+        '  "hero": { "headline": "string", "subtext": "string" },\n' +
+        '  "about": { "title": "string", "text": "string" },\n' +
+        '  "services": [{ "name": "string", "desc": "string" }],\n' +
+        '  "reviews": [{ "text": "string", "author": "string", "location": "string" }],\n' +
+        '  "service_areas": "string"\n' +
+        '}\n\n' +
+        'Constraints:\n' +
+        '- hero.headline: 4-8 words, action-oriented, include the city when provided.\n' +
+        '- hero.subtext: 1-2 sentences, mention licensing/insurance/experience as relevant.\n' +
+        '- about.title: 3-6 words, format like "<City> Trusts <Business Short Name>".\n' +
+        '- about.text: 130-170 words. Use the business name. Emphasize quality, trust, local service.\n' +
+        '- services: exactly 5 items. Names 2-4 words. Descriptions 1 sentence focused on customer benefit.\n' +
+        '- reviews: exactly 3 items. 2-3 sentences each, realistic but generic (no specific addresses). Author format "First L." (e.g. "Sarah M."). Locations should be nearby cities/neighborhoods to the service area.\n' +
+        '- service_areas: 3-5 city or neighborhood names near "' + (ctx.city || '') + '", comma-separated.';
     }
   };
 

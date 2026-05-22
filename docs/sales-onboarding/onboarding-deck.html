@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Polaris Point — Sales Onboarding Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space: #050D1E;
+      --space-light: #0A1628;
+      --surface: rgba(15, 25, 55, 0.55);
+      --border: rgba(91, 141, 239, 0.18);
+      --border-hover: rgba(91, 141, 239, 0.4);
+      --blue: #5B8DEF;
+      --blue-glow: rgba(91, 141, 239, 0.25);
+      --gold: #E8C547;
+      --gold-dim: rgba(232, 197, 71, 0.15);
+      --text: #FFFFFF;
+      --text-secondary: #9BB0D4;
+      --text-muted: #6B82A8;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: var(--space);
+      color: var(--text-secondary);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    h1 { font-size: clamp(2.4rem, 5vw, 4rem); letter-spacing: -0.02em; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: -0.01em; margin-bottom: 16px; }
+    h3 { font-size: 1.3rem; margin-bottom: 10px; }
+    h4 { font-size: 1rem; margin-bottom: 8px; color: var(--text); }
+    p { margin: 0 0 14px; }
+    .accent { color: var(--gold); }
+    .blue { color: var(--blue); }
+
+    /* background glow */
+    .bg-glow-1, .bg-glow-2 {
+      position: fixed; pointer-events: none; z-index: 0;
+      border-radius: 50%; filter: blur(120px);
+    }
+    .bg-glow-1 {
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      background: var(--blue-glow);
+    }
+    .bg-glow-2 {
+      bottom: -200px; right: -200px;
+      width: 500px; height: 500px;
+      background: var(--gold-dim);
+    }
+
+    /* slide container */
+    .deck {
+      position: relative;
+      z-index: 2;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      padding: 60px 80px 80px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity .5s ease, transform .5s ease;
+      overflow-y: auto;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+    .slide-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* nav */
+    .nav {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex; gap: 14px; align-items: center;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 18px;
+    }
+    .nav button {
+      background: none; border: none; color: var(--text-secondary);
+      font-family: inherit; font-size: 18px; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s;
+    }
+    .nav button:hover {
+      background: var(--blue-glow); color: var(--text);
+    }
+    .nav .counter {
+      font-size: 13px; color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      min-width: 60px; text-align: center;
+    }
+
+    .progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--gold);
+      z-index: 11;
+      transition: width .4s ease;
+    }
+
+    /* logo */
+    .brand {
+      position: fixed; top: 24px; left: 32px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; color: var(--text);
+      font-size: 16px; letter-spacing: -0.01em;
+      z-index: 9;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .brand svg { color: var(--gold); }
+    .slide-label {
+      position: fixed; top: 28px; right: 32px;
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      z-index: 9;
+    }
+
+    /* glass card */
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    /* layout helpers */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .stack-lg > * + * { margin-top: 24px; }
+    .stack-md > * + * { margin-top: 16px; }
+    .stack-sm > * + * { margin-top: 10px; }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 70ch;
+    }
+
+    /* tier card */
+    .tier-card {
+      padding: 22px 20px;
+      transition: border-color .3s, transform .3s;
+    }
+    .tier-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+    }
+    .tier-card .price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      font-weight: 700;
+      margin: 6px 0 8px;
+    }
+    .tier-card .sub {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .tier-card ul {
+      list-style: none;
+      font-size: 14px;
+    }
+    .tier-card li {
+      padding: 4px 0 4px 20px;
+      position: relative;
+    }
+    .tier-card li::before {
+      content: '✓';
+      position: absolute; left: 0;
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .tier-card.featured {
+      border: 1px solid var(--gold);
+      background: rgba(232, 197, 71, 0.04);
+    }
+    .tier-card.featured h3 {
+      color: var(--gold);
+    }
+
+    /* step list */
+    .step {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--blue-glow);
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+    }
+    .step-body h4 { color: var(--text); margin-bottom: 4px; }
+    .step-body p { font-size: 14px; margin: 0; color: var(--text-secondary); }
+
+    /* commission table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    th {
+      color: var(--gold);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    td.num {
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* big number */
+    .big-stat {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 4rem;
+      color: var(--gold);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .big-stat-label {
+      color: var(--text-muted);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* title slide */
+    .title-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .title-slide .star-mark {
+      font-size: 60px;
+      color: var(--gold);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.95); }
+    }
+
+    /* dialog block */
+    .dialog {
+      border-left: 3px solid var(--gold);
+      padding: 12px 18px;
+      background: rgba(232, 197, 71, 0.04);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    /* lists */
+    ul.bullets { list-style: none; padding: 0; }
+    ul.bullets li {
+      padding: 6px 0 6px 22px;
+      position: relative;
+      font-size: 15px;
+    }
+    ul.bullets li::before {
+      content: '';
+      position: absolute; left: 4px; top: 14px;
+      width: 6px; height: 6px;
+      background: var(--blue);
+      border-radius: 50%;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--blue-glow);
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pill.gold {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    @media (max-width: 768px) {
+      .slide { padding: 80px 24px 100px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .brand, .slide-label { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="brand">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34"/></svg>
+    Polaris Point
+  </div>
+  <div class="slide-label" id="slideLabel">Sales Onboarding</div>
+  <div class="progress" id="progress"></div>
+
+  <div class="deck" id="deck">
+
+    <!-- 1. Title -->
+    <section class="slide active">
+      <div class="slide-inner title-slide">
+        <div class="star-mark">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34"/></svg>
+        </div>
+        <h1>Sales <span class="accent">Onboarding</span></h1>
+        <p class="lead" style="text-align: center;">
+          Everything you need to start booking and closing Polaris Point clients.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 12px;">
+          <span class="pill">Day-One Ready</span>
+          <span class="pill gold">v1.0 · April 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Mission -->
+    <section class="slide">
+      <div class="slide-inner stack-lg">
+        <div>
+          <p class="eyebrow">Why we exist</p>
+          <h2>Local businesses are getting left behind online.</h2>
+          <p class="lead">
+            Most main-street businesses still rely on word of mouth while their customers search Google first. We build the websites, content, and AI tools that put them back on the map — without the agency complexity or runaway costs.
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="glass">
+            <h3 class="blue">Fast</h3>
+            <p>Sites launch in two weeks. No four-month agency timelines.</p>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Modern</h3>
+            <p>Built on the same stack as well-funded startups, sold at small-business prices.</p>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Honest</h3>
+            <p>Flat pricing, no surprise invoices, no jargon. We tell people what they actually need.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Who we sell to -->
+    <section class="slide">
+      <div class="slide-inner stack-lg">
+        <div>
+          <p class="eyebrow">Ideal customer</p>
+          <h2>Local businesses, 1–50 employees, 3+ years in business.</h2>
+          <p class="lead">If they have a physical address, employees, and reviews — they're a fit. If they're a side hustle, they're not.</p>
+        </div>
+        <div class="grid-4">
+          <div class="glass">
+            <h4>Trades & home services</h4>
+            <p style="font-size: 13px;">Plumbers, electricians, HVAC, pest control, cleaning, roofing</p>
+          </div>
+          <div class="glass">
+            <h4>Food & hospitality</h4>
+            <p style="font-size: 13px;">Restaurants, cafes, bakeries, food trucks, catering</p>
+          </div>
+          <div class="glass">
+            <h4>Health & wellness</h4>
+            <p style="font-size: 13px;">Med spas, dentists, chiros, trainers, vets, salons</p>
+          </div>
+          <div class="glass">
+            <h4>Real estate</h4>
+            <p style="font-size: 13px;">Agents, brokerages, property managers, mortgage brokers</p>
+          </div>
+          <div class="glass">
+            <h4>Professional services</h4>
+            <p style="font-size: 13px;">CPAs, lawyers, advisors, insurance agents, consultants</p>
+          </div>
+          <div class="glass">
+            <h4>E-commerce & retail</h4>
+            <p style="font-size: 13px;">Boutiques, online stores, local retail, Amazon sellers</p>
+          </div>
+          <div class="glass">
+            <h4>Auto & specialty</h4>
+            <p style="font-size: 13px;">Custom shops, detailing, tint, performance, fleet</p>
+          </div>
+          <div class="glass">
+            <h4>Creative & coaching</h4>
+            <p style="font-size: 13px;">Photographers, agencies, coaches, course creators</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Why now -->
+    <section class="slide">
+      <div class="slide-inner stack-lg">
+        <div>
+          <p class="eyebrow">The opportunity</p>
+          <h2>The gap between what these businesses have and what they need is wide — and getting wider.</h2>
+        </div>
+        <div class="grid-3">
+          <div>
+            <div class="big-stat">73%</div>
+            <p class="big-stat-label">of small businesses have a website that's older than 3 years</p>
+          </div>
+          <div>
+            <div class="big-stat">82%</div>
+            <p class="big-stat-label">of consumers research a local business online before visiting</p>
+          </div>
+          <div>
+            <div class="big-stat">$0</div>
+            <p class="big-stat-label">most local owners spend on AI tools — even though they'd save 10+ hrs/week</p>
+          </div>
+        </div>
+        <div class="glass" style="margin-top: 24px;">
+          <p style="font-size: 15px; color: var(--text);">
+            Every Polaris Point conversation starts the same way: <strong class="accent">"Your customers are already searching online. The only question is whether they find you or your competitor."</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Websites -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Product line 1</p>
+          <h2>Websites — fast, beautiful, conversion-focused.</h2>
+        </div>
+        <div class="grid-3">
+          <div class="glass tier-card">
+            <h3>Starter</h3>
+            <div class="price">$799 one-time</div>
+            <div class="sub">+ pick a monthly tier below</div>
+            <ul>
+              <li>5 pages, mobile responsive</li>
+              <li>Contact form</li>
+              <li>Google Business Profile setup</li>
+              <li>AI-generated content + basic SEO</li>
+              <li>2-week launch</li>
+            </ul>
+          </div>
+          <div class="glass tier-card featured">
+            <h3>Growth</h3>
+            <div class="price">$1,299 one-time</div>
+            <div class="sub">most common pick</div>
+            <ul>
+              <li>Everything in Starter</li>
+              <li>Blog + photo gallery</li>
+              <li>Lead capture forms</li>
+              <li>GA4 + Search Console</li>
+              <li>Monthly minor edits</li>
+            </ul>
+          </div>
+          <div class="glass tier-card">
+            <h3>Pro</h3>
+            <div class="price">$2,499 one-time</div>
+            <div class="sub">multi-location ready</div>
+            <ul>
+              <li>Everything in Growth</li>
+              <li>Multi-location support</li>
+              <li>Advanced schema</li>
+              <li>Quarterly SEO report</li>
+              <li>Priority support</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass" style="margin-top: 16px;">
+          <p style="font-size: 14px; margin: 0;">
+            <span class="pill gold">Next slide</span>
+            &nbsp; Every customer also picks one <strong class="accent">monthly ladder tier</strong> — that's where recurring revenue lives. Builds are one-time only.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5b. Monthly Ladder -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">The recurring story</p>
+          <h2>The monthly ladder — pick <span class="accent">one</span>, it includes everything below.</h2>
+          <p class="lead">No add-on math. Customer picks a level, that's their single recurring line. Hosting is the floor; Beacon is the ceiling.</p>
+        </div>
+        <div class="grid-2">
+          <div class="glass tier-card">
+            <h3>Hosting &amp; Analytics</h3>
+            <div class="price">$25/mo</div>
+            <div class="sub">the floor — required on every site</div>
+            <ul>
+              <li>Site hosting + CDN</li>
+              <li>Uptime monitoring</li>
+              <li>Visitor analytics</li>
+              <li>Monthly performance report</li>
+            </ul>
+          </div>
+          <div class="glass tier-card featured">
+            <h3>Business Automation</h3>
+            <div class="price">$79/mo</div>
+            <div class="sub">push this on every service business</div>
+            <ul>
+              <li>Everything in Hosting</li>
+              <li>Online booking widget (Calendly embed)</li>
+              <li>AI popup chat — answers from site content</li>
+              <li>Lead capture + instant auto-reply email</li>
+              <li>Automated review-request emails</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass" style="margin-top: 16px;">
+          <p style="font-size: 14px; margin: 0;">
+            <span class="pill gold">Beacon is the ladder top</span>
+            &nbsp; <strong class="accent">Beacon Spark / Beam / Lighthouse</strong> each include Hosting + Automation + content/marketing AI. See next slide.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Beacon -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Product line 2</p>
+          <h2><span class="accent">Beacon</span> — AI marketing assistant that knows their business.</h2>
+          <p class="lead">Beacon writes social posts, blog drafts, review responses, and ad copy in their voice. Sells with a website or as a standalone — perfect for clients who already have a site they don't want to replace. Pricing is monthly or 6-month commit (save up to 31%).</p>
+        </div>
+        <div class="grid-3">
+          <div class="glass tier-card">
+            <h3>Spark</h3>
+            <div class="price">$129/mo · $89/mo 6-mo</div>
+            <ul>
+              <li>Social posts, newsletter, blog drafts</li>
+              <li>Review responses</li>
+              <li>8K context, 5-turn memory</li>
+              <li>200 inquiries/mo, 50 MB library</li>
+              <li>Default Haiku model</li>
+            </ul>
+          </div>
+          <div class="glass tier-card featured">
+            <h3>Beam</h3>
+            <div class="price">$249/mo · $179/mo 6-mo</div>
+            <ul>
+              <li>Everything in Spark</li>
+              <li>AI workspace, competitor monitoring</li>
+              <li>Ad copy drafts</li>
+              <li>15K context, 12-turn memory</li>
+              <li>1,500 inquiries/mo, 250 MB library</li>
+              <li>Sonnet auto-upgrade on key drafts</li>
+            </ul>
+          </div>
+          <div class="glass tier-card">
+            <h3>Lighthouse</h3>
+            <div class="price">$499/mo · $359/mo 6-mo</div>
+            <ul>
+              <li>Everything in Beam</li>
+              <li>Lead research, outbound emails</li>
+              <li>Quarterly strategy reports</li>
+              <li>30K context, 20-turn memory</li>
+              <li>Unlimited inquiries, 1 GB library</li>
+              <li>Sonnet default + Opus on demand</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. SEO + Ads + Add-ons -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Product lines 3 & 4</p>
+          <h2>SEO, paid ads, and add-ons.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="glass">
+            <h3 class="blue">SEO & Google Business Profile</h3>
+            <ul class="bullets">
+              <li>GBP Optimization — $199 one-time</li>
+              <li>Local SEO Retainer — $499/mo</li>
+              <li>Multi-location SEO — $899/mo (up to 5 locations)</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Paid Ads Management</h3>
+            <ul class="bullets">
+              <li>Google Local Service Ads — $750 setup + 15% of spend</li>
+              <li>Google Search — $1,500 setup + 15% of spend</li>
+              <li>Meta (FB/IG) — $1,500 setup + 15% of spend</li>
+              <li>Full Funnel — $3,000 setup + 15% of spend</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">One-time add-ons</h3>
+            <ul class="bullets">
+              <li>Logo design — $499</li>
+              <li>Brand guide — $799</li>
+              <li>Promotional video — $1,499</li>
+              <li>Photography (half-day) — $899</li>
+              <li>AI chatbot setup (existing site) — $799</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Recurring add-ons</h3>
+            <ul class="bullets">
+              <li>Monthly content (4 blog posts) — $599/mo</li>
+              <li>Review automation — $399 setup</li>
+              <li>Email migration — $299/domain</li>
+              <li>Booking integration — $499</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Bundles -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Lead with these</p>
+          <h2>Three bundles. Most clients land on Momentum.</h2>
+          <p class="lead">Bundles are roughly 10% off line-item pricing. Don't discount further without Pete's approval.</p>
+        </div>
+        <div class="grid-3">
+          <div class="glass tier-card">
+            <h3>Foundation</h3>
+            <div class="price">$799 + $79/mo</div>
+            <div class="sub">entry — get online, capture leads</div>
+            <ul>
+              <li>Starter website</li>
+              <li>Business Automation tier (booking, AI chat, lead auto-reply, review-request emails)</li>
+            </ul>
+          </div>
+          <div class="glass tier-card featured">
+            <h3>Momentum</h3>
+            <div class="price">$1,299 + $678/mo</div>
+            <div class="sub">most clients pick this · assumes 6-mo Beacon commit</div>
+            <ul>
+              <li>Growth website</li>
+              <li>Beacon Beam ($179/mo on 6-mo commit, $249 month-to-month)</li>
+              <li>Local SEO Retainer ($499/mo)</li>
+            </ul>
+          </div>
+          <div class="glass tier-card">
+            <h3>Accelerator</h3>
+            <div class="price">$4,500 + $858/mo + ad spend</div>
+            <div class="sub">full-stack · assumes 6-mo Beacon commit</div>
+            <ul>
+              <li>Pro website + Google Search Ads setup</li>
+              <li>Beacon Lighthouse ($359/mo on 6-mo commit, $499 month-to-month)</li>
+              <li>Local SEO Retainer ($499/mo)</li>
+              <li>Google Search Ads management (15% of spend, billed separately)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Why we win -->
+    <section class="slide">
+      <div class="slide-inner stack-lg">
+        <div>
+          <p class="eyebrow">Value proposition</p>
+          <h2>Why we win against the alternatives.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="glass">
+            <h3 class="blue">vs. DIY (Wix, Squarespace)</h3>
+            <p>The owner spends 40+ hours building something that still won't convert. We deliver a finished, optimized site in two weeks while they keep running their business.</p>
+          </div>
+          <div class="glass">
+            <h3 class="blue">vs. cheap freelancers</h3>
+            <p>One developer who disappears after launch. We're a managed service — site, hosting, monitoring, content, AI, all in one bill.</p>
+          </div>
+          <div class="glass">
+            <h3 class="blue">vs. big agencies</h3>
+            <p>$15K minimums and four-month timelines. We deliver 80% of the value at 20% of the price, faster.</p>
+          </div>
+          <div class="glass">
+            <h3 class="blue">vs. generic AI tools (ChatGPT, Jasper)</h3>
+            <p>Beacon learns each client's brand: their docs, reviews, services, competitors. Generic tools start from zero on every prompt.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Sales flow -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">The flow</p>
+          <h2>Seven stages from cold to closed.</h2>
+          <p class="lead">Average cycle: 7–14 days for small deals, 14–30 for larger ones.</p>
+        </div>
+        <div>
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Source</h4><p>Find the right businesses. GBP gaps, Yelp, drive-bys, referrals, industry-specific lists.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Outreach</h4><p>One personalized email or walk-in. Three-touch follow-up cadence: day 0, day 4, day 11.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Discovery call</h4><p>30 minutes, structured around five questions. Always book the next meeting before hanging up.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Audit & proposal</h4><p>One-page audit + three-tier proposal. Sent 24 hours before review meeting, never without one scheduled.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Demo & review</h4><p>Live walkthrough of a matching demo site, then proposal walk-through, then ask for the close.</p></div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-body"><h4>Close</h4><p>Signed agreement + 50% deposit cleared = sale. Verbal commits don't count.</p></div></div>
+          <div class="step"><div class="step-num">7</div><div class="step-body"><h4>Handoff</h4><p>One-page handoff doc to fulfillment. Stay on the welcome thread until launch, then step out.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. Discovery call -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Stage 3 deep-dive</p>
+          <h2>The five discovery questions.</h2>
+          <p class="lead">Drive the conversation. These five questions in 30 minutes.</p>
+        </div>
+        <div class="stack-md">
+          <div class="dialog">"Walk me through your business — how long, what you do, who your customers are."</div>
+          <div class="dialog">"How are most new customers finding you today?"</div>
+          <div class="dialog">"What's the biggest bottleneck right now — getting leads, converting them, or delivering the work?"</div>
+          <div class="dialog">"If we fixed that, what would it be worth to you over a year?"</div>
+          <div class="dialog">"What's stopped you from doing this before?"</div>
+        </div>
+        <div class="glass" style="margin-top: 16px;">
+          <h4>Always close the discovery call by booking the next meeting:</h4>
+          <p style="margin-top: 8px;"><em>"Let me put together a short audit and a proposal — three options at different price points so you can see what fits. I'll send it over by [day], and we'll book 20 minutes to walk through it. Sound good?"</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. Demo & proposal -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Stage 5 deep-dive</p>
+          <h2>The demo / proposal review.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="glass">
+            <h3 class="blue">Walk-through structure (20–30 min)</h3>
+            <ul class="bullets">
+              <li>Recap what they told you (2 min)</li>
+              <li>Show a live demo in their vertical (5 min)</li>
+              <li>Walk the proposal (10 min)</li>
+              <li>Ask for the decision (5 min)</li>
+              <li>Handle objections (5 min)</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Demo tips</h3>
+            <ul class="bullets">
+              <li>Always share screen — don't just describe</li>
+              <li>Pull the demo closest to their industry</li>
+              <li>Show mobile view — most customers are on phones</li>
+              <li>For Beacon: log in and show real outputs</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass">
+          <h3 class="accent">The closing line</h3>
+          <p style="font-size: 1.1rem; color: var(--text); margin-top: 8px;">
+            <em>"Which of the three feels right for where you are?"</em>
+          </p>
+          <p style="margin-top: 8px;">Then <strong>stop talking.</strong> Silence is uncomfortable. Most people fill it with the answer. Don't rescue them with more options or more discounting.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. Objections -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Be ready</p>
+          <h2>The four objections you'll hear most.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="glass">
+            <h4>"It's too expensive."</h4>
+            <p style="font-size: 14px; margin-top: 8px;"><em>"Most of our clients felt that way at first. The way to think about it: if one new customer a month covers the whole investment, what's the math on that for your business?"</em> Then wait.</p>
+          </div>
+          <div class="glass">
+            <h4>"I already have a website."</h4>
+            <p style="font-size: 14px; margin-top: 8px;"><em>"When's the last time it brought you a real lead? Most sites still get traffic but don't convert. Want a free 15-minute audit?"</em></p>
+          </div>
+          <div class="glass">
+            <h4>"Send me some info."</h4>
+            <p style="font-size: 14px; margin-top: 8px;"><em>"Happy to. Quick question first — is now actually a bad time, or are you trying to politely tell me it's not for you? Either is fine."</em></p>
+          </div>
+          <div class="glass">
+            <h4>"Can you guarantee leads / rankings?"</h4>
+            <p style="font-size: 14px; margin-top: 8px;"><em>"No, and I wouldn't trust anyone who does. What I can guarantee is the work itself: site live in two weeks, SEO set up correctly, content on schedule. The leads follow when those are right."</em></p>
+          </div>
+        </div>
+        <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 12px;">
+          Full objection bank in <strong>sales-playbook.md</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- 14. Commission tiers -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Your compensation</p>
+          <h2>Commission steps up as you close.</h2>
+          <p class="lead">Earn more per deal as you build a track record. Tier resets January 1.</p>
+        </div>
+        <div class="grid-3">
+          <div class="glass tier-card">
+            <h3>Tier 1</h3>
+            <div class="price">15%</div>
+            <div class="sub">sales 1 through 5</div>
+            <p>Your first five deals of the year.</p>
+          </div>
+          <div class="glass tier-card">
+            <h3>Tier 2</h3>
+            <div class="price">20%</div>
+            <div class="sub">sales 6 through 10</div>
+            <p>Once you've proven you can close.</p>
+          </div>
+          <div class="glass tier-card featured">
+            <h3>Tier 3</h3>
+            <div class="price">25%</div>
+            <div class="sub">sale 11 and beyond</div>
+            <p>Top performers stay here all year.</p>
+          </div>
+        </div>
+        <div class="glass" style="margin-top: 16px;">
+          <h4>What counts as Recognized Sale Revenue:</h4>
+          <ul class="bullets" style="margin-top: 8px;">
+            <li>One-time setup fees: <strong>full amount</strong></li>
+            <li>First 12 months of recurring (Beacon, hosting, retainers, ads mgmt): <strong>full amount</strong></li>
+            <li>Recurring beyond month 12: <strong>not commissioned</strong></li>
+            <li>Ad spend pass-through: <strong>not commissioned</strong> (we earn on management fees)</li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">
+            Full terms — including clawback, splits, and discount rules — in <strong>commission-term-sheet.md</strong>. Sign before your first deal.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. Worked example -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">What it looks like in practice</p>
+          <h2>A worked example — 12 sales of the Momentum bundle.</h2>
+          <p class="lead">Every Momentum sale = $1,299 setup + ($678 × 12 months) = <span class="accent">$9,435 Recognized Sale Revenue per deal.</span></p>
+        </div>
+        <div class="glass">
+          <table>
+            <thead>
+              <tr>
+                <th>Sale #</th>
+                <th>Tier</th>
+                <th>Rate</th>
+                <th>Per-deal commission</th>
+                <th>Running total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="num">1–5</td><td>Tier 1</td><td>15%</td><td class="num">$1,415.25 ea</td><td class="num">$7,076</td></tr>
+              <tr><td class="num">6–10</td><td>Tier 2</td><td>20%</td><td class="num">$1,887.00 ea</td><td class="num">$16,511</td></tr>
+              <tr><td class="num">11–12</td><td>Tier 3</td><td>25%</td><td class="num">$2,358.75 ea</td><td class="num">$21,229</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-3" style="margin-top: 16px;">
+          <div>
+            <div class="big-stat">$21K</div>
+            <p class="big-stat-label">at 12 sales / year</p>
+          </div>
+          <div>
+            <div class="big-stat">$40K</div>
+            <p class="big-stat-label">at 20 sales / year</p>
+          </div>
+          <div>
+            <div class="big-stat">$75K</div>
+            <p class="big-stat-label">at 35 sales / year</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. Tools -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">Day one setup</p>
+          <h2>Tools and access you'll get on day one.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="glass">
+            <h3 class="blue">Communication</h3>
+            <ul class="bullets">
+              <li>@polarispoint.io email alias</li>
+              <li>Shared Google Drive</li>
+              <li>Calendar booking link</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Sales tools</h3>
+            <ul class="bullets">
+              <li>CRM access (pipeline + contacts)</li>
+              <li>Proposal template (Google Doc)</li>
+              <li>Audit template (one-pager)</li>
+              <li>DocuSign for service agreements</li>
+              <li>Deposit invoicing handled by Pete</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Demos to know cold</h3>
+            <ul class="bullets">
+              <li>polarispoint.io/plumber (trades)</li>
+              <li>polarispoint.io/salon (beauty/wellness)</li>
+              <li>polarispoint.io/restaurant (food)</li>
+              <li>polarispoint.io/real-estate (real estate)</li>
+              <li>polarispoint.io/beacon (Beacon AI)</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Reference docs</h3>
+            <ul class="bullets">
+              <li>services-and-pricing.md (catalog)</li>
+              <li>sales-playbook.md (full flow)</li>
+              <li>commission-term-sheet.md (your comp)</li>
+              <li>This deck (return any time)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17. Expectations -->
+    <section class="slide">
+      <div class="slide-inner stack-md">
+        <div>
+          <p class="eyebrow">What good looks like</p>
+          <h2>Your first 90 days.</h2>
+        </div>
+        <div class="grid-3">
+          <div class="glass">
+            <h3 class="blue">Day 1–14</h3>
+            <ul class="bullets">
+              <li>Read all four onboarding docs</li>
+              <li>Walk every demo site</li>
+              <li>Sit in on 2 recorded calls</li>
+              <li>Sign commission term sheet</li>
+              <li>First 5 outreach touches</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Day 15–45</h3>
+            <ul class="bullets">
+              <li>10–15 outreach touches/week</li>
+              <li>2–3 discovery calls/week</li>
+              <li>1 proposal sent/week</li>
+              <li>First closed deal expected</li>
+            </ul>
+          </div>
+          <div class="glass">
+            <h3 class="blue">Day 46–90</h3>
+            <ul class="bullets">
+              <li>20–30 touches/week</li>
+              <li>5–8 discovery calls/week</li>
+              <li>2–3 proposals/week</li>
+              <li>1–2 closes/week</li>
+              <li>Reach Tier 2 (20%)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="glass" style="margin-top: 16px;">
+          <p>If you're under those numbers, the bottleneck is almost always <strong class="accent">outreach volume</strong>, not closing skill. Fix that first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18. Closing slide -->
+    <section class="slide">
+      <div class="slide-inner title-slide">
+        <div class="star-mark">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34"/></svg>
+        </div>
+        <h1>Welcome to <span class="accent">Polaris Point</span>.</h1>
+        <p class="lead" style="text-align: center; max-width: 60ch;">
+          Read the playbook, sign the term sheet, run the flow. Questions go to Pete.
+        </p>
+        <div class="glass" style="max-width: 520px; margin-top: 16px;">
+          <h4>Your first task</h4>
+          <p style="margin-top: 8px;">Pick three businesses on your drive home tomorrow. Audit their websites tonight. Send three personalized outreach emails by Friday.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="nav">
+    <button id="prev" aria-label="Previous">←</button>
+    <span class="counter" id="counter">1 / 18</span>
+    <button id="next" aria-label="Next">→</button>
+  </nav>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = 0;
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const slideLabel = document.getElementById('slideLabel');
+
+    const labels = [
+      'Welcome',
+      'Our mission',
+      'Who we sell to',
+      'The opportunity',
+      'Websites',
+      'Beacon AI',
+      'SEO, ads, add-ons',
+      'Bundles',
+      'Why we win',
+      'Sales flow',
+      'Discovery call',
+      'Demo & proposal',
+      'Objection handling',
+      'Commission tiers',
+      'Worked example',
+      'Tools',
+      'First 90 days',
+      'Get started'
+    ];
+
+    function show(i) {
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      counter.textContent = `${i + 1} / ${total}`;
+      progress.style.width = `${((i + 1) / total) * 100}%`;
+      slideLabel.textContent = labels[i] || 'Sales Onboarding';
+      current = i;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => {
+      if (current > 0) show(current - 1);
+    });
+    document.getElementById('next').addEventListener('click', () => {
+      if (current < total - 1) show(current + 1);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (current < total - 1) show(current + 1);
+      } else if (e.key === 'ArrowLeft') {
+        if (current > 0) show(current - 1);
+      } else if (e.key === 'Home') {
+        show(0);
+      } else if (e.key === 'End') {
+        show(total - 1);
+      }
+    });
+
+    show(0);
+  </script>
+</body>
+</html>

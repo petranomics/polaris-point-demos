@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polaris Point — Real Estate Marketing Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space:#050D1E;
+      --space-2:#0B1733;
+      --blue:#5B8DEF;
+      --gold:#E8C547;
+      --green:#22c55e;
+      --amber:#f59e0b;
+      --purple:#a78bfa;
+      --text:#e8edf5;
+      --muted:#8c9ab1;
+      --dim:#475569;
+      --border:rgba(91,141,239,.14);
+      --surface:rgba(15,25,55,.55);
+      --surface-2:rgba(15,25,55,.35);
+    }
+    * { box-sizing: border-box; margin: 0; }
+
+    @page { size: 8.5in 11in; margin: 0; }
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background:#fff; }
+      .no-print { display: none !important; }
+      .page { margin: 0; box-shadow: none; page-break-after: always; }
+      .page:last-of-type { page-break-after: auto; }
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background:#1a1f2e;
+      color:var(--text);
+      line-height:1.55;
+    }
+    h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; color:#fff; line-height:1.2; font-weight:700; }
+
+    /* === PAGE === */
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 20px auto;
+      background: var(--space);
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+      padding: 0.55in 0.65in 0.5in;
+    }
+
+    /* Background flourishes — subtle, not distracting like flyer */
+    .page::before {
+      content:""; position:absolute;
+      top:-8%; right:-8%;
+      width:480px; height:480px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(91,141,239,.10) 0%, transparent 70%);
+      filter:blur(50px);
+      pointer-events:none;
+    }
+    .page::after {
+      content:""; position:absolute;
+      bottom:-5%; left:-5%;
+      width:380px; height:380px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(232,197,71,.06) 0%, transparent 70%);
+      filter:blur(40px);
+      pointer-events:none;
+    }
+    /* tiny starfield */
+    .starfield {
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background-image:
+        radial-gradient(1.5px 1.5px at 12% 14%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 8%,  rgba(91,141,239,.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 92% 28%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 6% 62%,  rgba(232,197,71,.45) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 88% 88%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px   at 35% 5%,    rgba(255,255,255,.35) 0%, transparent 100%),
+        radial-gradient(1px 1px   at 64% 92%,   rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1px 1px   at 18% 90%,   rgba(91,141,239,.35) 0%, transparent 100%),
+        radial-gradient(1px 1px   at 48% 32%,   rgba(255,255,255,.25) 0%, transparent 100%),
+        radial-gradient(1px 1px   at 72% 50%,   rgba(255,255,255,.25) 0%, transparent 100%);
+    }
+    .page > * { position: relative; z-index:1; }
+
+    /* === HEADER BAR === */
+    .top-bar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding-bottom: 14px;
+      border-bottom:1px solid var(--border);
+      margin-bottom: 22px;
+    }
+    .logo { display:flex; align-items:center; gap:8px; }
+    .logo svg { width:22px; height:22px; filter:drop-shadow(0 0 6px rgba(91,141,239,.45)); }
+    .logo .name {
+      font-family:'Space Grotesk',sans-serif; font-weight:700;
+      color:#fff; font-size:.95rem; letter-spacing:2.5px;
+    }
+    .doc-label {
+      font-size:.62rem; text-transform:uppercase; letter-spacing:2px;
+      color:var(--muted); font-weight:600;
+    }
+    .doc-label .accent { color:var(--gold); }
+
+    /* === HERO === */
+    .hero { margin-bottom: 22px; }
+    .hero .eyebrow {
+      display:inline-block;
+      font-size:.62rem; text-transform:uppercase; letter-spacing:2px;
+      color:var(--blue); font-weight:700;
+      background:rgba(91,141,239,.10);
+      padding:4px 10px; border-radius:6px;
+      margin-bottom:10px;
+    }
+    .hero h1 { font-size:1.95rem; margin-bottom:8px; letter-spacing:-.5px; }
+    .hero h1 .accent { color:var(--gold); }
+    .hero .lede { color:var(--muted); font-size:.92rem; max-width:62ch; }
+
+    /* === SECTION === */
+    .section { margin-bottom: 22px; }
+    .section-head {
+      display:flex; align-items:baseline; justify-content:space-between;
+      margin-bottom: 12px;
+    }
+    .section h2 { font-size:1.15rem; }
+    .section h2 .num {
+      color:var(--gold);
+      font-weight:600;
+      margin-right:6px;
+      font-family:'Space Grotesk',sans-serif;
+    }
+    .section .sub {
+      color:var(--muted);
+      font-size:.82rem;
+      max-width:60ch;
+      margin-top:2px;
+    }
+    .section-kicker {
+      font-size:.6rem; text-transform:uppercase; letter-spacing:2px;
+      color:var(--dim); font-weight:600;
+    }
+
+    /* === CARDS === */
+    .card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding: 14px 16px;
+    }
+    .card h3 { font-size:.85rem; margin-bottom:4px; }
+    .card p  { color:var(--muted); font-size:.78rem; line-height:1.55; }
+    .card .icon {
+      width:28px; height:28px;
+      border-radius:7px;
+      background:rgba(91,141,239,.12);
+      color:var(--blue);
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:8px;
+      font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem;
+    }
+    .card.gold .icon { background:rgba(232,197,71,.12); color:var(--gold); }
+
+    .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .grid-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; }
+    .grid-4 { display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:8px; }
+
+    /* === FEATURE ROW (icon + text inline) === */
+    .feature-row {
+      display:flex; gap:12px; align-items:flex-start;
+      padding:10px 0;
+      border-top:1px dashed rgba(91,141,239,.10);
+    }
+    .feature-row:first-child { border-top:none; padding-top:4px; }
+    .feature-row .badge {
+      flex-shrink:0;
+      width:32px; height:32px;
+      border-radius:8px;
+      background:rgba(91,141,239,.12);
+      color:var(--blue);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem;
+    }
+    .feature-row.gold .badge { background:rgba(232,197,71,.12); color:var(--gold); }
+    .feature-row h4 { font-size:.82rem; margin-bottom:2px; }
+    .feature-row p  { color:var(--muted); font-size:.76rem; line-height:1.55; }
+
+    /* === CALLOUT / EXAMPLE === */
+    .callout {
+      border-left:3px solid var(--gold);
+      background:rgba(232,197,71,.05);
+      border-radius:0 8px 8px 0;
+      padding: 10px 14px;
+      margin: 10px 0 0;
+    }
+    .callout .label {
+      font-size:.6rem; text-transform:uppercase; letter-spacing:1.5px;
+      color:var(--gold); font-weight:700; margin-bottom:4px;
+    }
+    .callout p { color:var(--text); font-size:.8rem; font-style:italic; line-height:1.55; }
+
+    /* === STAT STRIP === */
+    .stats {
+      display:grid; grid-template-columns: repeat(4, 1fr);
+      gap:8px;
+      margin: 4px 0 14px;
+    }
+    .stat {
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:10px 12px;
+      text-align:left;
+    }
+    .stat .n {
+      font-family:'Space Grotesk',sans-serif;
+      font-weight:700;
+      font-size:1.1rem;
+      color:#fff;
+    }
+    .stat .n.gold { color:var(--gold); }
+    .stat .n.blue { color:var(--blue); }
+    .stat .l {
+      font-size:.62rem; text-transform:uppercase; letter-spacing:1px;
+      color:var(--muted); font-weight:600;
+      margin-top:2px;
+    }
+
+    /* === MOCK DASHBOARD (Armadillo) === */
+    .dash {
+      background:linear-gradient(160deg, var(--space-2) 0%, #0a142b 100%);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      margin-top:8px;
+    }
+    .dash-head {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .dash-title { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:.78rem; letter-spacing:.5px; }
+    .dash-meta { font-size:.6rem; color:var(--dim); text-transform:uppercase; letter-spacing:1.5px; }
+
+    .heatmap {
+      display:grid; grid-template-columns: 30px repeat(7, 1fr); gap:2px;
+      font-size:.55rem;
+    }
+    .heatmap .day { color:var(--muted); text-align:right; padding-right:4px; line-height:14px; font-weight:600; }
+    .heatmap .hr {
+      height:14px;
+      border-radius:2px;
+      background:rgba(91,141,239,.08);
+    }
+    .heatmap .hr.l1 { background:rgba(91,141,239,.18); }
+    .heatmap .hr.l2 { background:rgba(91,141,239,.32); }
+    .heatmap .hr.l3 { background:rgba(232,197,71,.45); }
+    .heatmap .hr.l4 { background:rgba(232,197,71,.7);  }
+    .heatmap .hr.l5 { background:rgba(232,197,71,.95); }
+    .heatmap-axis {
+      display:grid; grid-template-columns: 30px repeat(7, 1fr); gap:2px;
+      font-size:.5rem; color:var(--dim); margin-top:3px; text-transform:uppercase; letter-spacing:.5px;
+    }
+    .heatmap-axis span { text-align:center; }
+
+    .trend-list { margin-top: 8px; }
+    .trend-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:6px 0;
+      border-top:1px solid rgba(91,141,239,.08);
+      font-size:.75rem;
+    }
+    .trend-item:first-child { border-top:none; }
+    .trend-item .topic { color:#fff; font-weight:600; }
+    .trend-item .topic .tag { color:var(--blue); font-weight:500; }
+    .trend-item .score {
+      font-family:'Space Grotesk',sans-serif; font-weight:700;
+      color:var(--gold); font-size:.8rem;
+    }
+    .trend-item .delta {
+      color:var(--green); font-size:.65rem; font-weight:600;
+      margin-left:6px;
+    }
+
+    /* === CTA STRIP === */
+    .cta {
+      background:linear-gradient(135deg, rgba(91,141,239,.18) 0%, rgba(232,197,71,.10) 100%);
+      border:1px solid rgba(232,197,71,.25);
+      border-radius:12px;
+      padding:18px 22px;
+      margin-top:16px;
+      display:flex; align-items:center; justify-content:space-between; gap:20px;
+    }
+    .cta .left h3 { font-size:1.1rem; margin-bottom:4px; }
+    .cta .left p { color:var(--muted); font-size:.82rem; }
+    .cta .right {
+      text-align:right; flex-shrink:0;
+    }
+    .cta .right .url {
+      font-family:'Space Grotesk',sans-serif; font-weight:700;
+      color:var(--gold); font-size:1rem; letter-spacing:1px;
+    }
+    .cta .right .sub {
+      color:var(--muted); font-size:.7rem; margin-top:2px;
+    }
+
+    /* === FOOTER === */
+    .page-foot {
+      position:absolute;
+      bottom:0.35in; left:0.65in; right:0.65in;
+      display:flex; align-items:center; justify-content:space-between;
+      border-top:1px solid var(--border);
+      padding-top:8px;
+      font-size:.6rem; color:var(--dim); letter-spacing:1px; text-transform:uppercase;
+    }
+    .page-foot .url-foot { color:var(--gold); font-weight:700; }
+
+    /* === SCREEN-ONLY CONTROLS === */
+    .toolbar {
+      max-width: 8.5in;
+      margin: 16px auto 0;
+      padding: 0 4px;
+      display:flex; gap:10px; justify-content:flex-end;
+    }
+    .btn-print {
+      background:var(--blue); color:#fff;
+      border:none; border-radius:8px;
+      padding:9px 16px;
+      font-family:'Inter',sans-serif; font-size:.78rem; font-weight:600;
+      cursor:pointer;
+    }
+    .btn-print:hover { background:#4A7DE0; }
+  </style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<!-- ===================================================================== -->
+<!-- PAGE 1 -->
+<!-- ===================================================================== -->
+<div class="page">
+  <div class="starfield"></div>
+
+  <div class="top-bar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none">
+        <polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/>
+      </svg>
+      <span class="name">POLARIS POINT</span>
+    </div>
+    <div class="doc-label">Real Estate Marketing Report · <span class="accent">Page 1 of 2</span></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <span class="eyebrow">For Agents, Brokers &amp; Teams</span>
+    <h1>A complete marketing system <span class="accent">built for real estate.</span></h1>
+    <p class="lede">A website that ranks. An AI that writes in your voice. And analytics that tell you what your sphere actually wants to see — before everyone else figures it out.</p>
+  </div>
+
+  <!-- === SECTION 1: WEBSITE === -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="num">01</span>Your Real Estate Website</h2>
+        <p class="sub">Your 24/7 lead-capture storefront. Built around how buyers and sellers actually search.</p>
+      </div>
+      <div class="section-kicker">The Foundation</div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="icon">L</div>
+        <h3>Listings That Convert</h3>
+        <p>Active listings, just-sold, and coming-soon — beautifully laid out, mobile-first. MLS/IDX-ready integration so your inventory updates itself.</p>
+      </div>
+      <div class="card">
+        <div class="icon">N</div>
+        <h3>Neighborhood Pages</h3>
+        <p>One page per farm area, school district, or zip — ranking for the searches your future clients are actually typing. Built-in market stats refresh monthly.</p>
+      </div>
+      <div class="card">
+        <div class="icon">C</div>
+        <h3>Lead Capture, Everywhere</h3>
+        <p>Home valuation forms, buyer guides, neighborhood reports — every visitor gets a clear next step. Leads pipe straight to your phone, email, or CRM.</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:10px;">
+      <div class="card gold">
+        <div class="icon">SEO</div>
+        <h3>Built to Rank on Google</h3>
+        <p>Fast, structured, schema-tagged. Local SEO baked in — title tags, neighborhood meta, structured data for listings. You show up when someone Googles "[your city] homes for sale."</p>
+      </div>
+      <div class="card gold">
+        <div class="icon">UX</div>
+        <h3>Mobile-First, Always</h3>
+        <p>80% of your traffic is on a phone, so we design for thumbs first. Tap-to-call, instant directions to open houses, frictionless contact.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- === SECTION 2: BEACON (starts on page 1, continues on page 2) === -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="num">02</span>Beacon — Your AI Marketing Engine</h2>
+        <p class="sub">Trained on your listings, your farm, your voice. Writes social, newsletters, and emails faster than you can think of what to post.</p>
+      </div>
+      <div class="section-kicker">The Engine</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n gold">3–5×</div><div class="l">Content output vs. solo</div></div>
+      <div class="stat"><div class="n blue">~6 hrs</div><div class="l">Saved per week</div></div>
+      <div class="stat"><div class="n gold">$129/mo</div><div class="l">Starts at Spark tier</div></div>
+      <div class="stat"><div class="n blue">24/7</div><div class="l">Always drafting</div></div>
+    </div>
+
+    <div class="feature-row">
+      <div class="badge">01</div>
+      <div>
+        <h4>Listing Posts — Drafted the Moment You List</h4>
+        <p>New listing, price drop, just-sold celebration, open house promo. Beacon writes the social post, the email blurb, and the SMS line — all in your voice, ready to schedule. You approve; it ships.</p>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="badge">02</div>
+      <div>
+        <h4>Weekly Newsletters — Without the Weekly Headache</h4>
+        <p>Market snapshot, new listings, neighborhood updates, mortgage rate notes. Beacon assembles it Monday morning from your IDX feed and local data. You skim, tweak the intro, send.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page footer -->
+  <div class="page-foot">
+    <span>Polaris Point · Real Estate Marketing Report</span>
+    <span class="url-foot">polarispoint.io</span>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- PAGE 2 -->
+<!-- ===================================================================== -->
+<div class="page">
+  <div class="starfield"></div>
+
+  <div class="top-bar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none">
+        <polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/>
+      </svg>
+      <span class="name">POLARIS POINT</span>
+    </div>
+    <div class="doc-label">Real Estate Marketing Report · <span class="accent">Page 2 of 2</span></div>
+  </div>
+
+  <!-- BEACON CONTINUED -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="num">02</span>Beacon — continued</h2>
+      </div>
+      <div class="section-kicker">The Engine</div>
+    </div>
+
+    <div class="feature-row">
+      <div class="badge">03</div>
+      <div>
+        <h4>Email Drip Sequences — Buyers, Sellers, Past Clients</h4>
+        <p>New-buyer onboarding, seller-prep checklist, just-moved-in follow-ups, closing-anniversary touches. Set the audience; Beacon writes the sequence and sends on schedule. Stop losing referrals to silence.</p>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="badge">04</div>
+      <div>
+        <h4>Hyper-Local Content — Not Generic Filler</h4>
+        <p>Beacon knows your zip codes, schools, HOAs, and price bands. It writes about <em>your</em> market — Cherrywood schools, Tarrytown comps, East Riverside rent shifts — not boilerplate "tips for buyers."</p>
+      </div>
+    </div>
+
+    <div class="feature-row gold">
+      <div class="badge">05</div>
+      <div>
+        <h4>Past-Client Nurture — Automated Stay-in-Touch</h4>
+        <p>Birthday notes, home-anniversary check-ins, market updates for their neighborhood, "thinking of you" touches twice a year. The agent who stays top-of-mind gets the referral. Beacon makes sure that's you.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="label">What a Beacon listing post looks like</div>
+      <p>"Just hit the market in Hyde Park: 4 bed / 3 bath, fully renovated, walking distance to Mueller's farmers' market and the new ACC campus. Listed at $725K. DM for the full tour — this one won't sit. 🔑"</p>
+    </div>
+  </div>
+
+  <!-- === SECTION 3: ARMADILLO ANALYTICS === -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2><span class="num">03</span>Armadillo Analytics</h2>
+        <p class="sub">Stop guessing when to post or what to say. Armadillo watches every post you publish — and every trending topic in your market — and tells you what's about to take off.</p>
+      </div>
+      <div class="section-kicker">The Edge</div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Heatmap mock -->
+      <div class="dash">
+        <div class="dash-head">
+          <div class="dash-title">Best Time to Post</div>
+          <div class="dash-meta">Last 30 days · Instagram</div>
+        </div>
+        <div class="heatmap">
+          <span class="day">Mon</span>
+          <div class="hr"></div><div class="hr l1"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l2"></div><div class="hr l4"></div><div class="hr l3"></div>
+          <span class="day">Tue</span>
+          <div class="hr l1"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l4"></div><div class="hr l3"></div><div class="hr l4"></div><div class="hr l5"></div>
+          <span class="day">Wed</span>
+          <div class="hr l1"></div><div class="hr l1"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l4"></div><div class="hr l5"></div><div class="hr l4"></div>
+          <span class="day">Thu</span>
+          <div class="hr l1"></div><div class="hr l2"></div><div class="hr l4"></div><div class="hr l5"></div><div class="hr l4"></div><div class="hr l3"></div><div class="hr l3"></div>
+          <span class="day">Fri</span>
+          <div class="hr l2"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l3"></div><div class="hr l3"></div><div class="hr l2"></div><div class="hr l1"></div>
+          <span class="day">Sat</span>
+          <div class="hr"></div><div class="hr l1"></div><div class="hr l3"></div><div class="hr l5"></div><div class="hr l5"></div><div class="hr l4"></div><div class="hr l2"></div>
+          <span class="day">Sun</span>
+          <div class="hr"></div><div class="hr l1"></div><div class="hr l2"></div><div class="hr l4"></div><div class="hr l5"></div><div class="hr l3"></div><div class="hr l1"></div>
+        </div>
+        <div class="heatmap-axis">
+          <span></span><span>6a</span><span>9a</span><span>12p</span><span>3p</span><span>6p</span><span>9p</span><span>11p</span>
+        </div>
+        <p style="font-size:.7rem;color:var(--muted);margin-top:8px;line-height:1.5;">
+          <strong style="color:#fff;">Your sweet spots:</strong> Tue 7–8pm, Thu 12–1pm, Sat 12–3pm. Recalculated every Sunday from your followers' actual activity — no more posting into the void at 9am.
+        </p>
+      </div>
+
+      <!-- Trending topics mock -->
+      <div class="dash">
+        <div class="dash-head">
+          <div class="dash-title">Trending in Real Estate · Your Market</div>
+          <div class="dash-meta">Updated hourly</div>
+        </div>
+        <div class="trend-list">
+          <div class="trend-item">
+            <div class="topic">Rate cut speculation <span class="tag">#mortgagerates</span></div>
+            <div><span class="score">92</span><span class="delta">↑ 41%</span></div>
+          </div>
+          <div class="trend-item">
+            <div class="topic">First-time buyer guides <span class="tag">#firsthomeATX</span></div>
+            <div><span class="score">87</span><span class="delta">↑ 28%</span></div>
+          </div>
+          <div class="trend-item">
+            <div class="topic">East Austin price shifts <span class="tag">#eastaustin</span></div>
+            <div><span class="score">81</span><span class="delta">↑ 19%</span></div>
+          </div>
+          <div class="trend-item">
+            <div class="topic">Open house reels <span class="tag">#openhouse</span></div>
+            <div><span class="score">76</span><span class="delta">↑ 15%</span></div>
+          </div>
+          <div class="trend-item">
+            <div class="topic">School district comparisons <span class="tag">#aisd</span></div>
+            <div><span class="score">71</span><span class="delta">↑ 9%</span></div>
+          </div>
+        </div>
+        <p style="font-size:.7rem;color:var(--muted);margin-top:8px;line-height:1.5;">
+          <strong style="color:#fff;">Get in front before everyone else.</strong> Armadillo surfaces topics gaining velocity in your local real estate scene — so you post the rate-cut take Wednesday morning, not Friday afternoon when it's already saturated.
+        </p>
+      </div>
+    </div>
+
+    <!-- Virality + competitor strip -->
+    <div class="grid-3" style="margin-top:10px;">
+      <div class="card">
+        <div class="icon" style="background:rgba(232,197,71,.15);color:var(--gold);">V</div>
+        <h3>Virality Score</h3>
+        <p>Every draft gets a 1–100 score before you post — based on hook strength, length, hashtag mix, and what's currently breaking out in your niche.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="background:rgba(167,139,250,.15);color:var(--purple);">C</div>
+        <h3>Competitor Watch</h3>
+        <p>See what the top three agents in your market are posting and which posts are getting traction. Steal the angle, not the words.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="background:rgba(34,197,94,.15);color:var(--green);">A</div>
+        <h3>Trend Alerts</h3>
+        <p>Get pinged the moment a topic in your farm area heats up — so the Beacon engine drafts your take while the wave is still building.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="left">
+      <h3>Ready to get the system running?</h3>
+      <p>Site, Beacon, and Armadillo work better together — and we set it all up for you.</p>
+    </div>
+    <div class="right">
+      <div class="url">polarispoint.io</div>
+      <div class="sub">hello@polarispoint.io</div>
+    </div>
+  </div>
+
+  <!-- Page footer -->
+  <div class="page-foot">
+    <span>Polaris Point · Real Estate Marketing Report</span>
+    <span class="url-foot">polarispoint.io</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -83,16 +83,25 @@ module.exports = async function handler(req, res) {
          GROUP BY model, provider
          ORDER BY cost DESC, calls DESC
          LIMIT 20`,
+      // Gap-filled: generate_series guarantees one row per day for the last
+      // 14 days even when a day has zero usage, so the chart always shows 14
+      // sequential bars/dates instead of skipping empty days. Filters live in
+      // the LEFT JOIN's ON clause so they don't drop the zero days.
       sql`
-        SELECT date_trunc('day', created_at)        AS day,
-               COALESCE(SUM(cost_usd),0)::float     AS cost,
-               COUNT(*)::int                        AS calls
-          FROM beacons_usage_log
-         WHERE created_at >= NOW() - INTERVAL '14 days'
-           AND (${appFilter}::text IS NULL OR COALESCE(app,'beacons') = ${appFilter})
-           AND (${tenantFilter}::text IS NULL OR tenant_id = ${tenantFilter})
-         GROUP BY day
-         ORDER BY day ASC`,
+        SELECT d.day                                  AS day,
+               COALESCE(SUM(l.cost_usd),0)::float     AS cost,
+               COUNT(l.id)::int                       AS calls
+          FROM generate_series(
+                 date_trunc('day', NOW()) - INTERVAL '13 days',
+                 date_trunc('day', NOW()),
+                 INTERVAL '1 day'
+               ) AS d(day)
+          LEFT JOIN beacons_usage_log l
+            ON date_trunc('day', l.created_at) = d.day
+           AND (${appFilter}::text IS NULL OR COALESCE(l.app,'beacons') = ${appFilter})
+           AND (${tenantFilter}::text IS NULL OR l.tenant_id = ${tenantFilter})
+         GROUP BY d.day
+         ORDER BY d.day ASC`,
       sql`
         SELECT u.created_at, u.app, u.endpoint, u.model, u.provider, u.tenant_id,
                t.display_name                               AS tenant_name,

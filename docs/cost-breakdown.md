@@ -97,7 +97,7 @@ Texas has no state income tax, but there are federal and other obligations.
 
 | Plan | One-time | Monthly | Annual per client |
 |------|----------|---------|-------------------|
-| Starter | $699 | $0 | $699 |
+| Starter | $799 | $0 | $799 |
 | Growth | $1,299 | $49 | $1,887 |
 | Pro | $2,499 | $99 | $3,687 |
 

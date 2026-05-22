@@ -327,44 +327,45 @@ Each capability is tagged:
 
 ---
 
-## TIER MAPPING (Suggested)
+## TIER MAPPING
 
-### Tier 1: Content Engine ($99-149/mo)
-All [NOW] content capabilities:
+Pricing is monthly or 6-month commit (save up to 31%). Three tiers — no enterprise add-on.
+
+### Tier 1: Spark ($129/mo or $89/mo on 6-mo commit)
+The entry point. All [NOW] content capabilities:
 - Social posts, newsletters, blog drafts
 - Review response templates
 - Basic content calendar
 - Written in brand voice
-- 50K tokens/month
+- 8K context per chat, 5-turn memory
+- 200 inquiries/month
+- 50 MB library
+- Default Haiku model
 
-### Tier 2: Marketing Assistant ($249-299/mo)
-Everything in Tier 1 plus:
-- On-demand AI workspace
+### Tier 2: Beam ($249/mo or $179/mo on 6-mo commit)
+Everything in Spark plus:
+- On-demand AI workspace with deeper recall
 - Competitor monitoring
 - Review tracking + alerts
 - Campaign strategy suggestions
 - Email sequence drafts
 - Ad copy drafts
-- 200K tokens/month
+- 15K context per chat, 12-turn memory
+- 1,500 inquiries/month
+- 250 MB library
+- Sonnet auto-upgrade on key drafts
 
-### Tier 3: Growth Engine ($449-499/mo)
-Everything in Tier 2 plus:
+### Tier 3: Lighthouse ($499/mo or $359/mo on 6-mo commit)
+Everything in Beam plus:
 - Lead research and prospecting
 - Outbound email drafts
-- Press releases
+- Press releases and PR pitches
 - Quarterly strategy reports
-- PR pitches
 - Market analysis
-- 500K tokens/month
-
-### Tier 4: Full Stack Marketing ($799-999/mo)
-Everything in Tier 3 plus:
-- [NEAR] integrations (CRM, booking, POS)
-- Paid ad management suggestions
-- Performance reporting
-- Recruiting content
-- 1M tokens/month
-- Priority Claude model (Sonnet instead of Haiku)
+- 30K context per chat, 20-turn memory
+- Unlimited inquiries
+- 1 GB library
+- Sonnet by default + Opus on demand
 
 ---
 

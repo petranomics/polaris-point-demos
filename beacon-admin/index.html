@@ -236,6 +236,71 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.err { border-color: rgba(248,113,113,.3); }
+
+    /* Offers grid — read-only view of customer pricing. Source of truth is
+       lib/tier-limits.js; this just renders /api/beacons/pricing. */
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 820px) { .offers-grid { grid-template-columns: 1fr; } }
+    .offer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .offer-card.featured { border-color: rgba(91,141,239,.35); }
+    .offer-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: var(--text);
+    }
+    .offer-tagline { font-size: 12px; color: var(--muted); min-height: 28px; }
+    .offer-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .offer-price small {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .offer-commit { font-size: 11px; color: var(--muted); margin-top: -4px; }
+    .offer-commit b { color: var(--green); font-weight: 600; }
+    .offer-features {
+      list-style: none;
+      padding: 0;
+      margin: 6px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .offer-features li::before {
+      content: '· ';
+      color: var(--muted);
+    }
+    .offer-source-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    .offer-source-note code {
+      background: rgba(91,141,239,.08);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
@@ -289,6 +354,21 @@
         <tr><td colspan="8" class="empty">Loading…</td></tr>
       </tbody>
     </table>
+
+    <!-- ===================== OFFERS ===================== -->
+    <div class="section-bar">
+      <div>
+        <h2>Offers</h2>
+        <div class="meta" id="offersMeta">Customer-facing pricing</div>
+      </div>
+    </div>
+    <div class="offers-grid" id="offersGrid">
+      <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:18px 0;font-size:13px">Loading pricing…</div>
+    </div>
+    <p class="offer-source-note">
+      Source of truth: <code>lib/tier-limits.js</code> → <code>TIER_PRICING</code> + <code>TIER_FEATURES</code>.
+      Edit there and redeploy; app, marketing, and this page all read from <code>/api/beacons/pricing</code>.
+    </p>
   </div>
 </div>
 
@@ -613,7 +693,7 @@ function lock() {
   });
 
   $('#signOutBtn').addEventListener('click', lock);
-  $('#refreshBtn').addEventListener('click', loadTenants);
+  $('#refreshBtn').addEventListener('click', () => { loadTenants(); loadOffers(); });
   $('#newTenantBtn').addEventListener('click', openAddModal);
   $('#closeModalBtn').addEventListener('click', () => $('#tenantModal').classList.remove('show'));
   $('#saveTenantBtn').addEventListener('click', saveTenant);
@@ -626,11 +706,46 @@ function lock() {
       $('#gateScreen').style.display = 'none';
       $('#app').style.display = 'block';
       loadTenants();
+      loadOffers();
     } else {
       sessionStorage.removeItem(KEY_STORAGE);
     }
   }
 })();
+
+// ===================== OFFERS =====================
+// Reads /api/beacons/pricing (no auth required — pricing is public) and
+// renders the customer-facing tier cards. Edits to pricing live in
+// lib/tier-limits.js; this view is intentionally read-only.
+async function loadOffers() {
+  const grid = $('#offersGrid');
+  const meta = $('#offersMeta');
+  try {
+    const r = await fetch(`${API_BASE}/pricing`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    renderOffers(data);
+    if (meta) meta.textContent = `${data.order.length} tiers · source: lib/tier-limits.js`;
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--red);padding:18px 0;font-size:13px">Pricing fetch failed: ${escapeHtml(e.message || 'unknown')}</div>`;
+  }
+}
+function renderOffers(data) {
+  const grid = $('#offersGrid');
+  // Beam is featured (middle tier — most-popular convention).
+  grid.innerHTML = data.order.map((key) => {
+    const t = data.tiers[key];
+    const featured = (key === 'beam') ? ' featured' : '';
+    const featureItems = (t.features || []).map(f => `<li>${escapeHtml(f)}</li>`).join('');
+    return `<div class="offer-card${featured}">
+      <div class="offer-name">${escapeHtml(t.name)}</div>
+      <div class="offer-tagline">${escapeHtml(t.tagline || '')}</div>
+      <div class="offer-price">$${t.sixMonth}<small>/mo on 6-mo</small></div>
+      <div class="offer-commit">or $${t.monthly}/mo month-to-month · <b>${t.sixMonthDiscountPct}% off</b> on commit</div>
+      <ul class="offer-features">${featureItems}</ul>
+    </div>`;
+  }).join('');
+}
 </script>
 
 </body>

@@ -60,6 +60,30 @@ module.exports = async function handler(req, res) {
       var id = req.query.id;
       if (!id) return res.status(400).json({ error: 'id required' });
       var b = req.body;
+
+      // Automation patch — flips Business Automation feature flags and saves
+      // the automation settings (Calendly URL, review URL, greeting) INSIDE
+      // site_config (read-modify-write of the JSONB). The ops toggles and
+      // shared/automation.js both read from here.
+      if (b.automation) {
+        var curRows = await sql`SELECT site_config FROM sites WHERE id = ${id}`;
+        if (!curRows.length) return res.status(404).json({ error: 'Site not found' });
+        var cfg = curRows[0].site_config || {};
+        if (typeof cfg === 'string') { try { cfg = JSON.parse(cfg); } catch (e) { cfg = {}; } }
+        cfg.features = Object.assign({}, cfg.features, b.automation.features || {});
+        cfg.automation = Object.assign({}, cfg.automation, b.automation.config || {});
+        var saved = await sql`
+          UPDATE sites
+          SET site_config = ${JSON.stringify(cfg)}::jsonb,
+              config_updated_at = NOW(),
+              updated_at = NOW()
+          WHERE id = ${id}
+          RETURNING id
+        `;
+        if (!saved.length) return res.status(404).json({ error: 'Site not found' });
+        return res.status(200).json({ ok: true });
+      }
+
       var result = await sql`
         UPDATE sites SET
           site_name = COALESCE(${b.site_name || null}, site_name),

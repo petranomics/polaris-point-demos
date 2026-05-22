@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon — Claim Your Free Access</title>
+  <meta name="description" content="Sign up for Beacon — your AI marketing team, powered up in minutes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       Beacon Signup
+       Polaris Point Dark Theme
+       ============================================ */
+    :root {
+      --space: #050D1E;
+      --sidebar-bg: #0A1225;
+      --blue: #5B8DEF;
+      --blue-hover: #4A7DE0;
+      --gold: #E8C547;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --purple: #a78bfa;
+      --red: #f87171;
+      --text: #e2e8f0;
+      --muted: #8494a7;
+      --dim: #475569;
+      --border: rgba(91,141,239,.1);
+      --surface: rgba(15,25,55,.5);
+      --surface-solid: #0f1937;
+      --input-bg: #0B1120;
+      --input-border: #1e293b;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: .2s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--space);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      color: #fff;
+      line-height: 1.2;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button { font-family: 'Inter', -apple-system, sans-serif; }
+    input, select { font-family: 'Inter', -apple-system, sans-serif; }
+
+    /* ---- Background glow ---- */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% -10%, rgba(91,141,239,.10), transparent 50%),
+        radial-gradient(ellipse at 80% 110%, rgba(232,197,71,.06), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ---- Page wrapper ---- */
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 56px 20px 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .hero-star {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 18px;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(91,141,239,.5));
+    }
+    .hero h1 {
+      font-size: 2rem;
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+    }
+    .hero-eyebrow {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .hero-note {
+      font-size: .82rem;
+      color: var(--muted);
+    }
+
+    /* ---- Card ---- */
+    .card {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px 28px;
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,.5);
+    }
+
+    /* ---- Form ---- */
+    .field {
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .field label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input,
+    .field select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .field input::placeholder { color: var(--dim); }
+    .field input:focus,
+    .field select:focus { border-color: var(--blue); }
+    .field select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238494a7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    .field-hint {
+      font-size: .7rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+    .field-error {
+      font-size: .72rem;
+      color: var(--danger);
+      margin-top: 5px;
+      display: none;
+    }
+    .field.has-error input,
+    .field.has-error select { border-color: var(--danger); }
+    .field.has-error .field-error { display: block; }
+
+    /* ---- Code field with validation indicator ---- */
+    .code-field-wrap {
+      position: relative;
+    }
+    .code-indicator {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      display: none;
+      pointer-events: none;
+    }
+    .code-indicator.visible { display: block; }
+    .code-indicator.valid { color: var(--success); }
+    .code-indicator.invalid { color: var(--danger); }
+    .code-indicator.loading {
+      display: block;
+      border: 2px solid rgba(91,141,239,.2);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+    .code-status {
+      font-size: .75rem;
+      margin-top: 6px;
+      display: none;
+      line-height: 1.4;
+    }
+    .code-status.visible { display: block; }
+    .code-status.valid { color: var(--success); }
+    .code-status.invalid { color: var(--danger); }
+
+    .field input[type="text"]#code {
+      padding-right: 40px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    /* ---- Submit button ---- */
+    .submit-btn {
+      width: 100%;
+      margin-top: 14px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 13px;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), transform .15s;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--blue-hover); transform: translateY(-1px); }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .form-error {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.3);
+      color: var(--danger);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: .82rem;
+      margin-top: 12px;
+      display: none;
+      line-height: 1.4;
+    }
+    .form-error.visible { display: block; }
+
+    /* ---- Footer link ---- */
+    .footer-link {
+      text-align: center;
+      margin-top: 22px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+    .footer-link a {
+      color: var(--blue);
+      font-weight: 500;
+    }
+    .footer-link a:hover { text-decoration: underline; }
+
+    /* ---- Success screen ---- */
+    .success {
+      display: none;
+      text-align: center;
+      animation: fadeIn .4s ease;
+    }
+    .success.visible { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .success-check {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(34,197,94,.15);
+      border: 2px solid var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: var(--success);
+    }
+    .success-check svg {
+      width: 38px;
+      height: 38px;
+    }
+    .success h2 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .success-trial {
+      color: var(--muted);
+      font-size: .92rem;
+      margin-bottom: 24px;
+    }
+    .success-trial strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .referral-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .referral-label {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .referral-code-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+    .referral-code {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1.5px;
+    }
+    .copy-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--blue);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+    .copy-btn:hover { border-color: var(--blue); background: rgba(91,141,239,.1); }
+    .copy-btn.copied { color: var(--success); border-color: var(--success); }
+    .copy-btn svg { width: 16px; height: 16px; }
+    .share-note {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+    .dash-btn {
+      display: inline-block;
+      width: 100%;
+      background: var(--gold);
+      color: #0A1225;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 13px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s, filter var(--transition);
+      text-decoration: none;
+    }
+    .dash-btn:hover { filter: brightness(1.08); transform: translateY(-1px); text-decoration: none; }
+
+    /* ---- Mobile ---- */
+    @media (max-width: 520px) {
+      .page { padding: 36px 16px 32px; }
+      .card { padding: 24px 20px; }
+      .hero h1 { font-size: 1.65rem; }
+      .hero-subtitle { font-size: .92rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Star symbol -->
+  <svg style="display:none">
+    <symbol id="icon-star" viewBox="0 0 24 24" fill="none">
+      <g stroke="#E8C547" stroke-width="1.2" stroke-linecap="round" opacity=".8">
+        <line x1="2"  y1="7"  x2="6"   y2="8"/>
+        <line x1="22" y1="7"  x2="18"  y2="8"/>
+        <line x1="4"  y1="3"  x2="7"   y2="5.5"/>
+        <line x1="20" y1="3"  x2="17"  y2="5.5"/>
+      </g>
+      <path d="M8 5 L12 2 L16 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="9" y="5" width="6" height="4" rx=".4" fill="rgba(232,197,71,.45)" stroke="currentColor" stroke-width="1.5"/>
+      <rect x="7.5" y="9" width="9" height="1.6" rx=".3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M8 10.6 L6.5 21 L17.5 21 L16 10.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      <rect x="10.5" y="15" width="3" height="2.5" rx=".3" fill="none" stroke="currentColor" stroke-width="1.1"/>
+      <line x1="4.5" y1="21" x2="19.5" y2="21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+    </symbol>
+    <symbol id="icon-check-big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/>
+    </symbol>
+  </svg>
+
+  <div class="page">
+    <!-- Hero -->
+    <div class="hero">
+      <svg class="hero-star"><use href="#icon-star"/></svg>
+      <div class="hero-eyebrow">Polaris Point</div>
+      <h1>Beacon</h1>
+      <div class="hero-subtitle">Your AI marketing team — powered up in minutes</div>
+      <div class="hero-note">Have a trial or referral code? Claim your free access below.</div>
+    </div>
+
+    <!-- Signup card -->
+    <div class="card" id="signupCard">
+      <form id="signupForm" novalidate>
+        <div class="field" id="field-name">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" autocomplete="name" required>
+          <div class="field-error">Please enter your name.</div>
+        </div>
+
+        <div class="field" id="field-email">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" required>
+          <div class="field-error">Please enter a valid email address.</div>
+        </div>
+
+        <div class="field" id="field-password">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="new-password" required minlength="8">
+          <div class="field-hint">At least 8 characters.</div>
+          <div class="field-error">Password must be at least 8 characters.</div>
+        </div>
+
+        <div class="field" id="field-confirm">
+          <label for="confirm">Confirm Password</label>
+          <input type="password" id="confirm" name="confirm" autocomplete="new-password" required>
+          <div class="field-error">Passwords do not match.</div>
+        </div>
+
+        <div class="field" id="field-code">
+          <label for="code">Trial or Referral Code</label>
+          <div class="code-field-wrap">
+            <input type="text" id="code" name="code" autocomplete="off" placeholder="BETA-ABC123" required>
+            <svg class="code-indicator valid" id="codeCheck"><use href="#icon-check"/></svg>
+            <svg class="code-indicator invalid" id="codeX"><use href="#icon-x"/></svg>
+            <span class="code-indicator loading" id="codeLoading"></span>
+          </div>
+          <div class="code-status" id="codeStatus"></div>
+          <div class="field-error">Please enter a code.</div>
+        </div>
+
+        <div class="field" id="field-industry">
+          <label for="industry">Industry</label>
+          <select id="industry" name="industry" required>
+            <option value="" disabled selected>Choose your industry...</option>
+            <option value="general">General</option>
+            <option value="real_estate">Real Estate Agent</option>
+            <option value="local_service">Local Service Business</option>
+            <option value="restaurant">Restaurant / Cafe</option>
+            <option value="health_wellness">Health &amp; Wellness</option>
+            <option value="professional_services">Professional Services</option>
+            <option value="ecommerce">E-Commerce</option>
+            <option value="creative_agency">Creative / Agency</option>
+          </select>
+          <div class="field-error">Please select your industry.</div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Create My Account</button>
+        <div class="form-error" id="formError"></div>
+      </form>
+
+      <div class="footer-link">
+        Already have an account? <a href="/beacon">Sign in &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Success screen -->
+    <div class="card success" id="successCard">
+      <div class="success-check">
+        <svg><use href="#icon-check-big"/></svg>
+      </div>
+      <h2 id="successGreeting">Welcome to Beacon!</h2>
+      <div class="success-trial" id="successTrial">Your trial runs through <strong>—</strong></div>
+
+      <div class="referral-card">
+        <div class="referral-label">Your Referral Code</div>
+        <div class="referral-code-row">
+          <div class="referral-code" id="referralCode">—</div>
+          <button type="button" class="copy-btn" id="copyBtn" aria-label="Copy referral code">
+            <svg><use href="#icon-copy"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="share-note">
+        Share this code with friends — they get 1 month free, and so do you!
+      </div>
+
+      <a href="/beacon" class="dash-btn">Go to Dashboard &rarr;</a>
+    </div>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+
+  // -------- Elements --------
+  const form = document.getElementById('signupForm');
+  const signupCard = document.getElementById('signupCard');
+  const successCard = document.getElementById('successCard');
+  const submitBtn = document.getElementById('submitBtn');
+  const formError = document.getElementById('formError');
+
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const confirmInput = document.getElementById('confirm');
+  const codeInput = document.getElementById('code');
+  const industrySelect = document.getElementById('industry');
+
+  const codeCheck = document.getElementById('codeCheck');
+  const codeX = document.getElementById('codeX');
+  const codeLoading = document.getElementById('codeLoading');
+  const codeStatus = document.getElementById('codeStatus');
+
+  // -------- Helpers --------
+  function setFieldError(fieldId, hasError) {
+    const f = document.getElementById(fieldId);
+    if (!f) return;
+    f.classList.toggle('has-error', !!hasError);
+  }
+
+  function showFormError(msg) {
+    formError.textContent = msg;
+    formError.classList.add('visible');
+  }
+  function clearFormError() {
+    formError.textContent = '';
+    formError.classList.remove('visible');
+  }
+
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  async function sha256Hex(str) {
+    const enc = new TextEncoder().encode(str);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  // -------- Code validation (debounced) --------
+  let codeDebounceTimer = null;
+  let codeAbortController = null;
+  let lastValidatedCode = null;
+  let lastValidationResult = null;
+  let codeValidationDisabled = false;
+
+  function hideCodeIndicators() {
+    codeCheck.classList.remove('visible');
+    codeX.classList.remove('visible');
+    codeLoading.classList.remove('visible');
+    codeStatus.classList.remove('visible', 'valid', 'invalid');
+    codeStatus.textContent = '';
+  }
+
+  function showCodeLoading() {
+    hideCodeIndicators();
+    codeLoading.classList.add('visible');
+  }
+
+  function showCodeValid(message) {
+    hideCodeIndicators();
+    codeCheck.classList.add('visible');
+    codeStatus.classList.add('visible', 'valid');
+    codeStatus.textContent = message;
+  }
+
+  function showCodeInvalid(message) {
+    hideCodeIndicators();
+    codeX.classList.add('visible');
+    codeStatus.classList.add('visible', 'invalid');
+    codeStatus.textContent = message || 'Invalid code.';
+  }
+
+  async function validateCode(rawCode) {
+    const code = (rawCode || '').trim().toUpperCase();
+    if (!code) {
+      hideCodeIndicators();
+      lastValidatedCode = null;
+      lastValidationResult = null;
+      return;
+    }
+    if (codeValidationDisabled) return;
+    if (code === lastValidatedCode) return;
+
+    if (codeAbortController) codeAbortController.abort();
+    codeAbortController = new AbortController();
+
+    showCodeLoading();
+    try {
+      const res = await fetch('/api/beacon/signup?action=validate_code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+        signal: codeAbortController.signal
+      });
+
+      if (res.status === 404 || res.status === 405) {
+        // Endpoint not implemented — skip live validation.
+        codeValidationDisabled = true;
+        hideCodeIndicators();
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.valid === false) {
+        lastValidatedCode = code;
+        lastValidationResult = { valid: false };
+        showCodeInvalid(data.error || data.message || 'Invalid code.');
+        return;
+      }
+
+      lastValidatedCode = code;
+      lastValidationResult = { valid: true, type: data.code_type, ...data };
+
+      if (data.code_type === 'trial') {
+        const weeks = data.trial_weeks || 6;
+        showCodeValid(`Valid trial code — ${weeks}-week trial`);
+      } else if (data.code_type === 'referral') {
+        const referrer = data.referrer_name || data.referred_by || 'a friend';
+        showCodeValid(`Valid referral — 1 month free, referred by ${referrer}`);
+      } else {
+        showCodeValid('Valid code!');
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      // Network or other error — silently skip live validation.
+      hideCodeIndicators();
+    }
+  }
+
+  codeInput.addEventListener('input', () => {
+    setFieldError('field-code', false);
+    clearFormError();
+    hideCodeIndicators();
+    lastValidatedCode = null;
+    lastValidationResult = null;
+    if (codeDebounceTimer) clearTimeout(codeDebounceTimer);
+    const val = codeInput.value;
+    if (!val.trim()) return;
+    codeDebounceTimer = setTimeout(() => validateCode(val), 500);
+  });
+
+  // Clear field errors as user types
+  [nameInput, emailInput, passwordInput, confirmInput, industrySelect].forEach(el => {
+    el.addEventListener('input', () => {
+      const wrap = el.closest('.field');
+      if (wrap) wrap.classList.remove('has-error');
+      clearFormError();
+    });
+    el.addEventListener('change', () => {
+      const wrap = el.closest('.field');
+      if (wrap) wrap.classList.remove('has-error');
+    });
+  });
+
+  // -------- Submit --------
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFormError();
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const confirm = confirmInput.value;
+    const code = codeInput.value.trim().toUpperCase();
+    const industry = industrySelect.value;
+
+    let hasError = false;
+
+    if (!name) { setFieldError('field-name', true); hasError = true; }
+    if (!email || !isValidEmail(email)) { setFieldError('field-email', true); hasError = true; }
+    if (!password || password.length < 8) { setFieldError('field-password', true); hasError = true; }
+    if (!confirm || confirm !== password) {
+      setFieldError('field-confirm', true);
+      const errEl = document.querySelector('#field-confirm .field-error');
+      if (errEl) errEl.textContent = !confirm ? 'Please confirm your password.' : 'Passwords do not match.';
+      hasError = true;
+    }
+    if (!code) { setFieldError('field-code', true); hasError = true; }
+    if (!industry) { setFieldError('field-industry', true); hasError = true; }
+
+    if (hasError) {
+      showFormError('Please fix the fields above.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating your account...';
+
+    try {
+      const password_hash = await sha256Hex(password);
+
+      const res = await fetch('/api/beacon/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password_hash, code, industry })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.success === false) {
+        const msg = (data && (data.error || data.message)) || 'Sign-up failed. Please check your info and try again.';
+        const lower = (msg || '').toLowerCase();
+        if (lower.includes('code') || lower.includes('invalid') || lower.includes('expired')) {
+          setFieldError('field-code', true);
+          const errEl = document.querySelector('#field-code .field-error');
+          if (errEl) errEl.textContent = msg;
+        } else if (lower.includes('email')) {
+          setFieldError('field-email', true);
+          const errEl = document.querySelector('#field-email .field-error');
+          if (errEl) errEl.textContent = msg;
+        }
+        showFormError(msg);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create My Account';
+        return;
+      }
+
+      showSuccess(name, data);
+    } catch (err) {
+      showFormError('Network error. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create My Account';
+    }
+  });
+
+  // -------- Success screen --------
+  function formatTrialEnd(sub, codeType, trialWeeks) {
+    let end = sub && (sub.trial_ends_at || sub.trial_end || sub.current_period_end || sub.expires_at);
+    let d;
+    if (end) {
+      d = new Date(end);
+      if (isNaN(d.getTime())) d = null;
+    }
+    if (!d) {
+      const weeks = (codeType === 'referral') ? 4 : (trialWeeks || 6);
+      d = new Date();
+      d.setDate(d.getDate() + weeks * 7);
+    }
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function showSuccess(name, data) {
+    const sub = data.subscription || {};
+    const codeType = data.code_type || (sub.code_type) || 'trial';
+    const trialWeeks = data.trial_weeks || 6;
+    const referral = sub.referral_code || sub.referralCode || data.referral_code || '—';
+    const trialEnd = formatTrialEnd(sub, codeType, trialWeeks);
+
+    document.getElementById('successGreeting').textContent = `Welcome to Beacon, ${name.split(' ')[0]}!`;
+    const trialEl = document.getElementById('successTrial');
+    trialEl.innerHTML = `Your trial runs through <strong>${trialEnd}</strong>`;
+    document.getElementById('referralCode').textContent = referral;
+
+    signupCard.style.display = 'none';
+    successCard.classList.add('visible');
+
+    // Scroll to top for the success state
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // -------- Copy referral code --------
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const code = document.getElementById('referralCode').textContent.trim();
+    if (!code || code === '—') return;
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch (_) {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+    }
+    copyBtn.classList.add('copied');
+    setTimeout(() => copyBtn.classList.remove('copied'), 1600);
+  });
+
+})();
+</script>
+</body>
+</html>

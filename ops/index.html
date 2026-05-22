@@ -169,7 +169,7 @@
       <div style="overflow-x:auto;">
         <table class="ops-table">
           <thead><tr>
-            <th>Site</th><th>Template</th><th>Status</th><th>Analytics</th><th>Plan</th><th>MRR</th><th>Owner</th><th>Actions</th>
+            <th>Site</th><th>Template</th><th>Status</th><th>Analytics</th><th>Automation</th><th>Plan</th><th>MRR</th><th>Owner</th><th>Actions</th>
           </tr></thead>
           <tbody id="sitesBody"></tbody>
         </table>
@@ -376,18 +376,34 @@
     var pass = document.getElementById('loginPass').value;
     var err = document.getElementById('loginError');
     if (!user || !pass) { err.textContent = 'Enter credentials'; err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    var btn = document.querySelector('.login-box button');
+    if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+    function reset() { if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; } }
+    function fail(msg) { err.textContent = msg; err.style.display = 'block'; reset(); }
 
     hashPw(pass).then(function(hash) {
-      fetch('/api/users?action=login', {
+      return fetch('/api/users?action=login', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: user, password_hash: hash })
-      }).then(function(r) { return r.json(); }).then(function(data) {
-        if (data.error) { err.textContent = data.error; err.style.display = 'block'; return; }
-        if (data.role !== 'senior') { err.textContent = 'Ops is restricted to senior admins'; err.style.display = 'block'; return; }
+      }).then(function(r) {
+        // Surface non-JSON / 5xx responses (common when vercel dev is cold or
+        // re-bundling a function) instead of failing silently.
+        return r.text().then(function(t) {
+          var data; try { data = JSON.parse(t); } catch (e) { data = null; }
+          if (!data) throw new Error('Server returned ' + r.status + ' (try again in a moment — the dev server may be warming up)');
+          return data;
+        });
+      }).then(function(data) {
+        if (data.error) return fail(data.error);
+        if (data.role !== 'senior') return fail('Ops is restricted to senior admins');
         currentUser = data;
         sessionStorage.setItem('ops_user', JSON.stringify(data));
+        reset();
         showOps();
       });
+    }).catch(function(e) {
+      fail((e && e.message) ? e.message : 'Login failed — check your connection and try again.');
     });
   }
 
@@ -463,7 +479,7 @@
   // === SITES ===
   function renderSites() {
     var body = document.getElementById('sitesBody');
-    if (!_sites.length) { body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#334155;">No sites registered yet.</td></tr>'; return; }
+    if (!_sites.length) { body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#334155;">No sites registered yet.</td></tr>'; return; }
     body.innerHTML = _sites.map(function(s) {
       return '<tr>' +
         '<td><strong style="color:#fff;">' + s.site_name + '</strong><br><span style="font-size:.7rem;color:#475569;">' + (s.domain || s.slug) + '</span></td>' +
@@ -474,6 +490,7 @@
           '<option value="archived"' + (s.status==='archived'?' selected':'') + '>Archived</option>' +
         '</select></td>' +
         '<td><label class="toggle"><input type="checkbox"' + (s.analytics_enabled ? ' checked' : '') + ' onchange="updateSite(' + s.id + ',\'analytics_enabled\',this.checked)"><span class="slider"></span></label></td>' +
+        '<td>' + automationCell(s) + '</td>' +
         '<td>' + (s.hosting_plan || '—') + '</td>' +
         '<td>$' + Number(s.monthly_revenue || 0).toLocaleString() + '</td>' +
         '<td>' + (s.owner || '—') + '</td>' +
@@ -491,6 +508,57 @@
     body[field] = value;
     fetch('/api/sites?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       .then(function() { loadAll(); });
+  }
+
+  // === BUSINESS AUTOMATION (per-site, stored in site_config) ===
+  function siteCfg(s) {
+    var c = s.site_config || {};
+    if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
+    return c;
+  }
+  function automationCell(s) {
+    var c = siteCfg(s), f = c.features || {};
+    var on = ['booking','aiChat','leadAutoReply','reviewRequests'].filter(function(k){ return f[k]; }).length;
+    var label = on ? (on + '/4 on') : 'Off';
+    var color = on ? '#16a34a' : '#475569';
+    return '<button onclick="openAutomation(' + s.id + ')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:3px 9px;color:' + color + ';font-size:.72rem;cursor:pointer;">&#9881; ' + label + '</button>';
+  }
+  function openAutomation(id) {
+    var s = _sites.find(function(x){ return x.id === id; });
+    if (!s) return;
+    var c = siteCfg(s), f = c.features || {}, a = c.automation || {};
+    document.getElementById('autoSiteId').value = id;
+    document.getElementById('autoSiteName').textContent = s.site_name;
+    document.getElementById('autoBooking').checked = !!f.booking;
+    document.getElementById('autoChat').checked = !!f.aiChat;
+    document.getElementById('autoLead').checked = !!f.leadAutoReply;
+    document.getElementById('autoReview').checked = !!f.reviewRequests;
+    document.getElementById('autoCalendly').value = a.calendlyUrl || '';
+    document.getElementById('autoReviewUrl').value = (a.reviewRequest && a.reviewRequest.reviewUrl) || '';
+    document.getElementById('autoGreeting').value = (a.chat && a.chat.greeting) || '';
+    document.getElementById('autoModal').style.display = 'flex';
+  }
+  function closeAutomation() { document.getElementById('autoModal').style.display = 'none'; }
+  function saveAutomation() {
+    var id = +document.getElementById('autoSiteId').value;
+    var payload = {
+      automation: {
+        features: {
+          booking: document.getElementById('autoBooking').checked,
+          aiChat: document.getElementById('autoChat').checked,
+          leadAutoReply: document.getElementById('autoLead').checked,
+          reviewRequests: document.getElementById('autoReview').checked
+        },
+        config: {
+          calendlyUrl: document.getElementById('autoCalendly').value.trim(),
+          chat: { greeting: document.getElementById('autoGreeting').value.trim() },
+          reviewRequest: { reviewUrl: document.getElementById('autoReviewUrl').value.trim() }
+        }
+      }
+    };
+    fetch('/api/sites?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function(r){ return r.json(); })
+      .then(function(){ closeAutomation(); loadAll(); });
   }
 
   function deleteSiteConfirm(id) {
@@ -922,5 +990,48 @@
     }).join('');
   }
 </script>
+
+<!-- BUSINESS AUTOMATION MODAL -->
+<div id="autoModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(8,12,22,.7);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#111827;border:1px solid rgba(91,141,239,.18);border-radius:14px;width:100%;max-width:460px;max-height:90vh;overflow:auto;padding:22px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;color:#fff;margin:0;">Business Automation</h3>
+      <button onclick="closeAutomation()" style="background:none;border:none;color:#64748b;font-size:22px;cursor:pointer;line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:.75rem;color:#64748b;margin:0 0 16px;"><span id="autoSiteName"></span> — switch features on, then fill the fields they need.</p>
+    <input type="hidden" id="autoSiteId">
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;color:#e2e8f0;">
+        <span>Online booking <span style="color:#475569;font-size:.72rem;">(needs Calendly URL)</span></span>
+        <span class="toggle"><input type="checkbox" id="autoBooking"><span class="slider"></span></span>
+      </label>
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;color:#e2e8f0;">
+        <span>AI popup chat <span style="color:#475569;font-size:.72rem;">(site must be registered)</span></span>
+        <span class="toggle"><input type="checkbox" id="autoChat"><span class="slider"></span></span>
+      </label>
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;color:#e2e8f0;">
+        <span>Lead capture auto-reply</span>
+        <span class="toggle"><input type="checkbox" id="autoLead"><span class="slider"></span></span>
+      </label>
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;color:#e2e8f0;">
+        <span>Review-request emails <span style="color:#475569;font-size:.72rem;">(needs review URL)</span></span>
+        <span class="toggle"><input type="checkbox" id="autoReview"><span class="slider"></span></span>
+      </label>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:18px 0;"></div>
+
+    <div class="ops-field"><label>Calendly URL</label><input type="text" id="autoCalendly" placeholder="https://calendly.com/business/30min"></div>
+    <div class="ops-field"><label>Google review URL</label><input type="text" id="autoReviewUrl" placeholder="https://g.page/r/..."></div>
+    <div class="ops-field"><label>Chat greeting</label><input type="text" id="autoGreeting" placeholder="Hi! Ask us anything about our services."></div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;">
+      <button class="ops-btn secondary" onclick="closeAutomation()">Cancel</button>
+      <button class="ops-btn" onclick="saveAutomation()">Save</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -111,7 +111,7 @@ function buildEmail(type, sub) {
   if (type === 'trial_week') {
     return {
       subject: '7 days left on your Beacon trial',
-      body: 'Hi ' + firstName + ',\n\nYour 6-week trial ends on ' + trialEnd + '. After that, your Beacon workspace goes read-only until you activate a paid plan.\n\nHere\'s what happens:\n\n✓ Your context and content history stay safe for 30 days\n⏸ New content generation, chat, and automated tasks pause\n✗ After 30 days of inactivity: everything is deleted\n\nThree ways to continue:\n\n1. Subscribe — Plans start at $129/mo annual ($149 quarterly, $169 monthly)\n2. Refer a friend — You earn a free month for each signup\n3. Extend trial — Reply and tell us why you need more time\n\n→ Activate Subscription: ' + subscribeLink + '\n\n— Pete'
+      body: 'Hi ' + firstName + ',\n\nYour 6-week trial ends on ' + trialEnd + '. After that, your Beacon workspace goes read-only until you activate a paid plan.\n\nHere\'s what happens:\n\n✓ Your context and content history stay safe for 30 days\n⏸ New content generation, chat, and automated tasks pause\n✗ After 30 days of inactivity: everything is deleted\n\nThree ways to continue:\n\n1. Subscribe — Plans start at $89/mo on a 6-month commit (or $129/mo month-to-month)\n2. Refer a friend — You earn a free month for each signup\n3. Extend trial — Reply and tell us why you need more time\n\n→ Activate Subscription: ' + subscribeLink + '\n\n— Pete'
     };
   }
 

@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summit Realty Group × Polaris Point — Marketing System Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space:#050D1E;
+      --space-2:#0B1733;
+      --blue:#5B8DEF;
+      --gold:#E8C547;
+      --green:#22c55e;
+      --amber:#f59e0b;
+      --purple:#a78bfa;
+      --pink:#ec4899;
+      --text:#e8edf5;
+      --muted:#8c9ab1;
+      --dim:#475569;
+      --border:rgba(91,141,239,.14);
+      --surface:rgba(15,25,55,.55);
+      --surface-2:rgba(15,25,55,.32);
+    }
+    * { box-sizing:border-box; margin:0; }
+
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Inter',sans-serif;
+      background:var(--space);
+      color:var(--text);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; color:#fff; line-height:1.18; font-weight:700; letter-spacing:-.3px; }
+    a { color:inherit; }
+
+    /* ===== LAYOUT ===== */
+    .wrap { max-width:1040px; margin:0 auto; padding:0 28px; }
+    .band { position:relative; padding:64px 0; }
+    .band.tight { padding:44px 0; }
+    .band-alt { background:linear-gradient(180deg, rgba(11,23,51,.5) 0%, rgba(5,13,30,0) 100%); }
+
+    .kicker {
+      display:inline-block;
+      font-size:.66rem; text-transform:uppercase; letter-spacing:2.5px;
+      color:var(--blue); font-weight:700;
+      background:rgba(91,141,239,.10);
+      padding:5px 12px; border-radius:6px;
+      margin-bottom:14px;
+    }
+    .kicker.gold { color:var(--gold); background:rgba(232,197,71,.10); }
+    .section-title { font-size:1.85rem; margin-bottom:10px; }
+    .section-title .accent { color:var(--gold); }
+    .section-lede { color:var(--muted); font-size:1rem; max-width:64ch; }
+
+    /* ===== STICKY NAV ===== */
+    .nav {
+      position:sticky; top:0; z-index:50;
+      background:rgba(5,13,30,.82);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav .wrap { display:flex; align-items:center; justify-content:space-between; padding-top:12px; padding-bottom:12px; }
+    .nav .brand { display:flex; align-items:center; gap:9px; }
+    .nav .brand svg { width:20px; height:20px; filter:drop-shadow(0 0 5px rgba(91,141,239,.5)); }
+    .nav .brand .n { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem; letter-spacing:1.5px; }
+    .nav .brand .by { font-size:.6rem; color:var(--dim); letter-spacing:.5px; }
+    .nav .links { display:flex; gap:22px; }
+    .nav .links a { font-size:.78rem; color:var(--muted); text-decoration:none; font-weight:500; transition:color .15s; }
+    .nav .links a:hover { color:#fff; }
+    .nav .pdf-btn {
+      background:var(--blue); color:#fff; border:none; border-radius:7px;
+      padding:8px 14px; font-family:'Inter',sans-serif; font-size:.74rem; font-weight:600; cursor:pointer;
+    }
+    .nav .pdf-btn:hover { background:#4A7DE0; }
+
+    /* ===== HERO ===== */
+    .hero { position:relative; overflow:hidden; padding:80px 0 70px; text-align:center; }
+    .hero::before {
+      content:""; position:absolute; top:-30%; left:50%; transform:translateX(-50%);
+      width:900px; height:700px;
+      background:radial-gradient(ellipse at center, rgba(91,141,239,.16) 0%, transparent 60%);
+      filter:blur(40px); pointer-events:none;
+    }
+    .starfield {
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background-image:
+        radial-gradient(2px 2px at 12% 18%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(2px 2px at 82% 12%, rgba(91,141,239,.7) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 92% 40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 6% 55%, rgba(232,197,71,.55) 0%, transparent 100%),
+        radial-gradient(2px 2px at 70% 70%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 30% 80%, rgba(91,141,239,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 48% 30%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 42%, rgba(255,255,255,.35) 0%, transparent 100%);
+    }
+    .hero .wrap { position:relative; z-index:1; }
+    .hero .cobrand {
+      display:inline-flex; align-items:center; gap:14px;
+      margin-bottom:24px;
+      padding:8px 18px;
+      border:1px solid var(--border); border-radius:999px;
+      background:rgba(15,25,55,.4);
+    }
+    .hero .cobrand .star { width:20px; height:20px; }
+    .hero .cobrand .sep { width:1px; height:18px; background:var(--border); }
+    .hero .cobrand span { font-size:.78rem; font-weight:600; color:var(--muted); letter-spacing:.5px; }
+    .hero .cobrand .summit { color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; }
+    .hero h1 { font-size:2.9rem; margin-bottom:16px; }
+    .hero h1 .accent { color:var(--gold); }
+    .hero .lede { color:var(--muted); font-size:1.12rem; max-width:60ch; margin:0 auto 26px; }
+    .hero .hero-stats { display:flex; gap:34px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
+    .hero .hero-stats .hs .n { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.6rem; color:#fff; }
+    .hero .hero-stats .hs .n.gold { color:var(--gold); }
+    .hero .hero-stats .hs .l { font-size:.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-top:2px; }
+    .badge-dummy {
+      display:inline-block; margin-top:22px;
+      font-size:.62rem; text-transform:uppercase; letter-spacing:1.5px;
+      color:var(--amber); font-weight:600;
+      border:1px dashed rgba(245,158,11,.4); border-radius:6px;
+      padding:4px 10px;
+    }
+
+    /* ===== ARCHITECTURE (Beacon) ===== */
+    .arch { margin-top:32px; }
+    .brain {
+      background:linear-gradient(160deg, rgba(232,197,71,.10) 0%, rgba(91,141,239,.08) 100%);
+      border:1px solid rgba(232,197,71,.28);
+      border-radius:16px;
+      padding:22px 24px;
+      position:relative;
+    }
+    .brain .brain-label {
+      position:absolute; top:-11px; left:24px;
+      font-size:.62rem; text-transform:uppercase; letter-spacing:2px; font-weight:700;
+      color:var(--gold); background:var(--space); padding:2px 10px; border-radius:5px;
+      border:1px solid rgba(232,197,71,.28);
+    }
+    .brain h3 { font-size:1.1rem; margin-bottom:4px; }
+    .brain p.sub { color:var(--muted); font-size:.84rem; margin-bottom:16px; max-width:70ch; }
+    .brain-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .truth {
+      background:rgba(5,13,30,.5); border:1px solid var(--border); border-radius:9px;
+      padding:11px 13px;
+    }
+    .truth .ic { font-size:.8rem; margin-bottom:5px; }
+    .truth h4 { font-size:.76rem; margin-bottom:2px; }
+    .truth p { font-size:.68rem; color:var(--muted); line-height:1.45; }
+
+    .flow-arrows {
+      display:flex; justify-content:center; gap:120px;
+      margin:6px 0 -6px; padding:14px 0 0;
+    }
+    .flow-arrows .arrow {
+      color:var(--blue); font-size:1.4rem; opacity:.5;
+    }
+    .conn-note { text-align:center; font-size:.66rem; color:var(--dim); text-transform:uppercase; letter-spacing:1.5px; margin:14px 0; font-weight:600; }
+
+    .workspaces { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .ws {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:16px;
+    }
+    .ws .ws-head { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+    .ws .ws-av {
+      width:30px; height:30px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.72rem; color:#fff;
+    }
+    .ws .ws-name { font-size:.8rem; font-weight:700; color:#fff; }
+    .ws .ws-role { font-size:.62rem; color:var(--blue); text-transform:uppercase; letter-spacing:.8px; font-weight:600; }
+    .ws ul { list-style:none; }
+    .ws ul li {
+      font-size:.7rem; color:var(--muted); padding:4px 0 4px 16px; position:relative; line-height:1.4;
+    }
+    .ws ul li::before { content:"+"; position:absolute; left:0; color:var(--green); font-weight:700; }
+    .ws .ws-tag { font-size:.62rem; color:var(--dim); margin-top:8px; font-style:italic; }
+
+    /* ===== IG / ARMADILLO ===== */
+    .ig-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:16px;
+      overflow:hidden; margin-top:30px;
+    }
+    .ig-head {
+      display:flex; align-items:center; gap:20px;
+      padding:22px 24px;
+      background:linear-gradient(135deg, rgba(236,72,153,.10) 0%, rgba(245,158,11,.08) 50%, rgba(91,141,239,.08) 100%);
+      border-bottom:1px solid var(--border);
+    }
+    .ig-avatar {
+      width:74px; height:74px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg, var(--pink), var(--amber), var(--blue));
+      padding:3px;
+    }
+    .ig-avatar .inner {
+      width:100%; height:100%; border-radius:50%;
+      background:var(--space-2);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .ig-avatar .inner svg { width:34px; height:34px; }
+    .ig-id { flex:1; }
+    .ig-id .handle { display:flex; align-items:center; gap:10px; }
+    .ig-id .handle .h { font-family:'Space Grotesk',sans-serif; font-size:1.05rem; font-weight:700; color:#fff; }
+    .ig-id .handle .verified { color:var(--blue); font-size:.9rem; }
+    .ig-id .handle .follow-btn { font-size:.66rem; background:var(--blue); color:#fff; padding:4px 12px; border-radius:6px; font-weight:600; }
+    .ig-id .bio { font-size:.76rem; color:var(--muted); margin-top:4px; line-height:1.5; }
+    .ig-counts { display:flex; gap:28px; margin-top:12px; }
+    .ig-counts .c .n { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; color:#fff; }
+    .ig-counts .c .l { font-size:.66rem; color:var(--muted); }
+
+    .metrics-band { padding:22px 24px; }
+    .metric-tiles { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+    .mt {
+      background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:13px 15px;
+    }
+    .mt .label { font-size:.62rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-weight:600; }
+    .mt .val { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.45rem; color:#fff; margin-top:3px; }
+    .mt .val.gold { color:var(--gold); }
+    .mt .val.green { color:var(--green); }
+    .mt .delta { font-size:.66rem; font-weight:600; margin-top:1px; }
+    .mt .delta.up { color:var(--green); }
+
+    .metric-cols { display:grid; grid-template-columns:1.1fr 1fr; gap:16px; }
+    .panel {
+      background:linear-gradient(160deg, var(--space-2) 0%, #0a142b 100%);
+      border:1px solid var(--border); border-radius:12px; padding:16px;
+    }
+    .panel-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.82rem; color:#fff; margin-bottom:3px; }
+    .panel-meta { font-size:.62rem; color:var(--dim); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:12px; }
+
+    /* growth bars */
+    .bars { display:flex; align-items:flex-end; gap:5px; height:96px; }
+    .bars .bar { flex:1; background:linear-gradient(180deg, var(--blue), rgba(91,141,239,.25)); border-radius:3px 3px 0 0; min-height:6px; position:relative; }
+    .bars .bar.peak { background:linear-gradient(180deg, var(--gold), rgba(232,197,71,.3)); }
+    .bars-axis { display:flex; justify-content:space-between; font-size:.55rem; color:var(--dim); margin-top:6px; text-transform:uppercase; letter-spacing:.5px; }
+
+    /* heatmap */
+    .heatmap { display:grid; grid-template-columns:32px repeat(7,1fr); gap:3px; font-size:.55rem; }
+    .heatmap .day { color:var(--muted); text-align:right; padding-right:4px; line-height:15px; font-weight:600; }
+    .heatmap .hr { height:15px; border-radius:3px; background:rgba(91,141,239,.08); }
+    .heatmap .hr.l1 { background:rgba(91,141,239,.2); }
+    .heatmap .hr.l2 { background:rgba(91,141,239,.35); }
+    .heatmap .hr.l3 { background:rgba(232,197,71,.45); }
+    .heatmap .hr.l4 { background:rgba(232,197,71,.72); }
+    .heatmap .hr.l5 { background:rgba(232,197,71,.98); }
+    .heatmap-axis { display:grid; grid-template-columns:32px repeat(7,1fr); gap:3px; font-size:.5rem; color:var(--dim); margin-top:4px; }
+    .heatmap-axis span { text-align:center; }
+
+    .insight { font-size:.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+    .insight strong { color:#fff; }
+
+    /* top posts */
+    .posts-band { padding:0 24px 24px; }
+    .posts-head { display:flex; align-items:baseline; justify-content:space-between; margin:6px 0 14px; }
+    .posts-head h3 { font-size:.95rem; }
+    .posts-head .meta { font-size:.64rem; color:var(--dim); text-transform:uppercase; letter-spacing:1.2px; }
+    .posts-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+    .post {
+      background:var(--surface-2); border:1px solid var(--border); border-radius:11px; overflow:hidden;
+    }
+    .post .img {
+      height:96px; position:relative;
+      display:flex; align-items:flex-end; padding:8px;
+    }
+    .post .img .type { font-size:.56rem; text-transform:uppercase; letter-spacing:1px; font-weight:700; color:#fff; background:rgba(0,0,0,.35); padding:2px 7px; border-radius:5px; backdrop-filter:blur(4px); }
+    .post .img .vscore {
+      position:absolute; top:8px; right:8px;
+      font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.7rem; color:#0B1120;
+      background:var(--gold); border-radius:6px; padding:2px 7px;
+    }
+    .post .cap { padding:10px 11px; }
+    .post .cap .txt { font-size:.68rem; color:var(--text); line-height:1.4; height:38px; overflow:hidden; }
+    .post .cap .eng { display:flex; gap:12px; margin-top:8px; font-size:.64rem; color:var(--muted); font-weight:600; }
+    .post .cap .eng .heart { color:var(--pink); }
+
+    /* trending */
+    .trend-list { margin-top:2px; }
+    .trend-item { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-top:1px solid rgba(91,141,239,.08); font-size:.74rem; }
+    .trend-item:first-child { border-top:none; }
+    .trend-item .topic { color:#fff; font-weight:600; }
+    .trend-item .topic .tag { color:var(--blue); font-weight:500; font-size:.68rem; }
+    .trend-item .score { font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--gold); }
+    .trend-item .delta { color:var(--green); font-size:.64rem; font-weight:600; margin-left:6px; }
+
+    /* ===== ROI STRIP ===== */
+    .roi { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:28px; }
+    .roi .r { text-align:center; padding:18px 12px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+    .roi .r .n { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.9rem; color:var(--gold); }
+    .roi .r .l { font-size:.72rem; color:var(--muted); margin-top:4px; line-height:1.4; }
+
+    /* ===== CTA ===== */
+    .cta-band { text-align:center; padding:60px 0; position:relative; overflow:hidden; }
+    .cta-band::before {
+      content:""; position:absolute; inset:0;
+      background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(232,197,71,.10) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .cta-band .wrap { position:relative; z-index:1; }
+    .cta-band h2 { font-size:2rem; margin-bottom:12px; }
+    .cta-band h2 .accent { color:var(--gold); }
+    .cta-band p { color:var(--muted); font-size:1rem; max-width:54ch; margin:0 auto 24px; }
+    .cta-band .url { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.3rem; color:var(--gold); letter-spacing:1px; }
+    .cta-band .contact { color:var(--muted); font-size:.85rem; margin-top:4px; }
+
+    /* ===== FOOTER ===== */
+    .foot { border-top:1px solid var(--border); padding:24px 0; }
+    .foot .wrap { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .foot .brand { display:flex; align-items:center; gap:9px; }
+    .foot .brand svg { width:18px; height:18px; }
+    .foot .brand .n { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.8rem; letter-spacing:1.5px; }
+    .foot .small { font-size:.66rem; color:var(--dim); }
+
+    /* ===== FIELD NOTES / JOURNAL ===== */
+    .journal-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:28px; }
+    .note {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:18px 20px;
+    }
+    .note .note-meta {
+      display:flex; justify-content:space-between;
+      font-size:.62rem; text-transform:uppercase; letter-spacing:1.2px;
+      color:var(--dim); font-weight:600; margin-bottom:10px;
+    }
+    .note .note-meta .nb { color:var(--blue); }
+    .note h3 {
+      font-family:'Space Grotesk',sans-serif; font-size:1rem; line-height:1.3;
+      margin-bottom:8px; color:#fff;
+    }
+    .note p { font-size:.78rem; color:var(--muted); line-height:1.55; margin-bottom:12px; }
+    .note .note-stats { display:flex; gap:18px; padding-top:10px; border-top:1px solid rgba(91,141,239,.1); }
+    .note .note-stats .ns .n { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.95rem; color:var(--gold); }
+    .note .note-stats .ns .l { font-size:.58rem; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); }
+    .note .readmore { display:inline-block; margin-top:12px; font-size:.7rem; font-weight:600; color:var(--blue); }
+    .journal-foot {
+      margin-top:16px; font-size:.74rem; color:var(--muted); text-align:center;
+      padding:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+    }
+    .journal-foot strong { color:#fff; }
+
+    /* ===== STILLS GALLERY ===== */
+    .stills { margin-top:28px; display:flex; flex-direction:column; gap:20px; }
+    .still-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      overflow:hidden;
+    }
+    .still-card .still-cap {
+      display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+      padding:11px 16px; border-bottom:1px solid var(--border);
+      background:rgba(5,13,30,.5);
+    }
+    .still-card .still-cap .t { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.82rem; color:#fff; }
+    .still-card .still-cap .d { font-size:.68rem; color:var(--muted); }
+    .still-card img { display:block; width:100%; height:auto; }
+    .stills-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .stills-note {
+      font-size:.7rem; color:var(--dim); text-align:center; margin-top:4px; font-style:italic;
+    }
+    /* themed agent-site grid */
+    .sites-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:28px; }
+    /* Beacon → site mapping callout */
+    .beacon-map {
+      margin-top:18px;
+      background:linear-gradient(135deg, rgba(232,197,71,.10), rgba(91,141,239,.08));
+      border:1px solid rgba(232,197,71,.22); border-radius:12px;
+      padding:16px 20px;
+    }
+    .beacon-map .bm-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.85rem; color:#fff; margin-bottom:10px; }
+    .beacon-map .bm-title .accent { color:var(--gold); }
+    .beacon-map .bm-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .beacon-map .bm-item { font-size:.72rem; color:var(--muted); line-height:1.4; padding-left:14px; position:relative; }
+    .beacon-map .bm-item::before { content:"→"; position:absolute; left:0; color:var(--blue); font-weight:700; }
+    .beacon-map .bm-item strong { color:#fff; display:block; font-size:.74rem; }
+    .beacon-map .bm-foot { font-size:.72rem; color:var(--muted); margin-top:12px; padding-top:10px; border-top:1px solid rgba(232,197,71,.15); }
+    .beacon-map .bm-foot strong { color:#fff; }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:880px){
+      .brain-grid,.workspaces,.metric-tiles,.posts-grid,.roi,.journal-grid,.stills-row,.sites-grid { grid-template-columns:1fr 1fr; }
+      .metric-cols,.beacon-map .bm-row { grid-template-columns:1fr 1fr; }
+      .nav .links { display:none; }
+      .hero h1 { font-size:2.1rem; }
+    }
+    @media(max-width:520px){
+      .brain-grid,.workspaces,.metric-tiles,.posts-grid,.roi,.journal-grid,.stills-row,.sites-grid,.beacon-map .bm-row { grid-template-columns:1fr; }
+    }
+
+    /* ===== PRINT / PDF =====
+       Dark theme is preserved in print — this is a digital leave-behind, and the
+       layout is built light-on-dark. Forcing a white page hides the light text. */
+    @page { size:8.5in 11in; margin:0.45in; }
+    @media print {
+      html, body { background:var(--space) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
+      .nav, .badge-dummy { display:none !important; }
+      .wrap { max-width:none; padding:0 0.1in; }
+      .band, .band.tight, .hero, .cta-band { padding:22px 0 !important; }
+      /* drop only the big blur halos (they band badly in print); keep section bgs */
+      .hero::before, .cta-band::before { display:none !important; }
+      /* let bands flow across pages, but never split these blocks mid-element.
+         .ig-card / .brain are taller than a page, so they're allowed to break;
+         their inner panels/cards carry the avoid rule instead. */
+      .note, .still-card, .panel, .roi .r, .browser, .ws, .post, .metric-tiles, .ig-head {
+        page-break-inside:avoid; break-inside:avoid;
+      }
+      /* keep multi-column grids in print */
+      .brain-grid,.workspaces { grid-template-columns:1fr 1fr 1fr; }
+      .journal-grid,.stills-row,.metric-tiles,.sites-grid,.beacon-map .bm-row { grid-template-columns:1fr 1fr; }
+      /* cap still image height so each still fits within one page */
+      .still-card img { max-height:8.4in; width:auto; margin:0 auto; }
+      .hero h1 { font-size:2.3rem; }
+      a[href]:after { content:""; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      <div>
+        <div class="n">POLARIS POINT</div>
+        <div class="by">for Summit Realty Group</div>
+      </div>
+    </div>
+    <div class="links">
+      <a href="#websites">Agent Sites</a>
+      <a href="#build">Live Build</a>
+      <a href="#beacon">Beacon</a>
+      <a href="#fieldnotes">Field Notes</a>
+      <a href="#social">Social</a>
+    </div>
+    <button class="pdf-btn" onclick="window.print()">Save as PDF</button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="starfield"></div>
+  <div class="wrap">
+    <div class="cobrand">
+      <svg class="star" viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      <span>Polaris Point</span>
+      <span class="sep"></span>
+      <span class="summit">Summit Realty Group</span>
+    </div>
+    <h1>One marketing system.<br><span class="accent">Every agent on brand.</span></h1>
+    <p class="lede">Custom websites for every agent, an AI content engine that knows your brokerage inside-out, and social analytics that turn 20,000 followers into a lead pipeline.</p>
+    <div class="hero-stats">
+      <div class="hs"><div class="n">8</div><div class="l">Agent sites</div></div>
+      <div class="hs"><div class="n gold">20.0K</div><div class="l">IG followers</div></div>
+      <div class="hs"><div class="n">4.8%</div><div class="l">Engagement rate</div></div>
+      <div class="hs"><div class="n gold">3–5×</div><div class="l">Content output</div></div>
+    </div>
+    <div class="badge-dummy">Demo — sample data for illustration</div>
+  </div>
+</header>
+
+<!-- ===== AGENT WEBSITES ===== -->
+<section class="band band-alt" id="websites">
+  <div class="wrap">
+    <span class="kicker">01 · Agent Websites</span>
+    <h2 class="section-title">A distinct site for <span class="accent">every agent.</span></h2>
+    <p class="section-lede">Same platform, same central brand system, same listing feed — but no two agents look alike. Each picks a palette and a voice; we build the site. Here's the flagship build, four ways:</p>
+
+    <div class="sites-grid">
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Sarah Chen · Central Austin</span><span class="d">Editorial Cream</span></div>
+        <img src="real-estate-demo-stills/theme-cream-hero.png" alt="Agent site — editorial cream theme">
+      </div>
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Maria Delgado · Westlake Luxury</span><span class="d">Slate Navy</span></div>
+        <img src="real-estate-demo-stills/theme-slate-hero.png" alt="Agent site — slate navy theme">
+      </div>
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Jordan Chen · East Austin</span><span class="d">Sage Forest</span></div>
+        <img src="real-estate-demo-stills/theme-sage-hero.png" alt="Agent site — sage forest theme">
+      </div>
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Tanya Brooks · Investment</span><span class="d">Charcoal Gold</span></div>
+        <img src="real-estate-demo-stills/theme-charcoal-hero.png" alt="Agent site — charcoal gold theme">
+      </div>
+    </div>
+    <p class="stills-note">Four palettes, one platform — every site shares the central brand system, live listing feed, and compliance footer.</p>
+  </div>
+</section>
+
+<!-- ===== FEATURED BUILD (STILLS) ===== -->
+<section class="band" id="build">
+  <div class="wrap">
+    <span class="kicker gold">Featured Build</span>
+    <h2 class="section-title">Not a mockup — <span class="accent">a finished site.</span></h2>
+    <p class="section-lede">Here's a real central-Austin agent site built on the system: an editorial neighborhood journal, live listings, a sold archive, and letters from past clients. Every word draftable in Beacon, every section on brand.</p>
+
+    <div class="stills">
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Home / Hero</span><span class="d">summitrealty.com — agent landing</span></div>
+        <img src="real-estate-demo-stills/01-hero.png" alt="Agent site hero">
+      </div>
+      <div class="stills-row">
+        <div class="still-card">
+          <div class="still-cap"><span class="t">Nº I · Field Notes</span><span class="d">Neighborhood journal</span></div>
+          <img src="real-estate-demo-stills/02-journal.png" alt="Field Notes journal section">
+        </div>
+        <div class="still-card">
+          <div class="still-cap"><span class="t">Nº IV · Letters</span><span class="d">Client testimonials</span></div>
+          <img src="real-estate-demo-stills/05-letters.png" alt="Client letters section">
+        </div>
+      </div>
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Nº II · Currently on Market</span><span class="d">Editorial listings with real copy</span></div>
+        <img src="real-estate-demo-stills/03-listings.png" alt="Listings section">
+      </div>
+      <div class="still-card">
+        <div class="still-cap"><span class="t">Nº III · From the Sold Archive</span><span class="d">Transaction record with the story behind each sale</span></div>
+        <img src="real-estate-demo-stills/04-sold.png" alt="Sold archive section">
+      </div>
+    </div>
+    <div class="beacon-map">
+      <div class="bm-title">Everything on this site is drafted in <span class="accent">Beacon</span> — the agent approves, it publishes.</div>
+      <div class="bm-row">
+        <div class="bm-item"><strong>Field Notes essays</strong>weekly neighborhood market analysis</div>
+        <div class="bm-item"><strong>Listing descriptions</strong>editorial copy for every property</div>
+        <div class="bm-item"><strong>Sold-archive stories</strong>the narrative behind each close</div>
+        <div class="bm-item"><strong>Monthly newsletter</strong>auto-assembled from the same feed</div>
+      </div>
+      <div class="bm-foot"><strong>The site is never stale and never off-brand</strong> — it pulls from the same central source of truth and live listing feed that powers the agent's social.</div>
+    </div>
+    <p class="stills-note">Live demo site captured directly — every agent on the platform gets a build at this level.</p>
+  </div>
+</section>
+
+<!-- ===== BEACON ARCHITECTURE ===== -->
+<section class="band" id="beacon">
+  <div class="wrap">
+    <span class="kicker gold">02 · Beacon AI Engine</span>
+    <h2 class="section-title">One brain. <span class="accent">Every agent's voice.</span></h2>
+    <p class="section-lede">Beacon runs on a shared <strong style="color:#fff;">central source of truth</strong> — your brokerage's brand, compliance rules, and live listing data — while each agent gets a personalized workspace that writes in their voice, about their market.</p>
+
+    <div class="arch">
+      <!-- Central brain -->
+      <div class="brain">
+        <span class="brain-label">Central Source of Truth · Summit Realty Brain</span>
+        <h3>Shared by every agent. Maintained once.</h3>
+        <p class="sub">Update the brand voice, a compliance rule, or the listing feed in one place — and all 8 agent workspaces inherit it instantly. No off-brand posts, no fair-housing slip-ups, no stale listings.</p>
+        <div class="brain-grid">
+          <div class="truth"><div class="ic">🎙️</div><h4>Brand Voice &amp; Style</h4><p>Tone, taglines, hashtags, and the Summit look — applied to everything.</p></div>
+          <div class="truth"><div class="ic">⚖️</div><h4>Fair Housing &amp; TREC</h4><p>Compliance guardrails + required disclaimers baked into every draft.</p></div>
+          <div class="truth"><div class="ic">🏠</div><h4>Live MLS / IDX Feed</h4><p>Brokerage-wide inventory, auto-synced. Posts pull real, current listings.</p></div>
+          <div class="truth"><div class="ic">📍</div><h4>Neighborhood Data</h4><p>ATX zips, schools, comps, and market trends, refreshed monthly.</p></div>
+          <div class="truth"><div class="ic">📋</div><h4>Approved Templates</h4><p>Just-listed, open house, just-sold, market update — pre-approved formats.</p></div>
+          <div class="truth"><div class="ic">🔗</div><h4>Brand Assets</h4><p>Logos, colors, headshots, licensing footers — always the right version.</p></div>
+        </div>
+      </div>
+
+      <div class="conn-note">↓ &nbsp; Each agent inherits the brain + adds their own context &nbsp; ↓</div>
+
+      <!-- Agent workspaces -->
+      <div class="workspaces">
+        <div class="ws">
+          <div class="ws-head">
+            <div class="ws-av" style="background:linear-gradient(135deg,#5B8DEF,#1e2a4a);">MD</div>
+            <div><div class="ws-name">Maria's Workspace</div><div class="ws-role">Luxury · Westlake</div></div>
+          </div>
+          <ul>
+            <li>Farm: Westlake, Rollingwood, Eanes ISD</li>
+            <li>Voice: warm, white-glove, story-driven</li>
+            <li>Sphere: 240 past luxury clients</li>
+            <li>Her 18 active listings</li>
+          </ul>
+          <div class="ws-tag">Brain + Maria = posts only she could write.</div>
+        </div>
+        <div class="ws">
+          <div class="ws-head">
+            <div class="ws-av" style="background:linear-gradient(135deg,#22c55e,#1a3a32);">JC</div>
+            <div><div class="ws-name">Jordan's Workspace</div><div class="ws-role">First-Timers · East ATX</div></div>
+          </div>
+          <ul>
+            <li>Farm: Mueller, Cherrywood, East Austin</li>
+            <li>Voice: friendly, educational, meme-fluent</li>
+            <li>Sphere: 95 first-time buyer leads</li>
+            <li>Rate &amp; affordability explainers</li>
+          </ul>
+          <div class="ws-tag">Same brand, totally different vibe.</div>
+        </div>
+        <div class="ws">
+          <div class="ws-head">
+            <div class="ws-av" style="background:linear-gradient(135deg,#E8C547,#3a2a18);">TB</div>
+            <div><div class="ws-name">Tanya's Workspace</div><div class="ws-role">Investment · North ATX</div></div>
+          </div>
+          <ul>
+            <li>Farm: North Austin, Lamar, Rundberg</li>
+            <li>Voice: data-first, no-fluff, ROI-focused</li>
+            <li>Sphere: 60 active investors</li>
+            <li>Cap-rate &amp; cash-flow breakdowns</li>
+          </ul>
+          <div class="ws-tag">Numbers-driven, on Summit's brand.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FIELD NOTES / JOURNAL ===== -->
+<section class="band" id="fieldnotes">
+  <div class="wrap">
+    <span class="kicker">03 · The Content Engine, in Action</span>
+    <h2 class="section-title">Beacon writes the <span class="accent">neighborhood journal.</span></h2>
+    <p class="section-lede">This is what "hyper-local" actually looks like — weekly Field Notes essays, drafted from your MLS feed and neighborhood data, in each agent's voice. Real estate buyers don't share listings. They share insight like this.</p>
+
+    <div class="journal-grid">
+      <article class="note">
+        <div class="note-meta"><span class="nb">Hyde Park · 78751</span><span>Essay · 6 min</span></div>
+        <h3>The walkable bungalow market is finally moving — but only one block at a time.</h3>
+        <p>Median days-on-market in 78751 dropped to 14 in March, but the headline hides a quieter truth: it's the pre-1940 bungalows on Avenue F, G, and H that are moving in days. The 1980s infill is sitting. Here's why, and what to ask if you're walking one this weekend.</p>
+        <div class="note-stats">
+          <div class="ns"><div class="n">14</div><div class="l">Days on market</div></div>
+          <div class="ns"><div class="n">+6%</div><div class="l">Over ask</div></div>
+          <div class="ns"><div class="n">$1.4M</div><div class="l">Median sale</div></div>
+        </div>
+        <span class="readmore">Read essay →</span>
+      </article>
+
+      <article class="note">
+        <div class="note-meta"><span class="nb">Tarrytown · 78703</span><span>Essay · 8 min</span></div>
+        <h3>Inventory is loosening for the first time in eighteen months.</h3>
+        <p>For a year and a half, Tarrytown listings disappeared in a weekend. April is the first month I've seen real buyer leverage — three homes under $2.4M sat past day twelve. Demand isn't down. Something else is happening, and the change favors patient buyers.</p>
+        <div class="note-stats">
+          <div class="ns"><div class="n">+12%</div><div class="l">Inventory MoM</div></div>
+          <div class="ns"><div class="n">$2.4M</div><div class="l">Median sale</div></div>
+          <div class="ns"><div class="n">22d</div><div class="l">Days on market</div></div>
+        </div>
+        <span class="readmore">Read essay →</span>
+      </article>
+
+      <article class="note">
+        <div class="note-meta"><span class="nb">Mueller · 78723</span><span>Field guide · 5 min</span></div>
+        <h3>Phase 5 pre-sales are open. Three things to know before making an offer.</h3>
+        <p>Mueller's last greenfield phase opened to early-access buyers in March. The townhomes are listed, the floor plans are public, and the wait list is real. If you've been holding out for the right entry into the planned community, this is likely the last meaningful release.</p>
+        <div class="note-stats">
+          <div class="ns"><div class="n">62</div><div class="l">Units this phase</div></div>
+          <div class="ns"><div class="n">$895K</div><div class="l">Starting price</div></div>
+          <div class="ns"><div class="n">2027</div><div class="l">Move-in</div></div>
+        </div>
+        <span class="readmore">Read guide →</span>
+      </article>
+
+      <article class="note">
+        <div class="note-meta"><span class="nb">Bouldin Creek · 78704</span><span>Essay · 7 min</span></div>
+        <h3>First-time buyer territory has returned to South 5th Street.</h3>
+        <p>Investor activity in 78704 cooled this quarter for the first time since 2021. Three solid options just hit the market under $850K — the kind of houses I haven't seen at that price in eighteen months. The bones are there. The catch is in the seller motivations.</p>
+        <div class="note-stats">
+          <div class="ns"><div class="n">3</div><div class="l">Under $850K</div></div>
+          <div class="ns"><div class="n">-8%</div><div class="l">Investor offers</div></div>
+          <div class="ns"><div class="n">19d</div><div class="l">Days on market</div></div>
+        </div>
+        <span class="readmore">Read essay →</span>
+      </article>
+    </div>
+
+    <p class="journal-foot"><strong>Why it matters:</strong> essays like these are what get shared, saved, and forwarded — and what Armadillo scores highest for virality. Beacon drafts them; the agent approves; the website and newsletter publish them automatically.</p>
+  </div>
+</section>
+
+<!-- ===== SOCIAL / ARMADILLO ===== -->
+<section class="band band-alt" id="social">
+  <div class="wrap">
+    <span class="kicker">04 · Armadillo Analytics</span>
+    <h2 class="section-title">20,000 followers, <span class="accent">working for you.</span></h2>
+    <p class="section-lede">Armadillo watches every post Summit publishes and tells you when to post, what's trending, and which drafts are about to take off — then feeds it straight back to Beacon.</p>
+
+    <div class="ig-card">
+      <!-- IG profile header -->
+      <div class="ig-head">
+        <div class="ig-avatar"><div class="inner"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg></div></div>
+        <div class="ig-id">
+          <div class="handle">
+            <span class="h">@summitrealty_atx</span>
+            <span class="verified">✔</span>
+            <span class="follow-btn">Following</span>
+          </div>
+          <div class="bio">Summit Realty Group · Austin's neighborhood experts 🏡 Listings, market takes &amp; ATX life. Managed with Beacon + Armadillo.</div>
+          <div class="ig-counts">
+            <div class="c"><span class="n">487</span> <span class="l">posts</span></div>
+            <div class="c"><span class="n">20.0K</span> <span class="l">followers</span></div>
+            <div class="c"><span class="n">612</span> <span class="l">following</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric tiles -->
+      <div class="metrics-band">
+        <div class="metric-tiles">
+          <div class="mt"><div class="label">Followers</div><div class="val">20,043</div><div class="delta up">↑ 1,240 (30d)</div></div>
+          <div class="mt"><div class="label">Engagement Rate</div><div class="val gold">4.8%</div><div class="delta up">↑ 1.3 pts vs. industry</div></div>
+          <div class="mt"><div class="label">Avg. Reach / Post</div><div class="val">14.2K</div><div class="delta up">↑ 22% (30d)</div></div>
+          <div class="mt"><div class="label">Profile → Lead</div><div class="val green">38</div><div class="delta up">leads this month</div></div>
+        </div>
+
+        <div class="metric-cols">
+          <!-- Growth + heatmap -->
+          <div class="panel">
+            <div class="panel-title">Follower Growth</div>
+            <div class="panel-meta">Last 12 weeks</div>
+            <div class="bars">
+              <div class="bar" style="height:34%"></div>
+              <div class="bar" style="height:40%"></div>
+              <div class="bar" style="height:38%"></div>
+              <div class="bar" style="height:48%"></div>
+              <div class="bar" style="height:55%"></div>
+              <div class="bar" style="height:52%"></div>
+              <div class="bar" style="height:63%"></div>
+              <div class="bar peak" style="height:78%"></div>
+              <div class="bar" style="height:70%"></div>
+              <div class="bar" style="height:82%"></div>
+              <div class="bar peak" style="height:94%"></div>
+              <div class="bar" style="height:88%"></div>
+            </div>
+            <div class="bars-axis"><span>Mar</span><span>Apr</span><span>May</span></div>
+            <p class="insight"><strong>+6.6% in 30 days.</strong> The two gold spikes line up with the Westlake luxury reel and the rate-cut explainer — both flagged high-virality by Armadillo before posting.</p>
+          </div>
+
+          <!-- Best time to post -->
+          <div class="panel">
+            <div class="panel-title">Best Time to Post</div>
+            <div class="panel-meta">Recalculated weekly · @summitrealty_atx</div>
+            <div class="heatmap">
+              <span class="day">Mon</span><div class="hr"></div><div class="hr l1"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l2"></div><div class="hr l4"></div><div class="hr l3"></div>
+              <span class="day">Tue</span><div class="hr l1"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l4"></div><div class="hr l3"></div><div class="hr l4"></div><div class="hr l5"></div>
+              <span class="day">Wed</span><div class="hr l1"></div><div class="hr l1"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l4"></div><div class="hr l5"></div><div class="hr l4"></div>
+              <span class="day">Thu</span><div class="hr l1"></div><div class="hr l2"></div><div class="hr l4"></div><div class="hr l5"></div><div class="hr l4"></div><div class="hr l3"></div><div class="hr l3"></div>
+              <span class="day">Fri</span><div class="hr l2"></div><div class="hr l2"></div><div class="hr l3"></div><div class="hr l3"></div><div class="hr l3"></div><div class="hr l2"></div><div class="hr l1"></div>
+              <span class="day">Sat</span><div class="hr"></div><div class="hr l1"></div><div class="hr l3"></div><div class="hr l5"></div><div class="hr l5"></div><div class="hr l4"></div><div class="hr l2"></div>
+              <span class="day">Sun</span><div class="hr"></div><div class="hr l1"></div><div class="hr l2"></div><div class="hr l4"></div><div class="hr l5"></div><div class="hr l3"></div><div class="hr l1"></div>
+            </div>
+            <div class="heatmap-axis"><span></span><span>6a</span><span>9a</span><span>12p</span><span>3p</span><span>6p</span><span>9p</span><span>11p</span></div>
+            <p class="insight"><strong>Sweet spots:</strong> Tue 7–8pm, Thu 12–1pm, Sat 12–3pm. Beacon auto-schedules new drafts into these windows.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top posts -->
+      <div class="posts-band">
+        <div class="posts-head">
+          <h3>Top Performing Posts</h3>
+          <span class="meta">Ranked by Armadillo virality score</span>
+        </div>
+        <div class="posts-grid">
+          <div class="post">
+            <div class="img" style="background:linear-gradient(135deg,#5B8DEF,#1e2a4a);"><span class="vscore">94</span><span class="type">Reel</span></div>
+            <div class="cap"><div class="txt">Westlake stunner walkthrough — 6,200 sf on the water 🌊</div><div class="eng"><span class="heart">♥ 2,340</span><span>💬 64</span></div></div>
+          </div>
+          <div class="post">
+            <div class="img" style="background:linear-gradient(135deg,#22c55e,#0a1f1a);"><span class="vscore">91</span><span class="type">Carousel</span></div>
+            <div class="cap"><div class="txt">Rate cut: what it actually means for ATX buyers 📉</div><div class="eng"><span class="heart">♥ 1,847</span><span>💬 156</span></div></div>
+          </div>
+          <div class="post">
+            <div class="img" style="background:linear-gradient(135deg,#E8C547,#3a2a18);"><span class="vscore">88</span><span class="type">Reel</span></div>
+            <div class="cap"><div class="txt">Mueller open house — come see this Sat 12–3 🏡</div><div class="eng"><span class="heart">♥ 1,612</span><span>💬 92</span></div></div>
+          </div>
+          <div class="post">
+            <div class="img" style="background:linear-gradient(135deg,#a78bfa,#2a1f4a);"><span class="vscore">79</span><span class="type">Post</span></div>
+            <div class="cap"><div class="txt">5 first-time buyer myths, busted 🧵</div><div class="eng"><span class="heart">♥ 980</span><span>💬 88</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending -->
+      <div class="posts-band" style="padding-top:0;">
+        <div class="metric-cols">
+          <div class="panel">
+            <div class="panel-title">Trending in ATX Real Estate</div>
+            <div class="panel-meta">Updated hourly · your market</div>
+            <div class="trend-list">
+              <div class="trend-item"><div class="topic">Rate cut speculation <span class="tag">#mortgagerates</span></div><div><span class="score">92</span><span class="delta">↑ 41%</span></div></div>
+              <div class="trend-item"><div class="topic">First-time buyer guides <span class="tag">#firsthomeATX</span></div><div><span class="score">87</span><span class="delta">↑ 28%</span></div></div>
+              <div class="trend-item"><div class="topic">East Austin price shifts <span class="tag">#eastaustin</span></div><div><span class="score">81</span><span class="delta">↑ 19%</span></div></div>
+              <div class="trend-item"><div class="topic">Open house reels <span class="tag">#openhouseatx</span></div><div><span class="score">76</span><span class="delta">↑ 15%</span></div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">How the Loop Closes</div>
+            <div class="panel-meta">Armadillo → Beacon → Post</div>
+            <div class="trend-list">
+              <div class="trend-item"><div class="topic">1. Armadillo spots <span class="tag">#mortgagerates</span> heating up</div></div>
+              <div class="trend-item"><div class="topic">2. Alert pings the Summit workspace</div></div>
+              <div class="trend-item"><div class="topic">3. Beacon drafts a take in each agent's voice</div></div>
+              <div class="trend-item"><div class="topic">4. Auto-scheduled into the Tue 7pm sweet spot</div></div>
+              <div class="trend-item"><div class="topic">5. Virality score 90+ before it ever posts</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESULTS ===== -->
+<section class="band tight" id="results">
+  <div class="wrap">
+    <span class="kicker gold">The Payoff</span>
+    <h2 class="section-title">What the system delivers.</h2>
+    <div class="roi">
+      <div class="r"><div class="n">3–5×</div><div class="l">More content shipped per agent</div></div>
+      <div class="r"><div class="n">+22%</div><div class="l">Reach per post in 30 days</div></div>
+      <div class="r"><div class="n">38</div><div class="l">Inbound leads / month from social</div></div>
+      <div class="r"><div class="n">~6 hrs</div><div class="l">Saved per agent, per week</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Ready to put <span class="accent">your whole team</span> on the system?</h2>
+    <p>Websites, Beacon, and Armadillo — set up for your brokerage, branded to you, running in weeks.</p>
+    <div class="url">polarispoint.io</div>
+    <div class="contact">hello@polarispoint.io · (512) 555-0100</div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+      <span class="n">POLARIS POINT</span>
+    </div>
+    <span class="small">Real Estate Marketing System — Demo · Sample data for illustration only</span>
+  </div>
+</footer>
+
+</body>
+</html>

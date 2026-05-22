@@ -156,6 +156,26 @@ window.SITE_CONFIG = {
     trustBar: true,
     familySection: true,
     analytics: false,
+    // ── Business Automation (shared/automation.js) ──
+    booking: true,         // floating "Book Now" → Calendly modal
+    aiChat: true,          // floating "Chat" → AI assistant scoped to this site
+    leadAutoReply: true,   // contact-form submit → instant confirmation email
+    reviewRequests: true,  // backend/cron — enqueue via /api/site-review-request
+  },
+
+  // Business Automation settings. Read by shared/automation.js (front-end) and
+  // the api/site-* endpoints (backend). Edit per client.
+  automation: {
+    calendlyUrl: "https://calendly.com/crystalclear-demo/cleaning",  // replace with the client's real link
+    chat: { greeting: "Hi! Ask me about our cleaning services, pricing, or scheduling." },
+    leadAutoReply: {
+      fromName: "Crystal Clear Cleaning",
+      replyText: "Thanks for reaching out to Crystal Clear Cleaning! We got your message and will send a customized quote within 2 business hours. For anything urgent, call us at (512) 555-0275.",
+    },
+    reviewRequest: {
+      delayDays: 3,
+      reviewUrl: "https://g.page/r/crystalclear-demo/review",  // replace with the client's Google review link
+    },
   },
 
   // === GOOGLE REVIEWS ===

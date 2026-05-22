@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon for Real Estate — Demo Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space: #050D1E;
+      --blue: #5B8DEF;
+      --gold: #E8C547;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --purple: #a78bfa;
+      --red: #f87171;
+      --text: #e2e8f0;
+      --muted: #8494a7;
+      --dim: #475569;
+      --border: rgba(91,141,239,.1);
+      --surface: rgba(15,25,55,.45);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--space);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      color: #fff;
+      line-height: 1.2;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,13,30,.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: #fff;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo svg { width: 20px; height: 20px; filter: drop-shadow(0 0 4px rgba(91,141,239,.4)); }
+    .logo .sep { color: var(--dim); font-weight: 400; margin: 0 2px; }
+    .logo .product { color: var(--blue); font-size: .85rem; }
+    .back-link {
+      font-size: .82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--blue); text-decoration: none; }
+
+    /* ===== LAYOUT ===== */
+    .page { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 72px 24px 56px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(91,141,239,.08);
+      border: 1px solid rgba(91,141,239,.15);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 20px;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin-bottom: 16px;
+      letter-spacing: -.02em;
+    }
+    .hero h1 .accent { color: var(--gold); }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 62ch;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .hero-agent {
+      margin-top: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+    .hero-agent .avatar {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .85rem;
+      color: #fff;
+    }
+    .hero-agent .info { text-align: left; }
+    .hero-agent .name { font-weight: 600; color: #fff; font-size: .88rem; }
+    .hero-agent .role { color: var(--muted); font-size: .75rem; }
+
+    /* ===== SECTIONS ===== */
+    .demo-section {
+      padding: 56px 0;
+      border-top: 1px solid var(--border);
+    }
+    .section-header {
+      margin-bottom: 28px;
+    }
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+    .section-tag::before {
+      content: "";
+      width: 5px; height: 5px;
+      border-radius: 50%;
+    }
+    .tag-weekly { color: var(--green); }
+    .tag-weekly::before { background: var(--green); }
+    .tag-on-demand { color: var(--purple); }
+    .tag-on-demand::before { background: var(--purple); }
+    .tag-monthly { color: var(--amber); }
+    .tag-monthly::before { background: var(--amber); }
+    .tag-daily { color: var(--blue); }
+    .tag-daily::before { background: var(--blue); }
+    .section-header h2 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+    .section-header p {
+      color: var(--muted);
+      font-size: .92rem;
+      max-width: 60ch;
+    }
+
+    /* ===== SOCIAL CARDS ===== */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .social-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color .2s, transform .2s;
+    }
+    .social-card:hover {
+      border-color: rgba(91,141,239,.25);
+      transform: translateY(-2px);
+    }
+    .social-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .social-card-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .social-card-avatar {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .7rem;
+      color: #fff;
+    }
+    .social-card-name { font-weight: 600; color: #fff; font-size: .82rem; }
+    .social-card-handle { color: var(--dim); font-size: .72rem; }
+    .social-type-tag {
+      font-size: .6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .type-market { background: rgba(91,141,239,.1); color: var(--blue); }
+    .type-listing { background: rgba(232,197,71,.1); color: var(--gold); }
+    .type-neighborhood { background: rgba(34,197,94,.1); color: var(--green); }
+    .type-education { background: rgba(167,139,250,.1); color: var(--purple); }
+    .type-personal { background: rgba(248,113,113,.1); color: var(--red); }
+    .social-card-body {
+      color: var(--text);
+      font-size: .88rem;
+      line-height: 1.7;
+      flex: 1;
+    }
+    .social-card-body .hashtags {
+      color: var(--blue);
+      font-size: .82rem;
+      margin-top: 10px;
+      display: block;
+    }
+    .social-card-footer {
+      display: flex;
+      gap: 20px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.05);
+      font-size: .75rem;
+      color: var(--dim);
+    }
+    .social-card-footer span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ===== LISTING CARD ===== */
+    .listing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      max-width: 720px;
+    }
+    .listing-photo {
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, rgba(91,141,239,.15) 0%, rgba(167,139,250,.1) 50%, rgba(232,197,71,.08) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .listing-photo-overlay {
+      font-size: .75rem;
+      color: var(--dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .listing-photo-overlay svg {
+      width: 32px; height: 32px;
+      opacity: .4;
+    }
+    .listing-photo .mls-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(5,13,30,.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 12px;
+      font-size: .6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--green);
+    }
+    .listing-photo .price-tag {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(5,13,30,.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 16px;
+    }
+    .listing-photo .price-tag .price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+    .listing-details {
+      padding: 24px;
+    }
+    .listing-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 6px;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .listing-meta .divider { color: var(--dim); }
+    .listing-address {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .listing-description {
+      color: var(--text);
+      font-size: .9rem;
+      line-height: 1.8;
+    }
+    .listing-description p { margin-bottom: 12px; }
+    .listing-agent-bar {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+    }
+    .listing-agent-bar .agent-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .listing-agent-bar .mini-avatar {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .6rem;
+      color: #fff;
+    }
+    .listing-agent-bar .agent-name { font-weight: 600; color: #fff; }
+    .listing-agent-bar .agent-brokerage { color: var(--dim); font-size: .72rem; }
+    .listing-agent-bar .contact { color: var(--blue); font-size: .78rem; }
+
+    /* ===== EMAIL / NEWSLETTER ===== */
+    .email-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      max-width: 680px;
+    }
+    .email-toolbar {
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .email-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .78rem;
+    }
+    .email-field .label {
+      color: var(--dim);
+      width: 60px;
+      flex-shrink: 0;
+    }
+    .email-field .value { color: var(--text); }
+    .email-field .value.subject { font-weight: 600; color: #fff; }
+    .email-body {
+      padding: 24px;
+      font-size: .88rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .email-body p { margin-bottom: 14px; }
+    .email-body .sig {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .email-body .sig strong { color: #fff; }
+    .email-body h3 {
+      font-size: .95rem;
+      margin: 18px 0 8px;
+    }
+    .email-body ul {
+      padding-left: 18px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .email-body ul li { margin-bottom: 4px; }
+    .email-body .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .stat-box {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .stat-box .num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+    .stat-box .label {
+      font-size: .7rem;
+      color: var(--dim);
+      margin-top: 2px;
+    }
+
+    /* ===== REVIEW CARD ===== */
+    .review-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 900px;
+    }
+    @media (max-width: 700px) {
+      .review-pair { grid-template-columns: 1fr; }
+    }
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .review-card-label {
+      font-size: .6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 12px;
+    }
+    .review-card-label.incoming { color: var(--amber); }
+    .review-card-label.response { color: var(--green); }
+    .review-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 10px;
+    }
+    .star {
+      width: 16px; height: 16px;
+      color: var(--gold);
+    }
+    .star.empty { color: var(--dim); }
+    .review-author {
+      font-weight: 600;
+      color: #fff;
+      font-size: .85rem;
+      margin-bottom: 4px;
+    }
+    .review-date {
+      color: var(--dim);
+      font-size: .72rem;
+      margin-bottom: 12px;
+    }
+    .review-text {
+      color: var(--text);
+      font-size: .86rem;
+      line-height: 1.75;
+    }
+    .response-text {
+      color: var(--text);
+      font-size: .86rem;
+      line-height: 1.75;
+    }
+    .response-meta {
+      margin-top: 12px;
+      font-size: .72rem;
+      color: var(--dim);
+      font-style: italic;
+    }
+
+    /* ===== COMPETITOR REPORT ===== */
+    .competitor-report {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      max-width: 720px;
+    }
+    .competitor-report .report-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .competitor-report .report-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .competitor-report .report-date {
+      font-size: .72rem;
+      color: var(--dim);
+    }
+    .competitor-item {
+      padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,.05);
+    }
+    .competitor-item:first-of-type { border-top: none; padding-top: 0; }
+    .competitor-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .competitor-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .65rem;
+      color: #fff;
+    }
+    .competitor-avatar.jm { background: linear-gradient(135deg, #ef4444, #f97316); }
+    .competitor-avatar.lp { background: linear-gradient(135deg, #22c55e, #06b6d4); }
+    .competitor-avatar.mg { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+    .competitor-name { font-weight: 600; color: #fff; font-size: .88rem; }
+    .competitor-brokerage { color: var(--dim); font-size: .72rem; }
+    .competitor-detail {
+      color: var(--text);
+      font-size: .85rem;
+      line-height: 1.75;
+      padding-left: 42px;
+    }
+    .competitor-detail li { margin-bottom: 4px; }
+    .insight-bar {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: rgba(232,197,71,.04);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 10px 10px 0;
+    }
+    .insight-bar .label {
+      font-size: .6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .insight-bar p {
+      color: var(--text);
+      font-size: .84rem;
+      line-height: 1.6;
+    }
+
+    /* ===== CHAT MOCK ===== */
+    .chat-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      max-width: 720px;
+    }
+    .chat-topbar {
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-topbar .beacon-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-topbar .beacon-icon svg { width: 14px; height: 14px; }
+    .chat-topbar .title {
+      font-weight: 600;
+      color: #fff;
+      font-size: .88rem;
+    }
+    .chat-topbar .status {
+      font-size: .7rem;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chat-topbar .status .dot {
+      width: 5px; height: 5px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+    .chat-messages {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: none;
+    }
+    .msg {
+      max-width: 85%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: .86rem;
+      line-height: 1.7;
+    }
+    .msg-user {
+      align-self: flex-end;
+      background: rgba(91,141,239,.15);
+      border: 1px solid rgba(91,141,239,.2);
+      color: var(--text);
+      border-bottom-right-radius: 4px;
+    }
+    .msg-beacon {
+      align-self: flex-start;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .msg-beacon p { margin-bottom: 10px; }
+    .msg-beacon p:last-child { margin-bottom: 0; }
+    .msg-beacon strong { color: #fff; }
+    .msg-beacon ul, .msg-beacon ol {
+      padding-left: 18px;
+      margin: 6px 0 10px;
+    }
+    .msg-beacon li { margin-bottom: 4px; }
+    .msg-time {
+      font-size: .65rem;
+      color: var(--dim);
+      margin-top: 6px;
+    }
+    .msg-user .msg-time { text-align: right; }
+    .chat-input-bar {
+      border-top: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-input-mock {
+      flex: 1;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: .82rem;
+      color: var(--dim);
+    }
+    .chat-send-btn {
+      width: 36px; height: 36px;
+      background: var(--blue);
+      border: none;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+    .chat-send-btn svg {
+      width: 16px; height: 16px;
+      color: #fff;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      text-align: center;
+      padding: 72px 24px;
+      border-top: 1px solid var(--border);
+    }
+    .cta-section h2 {
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      margin-bottom: 12px;
+    }
+    .cta-section p {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-bottom: 28px;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold);
+      color: var(--space);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      padding: 14px 32px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      text-decoration: none;
+    }
+    .cta-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(232,197,71,.2);
+      text-decoration: none;
+    }
+    .cta-price {
+      margin-top: 14px;
+      font-size: .8rem;
+      color: var(--dim);
+    }
+    .cta-price span { color: var(--text); font-weight: 600; }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+    }
+    .footer-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .78rem;
+      color: var(--dim);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a { color: var(--muted); font-size: .78rem; }
+    .footer-links a:hover { color: var(--blue); }
+
+    /* ===== BEACON GENERATED BADGE ===== */
+    .generated-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(91,141,239,.06);
+      border: 1px solid rgba(91,141,239,.12);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: .65rem;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 14px;
+    }
+    .generated-badge svg { width: 12px; height: 12px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      .social-grid { grid-template-columns: 1fr; }
+      .review-pair { grid-template-columns: 1fr; }
+      .hero { padding: 48px 16px 36px; }
+      .stat-row { grid-template-columns: 1fr !important; }
+      .footer-inner { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============== HEADER =============== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+        Polaris Point <span class="sep">/</span> <span class="product">Beacon for Real Estate</span>
+      </div>
+      <a href="/" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <!-- =============== HERO =============== -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Live Demo Showcase
+    </div>
+    <h1>See What Beacon Does for <span class="accent">Real Estate Agents</span></h1>
+    <p>Every output below was generated by Beacon in seconds -- tailored to one agent's brand, listings, and market. No templates. No generic content. Just smart, personalized marketing that sounds like you wrote it.</p>
+    <div class="hero-agent">
+      <div class="avatar">SC</div>
+      <div class="info">
+        <div class="name">Sarah Chen, REALTOR</div>
+        <div class="role">Compass -- Austin, TX &middot; South Austin, Bee Cave, Lakeway</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
+
+    <!-- =============== SECTION 1: SOCIAL POSTS =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-weekly">Weekly Output</div>
+        <h2>Social Media Content Pack</h2>
+        <p>Every Monday, Beacon delivers 5 ready-to-post social updates -- each a different content type, all in Sarah's voice.</p>
+      </div>
+
+      <div class="social-grid">
+
+        <!-- Post 1: Market Tip -->
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-card-author">
+              <div class="social-card-avatar">SC</div>
+              <div>
+                <div class="social-card-name">Sarah Chen</div>
+                <div class="social-card-handle">@sarahchenaustin</div>
+              </div>
+            </div>
+            <span class="social-type-tag type-market">Market Tip</span>
+          </div>
+          <div class="social-card-body">
+            Quick 78704 market check: homes are averaging just 11 days on market right now -- down from 18 in January. If you've been thinking about listing in South Austin, the window is wide open. Rates dropped to 6.25% and buyers are back in a big way. Showing activity in Bouldin Creek is up 15% over last month.
+            <br><br>
+            Curious what your home might be worth? DM me -- I'll pull the comps, no strings attached.
+            <span class="hashtags">#AustinRealEstate #SouthAustin #78704 #AustinMarketUpdate #SellerTips</span>
+          </div>
+          <div class="social-card-footer">
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> 47</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> 8</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 12</span>
+          </div>
+        </div>
+
+        <!-- Post 2: Listing -->
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-card-author">
+              <div class="social-card-avatar">SC</div>
+              <div>
+                <div class="social-card-name">Sarah Chen</div>
+                <div class="social-card-handle">@sarahchenaustin</div>
+              </div>
+            </div>
+            <span class="social-type-tag type-listing">Listing</span>
+          </div>
+          <div class="social-card-body">
+            Just listed in Bouldin Creek and this one's special.
+            <br><br>
+            1847 S 3rd St -- a modern farmhouse with white oak floors, a chef's kitchen (that waterfall quartz island, y'all), and a private backyard shaded by mature oaks. 3 bed / 2 bath, 1,680 sqft. Walk to everything on South Congress.
+            <br><br>
+            $625,000. Zilker Elementary. This neighborhood doesn't slow down -- schedule a showing before it's gone.
+            <span class="hashtags">#JustListed #BouldinCreek #AustinHomes #SouthCongress #ModernFarmhouse #AustinRealEstate</span>
+          </div>
+          <div class="social-card-footer">
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> 83</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> 14</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 24</span>
+          </div>
+        </div>
+
+        <!-- Post 3: Neighborhood -->
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-card-author">
+              <div class="social-card-avatar">SC</div>
+              <div>
+                <div class="social-card-name">Sarah Chen</div>
+                <div class="social-card-handle">@sarahchenaustin</div>
+              </div>
+            </div>
+            <span class="social-type-tag type-neighborhood">Neighborhood</span>
+          </div>
+          <div class="social-card-body">
+            Why I love South Austin in one paragraph:
+            <br><br>
+            You can grab breakfast tacos at Veracruz (the al pastor is non-negotiable), walk your dog through Bouldin Creek Greenbelt, pop into Elizabeth Street Cafe for Vietnamese coffee, browse vintage at Uncommon Objects, and end the day with sunset beers at Hotel San Jose -- all without getting in your car.
+            <br><br>
+            That's the 78704 lifestyle, and it's why homes here sell in 11 days. If you're thinking about South Austin, let me show you around my neighborhood.
+            <span class="hashtags">#SouthAustin #78704 #BouldingCreek #TravisHeights #KeepAustinLocal #AustinNeighborhoods</span>
+          </div>
+          <div class="social-card-footer">
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> 62</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> 11</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 18</span>
+          </div>
+        </div>
+
+        <!-- Post 4: Education -->
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-card-author">
+              <div class="social-card-avatar">SC</div>
+              <div>
+                <div class="social-card-name">Sarah Chen</div>
+                <div class="social-card-handle">@sarahchenaustin</div>
+              </div>
+            </div>
+            <span class="social-type-tag type-education">Education</span>
+          </div>
+          <div class="social-card-body">
+            First-time buyer tip that could save you thousands:
+            <br><br>
+            Rates are at 6.25% right now, but here's something most people don't know -- a lot of sellers in the Austin market are offering rate buydowns to attract buyers. I've negotiated 2-1 buydowns on three deals this year alone. That means your first year rate could be closer to 4.25%.
+            <br><br>
+            The trick is knowing which sellers are motivated enough to offer it. That's where having an agent who knows the market (not just the listings) makes all the difference.
+            <span class="hashtags">#FirstTimeBuyer #AustinHomebuyer #MortgageTips #RateBuydown #AustinRealEstate</span>
+          </div>
+          <div class="social-card-footer">
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> 54</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> 19</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 9</span>
+          </div>
+        </div>
+
+        <!-- Post 5: Personal -->
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-card-author">
+              <div class="social-card-avatar">SC</div>
+              <div>
+                <div class="social-card-name">Sarah Chen</div>
+                <div class="social-card-handle">@sarahchenaustin</div>
+              </div>
+            </div>
+            <span class="social-type-tag type-personal">Personal</span>
+          </div>
+          <div class="social-card-body">
+            Saturday morning status: Bowie (the dog, not the street -- although we live near that too) dragged me to Barton Springs at 8am. The water was freezing. I regret nothing.
+            <br><br>
+            This is my favorite thing about living in Travis Heights -- world-class nature is a 5-minute walk from my front door. David made migas when we got home and now I'm pretending to do work on the patio. Life's good, y'all.
+            <br><br>
+            What's your favorite Austin weekend ritual? Drop it below.
+            <span class="hashtags">#BartonSprings #TravisHeights #AustinLife #WeekendVibes #ATX</span>
+          </div>
+          <div class="social-card-footer">
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> 91</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> 23</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 15</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============== SECTION 2: LISTING DESCRIPTION =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-on-demand">On Demand</div>
+        <h2>Listing Description</h2>
+        <p>Beacon generates MLS-ready descriptions from raw listing data -- in your voice, with neighborhood expertise baked in.</p>
+      </div>
+
+      <div class="listing-card">
+        <div class="listing-photo">
+          <div class="listing-photo-overlay">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Property Photo
+          </div>
+          <span class="mls-badge">Active</span>
+          <div class="price-tag">
+            <div class="price">$625,000</div>
+          </div>
+        </div>
+        <div class="listing-details">
+          <div class="listing-meta">
+            <span>3 Bed</span>
+            <span class="divider">&middot;</span>
+            <span>2 Bath</span>
+            <span class="divider">&middot;</span>
+            <span>1,680 sqft</span>
+            <span class="divider">&middot;</span>
+            <span>Built 2018</span>
+          </div>
+          <div class="listing-address">1847 S 3rd St, Austin TX 78704</div>
+
+          <div class="generated-badge">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+            Generated by Beacon
+          </div>
+
+          <div class="listing-description">
+            <p>Modern farmhouse living in the heart of Bouldin Creek -- one of South Austin's most walkable and sought-after neighborhoods. This 2018-built home blends clean contemporary lines with warm, livable design. White oak floors run throughout the main level, leading into a chef's kitchen with a waterfall quartz island, stainless appliances, and soft-close cabinetry that makes Sunday morning cooking feel like an event.</p>
+            <p>The primary suite is a genuine retreat: spacious walk-in closet, double vanity, and a rain shower you won't want to leave. Two additional bedrooms share a well-appointed second bath with designer tile work.</p>
+            <p>Step outside to a private backyard shaded by mature live oaks -- the kind of space that earns its keep year-round in Austin's climate. Morning coffee, evening gatherings, weekend grilling -- it all happens here.</p>
+            <p>Location is everything in 78704, and this address delivers. Walk to South Congress shops, restaurants, and coffee. Bike to Barton Springs or the greenbelt. Zilker Elementary attendance zone. In a neighborhood averaging 11 days on market, this is the one you don't want to sleep on.</p>
+          </div>
+
+          <div class="listing-agent-bar">
+            <div class="agent-info">
+              <div class="mini-avatar">SC</div>
+              <div>
+                <div class="agent-name">Sarah Chen, REALTOR</div>
+                <div class="agent-brokerage">Compass -- Austin</div>
+              </div>
+            </div>
+            <div class="contact">(512) 555-0822</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== SECTION 3: MARKET REPORT =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-monthly">Monthly Output</div>
+        <h2>Market Update Newsletter</h2>
+        <p>A complete email newsletter draft, sent to Sarah's database on the 1st of every month. Branded, data-driven, hyperlocal.</p>
+      </div>
+
+      <div class="email-preview">
+        <div class="email-toolbar">
+          <div class="email-field">
+            <span class="label">From</span>
+            <span class="value">Sarah Chen &lt;sarah@sarahchenrealty.com&gt;</span>
+          </div>
+          <div class="email-field">
+            <span class="label">Subject</span>
+            <span class="value subject">Austin Market Pulse: April 2026 -- Rates Dropped, Buyers Are Back, and 78704 Is on Fire</span>
+          </div>
+        </div>
+        <div class="email-body">
+          <p>Hey y'all,</p>
+
+          <p>Spring is here and so are the buyers. After a slower Q4, the Austin market has shifted gears -- and I want to make sure you know exactly what's happening, whether you're thinking about selling, buying, or just keeping an eye on your home's value.</p>
+
+          <h3>The Big Picture</h3>
+          <div class="stat-row">
+            <div class="stat-box">
+              <div class="num">$485K</div>
+              <div class="label">Austin Median Price (up 3.2% YoY)</div>
+            </div>
+            <div class="stat-box">
+              <div class="num">6.25%</div>
+              <div class="label">30-Year Fixed Rate (down from 6.8%)</div>
+            </div>
+            <div class="stat-box">
+              <div class="num">18 Days</div>
+              <div class="label">Average Days on Market</div>
+            </div>
+            <div class="stat-box">
+              <div class="num">2.8 Mo</div>
+              <div class="label">Months of Supply</div>
+            </div>
+          </div>
+
+          <p>The rate drop from Q4 is the biggest story right now. We went from 6.8% to 6.25%, and that brought a wave of buyers off the sidelines. Showing activity is up 15% across the metro, and we're seeing multiple offers again on well-priced homes.</p>
+
+          <h3>Neighborhood Spotlight: 78704</h3>
+          <p>Bouldin Creek and Travis Heights continue to be the tightest market in Austin. Homes are averaging just 11 days on market, and anything priced under $650K with decent outdoor space is seeing 2-4 offers in the first week. If you own in 78704, your equity position is strong -- and I'd love to show you just how strong if you're curious.</p>
+
+          <h3>What This Means for You</h3>
+          <ul>
+            <li><strong>Thinking about selling?</strong> The spring market is in full swing and inventory is still low enough that well-prepared homes are commanding strong prices. Don't wait for summer -- the best buyers are active right now.</li>
+            <li><strong>Thinking about buying?</strong> Rates at 6.25% are significantly better than what we saw in late 2025. Plus, I'm seeing sellers offer rate buydowns on select properties. There's real opportunity if you move quickly.</li>
+            <li><strong>Staying put?</strong> Great time to check your home value and review your property tax protest options. Appraisal notices are coming soon -- reply to this email if you want help understanding yours.</li>
+          </ul>
+
+          <p>As always, I'm here if you have questions -- about the market, your home's value, or that neighbor's house you've been eyeing. Just hit reply.</p>
+
+          <div class="sig">
+            <strong>Sarah Chen</strong> | REALTOR, ABR, SRS<br>
+            Compass -- Austin, TX<br>
+            (512) 555-0822 | sarahchenrealty.com
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== SECTION 4: REVIEW RESPONSE =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-daily">Daily Monitoring</div>
+        <h2>Review Response</h2>
+        <p>Beacon monitors Google, Zillow, and Realtor.com daily. When a new review appears, it drafts a response that's empathetic, professional, and on-brand.</p>
+      </div>
+
+      <div class="review-pair">
+        <div class="review-card">
+          <div class="review-card-label incoming">Incoming Review -- Google</div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star empty" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="review-author">Mark T.</div>
+          <div class="review-date">Posted 2 days ago</div>
+          <div class="review-text">
+            Sarah helped us buy our home in South Austin and overall she was great -- really knowledgeable about the area and got us a fair deal. The only reason I'm not giving 5 stars is that there were a couple times during the process where we didn't hear back for a day or two and had to follow up. It was stressful during the inspection period when we needed answers quickly. But she came through in the end and we love our home.
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-label response">Beacon's Drafted Response</div>
+
+          <div class="generated-badge">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+            Generated by Beacon
+          </div>
+
+          <div class="response-text">
+            Mark, thank you for taking the time to share your experience -- and congratulations again on the new home! I'm so glad we found the right place for y'all in South Austin.
+            <br><br>
+            I appreciate you being honest about the communication gap during the inspection period. You're right -- that's a high-stress window and you deserved faster responses. I've since changed how I handle inspection-week communication to make sure no client feels that way again. Your feedback genuinely helped me improve.
+            <br><br>
+            I hope you're settling in and loving the neighborhood. If you ever need anything -- contractor recs, property tax questions, or just a good breakfast taco spot nearby -- I'm always a text away.
+          </div>
+          <div class="response-meta">Ready to post -- review and approve in 1 click</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== SECTION 5: COMPETITOR INTEL =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-weekly">Weekly Output</div>
+        <h2>Competitor Intelligence Report</h2>
+        <p>Every Wednesday, Beacon delivers a brief on what your competitors are doing -- so you can stay one step ahead.</p>
+      </div>
+
+      <div class="competitor-report">
+        <div class="report-header">
+          <div class="report-title">Weekly Competitor Brief -- April 7-13, 2026</div>
+          <div class="report-date">Delivered Wednesday, April 13</div>
+        </div>
+
+        <div class="competitor-item">
+          <div class="competitor-name-row">
+            <div class="competitor-avatar jm">JM</div>
+            <div>
+              <div class="competitor-name">Jake Morrison</div>
+              <div class="competitor-brokerage">Keller Williams -- 78704 overlap</div>
+            </div>
+          </div>
+          <ul class="competitor-detail">
+            <li>Posted <strong>4 times this week</strong> on Instagram (up from his usual 3)</li>
+            <li>2 video walkthroughs -- one of a new listing at 1620 S 2nd St ($589K), and one "day in the life" reel that got 2.4K views</li>
+            <li>1 just-sold post for a Travis Heights bungalow ($548K, 6 days on market)</li>
+            <li>1 market tip post about rate buydowns -- similar angle to your Tuesday content</li>
+          </ul>
+        </div>
+
+        <div class="competitor-item">
+          <div class="competitor-name-row">
+            <div class="competitor-avatar lp">LP</div>
+            <div>
+              <div class="competitor-name">Lisa Park</div>
+              <div class="competitor-brokerage">Redfin -- 78745/78748</div>
+            </div>
+          </div>
+          <ul class="competitor-detail">
+            <li>Listed <strong>2 new properties</strong> in 78745 this week -- 4408 Manchaca Rd ($462K) and 1900 Stassney Ln ($389K)</li>
+            <li>Active on Nextdoor with 3 neighborhood Q&A posts -- positioning herself as the go-to for South Austin questions</li>
+            <li>Still running the "1% listing fee" promotion through Redfin</li>
+          </ul>
+        </div>
+
+        <div class="competitor-item">
+          <div class="competitor-name-row">
+            <div class="competitor-avatar mg">MG</div>
+            <div>
+              <div class="competitor-name">The Martinez Group</div>
+              <div class="competitor-brokerage">Sotheby's -- Bee Cave/Lakeway</div>
+            </div>
+          </div>
+          <ul class="competitor-detail">
+            <li>Dropped their standard commission rate to <strong>2%</strong> on listings over $1M -- noted on their website update Tuesday</li>
+            <li>New luxury listing at 5200 Lago Vista Dr ($1.85M) with professional photography and drone video</li>
+            <li>Google reviews: still at 18 reviews total (you have 47) -- their latest review mentions "slow to respond"</li>
+          </ul>
+        </div>
+
+        <div class="insight-bar">
+          <div class="label">Beacon's Take</div>
+          <p>Jake is leaning hard into video -- something to consider for your content strategy. Lisa's Nextdoor activity is smart for 78745 farming; you might want to increase your presence there. The Martinez Group cutting commissions signals they're feeling competitive pressure in the luxury space -- good time to highlight your personalized service vs. their team approach when pitching Bee Cave sellers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== SECTION 6: PAST CLIENT EMAIL =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-monthly">Monthly Output</div>
+        <h2>Past Client Nurture Email</h2>
+        <p>Personalized seasonal emails to past clients -- warm, useful, and ending with a natural referral ask. This one goes to Tom & Rachel Kim, who closed in March 2025.</p>
+      </div>
+
+      <div class="email-preview">
+        <div class="email-toolbar">
+          <div class="email-field">
+            <span class="label">To</span>
+            <span class="value">Tom & Rachel Kim</span>
+          </div>
+          <div class="email-field">
+            <span class="label">Subject</span>
+            <span class="value subject">Happy 1-Year Home Anniversary! (Plus a Spring To-Do That'll Save You Money)</span>
+          </div>
+        </div>
+        <div class="email-body">
+          <div class="generated-badge">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#5B8DEF" stroke="#5B8DEF" stroke-width="0.3"/></svg>
+            Generated by Beacon
+          </div>
+
+          <p>Tom and Rachel,</p>
+
+          <p>Can you believe it's been a year since you got the keys to Kinney Ave? I still remember y'all walking through that front door for the first time -- and Rachel immediately claiming the back patio as her "work from home office." I hope that's still going strong.</p>
+
+          <p>I wanted to check in for two reasons:</p>
+
+          <p><strong>1. Spring home maintenance reminder:</strong> April is the perfect time to get your AC serviced before Austin summer hits (and you know it's coming). A quick tune-up now runs about $80-120 and can save you a $400+ emergency call in July. I've got a great HVAC tech if you need a recommendation -- just reply and I'll send his info.</p>
+
+          <p><strong>2. Your property tax appraisal is coming.</strong> Travis County appraisal notices should arrive in the next few weeks. Your home in 78704 has likely appreciated since last year (the neighborhood median is up about 4%), so your appraised value may jump. If the number looks high, it's worth protesting -- I can point you to a couple of solid protest services that handle the whole thing for about $300 flat fee.</p>
+
+          <p>On a personal note -- how are y'all settling into the Austin scene? Have you found your go-to breakfast taco spot yet? (I will judge your answer, fair warning.)</p>
+
+          <p>And if any of your Bay Area friends are thinking about making the move out here, I'd love to help them the way I helped y'all. No pressure at all -- I just know relocation buyers really benefit from having someone who knows the neighborhoods inside and out.</p>
+
+          <p>Hope you're loving Bouldin Creek as much as I love living nearby. Talk soon!</p>
+
+          <div class="sig">
+            <strong>Sarah</strong><br>
+            (512) 555-0822 | sarahchenrealty.com
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== SECTION 7: CHAT INTERFACE =============== -->
+    <section class="demo-section">
+      <div class="section-header">
+        <div class="section-tag tag-on-demand">On Demand</div>
+        <h2>Chat Interface</h2>
+        <p>Ask Beacon anything, anytime. It knows your listings, your market, your voice, and your clients. Answers in seconds.</p>
+      </div>
+
+      <div class="chat-container">
+        <div class="chat-topbar">
+          <div class="beacon-icon">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="12 1 12.69 10.34 15.18 8.82 13.66 11.31 23 12 13.66 12.69 15.18 15.18 12.69 13.66 12 23 11.31 13.66 8.82 15.18 10.34 12.69 1 12 10.34 11.31 8.82 8.82 11.31 10.34" fill="#fff" stroke="#fff" stroke-width="0.3"/></svg>
+          </div>
+          <div>
+            <div class="title">Beacon</div>
+            <div class="status"><span class="dot"></span> Online</div>
+          </div>
+        </div>
+
+        <div class="chat-messages">
+
+          <!-- Conversation 1 -->
+          <div class="msg msg-user">
+            Write me an open house invite for Saturday at 1847 S 3rd St
+            <div class="msg-time">10:14 AM</div>
+          </div>
+
+          <div class="msg msg-beacon">
+            <p><strong>Subject: You're Invited -- Open House This Saturday in Bouldin Creek</strong></p>
+            <p>Hey there,</p>
+            <p>I'm opening the doors at <strong>1847 S 3rd St</strong> this Saturday, April 18th from <strong>1:00 - 3:00 PM</strong>, and I'd love for you to come check it out (or share with someone who's looking).</p>
+            <p>Here's the quick rundown:</p>
+            <ul>
+              <li>Modern farmhouse in Bouldin Creek -- 3 bed / 2 bath, 1,680 sqft</li>
+              <li>White oak floors, chef's kitchen with waterfall quartz island</li>
+              <li>Private backyard with mature oaks -- a rare find in 78704</li>
+              <li>Walk to South Congress. Zilker Elementary zone.</li>
+              <li>Listed at $625,000</li>
+            </ul>
+            <p>Fair warning: homes in this neighborhood are averaging 11 days on market right now, so if this is on your radar, Saturday is the day to see it in person.</p>
+            <p>Can't make it? Shoot me a text at (512) 555-0822 and I'll set up a private showing.</p>
+            <p>See y'all Saturday!</p>
+            <p>-- Sarah</p>
+            <div class="msg-time">10:14 AM -- Generated in 4 seconds</div>
+          </div>
+
+          <!-- Conversation 2 -->
+          <div class="msg msg-user">
+            What should I say to a seller who wants to list at $700K when comps say $625K?
+            <div class="msg-time">2:31 PM</div>
+          </div>
+
+          <div class="msg msg-beacon">
+            <p>Good question -- this is one of the most important conversations you'll have with a seller. Here's how I'd approach it, based on the current 78704 market:</p>
+
+            <p><strong>Lead with respect for their number:</strong></p>
+            <p>"I understand why you're thinking $700K -- you've put a lot into this home, and Bouldin Creek is a strong market. Let me show you exactly what the data says so we can price it to get you the best possible result."</p>
+
+            <p><strong>Show the comps (be specific):</strong></p>
+            <ul>
+              <li>1620 S 2nd St -- similar size/age, sold for $618K (March 2026, 9 DOM)</li>
+              <li>2105 Kinney Ave -- slightly larger lot, sold for $595K (March 2025)</li>
+              <li>700 Bouldin Ave -- comparable condition, sold for $525K (April 2024, smaller sqft)</li>
+            </ul>
+
+            <p><strong>Frame the risk clearly:</strong></p>
+            <p>"At $700K, we'd be priced 12% above every comparable sale in the neighborhood. What happens is the serious buyers -- the ones pre-approved and ready to move -- will skip it because it doesn't appraise. We'd sit on market, get stale, and end up dropping to $625K anyway, but now it's been listed for 45 days and buyers wonder what's wrong with it."</p>
+
+            <p><strong>Offer the strategic alternative:</strong></p>
+            <p>"Here's what I'd recommend: list at $639K. It puts you just above the comp range, signals confidence, and gives us room to capture multiple offers in the first week. In this market, a well-priced home in 78704 with 11-day average DOM? I'd rather get you three offers at $625-640K in week one than sit at $700K for two months."</p>
+
+            <p><strong>The closing line:</strong></p>
+            <p>"My job isn't to tell you what you want to hear -- it's to get you the best result. And the best result starts with the right price."</p>
+            <div class="msg-time">2:31 PM -- Generated in 6 seconds</div>
+          </div>
+
+        </div>
+
+        <div class="chat-input-bar">
+          <div class="chat-input-mock">Ask Beacon anything...</div>
+          <div class="chat-send-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.page -->
+
+  <!-- =============== CTA SECTION =============== -->
+  <section class="cta-section">
+    <h2>Ready to See What Beacon Can Do for <em style="color:var(--gold);font-style:normal;">Your</em> Business?</h2>
+    <p>Everything above was generated from a single agent profile. Imagine what it does with yours.</p>
+    <a href="/booking" class="cta-btn">
+      Book a Free Demo
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </a>
+    <div class="cta-price">Starting at <span>$89/mo</span> on a 6-month commit &middot; or $129/mo month-to-month</div>
+  </section>
+
+  <!-- =============== FOOTER =============== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>&copy; 2026 Polaris Point &middot; Austin, TX</span>
+      <div class="footer-links">
+        <a href="https://polarispoint.io">polarispoint.io</a>
+        <a href="/beacon-one-pager.html">Pricing</a>
+        <a href="/docs/beacon-real-estate.html">Product Plan</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

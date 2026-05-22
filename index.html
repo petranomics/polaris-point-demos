@@ -1178,13 +1178,26 @@
             <div class="demo-thumb">
               <img src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Rack of vintage clothing" loading="lazy">
               <div class="demo-thumb-overlay">
-                <span class="demo-thumb-tag">E-commerce</span>
+                <span class="demo-thumb-tag">Clothing</span>
                 <span class="demo-thumb-name">POLOSTEW</span>
               </div>
             </div>
             <div class="demo-body">
               <p>Curated vintage clothing marketplace &mdash; one-of-a-kind pieces with detailed condition notes and Stripe checkout.</p>
               <a class="btn btn-blue" href="https://polostew.com" target="_blank" rel="noopener">POLOSTEW &rarr;</a>
+            </div>
+          </article>
+          <article class="glass demo-card reveal">
+            <div class="demo-thumb">
+              <img src="https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Flat-lay of leather bag, belt, sunglasses and accessories" loading="lazy">
+              <div class="demo-thumb-overlay">
+                <span class="demo-thumb-tag">Luxury Goods</span>
+                <span class="demo-thumb-name">THELUXINE</span>
+              </div>
+            </div>
+            <div class="demo-body">
+              <p>Curated luxury fashion &amp; lifestyle &mdash; runway pieces, artisan leather, limited editions, and fragrance.</p>
+              <a class="btn btn-blue" href="https://thatluxine.com" target="_blank" rel="noopener">THELUXINE &rarr;</a>
             </div>
           </article>
           <article class="glass demo-card reveal">
@@ -1197,7 +1210,7 @@
             </div>
             <div class="demo-body">
               <p>Single-origin Guatemalan coffee from the Acatenango volcano, roasted in small batches in Austin.</p>
-              <a class="btn btn-blue" href="https://www.exotico.coffee/" target="_blank" rel="noopener">Ex&oacute;tico Coffee &rarr;</a>
+              <a class="btn btn-blue" href="https://www.exotico.coffee/" target="_blank" rel="noopener" style="white-space:nowrap;">Ex&oacute;tico Coffee &rarr;</a>
             </div>
           </article>
           <article class="glass demo-card reveal">
@@ -1329,7 +1342,7 @@
           </div>
           <div class="glass reveal" style="padding:28px 24px;border-radius:16px;border-color:rgba(232,197,71,.3);">
             <p style="color:var(--gold);font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 12px;">Growth</p>
-            <h3 style="font-size:1.6rem;margin:0 0 4px;">$999</h3>
+            <h3 style="font-size:1.6rem;margin:0 0 4px;">$1,299</h3>
             <p style="color:var(--text-secondary);font-size:.82rem;margin:0 0 16px;">one-time</p>
             <ul style="list-style:none;padding:0;margin:0 0 20px;font-size:.85rem;color:var(--text-secondary);line-height:2;">
               <li style="color:#fff;">Multi-page website</li>
@@ -1341,91 +1354,110 @@
             <a class="btn btn-gold" href="#booking" style="width:100%;justify-content:center;font-size:.85rem;">Get Started</a>
           </div>
           <div class="glass reveal" style="padding:28px 24px;border-radius:16px;">
-            <p style="color:var(--blue);font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 12px;">Custom</p>
-            <h3 style="font-size:1.6rem;margin:0 0 4px;">$1,999+</h3>
+            <p style="color:var(--blue);font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 12px;">Pro</p>
+            <h3 style="font-size:1.6rem;margin:0 0 4px;">$2,499</h3>
             <p style="color:var(--text-secondary);font-size:.82rem;margin:0 0 16px;">one-time</p>
             <ul style="list-style:none;padding:0;margin:0 0 20px;font-size:.85rem;color:var(--text-secondary);line-height:2;">
               <li style="color:#fff;">Fully custom design</li>
               <li>Everything in Growth</li>
               <li>Unique branding &amp; layout</li>
               <li>Advanced integrations</li>
-              <li>Booking &amp; payment tools</li>
+              <li>Multi-location support</li>
             </ul>
             <a class="btn btn-glass" href="#booking" style="width:100%;justify-content:center;font-size:.85rem;">Let's Talk</a>
           </div>
         </div>
-        <div class="glass reveal" style="margin-top:24px;padding:28px 32px;border-radius:16px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;">
+        <!-- Monthly Ladder — each tier supersedes the one above. Single
+             recurring line. Sourced from lib/services-pricing.js. -->
+        <div class="reveal" style="margin-top:40px;">
+          <p class="section-label">Monthly Plans</p>
+          <h2 style="margin-bottom:6px;">Pick your level — every tier includes everything below it</h2>
+          <p class="section-intro">Start at hosting, scale to a full marketing engine. One line on your invoice — no add-on math.</p>
+        </div>
+        <div class="glass reveal" style="margin-top:20px;padding:24px 32px;border-radius:16px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;">
           <div>
             <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
               <p style="color:var(--gold);font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0;">Hosting &amp; Analytics</p>
               <span style="color:#fff;font-size:1.3rem;font-family:'Space Grotesk',sans-serif;font-weight:700;">$25<span style="font-size:.8rem;font-weight:400;color:var(--text-secondary);">/mo</span></span>
             </div>
-            <p style="color:var(--text-secondary);font-size:.88rem;margin:0;line-height:1.6;">We host your site, keep it fast, and give you a dashboard with visitor analytics, lead tracking, and performance reports. Available as an add-on to any plan.</p>
+            <p style="color:var(--text-secondary);font-size:.88rem;margin:0;line-height:1.6;">Site hosting, uptime monitoring, visitor analytics, and a monthly performance report. The floor — every customer needs this.</p>
           </div>
           <a class="btn btn-glass" href="#booking" style="font-size:.85rem;white-space:nowrap;">Learn More</a>
+        </div>
+        <div class="glass reveal" style="margin-top:12px;padding:24px 32px;border-radius:16px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
+              <p style="color:var(--blue);font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0;">Business Automation</p>
+              <span style="color:#fff;font-size:1.3rem;font-family:'Space Grotesk',sans-serif;font-weight:700;">$79<span style="font-size:.8rem;font-weight:400;color:var(--text-secondary);">/mo</span></span>
+            </div>
+            <p style="color:var(--text-secondary);font-size:.88rem;margin:0 0 6px;line-height:1.6;">Everything in Hosting + the tools that turn a site into a business:</p>
+            <ul style="list-style:none;padding:0;margin:0;font-size:.82rem;color:var(--text-secondary);line-height:1.7;">
+              <li>· Online booking widget (Calendly embed)</li>
+              <li>· AI popup chat — answers from your site content</li>
+              <li>· Lead capture + instant auto-reply email</li>
+              <li>· Automated review-request emails after service</li>
+            </ul>
+          </div>
+          <a class="btn btn-glass" href="#booking" style="font-size:.85rem;white-space:nowrap;">Add Automation</a>
         </div>
         <!-- BEACON — Ongoing Marketing -->
         <div class="reveal" style="margin-top:40px;">
           <p class="section-label">Ongoing Marketing</p>
-          <h2 style="margin-bottom:6px;">Beacon</h2>
-          <p class="section-intro">Your always-on marketing engine. Content, strategy, and growth — handled. Longer commitments unlock better pricing.</p>
+          <h2 style="margin-bottom:6px;">Beacon — top of the ladder</h2>
+          <p class="section-intro">Everything in Business Automation plus a content + marketing AI workspace that knows your business. Month-to-month, or commit to 6 months and save up to 31%.</p>
         </div>
+        <!-- Beacon tiers — keep aligned with lib/tier-limits.js (single source of truth) -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px;">
           <div class="glass reveal" style="padding:24px 20px;border-radius:16px;">
-            <p style="color:var(--blue);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 8px;">Beacon Lite</p>
+            <p style="color:var(--blue);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 8px;">Spark</p>
             <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:10px;">
-              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;">$129</span>
-              <span style="font-size:.72rem;color:var(--text-muted);">/mo annually</span>
+              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;">$89</span>
+              <span style="font-size:.72rem;color:var(--text-muted);">/mo on 6-mo</span>
             </div>
             <p style="color:var(--text-muted);font-size:.72rem;margin:0 0 14px;line-height:1.5;">
-              $149/mo quarterly<br>
-              $169/mo month-to-month
+              or $129/mo · month-to-month
             </p>
             <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:var(--text-secondary);line-height:2;">
-              <li style="color:#fff;">Weekly social media posts</li>
-              <li>Monthly newsletter drafts</li>
-              <li>Blog content (2/month)</li>
-              <li>Review response templates</li>
-              <li>Written in your brand voice</li>
+              <li style="color:#fff;">8K context per chat</li>
+              <li>5-turn memory</li>
+              <li>200 inquiries/month</li>
+              <li>50 MB library</li>
+              <li>Default Haiku model</li>
             </ul>
           </div>
           <div class="glass reveal" style="padding:24px 20px;border-radius:16px;border-color:rgba(232,197,71,.3);position:relative;">
             <span style="position:absolute;top:-9px;right:14px;background:var(--gold);color:var(--space);font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:2px 8px;border-radius:5px;">Most Popular</span>
-            <p style="color:var(--gold);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 8px;">Beacon</p>
+            <p style="color:var(--gold);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 8px;">Beam</p>
             <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:10px;">
-              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;">$249</span>
-              <span style="font-size:.72rem;color:var(--text-muted);">/mo annually</span>
+              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;">$179</span>
+              <span style="font-size:.72rem;color:var(--text-muted);">/mo on 6-mo</span>
             </div>
             <p style="color:var(--text-muted);font-size:.72rem;margin:0 0 14px;line-height:1.5;">
-              $299/mo quarterly<br>
-              $349/mo month-to-month
+              or $249/mo · month-to-month
             </p>
             <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:var(--text-secondary);line-height:2;">
-              <li style="color:#fff;">Everything in Lite</li>
-              <li style="color:#fff;">Dedicated AI workspace</li>
-              <li>Competitor monitoring</li>
-              <li>Review tracking &amp; alerts</li>
-              <li>Campaign strategy</li>
-              <li>On-demand prompting</li>
+              <li style="color:#fff;">Everything in Spark</li>
+              <li style="color:#fff;">15K context · 12-turn memory</li>
+              <li>1,500 inquiries/month</li>
+              <li>250 MB library</li>
+              <li>Sonnet auto-upgrade on key drafts</li>
             </ul>
           </div>
           <div class="glass reveal" style="padding:24px 20px;border-radius:16px;">
-            <p style="color:var(--blue);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 8px;">Beacon Pro</p>
+            <p style="color:var(--blue);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 8px;">Lighthouse</p>
             <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:10px;">
-              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;">$419</span>
-              <span style="font-size:.72rem;color:var(--text-muted);">/mo annually</span>
+              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;">$359</span>
+              <span style="font-size:.72rem;color:var(--text-muted);">/mo on 6-mo</span>
             </div>
             <p style="color:var(--text-muted);font-size:.72rem;margin:0 0 14px;line-height:1.5;">
-              $499/mo quarterly<br>
-              $579/mo month-to-month
+              or $499/mo · month-to-month
             </p>
             <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:var(--text-secondary);line-height:2;">
-              <li style="color:#fff;">Everything in Beacon</li>
-              <li style="color:#fff;">Lead research &amp; lists</li>
-              <li>Outbound email sequences</li>
-              <li>Press release drafts</li>
-              <li>Quarterly growth strategy</li>
-              <li>Enterprise: multi-user</li>
+              <li style="color:#fff;">Everything in Beam</li>
+              <li style="color:#fff;">30K context · 20-turn memory</li>
+              <li>Unlimited inquiries</li>
+              <li>1 GB library</li>
+              <li>Sonnet by default · Opus on demand</li>
             </ul>
           </div>
         </div>
