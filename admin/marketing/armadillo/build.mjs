@@ -597,7 +597,7 @@ function kitMock(data) {
 }
 
 /** Full page renderer */
-function buildPage({ slug, title, eyebrow, sub, accent, color, samplePostValue, postValueRange, formula, metrics, dashboard, kitData, footerNote }) {
+function buildPage({ slug, title, eyebrow, sub, accent, color, samplePostValue, postValueRange, formula, metrics, dashboard, kitData, featureSpotlight, footerNote }) {
   const charts = metrics.map(m => m.chart ?? '').join('');
   void charts; // referenced inline in metric cards
   return `<!DOCTYPE html>
@@ -678,6 +678,19 @@ function buildPage({ slug, title, eyebrow, sub, accent, color, samplePostValue, 
         </div>
       `).join('')}
     </section>
+
+    ${featureSpotlight ? `
+    <section style="padding: 22px 40px; border-bottom: 1px solid var(--border); background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);">
+      <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: center;">
+        <div>
+          <div style="font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--burnt); font-weight: 700; margin-bottom: 8px;">${featureSpotlight.eyebrow}</div>
+          <h3 style="font-size: 20px; font-weight: 700; margin: 0 0 8px; color: var(--text);">${featureSpotlight.title}</h3>
+          <p style="font-size: 13px; line-height: 1.6; color: var(--muted); margin: 0;">${featureSpotlight.body}</p>
+        </div>
+        ${featureSpotlight.preview ? `<div>${featureSpotlight.preview}</div>` : ''}
+      </div>
+    </section>
+    ` : ''}
 
     <section class="dashboard-preview" style="border-bottom: 1px solid var(--border);">
       <div class="dash-header">
@@ -1105,7 +1118,7 @@ const PLATFORMS = {
     title: 'Twitter / X',
     color: '#1DA1F2',
     eyebrow: 'For X creators',
-    sub: 'A dashboard that pulls apart what "engagement" means on X. Quote:Retweet ratio, Reply Engagement, Thread Performance — the signals that prove conversation, not just one-tap shares.',
+    sub: 'A dashboard that pulls apart what "engagement" means on X. Quote:Retweet ratio, Reply Engagement, Thread Performance — plus live niche-biased trend discovery, pulling the top tweets your audience is actually talking about.',
     samplePostValue: 1840,
     postValueRange: '$600 – $6,800 for accounts with 50K–500K followers',
     formula: [
@@ -1168,8 +1181,28 @@ const PLATFORMS = {
         { value: '38%', label: 'Quote:RT' },
         { value: '+184%', label: 'Thread Lift' },
         { value: '2.3%', label: 'Reply Eng.' },
-        { value: '6/wk', label: 'Posting Freq' },
+        { value: 'Live', label: 'Niche Trends' },
       ],
+    },
+    featureSpotlight: {
+      eyebrow: 'New · X-Specific',
+      title: 'See what your niche is talking about — live on X',
+      body: 'Every time you open the Trends tab, we pull the top recent tweets matching your niche\'s hashtags (passed through your persona). For a B2B SaaS creator: #saas, #startups, #b2b — current top tweets, ranked by engagement, surfaced with the author, like/RT/reply counts, and a click-through to X. No more guessing what to chime in on this week.',
+      preview: `
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-family: 'Inter', sans-serif;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text);">@levelsio</span>
+            <span style="font-size: 9px; color: #1DA1F2;">●</span>
+            <span style="font-size: 9px; color: var(--muted);">matched #saas</span>
+          </div>
+          <p style="font-size: 11px; line-height: 1.5; color: var(--text); margin: 0 0 10px;">"Stop A/B testing your landing page. Your problem isn't conversion rate, it's that no one wants what you're building. Talk to 30 customers this week instead."</p>
+          <div style="display: flex; gap: 14px; font-size: 9px; color: var(--muted);">
+            <span>♥ 3.2K</span>
+            <span>↻ 480</span>
+            <span>💬 210</span>
+            <span>👁 184K</span>
+          </div>
+        </div>`,
     },
     kitData: {
       accent: '#1DA1F2',
