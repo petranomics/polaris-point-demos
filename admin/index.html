@@ -382,6 +382,39 @@
     .senior-only-inline { display: none !important; }
     body.role-senior .senior-only-inline { display: inline-flex !important; }
 
+    /* Sub-navigation for parent tabs (Marketing, Ops) */
+    .admin-subnav {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      padding: 8px 4px 0;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .admin-subtab {
+      padding: 7px 12px;
+      border: none;
+      border-radius: 6px 6px 0 0;
+      background: transparent;
+      color: #64748b;
+      font-family: 'Inter', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .admin-subtab.active { background: rgba(91,141,239,.14); color: #5B8DEF; }
+    .admin-subtab:not(.active):hover { color: #94a3b8; }
+    .admin-subtab.senior-only { display: none; }
+    body.role-senior .admin-subtab.senior-only { display: inline-flex; }
+    .subnav-label {
+      font-size: .6rem; text-transform: uppercase; letter-spacing: 1px;
+      color: #475569; font-weight: 700; padding: 0 8px 0 12px;
+    }
+    .subnav-label.first { padding-left: 4px; }
+
     /* Role badge */
     .role-badge {
       display: inline-block;
@@ -1075,16 +1108,28 @@
     <button class="admin-tab" onclick="switchTab('intake')">3. Build Site</button>
     <button class="admin-tab" onclick="switchTab('offers')">Offers</button>
     <button class="admin-tab" onclick="switchTab('guide')">Sales Guide</button>
-    <button class="admin-tab" onclick="switchTab('materials')">Materials</button>
-    <a class="admin-tab" href="/ops" style="text-decoration:none;">Ops Dashboard</a>
-    <button class="admin-tab senior-only" onclick="switchTab('analytics')">Analytics</button>
-    <button class="admin-tab senior-only" onclick="switchTab('cards')">Business Cards</button>
-    <button class="admin-tab senior-only" onclick="switchTab('stickers')">Stickers</button>
-    <button class="admin-tab senior-only" onclick="switchTab('beacon')">Beacon</button>
-    <button class="admin-tab senior-only" onclick="switchTab('marketinghub')">Marketing Hub</button>
-    <button class="admin-tab senior-only" onclick="switchTab('sites')">Sites</button>
-    <button class="admin-tab senior-only" onclick="switchTab('users')">Users</button>
-    <button class="admin-tab senior-only" onclick="switchTab('apiusage')">API Usage</button>
+    <button class="admin-tab" onclick="switchTab('marketing')">Marketing</button>
+    <button class="admin-tab senior-only" onclick="switchTab('ops')">Ops</button>
+  </div>
+
+  <!-- Marketing sub-nav: General (all reps) + App-specific (senior) -->
+  <div id="marketingSubnav" class="admin-subnav">
+    <span class="subnav-label first">General</span>
+    <button class="admin-subtab" onclick="switchSub('materials')">Materials</button>
+    <button class="admin-subtab" onclick="switchSub('cards')">Business Cards</button>
+    <button class="admin-subtab" onclick="switchSub('stickers')">Stickers</button>
+    <span class="subnav-label senior-only-inline">App-Specific</span>
+    <button class="admin-subtab senior-only" onclick="switchSub('marketinghub')">Pitch Decks</button>
+    <button class="admin-subtab senior-only" onclick="switchSub('beacon')">Beacon</button>
+  </div>
+
+  <!-- Ops sub-nav (senior): embeds the former /ops dashboard -->
+  <div id="opsSubnav" class="admin-subnav">
+    <button class="admin-subtab" onclick="switchSub('sites')">Sites</button>
+    <button class="admin-subtab" onclick="switchSub('users')">Users</button>
+    <button class="admin-subtab" onclick="switchSub('analytics')">Analytics</button>
+    <button class="admin-subtab" onclick="switchSub('apiusage')">API Usage</button>
+    <button class="admin-subtab" onclick="switchSub('infra')">Infra</button>
   </div>
 
   <!-- SALES DECK TAB -->
@@ -1288,21 +1333,28 @@
         </div>
       </div>
 
-      <!-- MONTHLY LADDER — Hosting → Automation → Beacon. Each tier supersedes
-           the previous (single line on invoice). Source: lib/services-pricing.js. -->
+      <!-- MONTHLY LADDER — Launch → Orbit → Apex (Beacon Lite). Each tier
+           supersedes the previous (single line on invoice). Source: lib/services-pricing.js. -->
       <div class="sales-card" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <p style="color:#D4A853;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Hosting &amp; Analytics</p>
-          <p style="color:#94a3b8;font-size:.82rem;margin:0;">Site hosting, uptime monitoring, visitor analytics, and performance reports.</p>
+          <p style="color:#D4A853;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Launch</p>
+          <p style="color:#94a3b8;font-size:.82rem;margin:0;">Site hosting, uptime monitoring, visitor analytics, and lead tracking. The floor.</p>
         </div>
         <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$25<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
       </div>
       <div class="sales-card" style="margin-top:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
         <div>
-          <p style="color:#5B8DEF;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Business Automation</p>
-          <p style="color:#94a3b8;font-size:.82rem;margin:0 0 4px;">Everything in Hosting + booking widget (Calendly), AI popup chat, lead auto-reply, review-request emails.</p>
+          <p style="color:#5B8DEF;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Orbit · most popular</p>
+          <p style="color:#94a3b8;font-size:.82rem;margin:0 0 4px;">Everything in Launch + automated SEO (Google-readable data, review refresh, one-click blog posts, page speed) + booking widget, AI popup chat, lead auto-reply, review-request emails.</p>
         </div>
-        <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$79<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
+        <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$59<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
+      </div>
+      <div class="sales-card" style="margin-top:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+        <div>
+          <p style="color:#D4A853;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Apex</p>
+          <p style="color:#94a3b8;font-size:.82rem;margin:0;">Everything in Orbit + Beacon Lite — AI marketing engine (website customers only), unlimited blog posts via the Beacon budget.</p>
+        </div>
+        <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$99<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
       </div>
 
       <!-- BEACON — keep aligned with lib/tier-limits.js (single source of truth) -->
@@ -1380,7 +1432,9 @@
         <p><span class="gold">Starter ($799)</span> — "For the business that just needs to get online. A clean, professional site that shows up on Google and gives customers a way to reach you. AI-generated content keeps the cost down."</p>
         <p><span class="gold">Growth ($1,299)</span> — "For the business ready for multiple pages, service breakdowns, and a real SEO foundation. This is the sweet spot for most service businesses."</p>
         <p><span class="gold">Pro ($2,499)</span> — "For the business that wants a fully unique design with booking, payments, and advanced features. This replaces a $5K+ agency build."</p>
-        <p style="margin-top:12px;"><span class="gold">Hosting ($25/mo)</span> — "We keep your site live, fast, and give you analytics. Think of it like your electricity bill for your digital storefront."</p>
+        <p style="margin-top:12px;"><span class="gold">Launch ($25/mo)</span> — "We keep your site live, fast, and give you analytics and lead tracking. Think of it like your electricity bill for your digital storefront."</p>
+        <p><span class="gold">Orbit ($59/mo) — most popular</span> — "Everything in Launch, plus everything Google needs to actually find you: your business details tagged the way Google wants, star ratings in search, fresh reviews pulled in automatically, and one-click SEO blog posts. It also runs your booking widget, an AI chat that answers from your site, and instant lead replies. This is the one that turns a site into a lead machine."</p>
+        <p><span class="gold">Apex ($99/mo)</span> — "Everything in Orbit, plus your own Beacon Lite — an AI marketing engine that knows your business and writes content on demand. Only available to our website customers."</p>
         <p><span class="gold">Beacon ($89–$499/mo)</span> — "Your always-on marketing engine. Spark at $89/mo on a 6-month commit (or $129 month-to-month) writes your social posts, newsletters, and blog drafts in your brand voice. Beam at $179/mo on commit adds an AI workspace, competitor tracking, and review alerts. Lighthouse at $359/mo on commit is the full stack with unlimited inquiries and our smartest model. It's like hiring a marketing person for a fraction of the cost."</p>
       </div>
 
@@ -1469,7 +1523,7 @@
           "This is one we built for a [similar business]. See how the reviews are right up front, click-to-call is right there, and the whole thing is built to turn a visitor into a phone call. We'd build yours with your info, your branding — same quality."
 
           <span class="speaker">The Close</span>
-          "The Starter package is $799, one-time — site goes live in two weeks. We can add Business Automation for $79/mo (booking, AI chat, lead auto-reply) or go all the way with Beacon for content and marketing on top. Want to start with just the build?"
+          "The Starter package is $799, one-time — site goes live in two weeks. Most clients add Orbit at $59/mo (SEO, booking, AI chat, lead auto-reply) or go all the way to Apex at $99/mo, which includes Beacon Lite for content and marketing on top. Want to start with just the build?"
         </div>
       </div>
 
@@ -3013,6 +3067,49 @@
     </div>
   </div><!-- /tabApiusage -->
 
+  <!-- ============ INFRA TAB (senior-only, Ops sub) — ported from /ops ============ -->
+  <div id="tabInfra" class="tab-content" style="display:none;">
+    <div class="sales-section">
+      <div class="sales-card">
+        <h3>Infrastructure Status</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div style="padding:20px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h4 style="color:#fff;font-size:.85rem;margin:0;">VPS (Hostinger)</h4>
+              <span id="vpsStatusBadge" style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(100,116,139,.12);color:#64748b;">Checking…</span>
+            </div>
+            <div id="vpsDetails" style="font-size:.78rem;color:#cbd5e1;line-height:1.8;"></div>
+            <div style="margin-top:12px;display:flex;gap:8px;">
+              <button class="btn-export" onclick="checkVps()" style="font-size:.72rem;padding:6px 12px;">Refresh</button>
+              <button class="btn-export" onclick="testVpsGenerate()" style="background:transparent;border:1px solid #1e293b;color:#94a3b8;font-size:.72rem;padding:6px 12px;">Test Generate</button>
+            </div>
+            <div id="vpsTestResult" style="margin-top:8px;font-size:.75rem;color:#cbd5e1;display:none;"></div>
+          </div>
+          <div style="padding:20px;background:#0B1120;border:1px solid #1e293b;border-radius:10px;">
+            <h4 style="color:#fff;font-size:.85rem;margin:0 0 12px;">Services</h4>
+            <div style="font-size:.78rem;color:#cbd5e1;line-height:2;">
+              <div style="display:flex;justify-content:space-between;"><span>Vercel (Frontend)</span><span style="color:#16a34a;font-weight:600;">Active</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>Neon (Database)</span><span style="color:#16a34a;font-weight:600;">Active</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>Google Workspace (Email)</span><span style="color:#16a34a;font-weight:600;">Active</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>Anthropic API (Fallback AI)</span><span style="color:#16a34a;font-weight:600;">Active</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sales-card">
+        <h3>Cost Overview</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px;">
+          <div style="padding:14px;background:#0B1120;border-radius:8px;text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$20</div><div style="font-size:.62rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Vercel Pro/mo</div></div>
+          <div style="padding:14px;background:#0B1120;border-radius:8px;text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$9</div><div style="font-size:.62rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Hostinger VPS/mo</div></div>
+          <div style="padding:14px;background:#0B1120;border-radius:8px;text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$19</div><div style="font-size:.62rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Neon DB/mo</div></div>
+          <div style="padding:14px;background:#0B1120;border-radius:8px;text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;">$7</div><div style="font-size:.62rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Google WS/mo</div></div>
+          <div style="padding:14px;background:#0B1120;border-radius:8px;text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#D4A853;">$55</div><div style="font-size:.62rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">Total/mo</div></div>
+          <div style="padding:14px;background:#0B1120;border-radius:8px;text-align:center;"><div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:#5B8DEF;">$0</div><div style="font-size:.62rem;color:#475569;text-transform:uppercase;letter-spacing:.5px;">LLM per call (VPS)</div></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tabInfra -->
+
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script>
     // === ROLE MANAGEMENT ===
@@ -3034,8 +3131,12 @@
       marketinghub: 'tabMarketingHub',
       users: 'tabUsers',
       apiusage: 'tabApiusage',
-      sites: 'tabSites'
+      sites: 'tabSites',
+      infra: 'tabInfra'
     };
+    // Which sub-sections live under each parent tab.
+    var MARKETING_SUBS = ['materials', 'cards', 'stickers', 'marketinghub', 'beacon'];
+    var OPS_SUBS = ['sites', 'users', 'analytics', 'apiusage', 'infra'];
 
     // === SLIDE DECK ===
     var currentSlide = 0;
@@ -3098,18 +3199,8 @@
       }
     }
 
-    function switchTab(tab) {
-      // Senior-only tabs check
-      if ((tab === 'cards' || tab === 'stickers' || tab === 'analytics' || tab === 'outreach' || tab === 'beacon' || tab === 'apiusage' || tab === 'users' || tab === 'sites') && currentRole !== 'senior') return;
-      document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
-      document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
-      var targetId = TAB_MAP[tab];
-      if (targetId) document.getElementById(targetId).style.display = 'block';
-      // Find and activate the correct tab button
-      document.querySelectorAll('.admin-tab').forEach(function(btn) {
-        if (btn.getAttribute('onclick') === "switchTab('" + tab + "')") btn.classList.add('active');
-      });
-      // Load leads when switching to leads tab
+    // Per-section data loaders, shared by switchTab and switchSub.
+    function runTabLoader(tab) {
       if (tab === 'leads') { renderLeads(); loadOutreachQueue(); }
       if (tab === 'analytics') { loadAnalytics(); loadPreviews(); }
       if (tab === 'outreach') loadOutreachQueue();
@@ -3118,6 +3209,44 @@
       if (tab === 'apiusage') loadAdminApiUsage();
       if (tab === 'users') loadUsersTab();
       if (tab === 'sites') loadSitesTab();
+      if (tab === 'infra') checkVps();
+    }
+
+    function switchTab(tab) {
+      // Sub-section names route to their parent tab + that sub.
+      if (MARKETING_SUBS.indexOf(tab) !== -1) { switchTab('marketing'); switchSub(tab); return; }
+      if (OPS_SUBS.indexOf(tab) !== -1) { switchTab('ops'); switchSub(tab); return; }
+      // Senior-only parents
+      if ((tab === 'outreach' || tab === 'ops') && currentRole !== 'senior') return;
+
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('marketingSubnav').style.display = 'none';
+      document.getElementById('opsSubnav').style.display = 'none';
+      // Activate the matching parent button
+      document.querySelectorAll('.admin-tab').forEach(function(btn) {
+        if (btn.getAttribute('onclick') === "switchTab('" + tab + "')") btn.classList.add('active');
+      });
+
+      // Parent tabs reveal a sub-nav and open their first section.
+      if (tab === 'marketing') { document.getElementById('marketingSubnav').style.display = 'flex'; switchSub('materials'); return; }
+      if (tab === 'ops') { document.getElementById('opsSubnav').style.display = 'flex'; switchSub('sites'); return; }
+
+      var targetId = TAB_MAP[tab];
+      if (targetId) document.getElementById(targetId).style.display = 'block';
+      runTabLoader(tab);
+    }
+
+    // Switch a sub-section within the currently active parent tab. Keeps the
+    // parent tab + its sub-nav visible; only swaps the content panel.
+    function switchSub(sub) {
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
+      var targetId = TAB_MAP[sub];
+      if (targetId) document.getElementById(targetId).style.display = 'block';
+      document.querySelectorAll('.admin-subtab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('onclick') === "switchSub('" + sub + "')");
+      });
+      runTabLoader(sub);
     }
 
     // ---- Materials / Coupon code ----
@@ -7268,6 +7397,49 @@
       fetch('/api/sites?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function(r){ return r.json(); })
         .then(function(){ closeAdminAuto(); loadSitesTab(); });
+    }
+
+    // ===== INFRA (Ops sub) — ported from /ops =====
+    function checkVps() {
+      var badge = document.getElementById('vpsStatusBadge');
+      var details = document.getElementById('vpsDetails');
+      if (!badge || !details) return;
+      badge.textContent = 'Checking…';
+      badge.style.background = 'rgba(100,116,139,.12)'; badge.style.color = '#64748b';
+      fetch('/api/vps?action=health')
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if (data.error) throw new Error(data.error);
+          badge.textContent = 'Online';
+          badge.style.background = 'rgba(22,163,74,.12)'; badge.style.color = '#16a34a';
+          details.innerHTML =
+            '<div>IP: <strong>72.60.120.245</strong></div>' +
+            '<div>Model: <strong>' + (data.model || 'mistral') + '</strong></div>' +
+            '<div>Uptime: <strong>' + (data.uptime || 'N/A') + '</strong></div>' +
+            '<div>Memory: <strong>' + (data.memory || 'N/A') + '</strong></div>';
+        })
+        .catch(function(e){
+          badge.textContent = 'Offline';
+          badge.style.background = 'rgba(239,68,68,.12)'; badge.style.color = '#ef4444';
+          details.innerHTML = '<div style="color:#ef4444;">' + (e.message || 'unreachable') + '</div>';
+        });
+    }
+    function testVpsGenerate() {
+      var result = document.getElementById('vpsTestResult');
+      if (!result) return;
+      result.style.display = 'block';
+      result.textContent = 'Generating test content…'; result.style.color = '#cbd5e1';
+      fetch('/api/generate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'meta_desc', context: { businessName: 'Test Plumbing', industry: 'plumber', city: 'Austin' } })
+      })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if (data.error) throw new Error(data.error);
+          result.innerHTML = '<strong>Source:</strong> ' + (data.source || '?') + '<br><strong>Output:</strong> ' + (data.content || '').substring(0, 200);
+          result.style.color = '#16a34a';
+        })
+        .catch(function(e){ result.textContent = 'Failed: ' + (e.message || 'error'); result.style.color = '#ef4444'; });
     }
 
     function loadAdminApiUsage() {

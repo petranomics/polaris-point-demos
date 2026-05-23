@@ -29,17 +29,19 @@ Every recurring customer is on exactly one ladder tier. Each tier strictly inclu
 
 | Tier | Monthly | 6-mo commit | What it adds on top of the previous tier |
 |---|---|---|---|
-| **Hosting & Analytics** | $25 | — | Site hosting, uptime monitoring, visitor analytics, monthly performance report. The floor — every customer needs this. |
-| **Business Automation** | $79 | — | + Online booking widget (Calendly embed), AI popup chat (answers from site content), lead capture + instant auto-reply email, automated review-request emails after service |
-| **Beacon Spark** | $129 | $89 | + Beacon content workspace: 8K context, 5-turn memory, 200 inquiries/mo, 50 MB library, default Haiku model |
+| **Launch** | $25 | — | Site hosting, uptime monitoring, visitor analytics, lead tracking, monthly performance report. The floor — every customer needs this. |
+| **Orbit** ⭐ | $59 | — | + Automated SEO (Google-readable business data → star ratings in search, automatic Google review refresh, one-click SEO blog posts, page speed + image SEO) AND the lead tools: online booking widget (Calendly embed), AI popup chat (answers from site content), lead capture + instant auto-reply email, automated review-request emails |
+| **Apex** | $99 | — | + Beacon Lite: an AI marketing engine that knows the business (website customers only), unlimited SEO blog posts via the Beacon budget |
+| **Beacon Spark** | $129 | $89 | + Steps above Apex's Beacon Lite to the full Spark workspace: 8K context, 5-turn memory, 200 inquiries/mo, 50 MB library, default Haiku model |
 | **Beacon Beam** ⭐ | $249 | $179 | + 15K context, 12-turn memory, 1,500 inquiries/mo, 250 MB library, Sonnet auto-upgrade on key drafts |
 | **Beacon Lighthouse** | $499 | $359 | + 30K context, 20-turn memory, unlimited inquiries, 1 GB library, Sonnet by default + Opus on demand |
 
-⭐ = most popular tier (anchor your pitch here)
+⭐ = most popular pick in its group (anchor your pitch here): **Orbit** for the website ladder, **Beam** if the conversation goes to Beacon.
 
 **Notes for selling:**
 - The ladder removes negotiation. Customer doesn't pick parts; they pick a level.
-- Push **Business Automation** for any service business — booking + lead auto-reply usually pays for itself with one new customer/mo.
+- Push **Orbit** for any service business — automated SEO + booking + lead auto-reply usually pays for itself with one new customer/mo. It's the default recurring line.
+- **Beacon Lite** (inside Apex) is exclusive to website customers — it's not sold standalone. Clients who outgrow it step up to a full Beacon tier.
 - Push **Beacon Beam** when the conversation turns to marketing or content. The 6-mo commit (28% off) is your discount lever — don't go deeper.
 - `pete` tier is internal-only — never quote it to a customer.
 
@@ -91,14 +93,14 @@ We manage spend on Google, Meta, and YouTube. Two parts: setup fee + monthly man
 
 Three packages reps lead with. Each is one build + one ladder tier + (optional) add-ons. Bundle pricing is roughly 10% off line-item total — don't discount further without Pete's approval.
 
-### Foundation — $799 setup + $79/mo
+### Foundation — $799 setup + $59/mo
 - **Starter** website
-- **Business Automation** ladder ($79/mo, includes Hosting)
-- *Pitch:* "Get online and capture leads automatically. The fastest path from no presence to a working sales funnel."
+- **Orbit** ladder ($59/mo, includes Launch hosting)
+- *Pitch:* "Get online, get found on Google, and capture leads automatically. The fastest path from no presence to a working sales funnel."
 
 ### Momentum — $1,299 setup + $678/mo ⭐
 - **Growth** website
-- **Beacon Beam** on 6-mo commit ($179/mo, includes Automation + Hosting)
+- **Beacon Beam** on 6-mo commit ($179/mo, includes Orbit + Launch)
 - **Local SEO Retainer** ($499/mo)
 - *Pitch:* "For service businesses ready to grow. Pro content engine + SEO retainer. Most clients land here."
 - *Setup is just the Growth build — no SEO setup fee on the bundle.*
@@ -106,7 +108,7 @@ Three packages reps lead with. Each is one build + one ladder tier + (optional) 
 ### Accelerator — $4,500 setup + $858/mo + ad spend
 - **Pro** website ($2,499)
 - **Google Search Ads** setup ($1,500) + small bundle premium ($501 for white-glove kickoff)
-- **Beacon Lighthouse** on 6-mo commit ($359/mo, includes Automation + Hosting)
+- **Beacon Lighthouse** on 6-mo commit ($359/mo, includes Orbit + Launch)
 - **Local SEO Retainer** ($499/mo)
 - **Google Search Ads** management (15% of ad spend, billed separately as a pass-through)
 - *Pitch:* "For businesses ready to scale. Every tool, white-glove. Recurring excludes ad spend."
