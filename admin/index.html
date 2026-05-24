@@ -1850,7 +1850,11 @@
             <button class="btn-export secondary" type="button" onclick="composeWithAI(this)" style="width:100%;">Compose with AI</button>
           </div>
         </div>
-        <div style="font-size:.7rem;color:#64748b;margin-top:6px;line-height:1.4;">No online footprint? "Use Template Defaults" loads 5 standard services for the selected template plus generic hero/about copy. "Compose with AI" drafts tailored services, hero, about, and sample reviews from the business name + city. Both only fill empty fields.</div>
+        <div style="margin-top:8px;">
+          <button class="btn-export secondary" type="button" onclick="useGenericPhotos(this)" style="width:100%;">Use Generic Photos</button>
+        </div>
+        <div id="genericPhotosGallery" style="display:none;margin-top:10px;"></div>
+        <div style="font-size:.7rem;color:#64748b;margin-top:6px;line-height:1.4;">No online footprint? "Use Template Defaults" loads 5 standard services for the selected template plus generic hero/about copy. "Compose with AI" drafts tailored services, hero, about, and sample reviews from the business name + city. "Use Generic Photos" pulls a curated set of stock photos for the selected template so the demo has visuals when Google photos don't load. All three only fill empty fields/slots.</div>
         <div id="searchResults" class="search-results">
           <div id="searchResultsList"></div>
         </div>
@@ -2007,9 +2011,123 @@
         </div>
       </div>
 
-      <!-- Step 4: Generate & Preview -->
+      <!-- Step 4: Notifications & Reporting — universal across all tiers
+           (Launch / Orbit / Apex). These set where leads + performance
+           reports go regardless of whether the client pays for chatbot. -->
       <div class="intake-section">
-        <h3><span class="step-num">4</span> Generate</h3>
+        <h3><span class="step-num">4</span> Notifications &amp; Reporting</h3>
+        <p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Where leads, alerts, and the monthly performance report get sent. Applies to every tier — including Launch hosting customers.</p>
+
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Primary lead-notification email</label>
+            <input type="email" id="intLeadEmail" placeholder="owner@business.com">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">Contact-form submissions and "someone is calling now" alerts go here. Defaults to the business email if blank.</p>
+          </div>
+          <div class="intake-field">
+            <label>Optional CC email</label>
+            <input type="email" id="intLeadCcEmail" placeholder="partner@business.com (optional)">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">A second recipient — partner, office manager, virtual assistant.</p>
+          </div>
+        </div>
+
+        <div class="intake-row" style="margin-top:6px;">
+          <div class="intake-field">
+            <label>Lead alert urgency</label>
+            <select id="intLeadAlertCadence">
+              <option value="instant">Instant — email per lead (default)</option>
+              <option value="daily">Daily digest — one summary email at 8am</option>
+              <option value="weekly">Weekly digest — Monday morning summary</option>
+            </select>
+          </div>
+          <div class="intake-field">
+            <label>Performance report recipient</label>
+            <input type="email" id="intReportEmail" placeholder="Defaults to lead-notification email">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">Monthly site-health + visitor report. Owners on Launch get this; Orbit+ gets a richer version.</p>
+          </div>
+        </div>
+
+        <div class="intake-field" style="margin-top:6px;">
+          <label>Internal owner notes (never shown publicly)</label>
+          <textarea id="intOwnerNotes" placeholder="Anything our team should remember about this client. E.g. 'Prefers phone calls over email,' 'Quarterly content refresh due Jan/Apr/Jul/Oct,' 'Site goes dark for hunting season Nov-Dec.'" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Step 5: Chatbot & Brand Voice — Orbit / Apex tiers only -->
+      <!-- These fields save into site_config.chatbot and site_config.brand
+           and are read by /api/site-chat.js when constructing the system
+           prompt. shared/site-admin.js mirrors these fields so the client can
+           refine them on their /admin after launch (Stage B). -->
+      <div class="intake-section">
+        <h3><span class="step-num">5</span> Chatbot &amp; Brand Voice <span style="display:inline-block;background:rgba(91,141,239,.15);color:#5B8DEF;font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:10px;letter-spacing:1px;margin-left:8px;vertical-align:middle;">ORBIT &amp; APEX</span></h3>
+        <p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Define how the AI popup chat speaks for the business — and the brand voice that shapes the whole site. Only used if the client is on Orbit or Apex. The client can refine these on their own admin after launch.</p>
+
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Chatbot persona</label>
+            <select id="intBotPersona">
+              <option value="friendly">Friendly &amp; warm — local-business default</option>
+              <option value="professional">Professional &amp; concise — for trades/financial</option>
+              <option value="casual">Casual &amp; conversational — cafes, salons</option>
+              <option value="direct">Direct &amp; no-nonsense — emergency services</option>
+              <option value="enthusiastic">Enthusiastic &amp; upbeat — hospitality</option>
+            </select>
+          </div>
+          <div class="intake-field">
+            <label>Voice perspective</label>
+            <select id="intBotVoice">
+              <option value="we">We / our team (most common)</option>
+              <option value="they">They / the business (third-person)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="intake-field" style="margin-top:6px;">
+          <label>Custom greeting</label>
+          <input type="text" id="intBotGreeting" placeholder="Hi! Ask me anything about [your business]…">
+          <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">First line visitors see. Leave blank for the default.</p>
+        </div>
+
+        <div class="intake-row" style="margin-top:6px;">
+          <div class="intake-field">
+            <label>Things the bot should NEVER say</label>
+            <textarea id="intBotNeverSay" placeholder="One per line, e.g.&#10;Don't quote prices&#10;Don't promise same-day service&#10;Don't recommend specific medications" style="min-height:90px;"></textarea>
+          </div>
+          <div class="intake-field">
+            <label>Things the bot should ALWAYS suggest</label>
+            <textarea id="intBotAlwaysSuggest" placeholder="One per line, e.g.&#10;Suggest the booking link for appointments&#10;Suggest calling for emergencies&#10;Suggest the free-estimate form for quotes" style="min-height:90px;"></textarea>
+          </div>
+        </div>
+
+        <div class="intake-field" style="margin-top:6px;">
+          <label>Extra tone / instruction notes (optional)</label>
+          <textarea id="intBotNotes" placeholder="Free-form: anything else the bot should know about how to behave. E.g. 'Always end with a friendly sign-off using the owner's first name (Maria).'" style="min-height:60px;"></textarea>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #1e293b;margin:22px 0 14px;">
+
+        <p style="font-size:.78rem;color:#94a3b8;margin:0 0 12px;font-weight:600;">Brand voice — shapes both site copy and the chatbot:</p>
+
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Target customer</label>
+            <input type="text" id="intTargetCustomer" placeholder="e.g. Austin homeowners with older homes (1980s-90s)">
+          </div>
+          <div class="intake-field">
+            <label>Key differentiators</label>
+            <textarea id="intDifferentiators" placeholder="One per line, e.g.&#10;Family-owned since 2008&#10;24/7 emergency service&#10;Master-licensed technicians&#10;Lifetime warranty on installs" style="min-height:74px;"></textarea>
+          </div>
+        </div>
+
+        <div class="intake-field" style="margin-top:6px;">
+          <label>Brand voice notes</label>
+          <textarea id="intBrandVoiceNotes" placeholder="Free-form: anything about how the brand speaks (warm vs. corporate, formal vs. plain-spoken, humor vs. straight, etc.). The AI uses this when composing site copy AND chatbot replies." style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Step 6: Generate & Preview -->
+      <div class="intake-section">
+        <h3><span class="step-num">6</span> Generate</h3>
         <div class="btn-row" style="margin-top:0;">
           <button class="btn-export" onclick="generateConfig()">Generate config.js</button>
           <button class="btn-export secondary senior-only-inline" id="btnCopyConfig" onclick="copyConfig()" style="display:none;">Copy to Clipboard</button>
@@ -2064,6 +2182,14 @@
             <div class="intake-field">
               <label>Custom Domain (optional — can add later)</label>
               <input type="text" id="deployDomain" placeholder="e.g. geronimoplumbing.com">
+            </div>
+            <div class="intake-field">
+              <label>Site Admin Password</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="text" id="deployAdminPassword" placeholder="Leave blank to auto-generate" style="flex:1;font-family:'JetBrains Mono',monospace;">
+                <button type="button" onclick="generateDeployPassword()" style="background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:9px 12px;color:#94a3b8;font-size:.75rem;cursor:pointer;white-space:nowrap;">Generate</button>
+              </div>
+              <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">The client uses this to sign in at <code style="color:#5B8DEF;">/admin</code> on their live site. Shown in plaintext on success so you can copy and share.</p>
             </div>
           </div>
           <div style="text-align:center;margin-top:12px;">
@@ -2747,9 +2873,10 @@
                 <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Automation</th>
                 <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Plan</th>
                 <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Owner</th>
+                <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Links</th>
               </tr>
             </thead>
-            <tbody id="adminSitesBody"><tr><td colspan="6" style="padding:14px;text-align:center;color:#475569;">Loading…</td></tr></tbody>
+            <tbody id="adminSitesBody"><tr><td colspan="7" style="padding:14px;text-align:center;color:#475569;">Loading…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -2783,7 +2910,7 @@
   </div>
 
   <!-- ============ MARKETING HUB TAB (senior-only) ============ -->
-  <!-- One-stop pitch surface: Armadillo Analytics one-pagers, Beacon
+  <!-- One-stop pitch surface: Polaris Point Analytics one-pagers, Beacon
        collateral, and Polaris Point pitch decks. Each card opens a
        standalone page in a new tab. Cards are pre-built HTML in
        /admin/marketing/<product>/<slug> — refresh by re-running
@@ -2807,7 +2934,7 @@
         <p style="margin-bottom:14px;">Keyboard-navigable HTML decks for sit-down meetings. Arrow keys to advance, Esc for overview.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;">
           <a href="/admin/marketing/decks/armadillo" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid rgba(191,87,0,0.4);border-radius:10px;padding:14px;display:block;">
-            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.92rem;margin:0 0 6px;">Armadillo Analytics · 8 slides</h4>
+            <h4 style="font-family:'Outfit',sans-serif;color:#fff;font-size:.92rem;margin:0 0 6px;">Polaris Point Analytics · 8 slides</h4>
             <p style="font-size:.72rem;color:#94a3b8;margin:0;line-height:1.45;">Single-product pitch. Problem → solution → price-per-post → optimization → media kit → pricing → CTA.</p>
           </a>
           <a href="/admin/marketing/decks/white-label" target="_blank" style="text-decoration:none;background:#0B1120;border:1px solid rgba(232,197,71,0.4);border-radius:10px;padding:14px;display:block;">
@@ -2821,11 +2948,11 @@
         </div>
       </div>
 
-      <!-- Armadillo Analytics one-pagers -->
+      <!-- Polaris Point Analytics one-pagers -->
       <div class="sales-card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
           <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#BF5700;"></span>
-          <h3 style="margin:0;">Armadillo Analytics — Creator one-pagers</h3>
+          <h3 style="margin:0;">Polaris Point Analytics — Creator one-pagers</h3>
         </div>
         <p style="margin-bottom:14px;">Visual one-pagers for each platform plus an agency white-label pitch. Each opens in a new tab — letter-size, print-ready, with live charts and a rendered media-kit preview.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
@@ -3411,6 +3538,13 @@
         '<textarea placeholder="Review text" class="rev-text"></textarea>' +
         '<input type="text" placeholder="Author name" class="rev-author">' +
         '<input type="text" placeholder="Location (e.g. Cedar Park)" class="rev-location">' +
+        '<select class="rev-stars" title="Star rating" style="background:#0B1120;border:1px solid #1e293b;border-radius:6px;color:#e2e8f0;font-family:inherit;font-size:.82rem;padding:6px 8px;">' +
+          '<option value="5">★★★★★ (5)</option>' +
+          '<option value="4">★★★★☆ (4)</option>' +
+          '<option value="3">★★★☆☆ (3)</option>' +
+          '<option value="2">★★☆☆☆ (2)</option>' +
+          '<option value="1">★☆☆☆☆ (1)</option>' +
+        '</select>' +
         '</div>' +
         '<button class="remove-item" onclick="this.parentElement.remove()">&times;</button>';
       container.appendChild(div);
@@ -3690,6 +3824,11 @@
         last.querySelector('.rev-text').value = r.text;
         last.querySelector('.rev-author').value = r.author || '';
         last.querySelector('.rev-location').value = '';
+        var stars = last.querySelector('.rev-stars');
+        if (stars) {
+          var n = parseInt(r.rating, 10);
+          stars.value = (n >= 1 && n <= 5) ? String(n) : '5';
+        }
       });
 
       document.getElementById('pasteReviewsBox').style.display = 'none';
@@ -4192,6 +4331,11 @@
           last.querySelector('.rev-text').value = r.text || '';
           last.querySelector('.rev-author').value = r.author || r.author_name || '';
           last.querySelector('.rev-location').value = r.location || r.time || city || '';
+          var stars = last.querySelector('.rev-stars');
+          if (stars) {
+            var n = parseInt(r.rating, 10);
+            stars.value = (n >= 1 && n <= 5) ? String(n) : '5';
+          }
         });
         console.log('Filled ' + place.reviews.length + ' reviews into form');
       } else {
@@ -4233,6 +4377,13 @@
 
     // === CONFIG GENERATOR ===
     function val(id) { return document.getElementById(id).value.trim(); }
+    // Read a textarea as an array of non-empty trimmed lines. Used by the
+    // chatbot do/don't lists, brand differentiators, etc.
+    function valLines(id) {
+      var v = val(id);
+      if (!v) return [];
+      return v.split(/\r?\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+    }
 
     function generateConfig() {
       var bizName = val('intBizName') || 'Business Name';
@@ -4266,7 +4417,10 @@
         var t = item.querySelector('.rev-text').value.trim();
         var a = item.querySelector('.rev-author').value.trim();
         var l = item.querySelector('.rev-location').value.trim();
-        if (t) reviews.push({ text: t, author: a, location: l });
+        var sEl = item.querySelector('.rev-stars');
+        var rating = sEl ? parseInt(sEl.value, 10) : 5;
+        if (isNaN(rating) || rating < 1 || rating > 5) rating = 5;
+        if (t) reviews.push({ text: t, author: a, location: l, rating: rating });
       });
 
       // Gather FAQs
@@ -4295,7 +4449,8 @@
         var attr = r.author + (r.location ? ' &middot; ' + r.location : '');
         revLines += '    {\n';
         revLines += '      text: ' + JSON.stringify(r.text) + ',\n';
-        revLines += '      attribution: ' + JSON.stringify(attr) + '\n';
+        revLines += '      attribution: ' + JSON.stringify(attr) + ',\n';
+        revLines += '      rating: ' + (r.rating || 5) + '\n';
         revLines += '    }' + (i < reviews.length - 1 ? ',' : '') + '\n';
       });
       revLines += '  ],\n';
@@ -4519,6 +4674,33 @@
         '    acceptButton: "Accept",\n' +
         '    declineButton: "No Thanks",\n' +
         '    privacyUrl: "#"\n' +
+        '  },\n\n' +
+        '  // === CHATBOT (Orbit / Apex tiers) ===\n' +
+        '  // Consumed by /api/site-chat.js when building the system prompt.\n' +
+        '  chatbot: {\n' +
+        '    persona: ' + JSON.stringify(val('intBotPersona') || 'friendly') + ',\n' +
+        '    voice: ' + JSON.stringify(val('intBotVoice') || 'we') + ',\n' +
+        '    greeting: ' + JSON.stringify(val('intBotGreeting')) + ',\n' +
+        '    neverSay: ' + JSON.stringify(valLines('intBotNeverSay')) + ',\n' +
+        '    alwaysSuggest: ' + JSON.stringify(valLines('intBotAlwaysSuggest')) + ',\n' +
+        '    notes: ' + JSON.stringify(val('intBotNotes')) + '\n' +
+        '  },\n\n' +
+        '  // === BRAND VOICE ===\n' +
+        '  // Shapes AI-composed copy AND folds into the chatbot system prompt.\n' +
+        '  brand: {\n' +
+        '    targetCustomer: ' + JSON.stringify(val('intTargetCustomer')) + ',\n' +
+        '    differentiators: ' + JSON.stringify(valLines('intDifferentiators')) + ',\n' +
+        '    voiceNotes: ' + JSON.stringify(val('intBrandVoiceNotes')) + '\n' +
+        '  },\n\n' +
+        '  // === OPS / NOTIFICATIONS (all tiers) ===\n' +
+        '  // Lead routing + report recipient. Consumed by /api/site-lead.js\n' +
+        '  // and the monthly reporting cron.\n' +
+        '  ops: {\n' +
+        '    leadEmail: ' + JSON.stringify(val('intLeadEmail') || val('intEmail')) + ',\n' +
+        '    leadCcEmail: ' + JSON.stringify(val('intLeadCcEmail')) + ',\n' +
+        '    leadAlertCadence: ' + JSON.stringify(val('intLeadAlertCadence') || 'instant') + ',\n' +
+        '    reportEmail: ' + JSON.stringify(val('intReportEmail') || val('intLeadEmail') || val('intEmail')) + ',\n' +
+        '    ownerNotes: ' + JSON.stringify(val('intOwnerNotes')) + '\n' +
         '  }\n' +
         '};\n';
 
@@ -4605,7 +4787,18 @@
       URL.revokeObjectURL(a.href);
     }
 
-    function deploySite() {
+    // Generates a memorable-but-random temp password (e.g. "Polaris-7K3M-9X2")
+    // suitable for handing off to the client. SHA-256 hashed at deploy time.
+    function generateDeployPassword() {
+      var alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // skip O/0/I/1 to avoid ambiguity
+      function chunk(n) { var s = ''; for (var i = 0; i < n; i++) s += alphabet[Math.floor(Math.random() * alphabet.length)]; return s; }
+      var pw = 'Polaris-' + chunk(4) + '-' + chunk(3);
+      var el = document.getElementById('deployAdminPassword');
+      if (el) { el.value = pw; el.focus(); el.select(); }
+      return pw;
+    }
+
+    async function deploySite() {
       if (!window._generatedConfig) { alert('Generate a config first.'); return; }
       var slug = document.getElementById('deploySlug').value.trim();
       if (!slug) { alert('Enter a site slug.'); return; }
@@ -4614,29 +4807,67 @@
       var btn = document.getElementById('btnDeploy');
       var status = document.getElementById('deployStatus');
 
+      // Auto-generate the admin password if the field is blank, so every
+      // deployed site is sign-in-ready without manual SQL.
+      var pwField = document.getElementById('deployAdminPassword');
+      var plainPassword = (pwField && pwField.value.trim()) || generateDeployPassword();
+
       btn.disabled = true;
       btn.textContent = 'Deploying...';
       status.style.display = 'block';
       status.innerHTML = '<p style="color:#5B8DEF;font-size:.85rem;">Creating repo &amp; deploying to Vercel...</p>';
 
-      fetch('/api/deploy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug: slug,
-          template: template,
-          config: window._generatedConfig,
-          domain: domain
-        })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
+      try {
+        var deployResp = await fetch('/api/deploy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            slug: slug,
+            template: template,
+            config: window._generatedConfig,
+            domain: domain
+          })
+        });
+        var data = await deployResp.json();
         if (data.error) {
           status.innerHTML = '<p style="color:#f44336;font-size:.85rem;">' + data.error + '</p>';
           btn.disabled = false;
           btn.textContent = 'Deploy Live Site';
           return;
         }
+
+        // Register the site in our DB so it shows up in the Sites tab and the
+        // /admin login can verify the password. Non-fatal if this fails — the
+        // site is still live; we just surface a warning.
+        var registerWarning = '';
+        try {
+          var passwordHash = await hashPwd(plainPassword);
+          var bizName = (document.getElementById('intBizName') && document.getElementById('intBizName').value.trim()) || slug;
+          var siteFields = {
+            site_name: bizName,
+            slug: slug,
+            template: template,
+            domain: data.customDomain || domain || '',
+            vercel_url: data.vercelUrl || data.siteUrl || '',
+            repo_url: data.repoUrl || '',
+            status: 'active',
+            hosting_plan: 'launch',
+            owner: (typeof currentUser !== 'undefined' && currentUser) || sessionStorage.getItem('pp_user') || '',
+            admin_password_hash: passwordHash
+          };
+          var regResp = await fetch('/api/sites', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(siteFields)
+          });
+          if (!regResp.ok) {
+            var regErr = await regResp.json().catch(function() { return {}; });
+            registerWarning = '<p style="color:#f59e0b;font-size:.74rem;margin-top:10px;">Site is live but DB registration failed (' + (regErr.error || regResp.status) + '). The client login will not work until the site is registered manually.</p>';
+          }
+        } catch (e) {
+          registerWarning = '<p style="color:#f59e0b;font-size:.74rem;margin-top:10px;">Site is live but DB registration threw: ' + (e.message || 'unknown') + '.</p>';
+        }
+
         var liveUrl = data.siteUrl;
         var dnsNote = '';
         if (data.customDomain) {
@@ -4644,6 +4875,14 @@
         } else if (domain) {
           dnsNote = '<p style="color:#64748b;font-size:.78rem;margin-top:12px;">Custom domain could not be added automatically. Add it in Vercel project settings.</p>';
         }
+        // Plaintext password rendered for one-time copy. Once this card is
+        // dismissed, the plaintext is gone — only the hash remains in the DB.
+        var pwBox =
+          '<div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px;margin:14px auto 0;max-width:400px;text-align:left;">' +
+            '<p style="color:#94a3b8;font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 6px;">Site admin password (copy now)</p>' +
+            '<p style="color:#D4A853;font-family:\'JetBrains Mono\',monospace;font-size:.95rem;margin:0;word-break:break-all;">' + escHtml(plainPassword) + '</p>' +
+            '<p style="color:#475569;font-size:.68rem;margin:8px 0 0;">Plaintext shown once. Hash stored in DB. Share with client; they sign in at the Site Admin link below.</p>' +
+          '</div>';
         status.innerHTML =
           '<div style="margin-bottom:12px;">' +
             '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" style="margin-bottom:8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
@@ -4652,17 +4891,18 @@
           '<p style="color:#64748b;font-size:.78rem;margin-bottom:12px;">Live in 30-60 seconds after Vercel builds</p>' +
           '<div style="display:flex;flex-direction:column;gap:8px;max-width:400px;margin:0 auto;">' +
             '<a href="' + liveUrl + '" target="_blank" style="background:#5B8DEF;color:#fff;padding:10px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.85rem;">Visit Site &#8594; ' + liveUrl + '</a>' +
-            '<a href="' + data.adminUrl + '" target="_blank" style="background:#111827;color:#94a3b8;padding:10px;border-radius:8px;text-decoration:none;font-size:.82rem;border:1px solid #1e293b;">Site Admin &#8594; ' + data.adminUrl + '</a>' +
+            '<a href="' + data.adminUrl + '" target="_blank" style="background:#D4A853;color:#0B1120;padding:10px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85rem;">Site Admin &#8594; ' + data.adminUrl + '</a>' +
             '<a href="' + data.repoUrl + '" target="_blank" style="background:#111827;color:#94a3b8;padding:10px;border-radius:8px;text-decoration:none;font-size:.82rem;border:1px solid #1e293b;">GitHub Repo &#8594; ' + data.repoUrl + '</a>' +
           '</div>' +
+          pwBox +
+          registerWarning +
           dnsNote;
         btn.style.display = 'none';
-      })
-      .catch(function(err) {
-        status.innerHTML = '<p style="color:#f44336;font-size:.85rem;">Deploy failed: ' + err.message + '</p>';
+      } catch (err) {
+        status.innerHTML = '<p style="color:#f44336;font-size:.85rem;">Deploy failed: ' + (err.message || 'unknown') + '</p>';
         btn.disabled = false;
         btn.textContent = 'Deploy Live Site';
-      });
+      }
     }
 
     function previewSite() {
@@ -5297,6 +5537,11 @@
               last.querySelector('.rev-text').value = r.text || '';
               last.querySelector('.rev-author').value = r.author || '';
               last.querySelector('.rev-location').value = r.location || city || '';
+              var stars = last.querySelector('.rev-stars');
+              if (stars) {
+                var n = parseInt(r.rating, 10);
+                stars.value = (n >= 1 && n <= 5) ? String(n) : '5';
+              }
             });
           }
         }
@@ -5306,6 +5551,117 @@
         if (btn) { btn.disabled = false; btn.textContent = origLabel; }
         alert('Compose failed: ' + (e.message || 'unknown error'));
       });
+    }
+
+    // Curated Pexels photo sets per template — fallback when Google photos
+    // don't load (no online footprint, weak listing, blocked images). These
+    // URLs are pulled from the templates' own configs, so they're known-good.
+    var STOCK_PHOTOS = {
+      plumber: [
+        'https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/6492411/pexels-photo-6492411.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ],
+      handyman: [
+        'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3637837/pexels-photo-3637837.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ],
+      cleaning: [
+        'https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ],
+      'pest-control': [
+        'https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1643384/pexels-photo-1643384.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/164558/pexels-photo-164558.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/4097848/pexels-photo-4097848.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ],
+      cafe: [
+        'https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1233528/pexels-photo-1233528.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1309778/pexels-photo-1309778.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1695052/pexels-photo-1695052.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/205961/pexels-photo-205961.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ],
+      restaurant: [
+        'https://images.pexels.com/photos/2491273/pexels-photo-2491273.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1105325/pexels-photo-1105325.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/36169156/pexels-photo-36169156.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ],
+      salon: [
+        'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3992870/pexels-photo-3992870.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3992874/pexels-photo-3992874.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3993320/pexels-photo-3993320.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/3993467/pexels-photo-3993467.jpeg?auto=compress&cs=tinysrgb&w=800'
+      ]
+    };
+
+    // Render the per-template stock photo picker and pre-assign hero/about
+    // for unfilled slots so a one-click flow produces a working demo. Photos
+    // hook into the same .photo-role + data-photo-url-b64 + setPhotoRole
+    // pipeline the Google gallery uses, so deploy reads them from the same
+    // window._place* globals.
+    function useGenericPhotos(btn) {
+      var templateSlug = (document.getElementById('searchTemplate').value || '').toLowerCase();
+      var photos = STOCK_PHOTOS[templateSlug];
+      if (!photos || !photos.length) { alert('No stock photos for "' + templateSlug + '" yet.'); return; }
+
+      var gallery = document.getElementById('genericPhotosGallery');
+      var html = '<div style="font-size:.68rem;color:#94a3b8;margin-bottom:6px;">Curated stock photos for ' + escHtml(templateSlug) + '. Pick which photo plays which role on the site:</div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          photos.map(function(p) {
+            var encoded = (window.btoa ? btoa(unescape(encodeURIComponent(p))) : p);
+            return '<div style="position:relative;width:124px;border-radius:6px;border:1px solid #1e293b;overflow:hidden;background:#0B1120;">' +
+              '<img src="' + p + '" style="width:100%;height:80px;object-fit:cover;display:block;" loading="lazy" />' +
+              '<select class="photo-role" data-photo-url-b64="' + encoded + '" onchange="setPhotoRole(this)" style="width:100%;background:#0B1120;color:#cbd5e1;border:0;border-top:1px solid #1e293b;font-size:.7rem;padding:4px 6px;outline:none;">' +
+                '<option value="">Unused</option>' +
+                '<option value="hero">Hero</option>' +
+                '<option value="about">About</option>' +
+                '<option value="logo">Logo</option>' +
+                '<option value="team">Team</option>' +
+              '</select>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      gallery.innerHTML = html;
+      gallery.style.display = 'block';
+
+      // Add to _placePhotos so the deploy pipeline finds them. Don't clobber
+      // existing Google photos — append, dedupe.
+      var existing = Array.isArray(window._placePhotos) ? window._placePhotos.slice() : [];
+      photos.forEach(function(p) { if (existing.indexOf(p) === -1) existing.push(p); });
+      window._placePhotos = existing;
+
+      // Pre-assign empty role slots so one click yields a working demo.
+      if (!window._placeHeroPhoto && photos[0]) window._placeHeroPhoto = photos[0];
+      if (!window._placeAboutPhoto && photos[1]) window._placeAboutPhoto = photos[1];
+      if (!window._placeImageUrl) window._placeImageUrl = photos[0];
+      syncPhotoRoleDropdowns();
+
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = 'Stock photos loaded ✓';
+        setTimeout(function() { btn.textContent = orig; }, 1600);
+      }
     }
 
     function leadQuickFill() {
@@ -7351,8 +7707,17 @@
     }
     function renderAdminSites() {
       var body = document.getElementById('adminSitesBody');
-      if (!_adminSites.length) { body.innerHTML = '<tr><td colspan="6" style="padding:14px;text-align:center;color:#475569;">No sites registered yet.</td></tr>'; return; }
+      if (!_adminSites.length) { body.innerHTML = '<tr><td colspan="7" style="padding:14px;text-align:center;color:#475569;">No sites registered yet.</td></tr>'; return; }
       body.innerHTML = _adminSites.map(function(s){
+        // Resolve the public-facing URLs. domain wins if set; otherwise the
+        // stored vercel_url; otherwise the slug-derived guess. Admin URL is
+        // always <site root>/admin.
+        var siteUrl = s.domain ? ('https://' + s.domain) : (s.vercel_url || (s.slug ? ('https://pp-' + s.slug + '.vercel.app') : ''));
+        var adminUrl = siteUrl ? (siteUrl.replace(/\/$/, '') + '/admin') : '';
+        var linkBtn = function(href, label, color) {
+          if (!href) return '';
+          return '<a href="' + href + '" target="_blank" rel="noopener" style="display:inline-block;background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:4px 9px;color:' + color + ';font-size:.7rem;text-decoration:none;margin-right:4px;">' + label + ' ↗</a>';
+        };
         return '<tr>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><strong style="color:#fff;">' + (s.site_name || '') + '</strong><br><span style="font-size:.7rem;color:#475569;">' + (s.domain || s.slug || '') + '</span></td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.template || '—') + '</td>' +
@@ -7360,6 +7725,7 @@
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + adminAutoCell(s) + '</td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.hosting_plan || '—') + '</td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.owner || '—') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);white-space:nowrap;">' + linkBtn(siteUrl, 'Site', '#5B8DEF') + linkBtn(adminUrl, 'Admin', '#D4A853') + '</td>' +
         '</tr>';
       }).join('');
     }
