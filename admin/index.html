@@ -384,6 +384,21 @@
     /* Senior-only table cell — used on Sites tab for the plaintext password. */
     .senior-cell { display: none; }
     body.role-senior .senior-cell { display: table-cell; }
+    .senior-inline-btn { display: none !important; }
+    body.role-senior .senior-inline-btn { display: inline-block !important; }
+    /* Destructive action button — danger red, opt-in feel. */
+    .danger-btn {
+      background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.32);
+      color: #f87171;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: .7rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+    .danger-btn:hover { background: rgba(248,113,113,.16); }
 
     /* Sub-navigation for parent tabs (Marketing, Ops) */
     .admin-subnav {
@@ -7915,7 +7930,11 @@
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + adminAutoCell(s) + '</td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.hosting_plan || '—') + '</td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.owner || '—') + '</td>' +
-          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);white-space:nowrap;">' + adminBtn(adminUrl) + linkBtn(siteUrl, 'Site', '#5B8DEF') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);white-space:nowrap;">' +
+            adminBtn(adminUrl) +
+            linkBtn(siteUrl, 'Site', '#5B8DEF') +
+            '<button class="danger-btn senior-inline-btn" onclick="destroySite(' + JSON.stringify(s.slug || '').replace(/"/g, '&quot;') + ',' + JSON.stringify(s.site_name || s.slug || '').replace(/"/g, '&quot;') + ')">Destroy</button>' +
+          '</td>' +
           '<td class="senior-cell" style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + pwCell + '</td>' +
         '</tr>';
       }).join('');
@@ -7948,6 +7967,59 @@
     function escAttr(s) {
       return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
+
+    // Full teardown of a deployed client site: deletes the GitHub repo, the
+    // Vercel project, and the sites row. Triple-gated:
+    //   (1) UI button is senior-only via .senior-inline-btn CSS class
+    //   (2) Must type the slug exactly to authorize
+    //   (3) Must re-enter their admin password (proven against users table)
+    // After deletion, refreshes the Sites tab so the row disappears.
+    async function destroySite(slug, displayName) {
+      if (!slug) { alert('Slug missing — refresh and retry.'); return; }
+      var typed = prompt(
+        'PERMANENT — this will delete the GitHub repo, the Vercel project, and the DB row for:\n\n  ' +
+        (displayName || slug) + '\n\nType the slug exactly to confirm: ' + slug
+      );
+      if (!typed) return;
+      if (typed.trim().toLowerCase() !== slug.toLowerCase()) {
+        alert('Slug mismatch — destroy cancelled.');
+        return;
+      }
+      var pw = prompt('Re-enter your admin password to authorize the destroy:');
+      if (!pw) return;
+
+      var username = (typeof currentUser !== 'undefined' && currentUser) || sessionStorage.getItem('pp_user') || '';
+      if (!username) { alert('Logged-in user not found — sign out and back in, then retry.'); return; }
+
+      try {
+        var pwHash = await hashPwd(pw);
+        var resp = await fetch('/api/destroy-site', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-pp-user': username,
+            'x-pp-pw-hash': pwHash
+          },
+          body: JSON.stringify({ slug: slug })
+        });
+        var data = await resp.json();
+        if (!resp.ok) {
+          alert('Destroy failed: ' + (data.error || ('HTTP ' + resp.status)));
+          return;
+        }
+        var r = data.results || {};
+        alert(
+          'Destroyed "' + slug + '"\n\n' +
+          'GitHub repo:    ' + (r.github || '—') + '\n' +
+          'Vercel project: ' + (r.vercel || '—') + '\n' +
+          'DB row:         ' + (r.db || '—')
+        );
+        if (typeof loadSitesTab === 'function') loadSitesTab();
+      } catch (e) {
+        alert('Destroy error: ' + (e.message || 'unknown'));
+      }
+    }
+
     function openAdminAuto(id) {
       var s = _adminSites.find(function(x){ return x.id === id; });
       if (!s) return;
