@@ -98,6 +98,12 @@ module.exports = async function handler(req, res) {
 
     // Client admin columns (Phase 1: per-client passwords + DB-backed config)
     await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS admin_password_hash TEXT`;
+    // Plaintext copy of the deploy-time admin password — surfaced ONLY on the
+    // senior ops Sites tab so Pete can speak with clients or unblock employees
+    // without resetting the credential. Rotated after handoff per process.
+    // Client-side gated (currentRole === 'senior'); /api/sites GET is open by
+    // design today (backlog: senior-auth header on /api/sites).
+    await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS admin_password_plain TEXT`;
     await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS site_config JSONB`;
     await sql`ALTER TABLE sites ADD COLUMN IF NOT EXISTS config_updated_at TIMESTAMP DEFAULT NOW()`;
 

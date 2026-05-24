@@ -39,15 +39,17 @@ module.exports = async function handler(req, res) {
       var b = req.body;
       if (!b || !b.site_name || !b.slug) return res.status(400).json({ error: 'site_name and slug required' });
       var result = await sql`
-        INSERT INTO sites (site_name, slug, template, domain, vercel_url, repo_url, status, analytics_enabled, hosting_plan, monthly_revenue, owner, notes, admin_password_hash, site_config)
+        INSERT INTO sites (site_name, slug, template, domain, vercel_url, repo_url, status, analytics_enabled, hosting_plan, monthly_revenue, owner, notes, admin_password_hash, admin_password_plain, site_config)
         VALUES (${b.site_name}, ${b.slug}, ${b.template || 'plumber'}, ${b.domain || ''}, ${b.vercel_url || ''},
           ${b.repo_url || ''}, ${b.status || 'active'}, ${b.analytics_enabled !== false}, ${b.hosting_plan || 'starter'},
           ${b.monthly_revenue || 0}, ${b.owner || ''}, ${b.notes || ''},
-          ${b.admin_password_hash || null}, ${b.site_config ? JSON.stringify(b.site_config) : null}::jsonb)
+          ${b.admin_password_hash || null}, ${b.admin_password_plain || null},
+          ${b.site_config ? JSON.stringify(b.site_config) : null}::jsonb)
         ON CONFLICT (slug) DO UPDATE SET
           site_name = EXCLUDED.site_name, domain = COALESCE(EXCLUDED.domain, sites.domain),
           vercel_url = COALESCE(EXCLUDED.vercel_url, sites.vercel_url), repo_url = COALESCE(EXCLUDED.repo_url, sites.repo_url),
           admin_password_hash = COALESCE(EXCLUDED.admin_password_hash, sites.admin_password_hash),
+          admin_password_plain = COALESCE(EXCLUDED.admin_password_plain, sites.admin_password_plain),
           site_config = COALESCE(EXCLUDED.site_config, sites.site_config),
           config_updated_at = NOW(), updated_at = NOW()
         RETURNING *

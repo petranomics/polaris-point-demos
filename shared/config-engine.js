@@ -250,6 +250,20 @@
         var prop = el.getAttribute('data-cfg-item-html');
         if (item[prop] !== undefined) el.innerHTML = item[prop];
       });
+      // Per-item star rendering: data-cfg-item-stars="rating"
+      // Reads item[prop] (clamped 0-5, default 5 if missing) and renders
+      // filled (★) + empty (☆) stars. Updates aria-label too so screen
+      // readers report the real rating.
+      child.querySelectorAll('[data-cfg-item-stars]').forEach(function(el) {
+        var prop = el.getAttribute('data-cfg-item-stars');
+        var raw = item[prop];
+        var n = raw === undefined || raw === null || raw === '' ? 5 : Math.round(Number(raw));
+        if (isNaN(n)) n = 5;
+        if (n < 0) n = 0;
+        if (n > 5) n = 5;
+        el.innerHTML = '★'.repeat(n) + '☆'.repeat(5 - n);
+        el.setAttribute('aria-label', n + ' star rating');
+      });
     }
   });
 

@@ -192,6 +192,36 @@
     parent.appendChild(row);
   }
 
+  // Renders a textarea that collects as a line-separated array. Marked with
+  // data-as="lines" so collectConfig() splits/joins automatically.
+  function addLinesField(parent, label, key, val, placeholder) {
+    var f = el('div', 'sa-field');
+    f.appendChild(el('label', '', { text: label }));
+    var inp = el('textarea', '', { 'data-key': key, 'data-as': 'lines' });
+    if (placeholder) inp.setAttribute('placeholder', placeholder);
+    inp.value = Array.isArray(val) ? val.join('\n') : (val || '');
+    f.appendChild(inp);
+    parent.appendChild(f);
+    return inp;
+  }
+
+  // Renders a <select> bound to a data-key. options = [{value, label}].
+  function addSelect(parent, label, key, options, val) {
+    var f = el('div', 'sa-field');
+    f.appendChild(el('label', '', { text: label }));
+    var sel = el('select', '', { 'data-key': key });
+    options.forEach(function(opt) {
+      var o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      if (opt.value === val) o.selected = true;
+      sel.appendChild(o);
+    });
+    f.appendChild(sel);
+    parent.appendChild(f);
+    return sel;
+  }
+
   // ── Auto-crop whitespace/transparency from images ──
   function autoCropImage(src, callback) {
     var img = new Image();
@@ -339,7 +369,23 @@
       var key = inp.getAttribute('data-key');
       // Skip list items (handled separately)
       if (key.indexOf('reviewsList_') === 0 || key.indexOf('faqsList_') === 0 || key.indexOf('servicesList_') === 0) return;
-      out[key] = inp.value;
+      // Parse line-separated textareas into string arrays.
+      var value = inp.value;
+      if (inp.getAttribute('data-as') === 'lines') {
+        value = (value || '').split(/\r?\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+      }
+      // Dotted keys (e.g. "chatbot.persona") become nested objects so the
+      // emitted config matches what /api/site-chat.js and /api/site-lead.js
+      // expect. Single-level nesting only — keep it simple.
+      var dot = key.indexOf('.');
+      if (dot !== -1) {
+        var parent = key.slice(0, dot);
+        var child = key.slice(dot + 1);
+        if (!out[parent] || typeof out[parent] !== 'object') out[parent] = {};
+        out[parent][child] = value;
+        return;
+      }
+      out[key] = value;
     });
 
     // Auto-derive
@@ -664,6 +710,61 @@
     addField(sec11, 'Section Title', 'familyTitle', 'text', config.familyTitle || '');
     addField(sec11, 'Section Text', 'familyText', 'textarea', config.familyText || '');
     wrap.appendChild(sec11);
+
+    // 12. Notifications & Reporting (universal — all tiers)
+    var ops = config.ops || {};
+    var sec12 = makeSection('Notifications & Reporting');
+    var ops12Note = el('p', '', { text: 'Where leads, alerts, and the monthly performance report get sent. Updates take effect on the next save.' });
+    ops12Note.style.cssText = 'font-size:.78rem;color:#94a3b8;margin:-4px 0 12px;';
+    sec12.appendChild(ops12Note);
+    addFieldRow(sec12, [
+      { label: 'Primary lead-notification email', key: 'ops.leadEmail', val: ops.leadEmail || '' },
+      { label: 'CC email (optional)', key: 'ops.leadCcEmail', val: ops.leadCcEmail || '' }
+    ]);
+    addSelect(sec12, 'Lead alert cadence', 'ops.leadAlertCadence', [
+      { value: 'instant', label: 'Instant — email per lead' },
+      { value: 'daily', label: 'Daily digest (8am)' },
+      { value: 'weekly', label: 'Weekly digest (Monday)' }
+    ], ops.leadAlertCadence || 'instant');
+    addField(sec12, 'Performance report recipient', 'ops.reportEmail', 'text', ops.reportEmail || '');
+    addField(sec12, 'Internal notes (never shown publicly)', 'ops.ownerNotes', 'textarea', ops.ownerNotes || '');
+    wrap.appendChild(sec12);
+
+    // 13. Chatbot & Brand Voice (Orbit / Apex tiers)
+    var bot = config.chatbot || {};
+    var brand = config.brand || {};
+    var sec13 = makeSection('Chatbot & Brand Voice');
+    var sec13Note = el('p', '', { text: 'Defines how the AI popup chat speaks for your business — and the brand voice that shapes site copy. Only used on Orbit / Apex plans.' });
+    sec13Note.style.cssText = 'font-size:.78rem;color:#94a3b8;margin:-4px 0 12px;';
+    sec13.appendChild(sec13Note);
+    var botRow = el('div', 'sa-field-row');
+    addSelect(botRow, 'Persona', 'chatbot.persona', [
+      { value: 'friendly', label: 'Friendly & warm' },
+      { value: 'professional', label: 'Professional & concise' },
+      { value: 'casual', label: 'Casual & conversational' },
+      { value: 'direct', label: 'Direct & no-nonsense' },
+      { value: 'enthusiastic', label: 'Enthusiastic & upbeat' }
+    ], bot.persona || 'friendly');
+    addSelect(botRow, 'Voice', 'chatbot.voice', [
+      { value: 'we', label: 'We / our team' },
+      { value: 'they', label: 'They / the business' }
+    ], bot.voice || 'we');
+    sec13.appendChild(botRow);
+    addField(sec13, 'Custom greeting', 'chatbot.greeting', 'text', bot.greeting || '');
+    addLinesField(sec13, 'Things the bot should NEVER say (one per line)', 'chatbot.neverSay', bot.neverSay,
+      "Don't quote prices\nDon't promise same-day service");
+    addLinesField(sec13, 'Things the bot should ALWAYS suggest (one per line)', 'chatbot.alwaysSuggest', bot.alwaysSuggest,
+      'Suggest the booking link for appointments\nSuggest calling for emergencies');
+    addField(sec13, 'Extra tone notes (optional)', 'chatbot.notes', 'textarea', bot.notes || '');
+    // Brand voice subsection — shapes both site copy AND chatbot replies
+    var brandHeader = el('h3', '', { text: 'Brand voice' });
+    brandHeader.style.cssText = 'font-size:.85rem;color:#fff;margin:18px 0 8px;padding-top:14px;border-top:1px solid rgba(91,141,239,.14);';
+    sec13.appendChild(brandHeader);
+    addField(sec13, 'Target customer', 'brand.targetCustomer', 'text', brand.targetCustomer || '');
+    addLinesField(sec13, 'Key differentiators (one per line)', 'brand.differentiators', brand.differentiators,
+      'Family-owned since 2008\n24/7 emergency service\nLifetime warranty');
+    addField(sec13, 'Brand voice notes', 'brand.voiceNotes', 'textarea', brand.voiceNotes || '');
+    wrap.appendChild(sec13);
 
     // Sticky save bar
     var bar = el('div', 'sa-save-bar');

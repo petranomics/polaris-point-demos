@@ -205,7 +205,11 @@
       form.appendChild(input); form.appendChild(sendBtn);
       wrap.appendChild(log); wrap.appendChild(form);
       modal.body.appendChild(wrap);
-      addMsg('bot', cfg.chat.greeting || ('Hi! Ask me anything about ' + cfg.businessName + '.'));
+      // Prefer the new `chatbot.greeting` (set in the build-flow intake);
+      // fall back to legacy `chat.greeting` for sites built before that field
+      // existed, then the name-aware default.
+      var greeting = (cfg.chatbot && cfg.chatbot.greeting) || cfg.chat.greeting || ('Hi! Ask me anything about ' + cfg.businessName + '.');
+      addMsg('bot', greeting);
       form.addEventListener('submit', onSend);
       built = true;
     }

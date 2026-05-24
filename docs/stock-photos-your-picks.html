@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your picks — running tally</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050D1E;
+    --surface: #0c1422;
+    --border: rgba(91,141,239,.18);
+    --blue: #5B8DEF;
+    --gold: #D4A853;
+    --green: #16a34a;
+    --amber: #f59e0b;
+    --red: #f87171;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #475569;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5; padding: 40px 24px 80px; }
+  .page { max-width: 1320px; margin: 0 auto; }
+  header h1 { font-family: 'Outfit', sans-serif; font-size: 1.9rem; margin: 0 0 6px; letter-spacing: -.01em; }
+  header h1 .accent { color: var(--gold); }
+  header .sub { color: var(--muted); margin: 0 0 8px; max-width: 760px; }
+  header .meta { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--dim); text-transform: uppercase; letter-spacing: .14em; margin: 0 0 8px; }
+  header .progress { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--gold); margin: 0 0 24px; }
+
+  .industry { margin-top: 48px; }
+  .industry-head {
+    display: flex; align-items: baseline; gap: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+  }
+  .industry-head h2 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 600; margin: 0; text-transform: capitalize; color: #fff; }
+  .industry-head .slug { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--dim); }
+  .industry-head .stat { font-family: 'JetBrains Mono', monospace; font-size: .7rem; padding: 2px 8px; border-radius: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+  .stat.full   { background: rgba(22,163,74,.18);  color: var(--green); }
+  .stat.partial{ background: rgba(245,158,11,.18); color: var(--amber); }
+  .stat.pending{ background: rgba(248,113,113,.18);color: var(--red); }
+
+  .roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(560px, 1fr)); gap: 18px; }
+  .role { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .role-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .role-head .label { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: .95rem; color: #fff; }
+  .role-head .badge { font-family: 'JetBrains Mono', monospace; font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 2px 7px; border-radius: 8px; }
+  .badge.hero { background: rgba(212,168,83,.16); color: var(--gold); }
+  .badge.work { background: rgba(91,141,239,.16); color: var(--blue); }
+  .badge.team { background: rgba(22,163,74,.18);  color: var(--green); }
+
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .slot {
+    border-radius: 8px; overflow: hidden; background: #0B1120;
+    border: 1px solid #1e293b; min-height: 200px;
+    display: flex; flex-direction: column;
+  }
+  /* Bias crop toward the top so portrait-oriented people shots keep faces in
+     frame. Bump height too so we crop less aggressively. Individual photos
+     that still look off get per-slot overrides via inline style. */
+  .slot img { display: block; width: 100%; height: 240px; object-fit: cover; object-position: center 25%; }
+  .slot .info { padding: 8px 10px; flex: 1; }
+  .slot .info .id { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--blue); }
+  .slot .info .tag { font-size: .58rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 6px; margin-left: 6px; }
+  .slot .info .tag.approved { background: rgba(212,168,83,.16); color: var(--gold); }
+  .slot .info .tag.picked   { background: rgba(22,163,74,.18);  color: var(--green); }
+  .slot .info .tag.flag     { background: rgba(245,158,11,.18); color: var(--amber); }
+  .slot .info .slug { font-size: .68rem; color: var(--muted); margin-top: 3px; word-break: break-word; }
+  .slot .info .flag-note { font-size: .68rem; color: var(--amber); margin-top: 4px; }
+
+  .pending {
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; min-height: 240px;
+    background: repeating-linear-gradient(45deg, transparent 0 8px, rgba(248,113,113,.04) 8px 16px);
+    border: 1px dashed rgba(248,113,113,.3);
+    color: var(--red); font-size: .8rem; gap: 8px;
+  }
+  .pending .label-pending { font-family: 'JetBrains Mono', monospace; font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+  .pending .ask { color: var(--muted); font-size: .76rem; text-align: center; padding: 0 14px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <h1>Your picks — <span class="accent">running tally</span></h1>
+    <p class="sub">Only the URLs you've sent so far. Pending slots are red-striped — they'll come from your next message (or I'll fill from the proposal pool if you say "use guesses").</p>
+    <p class="meta">12 of ~30 slots filled · plumber + handyman complete · cleaning partial · pest/cafe/restaurant/salon pending</p>
+  </header>
+
+<!-- ════════════════════════════════════════════════════════════ PLUMBER ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Plumber</h2><span class="slug">plumber</span><span class="stat full">COMPLETE</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">6419128</span><span class="tag approved">APPROVED</span></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/37085794/pexels-photo-37085794.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">37085794</span><span class="tag picked">PICK</span><div class="slug">artistic-black-and-white-water-faucet-drips</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Work</span><span class="badge work">WORK</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/32588548/pexels-photo-32588548.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">32588548</span><span class="tag picked">PICK</span><div class="slug">plumber-repairing-pipe-with-wrench-indoors</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/8961699/pexels-photo-8961699.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">8961699</span><span class="tag flag">PICK ⚠</span><div class="slug">man-and-woman-holding-a-red-hose</div><div class="flag-note">Slug says "man-and-woman" — confirm this is intended.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/34670929/pexels-photo-34670929.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">34670929</span><span class="tag picked">PICK</span><div class="slug">construction-workers-in-safety-gear-on-site</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/13821194/pexels-photo-13821194.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">13821194</span><span class="tag picked">PICK</span><div class="slug">smiling-man-in-workwear-holding-tools</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ HANDYMAN ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Handyman</h2><span class="slug">handyman</span><span class="stat full">COMPLETE</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/5768284/pexels-photo-5768284.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">5768284</span><span class="tag picked">PICK</span><div class="slug">crop-man-installing-window-during-apartment-renovation</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/37541226/pexels-photo-37541226.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">37541226</span><span class="tag picked">PICK</span><div class="slug">worker-using-angle-grinder-sparks-flying</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Work</span><span class="badge work">WORK</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/33388413/pexels-photo-33388413.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">33388413</span><span class="tag picked">PICK</span><div class="slug">two-technicians-repairing-machinery-in-workshop</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/37704233/pexels-photo-37704233.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">37704233</span><span class="tag picked">PICK</span><div class="slug">construction-worker-on-site-with-tools-outdoors</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4981806/pexels-photo-4981806.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4981806</span><span class="tag flag">PICK ⚠</span><div class="slug">a-man-using-spirit-level</div><div class="flag-note">Slug says "a man" (singular) — for a team slot. Confirm or swap.</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/8821549/pexels-photo-8821549.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">8821549</span><span class="tag picked">PICK</span><div class="slug">men-using-a-grinder-on-a-wood-plank</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ CLEANING ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Cleaning</h2><span class="slug">cleaning</span><span class="stat full">COMPLETE</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/6195949/pexels-photo-6195949.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">6195949</span><span class="tag picked">PICK</span><div class="slug">a-close-up-shot-of-a-person-using-a-vacuum-cleaner</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/6195274/pexels-photo-6195274.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">6195274</span><span class="tag picked">PICK</span><div class="slug">women-cleaning-inside-of-a-house</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Work</span><span class="badge work">WORK</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4107112</span><span class="tag approved">APPROVED</span></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4440659/pexels-photo-4440659.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4440659</span><span class="tag picked">PICK</span><div class="slug">a-person-wearing-a-rubber-gloves-holding-a-blue-plastic-spray-bottle</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/6196222/pexels-photo-6196222.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">6196222</span><span class="tag picked">PICK</span><div class="slug">3-men-in-orange-and-black-uniform-standing-beside-white-and-brown-house</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/7345413/pexels-photo-7345413.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">7345413</span><span class="tag flag">PICK ⚠</span><div class="slug">a-woman-in-yellow-shirt</div><div class="flag-note">Singular "a woman" — for a team alt slot. Confirm or swap.</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ PEST CONTROL ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Pest control</h2><span class="slug">pest-control</span><span class="stat full">COMPLETE</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">3555615</span><span class="tag approved">APPROVED</span></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4933821/pexels-photo-4933821.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4933821</span><span class="tag picked">PICK</span><div class="slug">father-and-son-making-soap-bubbles-in-yard</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Work</span><span class="badge work">WORK</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4894608/pexels-photo-4894608.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4894608</span><span class="tag flag">PICK ⚠</span><div class="slug">woman-in-hat-and-mask-spraying-a-tree-in-a-garden-with-pesticides</div><div class="flag-note">You earlier said "NOT mask shot" — outdoor garden context is softer than indoor PPE, but confirm.</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4176548/pexels-photo-4176548.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4176548</span><span class="tag flag">PICK ⚠</span><div class="slug">person-in-white-protective-clothing-fumigating-an-indoor-plant</div><div class="flag-note">Full protective suit — closer to the "jarring PPE" you wanted to avoid.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/4098315/pexels-photo-4098315.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">4098315</span><span class="tag flag">PICK ⚠</span><div class="slug">a-person-cleaning-the-glass-window</div><div class="flag-note">Slug is "a person cleaning the glass window" — singular + cleaning context, not a pest-control team. Want to keep or swap?</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/10481254/pexels-photo-10481254.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">10481254</span><span class="tag picked">PICK</span><div class="slug">men-standing-on-street-wearing-full-personal-protective-equipment</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ CAFE ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Cafe</h2><span class="slug">cafe</span><span class="stat full">COMPLETE (Sprint 2 redesign coming)</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">302899</span><span class="tag approved">APPROVED</span></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">2074130</span><span class="tag approved">APPROVED ALT</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Atmosphere</span><span class="badge work">"WORK" RENAMED</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/2253643/pexels-photo-2253643.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">2253643</span><span class="tag flag">PICK ⚠</span><div class="slug">top-view-photo-of-restaurant</div><div class="flag-note">Slug says "restaurant" — Pexels alt-text labeling. Likely fine for cafe atmosphere but eyeball.</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/30618328/pexels-photo-30618328.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">30618328</span><span class="tag picked">PICK</span><div class="slug">cozy-outdoor-cafe-with-seated-patron</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/7176007/pexels-photo-7176007.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">7176007</span><span class="tag picked">PICK</span><div class="slug">portrait-of-three-people-in-a-kitchen-with-coffee-making-equipment</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/36729740/pexels-photo-36729740.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">36729740</span><span class="tag picked">PICK</span><div class="slug">young-cafe-owners-smiling-in-apron-attire</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ RESTAURANT ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Restaurant</h2><span class="slug">restaurant</span><span class="stat full">COMPLETE (Sprint 2 redesign coming)</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/37058013/pexels-photo-37058013.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">37058013</span><span class="tag picked">PICK</span><div class="slug">authentic-argentine-asado-at-uribelarrea-grill</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/23330916/pexels-photo-23330916.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">23330916</span><span class="tag picked">PICK</span><div class="slug">meals-prepared-for-dinner</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">The Food</span><span class="badge work">"WORK" RENAMED</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/37184964/pexels-photo-37184964.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">37184964</span><span class="tag picked">PICK</span><div class="slug">chef-grilling-meat-at-traditional-uruguayan-parrilla</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/15671274/pexels-photo-15671274.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">15671274</span><span class="tag picked">PICK</span><div class="slug">cooks-preparing-food</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/6937472/pexels-photo-6937472.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">6937472</span><span class="tag flag">PICK ⚠</span><div class="slug">man-in-black-crew-neck-shirt-beside-woman-in-black-crew-neck-shirt</div><div class="flag-note">Slug just describes "man + woman in black shirts" — no restaurant context. Could be a couple, not a team. Eyeball before locking.</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/19771754/pexels-photo-19771754.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">19771754</span><span class="tag picked">PICK</span><div class="slug">cooks-in-a-kitchen</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ SALON / BARBERSHOP ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Salon / Barbershop</h2><span class="slug">salon</span><span class="stat full">COMPLETE (Sprint 2 redesign coming)</span></div>
+  <div class="roles">
+
+    <div class="role">
+      <div class="role-head"><span class="label">Hero (salon + barber)</span><span class="badge hero">HERO</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">3993449</span><span class="tag approved">APPROVED (salon)</span></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">1813272</span><span class="tag approved">APPROVED (barber)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Styles (salon + barber)</span><span class="badge work">"WORK" RENAMED</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/16048250/pexels-photo-16048250.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">16048250</span><span class="tag flag">PICK ⚠ (salon)</span><div class="slug">hand-over-scissors-on-table-in-barber-shop</div><div class="flag-note">Pexels labels it "barber shop" — visually may still work for salon "styles" slot. Confirm.</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/33461079/pexels-photo-33461079.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">33461079</span><span class="tag picked">PICK (barber)</span><div class="slug">barber-trimming-hair-with-clipper-and-comb</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-head"><span class="label">Team (salon + barber)</span><span class="badge team">TEAM</span></div>
+      <div class="pair">
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/28863315/pexels-photo-28863315.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">28863315</span><span class="tag picked">PICK (salon)</span><div class="slug">professional-hair-stylist-curling-client-s-hair-in-salon</div></div>
+        </div>
+        <div class="slot">
+          <img src="https://images.pexels.com/photos/19664876/pexels-photo-19664876.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="">
+          <div class="info"><span class="id">19664876</span><span class="tag picked">PICK (barber)</span><div class="slug">barber-cutting-client-hair</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+</body>
+</html>

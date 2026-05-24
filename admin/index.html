@@ -381,6 +381,9 @@
     body.role-senior .admin-tab.senior-only { display: block; }
     .senior-only-inline { display: none !important; }
     body.role-senior .senior-only-inline { display: inline-flex !important; }
+    /* Senior-only table cell — used on Sites tab for the plaintext password. */
+    .senior-cell { display: none; }
+    body.role-senior .senior-cell { display: table-cell; }
 
     /* Sub-navigation for parent tabs (Marketing, Ops) */
     .admin-subnav {
@@ -1349,10 +1352,10 @@
         </div>
         <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$59<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
       </div>
-      <div class="sales-card" style="margin-top:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+      <div class="sales-card" style="margin-top:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;opacity:.7;">
         <div>
-          <p style="color:#D4A853;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Apex</p>
-          <p style="color:#94a3b8;font-size:.82rem;margin:0;">Everything in Orbit + Beacon Lite — AI marketing engine (website customers only), unlimited blog posts via the Beacon budget.</p>
+          <p style="color:#D4A853;font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:0 0 4px;">Apex <span style="background:rgba(245,158,11,.18);color:#f59e0b;font-size:.55rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:4px;letter-spacing:1px;">COMING SOON</span></p>
+          <p style="color:#94a3b8;font-size:.82rem;margin:0;">Everything in Orbit + Beacon Lite — AI marketing engine (website customers only), unlimited blog posts via the Beacon budget. <em style="color:#f59e0b;">Not yet provisionable — collect "notify me" interest only.</em></p>
         </div>
         <p style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;margin:0;">$99<span style="font-size:.7rem;color:#64748b;font-weight:400;">/mo</span></p>
       </div>
@@ -2062,6 +2065,19 @@
         <h3><span class="step-num">5</span> Chatbot &amp; Brand Voice <span style="display:inline-block;background:rgba(91,141,239,.15);color:#5B8DEF;font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:10px;letter-spacing:1px;margin-left:8px;vertical-align:middle;">ORBIT &amp; APEX</span></h3>
         <p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Define how the AI popup chat speaks for the business — and the brand voice that shapes the whole site. Only used if the client is on Orbit or Apex. The client can refine these on their own admin after launch.</p>
 
+        <!-- Master toggle. Most sites don't need a chatbot. When unchecked,
+             the fields below are disabled and the deploy emits only
+             chatbot:{enabled:false}, which tells shared/automation.js to skip
+             rendering the widget. -->
+        <div style="background:#0B1120;border:1px solid #1e293b;border-radius:10px;padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;flex:1;">
+            <input type="checkbox" id="intBotEnabled" onchange="toggleChatbotSection()" style="width:18px;height:18px;cursor:pointer;accent-color:#5B8DEF;">
+            <span style="color:#fff;font-size:.88rem;font-weight:600;">Enable AI popup chat on this site</span>
+          </label>
+          <span style="font-size:.7rem;color:#475569;">Off by default — flip on for Orbit/Apex builds that want the bot.</span>
+        </div>
+
+        <div id="chatbotFieldsWrap">
         <div class="intake-row">
           <div class="intake-field">
             <label>Chatbot persona</label>
@@ -2104,9 +2120,11 @@
           <textarea id="intBotNotes" placeholder="Free-form: anything else the bot should know about how to behave. E.g. 'Always end with a friendly sign-off using the owner's first name (Maria).'" style="min-height:60px;"></textarea>
         </div>
 
+        </div><!-- /chatbotFieldsWrap -->
+
         <hr style="border:none;border-top:1px solid #1e293b;margin:22px 0 14px;">
 
-        <p style="font-size:.78rem;color:#94a3b8;margin:0 0 12px;font-weight:600;">Brand voice — shapes both site copy and the chatbot:</p>
+        <p style="font-size:.78rem;color:#94a3b8;margin:0 0 12px;font-weight:600;">Brand voice — shapes site copy regardless of whether the chatbot is on:</p>
 
         <div class="intake-row">
           <div class="intake-field">
@@ -2874,9 +2892,10 @@
                 <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Plan</th>
                 <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Owner</th>
                 <th style="padding:8px 12px;border-bottom:1px solid #1e293b;">Links</th>
+                <th class="senior-cell" style="padding:8px 12px;border-bottom:1px solid #1e293b;">Site Password</th>
               </tr>
             </thead>
-            <tbody id="adminSitesBody"><tr><td colspan="7" style="padding:14px;text-align:center;color:#475569;">Loading…</td></tr></tbody>
+            <tbody id="adminSitesBody"><tr><td colspan="8" style="padding:14px;text-align:center;color:#475569;">Loading…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -4385,6 +4404,19 @@
       return v.split(/\r?\n/).map(function(s) { return s.trim(); }).filter(Boolean);
     }
 
+    // Master toggle for the Step 5 chatbot fields. When OFF the section
+    // collapses visually (dimmed, inputs disabled) and the config generator
+    // emits only chatbot:{enabled:false} so shared/automation.js skips
+    // rendering the widget on the deployed site.
+    function toggleChatbotSection() {
+      var enabled = document.getElementById('intBotEnabled').checked;
+      var wrap = document.getElementById('chatbotFieldsWrap');
+      if (!wrap) return;
+      wrap.style.opacity = enabled ? '1' : '.4';
+      wrap.style.pointerEvents = enabled ? 'auto' : 'none';
+      wrap.querySelectorAll('input,select,textarea').forEach(function(el) { el.disabled = !enabled; });
+    }
+
     function generateConfig() {
       var bizName = val('intBizName') || 'Business Name';
       var bizShort = val('intBizShort') || bizName;
@@ -4675,16 +4707,28 @@
         '    declineButton: "No Thanks",\n' +
         '    privacyUrl: "#"\n' +
         '  },\n\n' +
-        '  // === CHATBOT (Orbit / Apex tiers) ===\n' +
-        '  // Consumed by /api/site-chat.js when building the system prompt.\n' +
-        '  chatbot: {\n' +
-        '    persona: ' + JSON.stringify(val('intBotPersona') || 'friendly') + ',\n' +
-        '    voice: ' + JSON.stringify(val('intBotVoice') || 'we') + ',\n' +
-        '    greeting: ' + JSON.stringify(val('intBotGreeting')) + ',\n' +
-        '    neverSay: ' + JSON.stringify(valLines('intBotNeverSay')) + ',\n' +
-        '    alwaysSuggest: ' + JSON.stringify(valLines('intBotAlwaysSuggest')) + ',\n' +
-        '    notes: ' + JSON.stringify(val('intBotNotes')) + '\n' +
-        '  },\n\n' +
+        // === CHATBOT (Orbit / Apex tiers) ===
+        // Master toggle: if unchecked, emit a minimal block with enabled:false
+        // so shared/automation.js skips the widget and /api/site-chat.js
+        // refuses requests cleanly. Most sites won't have the chatbot.
+        (function() {
+          var botEnabled = document.getElementById('intBotEnabled') && document.getElementById('intBotEnabled').checked;
+          if (!botEnabled) {
+            return '  // === CHATBOT (disabled — toggle off in builder) ===\n' +
+                   '  chatbot: { enabled: false },\n\n';
+          }
+          return '  // === CHATBOT (Orbit / Apex tiers) ===\n' +
+                 '  // Consumed by /api/site-chat.js when building the system prompt.\n' +
+                 '  chatbot: {\n' +
+                 '    enabled: true,\n' +
+                 '    persona: ' + JSON.stringify(val('intBotPersona') || 'friendly') + ',\n' +
+                 '    voice: ' + JSON.stringify(val('intBotVoice') || 'we') + ',\n' +
+                 '    greeting: ' + JSON.stringify(val('intBotGreeting')) + ',\n' +
+                 '    neverSay: ' + JSON.stringify(valLines('intBotNeverSay')) + ',\n' +
+                 '    alwaysSuggest: ' + JSON.stringify(valLines('intBotAlwaysSuggest')) + ',\n' +
+                 '    notes: ' + JSON.stringify(val('intBotNotes')) + '\n' +
+                 '  },\n\n';
+        })() +
         '  // === BRAND VOICE ===\n' +
         '  // Shapes AI-composed copy AND folds into the chatbot system prompt.\n' +
         '  brand: {\n' +
@@ -4853,7 +4897,10 @@
             status: 'active',
             hosting_plan: 'launch',
             owner: (typeof currentUser !== 'undefined' && currentUser) || sessionStorage.getItem('pp_user') || '',
-            admin_password_hash: passwordHash
+            admin_password_hash: passwordHash,
+            // Plaintext is stored so the Sites tab can surface it to senior
+            // role for client-handoff conversations. Rotate after handoff.
+            admin_password_plain: plainPassword
           };
           var regResp = await fetch('/api/sites', {
             method: 'POST',
@@ -5553,108 +5600,228 @@
       });
     }
 
-    // Curated Pexels photo sets per template — fallback when Google photos
-    // don't load (no online footprint, weak listing, blocked images). These
-    // URLs are pulled from the templates' own configs, so they're known-good.
+    // Curated Pexels photo sets per industry, grouped by role. Each industry
+    // gets two candidates per role so the build flow always has an A and B
+    // option. workLabel customizes the middle role's display name where the
+    // industry calls for it (cafe → Atmosphere, restaurant → The Food,
+    // salon → Styles). All photos still map to the underlying hero/about/team
+    // roles in the data model — only the picker label changes.
     var STOCK_PHOTOS = {
-      plumber: [
-        'https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/8486975/pexels-photo-8486975.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/5071177/pexels-photo-5071177.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/6492411/pexels-photo-6492411.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      handyman: [
-        'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/8005368/pexels-photo-8005368.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3637837/pexels-photo-3637837.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      cleaning: [
-        'https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/4107285/pexels-photo-4107285.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      'pest-control': [
-        'https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1643384/pexels-photo-1643384.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/164558/pexels-photo-164558.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/4097848/pexels-photo-4097848.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      cafe: [
-        'https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1233528/pexels-photo-1233528.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1309778/pexels-photo-1309778.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1695052/pexels-photo-1695052.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/205961/pexels-photo-205961.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      restaurant: [
-        'https://images.pexels.com/photos/2491273/pexels-photo-2491273.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1105325/pexels-photo-1105325.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/36169156/pexels-photo-36169156.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      salon: [
-        'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3992870/pexels-photo-3992870.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3992874/pexels-photo-3992874.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3993320/pexels-photo-3993320.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3993467/pexels-photo-3993467.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ]
+      plumber: {
+        workLabel: 'Work',
+        hero: [
+          'https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/37085794/pexels-photo-37085794.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/32588548/pexels-photo-32588548.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/8961699/pexels-photo-8961699.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/34670929/pexels-photo-34670929.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/13821194/pexels-photo-13821194.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      },
+      handyman: {
+        workLabel: 'Work',
+        hero: [
+          'https://images.pexels.com/photos/5768284/pexels-photo-5768284.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/37541226/pexels-photo-37541226.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/33388413/pexels-photo-33388413.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/37704233/pexels-photo-37704233.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/4981806/pexels-photo-4981806.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/8821549/pexels-photo-8821549.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      },
+      cleaning: {
+        workLabel: 'Work',
+        hero: [
+          'https://images.pexels.com/photos/6195949/pexels-photo-6195949.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/6195274/pexels-photo-6195274.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/4440659/pexels-photo-4440659.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/6196222/pexels-photo-6196222.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/7345413/pexels-photo-7345413.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      },
+      'pest-control': {
+        workLabel: 'Work',
+        hero: [
+          'https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/4933821/pexels-photo-4933821.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/4894608/pexels-photo-4894608.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/4176548/pexels-photo-4176548.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/4098315/pexels-photo-4098315.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/10481254/pexels-photo-10481254.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      },
+      cafe: {
+        workLabel: 'Atmosphere',
+        hero: [
+          'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/2253643/pexels-photo-2253643.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/30618328/pexels-photo-30618328.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/7176007/pexels-photo-7176007.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/36729740/pexels-photo-36729740.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      },
+      restaurant: {
+        workLabel: 'The Food',
+        hero: [
+          'https://images.pexels.com/photos/37058013/pexels-photo-37058013.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/23330916/pexels-photo-23330916.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/37184964/pexels-photo-37184964.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/15671274/pexels-photo-15671274.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/6937472/pexels-photo-6937472.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/19771754/pexels-photo-19771754.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      },
+      salon: {
+        workLabel: 'Styles',
+        hero: [
+          'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        work: [
+          'https://images.pexels.com/photos/16048250/pexels-photo-16048250.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/33461079/pexels-photo-33461079.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ],
+        team: [
+          'https://images.pexels.com/photos/28863315/pexels-photo-28863315.jpeg?auto=compress&cs=tinysrgb&w=800',
+          'https://images.pexels.com/photos/19664876/pexels-photo-19664876.jpeg?auto=compress&cs=tinysrgb&w=800'
+        ]
+      }
     };
 
-    // Render the per-template stock photo picker and pre-assign hero/about
-    // for unfilled slots so a one-click flow produces a working demo. Photos
-    // hook into the same .photo-role + data-photo-url-b64 + setPhotoRole
-    // pipeline the Google gallery uses, so deploy reads them from the same
-    // window._place* globals.
+    // Generate a typographic SVG logo from business name + accent color.
+    // Returned as a data URI so it can drop straight into intLogoData and
+    // travel to the deployed site as if it were an uploaded image. Falls
+    // back to the gold accent color if none provided.
+    function generateTypographicLogo(name, color) {
+      var safeName = String(name || 'Your Business').slice(0, 40);
+      var col = color || '#D4A853';
+      var fontSize = safeName.length > 22 ? 22 : 28;
+      var safeXml = safeName.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      var svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">' +
+          '<rect width="320" height="80" fill="transparent"/>' +
+          '<text x="160" y="50" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="' + fontSize + '" fill="' + col + '" letter-spacing="-.5">' + safeXml + '</text>' +
+          '<line x1="80" y1="62" x2="240" y2="62" stroke="' + col + '" stroke-width="1.5" opacity=".5"/>' +
+        '</svg>';
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Click handler for the "Generate Text Logo" button in the picker.
+    // Reads intBizShort (or intBizName as fallback), generates a typographic
+    // SVG, drops it into intLogoData, and shows a small preview in the picker.
+    function generateTypographicLogoForBuild(btn) {
+      var name = (document.getElementById('intBizShort').value.trim() ||
+                  document.getElementById('intBizName').value.trim() ||
+                  'Your Business');
+      var dataUri = generateTypographicLogo(name, '#D4A853');
+      var logoData = document.getElementById('intLogoData');
+      if (logoData) logoData.value = dataUri;
+      var preview = document.getElementById('genericLogoPreview');
+      if (preview) {
+        preview.style.display = 'block';
+        preview.innerHTML = '<img src="' + dataUri + '" style="max-width:240px;background:#fff;padding:8px;border-radius:6px;display:block;" />';
+      }
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = 'Logo generated ✓';
+        setTimeout(function() { btn.textContent = orig; }, 1600);
+      }
+    }
+
+    // Render the per-template stock photo picker grouped by role. Each role
+    // section shows its A + B candidates; their dropdowns are pre-set to the
+    // section's intended role so the user can deploy with one click and still
+    // override per-photo if they want a cross-role swap.
     function useGenericPhotos(btn) {
       var templateSlug = (document.getElementById('searchTemplate').value || '').toLowerCase();
       var photos = STOCK_PHOTOS[templateSlug];
-      if (!photos || !photos.length) { alert('No stock photos for "' + templateSlug + '" yet.'); return; }
+      if (!photos) { alert('No stock photos for "' + templateSlug + '" yet.'); return; }
 
       var gallery = document.getElementById('genericPhotosGallery');
-      var html = '<div style="font-size:.68rem;color:#94a3b8;margin-bottom:6px;">Curated stock photos for ' + escHtml(templateSlug) + '. Pick which photo plays which role on the site:</div>' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-          photos.map(function(p) {
-            var encoded = (window.btoa ? btoa(unescape(encodeURIComponent(p))) : p);
-            return '<div style="position:relative;width:124px;border-radius:6px;border:1px solid #1e293b;overflow:hidden;background:#0B1120;">' +
-              '<img src="' + p + '" style="width:100%;height:80px;object-fit:cover;display:block;" loading="lazy" />' +
-              '<select class="photo-role" data-photo-url-b64="' + encoded + '" onchange="setPhotoRole(this)" style="width:100%;background:#0B1120;color:#cbd5e1;border:0;border-top:1px solid #1e293b;font-size:.7rem;padding:4px 6px;outline:none;">' +
-                '<option value="">Unused</option>' +
-                '<option value="hero">Hero</option>' +
-                '<option value="about">About</option>' +
-                '<option value="logo">Logo</option>' +
-                '<option value="team">Team</option>' +
-              '</select>' +
-            '</div>';
-          }).join('') +
+      var workLabel = photos.workLabel || 'Work';
+
+      // Build one section per role. `role` is the value the photo dropdown
+      // pre-selects (maps to the underlying hero/about/team data slot).
+      var renderSection = function(title, role, urls) {
+        if (!Array.isArray(urls) || !urls.length) return '';
+        return '<div style="margin-bottom:14px;">' +
+          '<div style="font-family:Outfit,sans-serif;font-weight:600;font-size:.78rem;color:#fff;margin-bottom:6px;letter-spacing:.02em;">' + escHtml(title) + '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+            urls.map(function(p) {
+              var encoded = (window.btoa ? btoa(unescape(encodeURIComponent(p))) : p);
+              return '<div style="position:relative;width:160px;border-radius:6px;border:1px solid #1e293b;overflow:hidden;background:#0B1120;">' +
+                '<img src="' + p + '" style="width:100%;height:108px;object-fit:cover;object-position:center 25%;display:block;" loading="lazy" />' +
+                '<select class="photo-role" data-photo-url-b64="' + encoded + '" onchange="setPhotoRole(this)" style="width:100%;background:#0B1120;color:#cbd5e1;border:0;border-top:1px solid #1e293b;font-size:.7rem;padding:4px 6px;outline:none;">' +
+                  '<option value="">Unused</option>' +
+                  '<option value="hero"' + (role === 'hero' ? ' selected' : '') + '>Hero</option>' +
+                  '<option value="about"' + (role === 'about' ? ' selected' : '') + '>' + escHtml(workLabel) + '</option>' +
+                  '<option value="logo"' + (role === 'logo' ? ' selected' : '') + '>Logo</option>' +
+                  '<option value="team"' + (role === 'team' ? ' selected' : '') + '>Team</option>' +
+                '</select>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
         '</div>';
+      };
+
+      var html = '<div style="font-size:.7rem;color:#94a3b8;margin-bottom:12px;">Curated stock photos for <strong style="color:#cbd5e1;">' + escHtml(templateSlug) + '</strong>, grouped by role. The first photo in each section is pre-assigned — change a dropdown to swap.</div>';
+      html += renderSection('Hero', 'hero', photos.hero);
+      html += renderSection(workLabel, 'about', photos.work);
+      html += renderSection('Team', 'team', photos.team);
+      // Logo gets its own section with a "generate text logo" affordance —
+      // real logos aren't photos, so we skip stock entirely and offer a
+      // clean typographic mark instead.
+      html += '<div style="margin-top:14px;background:#0B1120;border:1px solid #1e293b;border-radius:8px;padding:12px 14px;">' +
+        '<div style="font-family:Outfit,sans-serif;font-weight:600;font-size:.78rem;color:#fff;margin-bottom:4px;">Logo (auto-generated)</div>' +
+        '<p style="font-size:.7rem;color:#94a3b8;margin:0 0 8px;line-height:1.5;">Stock photos make awkward logos. Generate a clean typographic mark from the business name + theme color — they can still upload a real logo later.</p>' +
+        '<button type="button" onclick="generateTypographicLogoForBuild(this)" style="background:rgba(212,168,83,.12);border:1px solid rgba(212,168,83,.3);border-radius:6px;padding:6px 12px;color:#D4A853;font-size:.74rem;font-weight:600;cursor:pointer;">Generate Text Logo</button>' +
+        '<div id="genericLogoPreview" style="margin-top:10px;display:none;"></div>' +
+      '</div>';
       gallery.innerHTML = html;
       gallery.style.display = 'block';
 
-      // Add to _placePhotos so the deploy pipeline finds them. Don't clobber
-      // existing Google photos — append, dedupe.
+      // Push every photo into _placePhotos so the deploy pipeline (and any
+      // downstream config generator references) finds them. Dedupe so we
+      // don't double-count if Google already returned the same URL.
       var existing = Array.isArray(window._placePhotos) ? window._placePhotos.slice() : [];
-      photos.forEach(function(p) { if (existing.indexOf(p) === -1) existing.push(p); });
+      [].concat(photos.hero || [], photos.work || [], photos.team || []).forEach(function(p) {
+        if (existing.indexOf(p) === -1) existing.push(p);
+      });
       window._placePhotos = existing;
 
-      // Pre-assign empty role slots so one click yields a working demo.
-      if (!window._placeHeroPhoto && photos[0]) window._placeHeroPhoto = photos[0];
-      if (!window._placeAboutPhoto && photos[1]) window._placeAboutPhoto = photos[1];
-      if (!window._placeImageUrl) window._placeImageUrl = photos[0];
+      // Pre-assign each empty role slot to its section's first photo so one
+      // click yields a working demo. Don't clobber existing assignments —
+      // if Google already populated hero, leave it alone.
+      if (!window._placeHeroPhoto && photos.hero && photos.hero[0])  window._placeHeroPhoto  = photos.hero[0];
+      if (!window._placeAboutPhoto && photos.work && photos.work[0]) window._placeAboutPhoto = photos.work[0];
+      if (!window._placeTeamPhoto && photos.team && photos.team[0])  window._placeTeamPhoto  = photos.team[0];
+      if (!window._placeImageUrl) window._placeImageUrl = (photos.hero && photos.hero[0]) || '';
       syncPhotoRoleDropdowns();
 
       if (btn) {
@@ -7707,7 +7874,7 @@
     }
     function renderAdminSites() {
       var body = document.getElementById('adminSitesBody');
-      if (!_adminSites.length) { body.innerHTML = '<tr><td colspan="7" style="padding:14px;text-align:center;color:#475569;">No sites registered yet.</td></tr>'; return; }
+      if (!_adminSites.length) { body.innerHTML = '<tr><td colspan="8" style="padding:14px;text-align:center;color:#475569;">No sites registered yet.</td></tr>'; return; }
       body.innerHTML = _adminSites.map(function(s){
         // Resolve the public-facing URLs. domain wins if set; otherwise the
         // stored vercel_url; otherwise the slug-derived guess. Admin URL is
@@ -7718,6 +7885,29 @@
           if (!href) return '';
           return '<a href="' + href + '" target="_blank" rel="noopener" style="display:inline-block;background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:4px 9px;color:' + color + ';font-size:.7rem;text-decoration:none;margin-right:4px;">' + label + ' ↗</a>';
         };
+        // The Admin button is the most-used action on this row — it's how Pete
+        // jumps into a client's site editor while on a call. Render it as a
+        // filled gold primary so it stands out from the muted Site link.
+        var adminBtn = function(href) {
+          if (!href) return '';
+          return '<a href="' + href + '" target="_blank" rel="noopener" ' +
+            'style="display:inline-block;background:#D4A853;color:#0B1120;border-radius:6px;padding:6px 12px;' +
+            'font-size:.75rem;font-weight:700;text-decoration:none;margin-right:4px;">Open Admin ↗</a>';
+        };
+        // Password cell renders only for the senior role (CSS gates the <td>).
+        // We embed the plaintext as a data-attribute so click-to-copy works
+        // without leaking it into the DOM as visible text on a non-senior
+        // page (the cell is display:none for non-senior anyway).
+        var pwPlain = s.admin_password_plain || '';
+        var pwCell;
+        if (pwPlain) {
+          var pwEsc = escAttr(pwPlain);
+          pwCell = '<code class="sa-pw" data-pw="' + pwEsc + '" onclick="copySitePassword(this)" title="Click to copy" ' +
+            'style="cursor:pointer;background:#0B1120;border:1px solid #1e293b;border-radius:6px;padding:4px 10px;color:#D4A853;font-family:\'JetBrains Mono\',monospace;font-size:.72rem;white-space:nowrap;">' +
+            pwEsc + '</code>';
+        } else {
+          pwCell = '<span style="color:#475569;font-size:.7rem;font-style:italic;">— not on file —</span>';
+        }
         return '<tr>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);"><strong style="color:#fff;">' + (s.site_name || '') + '</strong><br><span style="font-size:.7rem;color:#475569;">' + (s.domain || s.slug || '') + '</span></td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.template || '—') + '</td>' +
@@ -7725,9 +7915,38 @@
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + adminAutoCell(s) + '</td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.hosting_plan || '—') + '</td>' +
           '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + (s.owner || '—') + '</td>' +
-          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);white-space:nowrap;">' + linkBtn(siteUrl, 'Site', '#5B8DEF') + linkBtn(adminUrl, 'Admin', '#D4A853') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);white-space:nowrap;">' + adminBtn(adminUrl) + linkBtn(siteUrl, 'Site', '#5B8DEF') + '</td>' +
+          '<td class="senior-cell" style="padding:10px 12px;border-bottom:1px solid rgba(30,41,59,.5);">' + pwCell + '</td>' +
         '</tr>';
       }).join('');
+    }
+
+    // Helper: copy a site's admin password to clipboard. Tied to the
+    // click-to-copy <code> cells in the senior Sites tab.
+    function copySitePassword(el) {
+      var pw = el.getAttribute('data-pw') || '';
+      if (!pw) return;
+      var done = function() {
+        var orig = el.textContent;
+        el.textContent = 'Copied ✓';
+        el.style.color = '#16a34a';
+        setTimeout(function() { el.textContent = orig; el.style.color = '#D4A853'; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(pw).then(done).catch(function() {
+          // Fallback for older browsers / non-secure contexts.
+          var ta = document.createElement('textarea');
+          ta.value = pw; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); done(); } catch(e) {}
+          document.body.removeChild(ta);
+        });
+      }
+    }
+
+    // Tiny escape for embedding text in HTML attributes — used by the
+    // click-to-copy password cell so passwords with quotes survive.
+    function escAttr(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
     function openAdminAuto(id) {
       var s = _adminSites.find(function(x){ return x.id === id; });

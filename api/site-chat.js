@@ -62,7 +62,53 @@ function buildContext(cfg) {
   if (services.length) lines.push('Services:\n- ' + services.join('\n- '));
   var faqs = pickFaqs(cfg);
   if (faqs.length) lines.push('FAQs:\n' + faqs.join('\n'));
+  // Brand voice — guides tone of replies (set in the build-flow intake).
+  var brand = cfg.brand || {};
+  var brandLines = [];
+  if (brand.targetCustomer) brandLines.push('Target customer: ' + brand.targetCustomer);
+  if (Array.isArray(brand.differentiators) && brand.differentiators.length) {
+    brandLines.push('Key differentiators:\n- ' + brand.differentiators.join('\n- '));
+  }
+  if (brand.voiceNotes) brandLines.push('Voice notes: ' + brand.voiceNotes);
+  if (brandLines.length) lines.push('Brand voice:\n' + brandLines.join('\n'));
   return { name: name, text: lines.join('\n\n') };
+}
+
+// Build the persona/tone preamble from the chatbot section of site_config.
+// Defaults match the legacy prompt so a site with no chatbot config behaves
+// the way it did before this feature shipped.
+function buildPersonaPreamble(cfg, name) {
+  var c = cfg.chatbot || {};
+  var personaMap = {
+    friendly:     'Be warm and friendly — like a helpful neighbor.',
+    professional: 'Be professional and concise — like a knowledgeable receptionist.',
+    casual:       'Be casual and conversational — like a friendly regular.',
+    direct:       'Be direct and no-nonsense — get to the point fast.',
+    enthusiastic: 'Be upbeat and enthusiastic — show genuine warmth.'
+  };
+  var voiceMap = {
+    we:   'Speak in first person plural ("we", "our team") as if you are part of the business.',
+    they: 'Speak in third person about the business ("' + name + ' offers…", "they\'re open until…").'
+  };
+  var parts = [];
+  parts.push(personaMap[c.persona] || personaMap.friendly);
+  parts.push(voiceMap[c.voice] || voiceMap.we);
+  if (Array.isArray(c.neverSay) && c.neverSay.length) {
+    parts.push('IMPORTANT — things you must NEVER do:\n- ' + c.neverSay.join('\n- '));
+  }
+  if (Array.isArray(c.alwaysSuggest) && c.alwaysSuggest.length) {
+    parts.push('Things to suggest when relevant:\n- ' + c.alwaysSuggest.join('\n- '));
+  }
+  if (c.notes) parts.push('Additional instructions: ' + c.notes);
+  return parts.join('\n\n');
+}
+
+// Resolve the greeting visible in the widget. Pulled from chatbot.greeting
+// first, then falls back to a name-aware default. Surfaced for completeness
+// but the actual greeting render lives in shared/automation.js.
+function resolveGreeting(cfg, name) {
+  var custom = (cfg.chatbot && cfg.chatbot.greeting) || '';
+  return custom.trim() || ('Hi! Ask me anything about ' + name + '.');
 }
 
 module.exports = async function handler(req, res) {
@@ -96,12 +142,14 @@ module.exports = async function handler(req, res) {
   }
 
   var ctx = buildContext(cfg);
+  var persona = buildPersonaPreamble(cfg, ctx.name);
   var system =
-    'You are the friendly virtual assistant for ' + ctx.name + ', embedded on their website. ' +
-    'Answer visitor questions using ONLY the business information below. Be warm, concise (2-4 sentences), and helpful. ' +
+    'You are the virtual assistant for ' + ctx.name + ', embedded on their website. ' +
+    'Answer visitor questions using ONLY the business information below. Keep replies concise (2-4 sentences) and helpful. ' +
     'When a visitor wants to book, get a quote, or do something you cannot complete in chat, encourage them to use the booking button, fill out the contact form, or call the business directly. ' +
     'If a question is outside what you know about this business, say so plainly and point them to call or leave a message — never invent prices, availability, policies, or facts. ' +
     'Never discuss anything unrelated to this business.\n\n' +
+    '=== TONE & BEHAVIOR ===\n' + persona + '\n\n' +
     '=== BUSINESS INFORMATION ===\n' + ctx.text;
 
   // Build messages from clamped history + the new turn

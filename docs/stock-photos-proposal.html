@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Photos — Round 2 (your feedback applied)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050D1E;
+    --surface: #0c1422;
+    --border: rgba(91,141,239,.18);
+    --blue: #5B8DEF;
+    --gold: #D4A853;
+    --green: #16a34a;
+    --amber: #f59e0b;
+    --red: #f87171;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #475569;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5; padding: 40px 24px 80px; }
+  .page { max-width: 1320px; margin: 0 auto; }
+  header h1 { font-family: 'Outfit', sans-serif; font-size: 1.9rem; margin: 0 0 6px; letter-spacing: -.01em; }
+  header h1 .accent { color: var(--gold); }
+  header .sub { color: var(--muted); margin: 0 0 8px; max-width: 760px; }
+  header .meta { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--dim); text-transform: uppercase; letter-spacing: .14em; margin: 0 0 32px; }
+
+  .industry { margin-top: 56px; }
+  .industry-head {
+    display: flex; align-items: baseline; gap: 14px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
+  }
+  .industry-head h2 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 600; margin: 0; text-transform: capitalize; color: #fff; }
+  .industry-head .slug { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--dim); }
+
+  .role { margin-bottom: 28px; }
+  .role-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+  .role-head .label { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem; color: #fff; }
+  .role-head .status { font-family: 'JetBrains Mono', monospace; font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; }
+  .status.keep   { background: rgba(22,163,74,.18);  color: var(--green); }
+  .status.revised { background: rgba(245,158,11,.18); color: var(--amber); }
+  .role-ask { font-size: .82rem; color: var(--muted); margin: 0 0 12px; max-width: 800px; }
+  .role-ask strong { color: var(--text); }
+
+  .pexels-search {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(91,141,239,.08); color: var(--blue);
+    border: 1px solid rgba(91,141,239,.25); border-radius: 6px;
+    padding: 4px 10px; font-size: .72rem; font-weight: 500;
+    text-decoration: none; margin-bottom: 12px;
+  }
+  .pexels-search:hover { background: rgba(91,141,239,.15); }
+
+  .candidates { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .cand {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden;
+  }
+  .cand.keep    { border-color: rgba(22,163,74,.4); }
+  .cand.guess   { border-color: rgba(245,158,11,.4); }
+  .cand img { display: block; width: 100%; height: 200px; object-fit: cover; background: #0B1120; }
+  .cand .meta { padding: 10px 14px; }
+  .cand .meta .id { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--blue); }
+  .cand .meta .tag { display: inline-block; margin-left: 8px; font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 1px 7px; border-radius: 8px; }
+  .cand .meta .tag.keep   { background: rgba(22,163,74,.18);  color: var(--green); }
+  .cand .meta .tag.guess  { background: rgba(245,158,11,.18); color: var(--amber); }
+  .cand .meta .note { font-size: .76rem; color: var(--muted); margin-top: 4px; }
+
+  .removed { background: var(--surface); border: 1px dashed rgba(248,113,113,.3); border-radius: 10px; padding: 10px 14px; color: var(--red); font-size: .8rem; }
+  .removed .id { font-family: 'JetBrains Mono', monospace; font-size: .72rem; }
+
+  .bespoke-flag {
+    background: rgba(91,141,239,.06); border: 1px solid rgba(91,141,239,.25);
+    border-radius: 10px; padding: 14px 18px; margin-top: 14px;
+    font-size: .82rem; color: var(--muted);
+  }
+  .bespoke-flag strong { color: var(--blue); }
+
+  .logo-note {
+    background: rgba(91,141,239,.06); border: 1px solid rgba(91,141,239,.25);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0 0;
+  }
+  .logo-note strong { color: var(--gold); }
+  .logo-note svg { margin-top: 10px; display: block; max-width: 320px; border: 1px solid var(--border); border-radius: 8px; }
+
+  .legend {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; margin: 20px 0 0;
+  }
+  .legend h3 { font-family: 'Outfit', sans-serif; font-size: .85rem; color: var(--gold); margin: 0 0 8px; text-transform: uppercase; letter-spacing: .14em; }
+  .legend ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: .82rem; }
+  .legend li { margin: 4px 0; }
+  .legend code { font-family: 'JetBrains Mono', monospace; color: var(--blue); }
+
+  @media (max-width: 720px) { .candidates { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <h1>Stock photos — <span class="accent">round 2</span></h1>
+    <p class="sub">Your feedback applied. Slots marked <span class="status keep">KEEP</span> mean current pick is approved; slots marked <span class="status revised">REVISED</span> have new candidates plus a Pexels search link so you can hunt your own if mine miss the mark.</p>
+    <p class="meta">caveat · I can't visually browse Pexels · expect 30–50% miss rate · paste better URLs back and I'll wire them</p>
+  </header>
+
+  <div class="legend">
+    <h3>How to respond</h3>
+    <ul>
+      <li><strong>If a guess is right:</strong> "plumber work A: keep" — I lock it in</li>
+      <li><strong>If you find a better one:</strong> "plumber team: use <code>https://images.pexels.com/photos/12345678/...</code>" — paste the URL</li>
+      <li><strong>If both my guesses miss:</strong> click the Pexels search link in that row, find a winner, paste the URL back</li>
+      <li><strong>Bespoke redesigns</strong> (cafe / restaurant / salon) are Sprint 2 — flagged inline below but not addressed here</li>
+    </ul>
+  </div>
+
+<!-- ════════════════════════════════════════════════════════════ PLUMBER ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Plumber</h2><span class="slug">plumber</span></div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Hero</span><span class="status keep">KEEP</span></div>
+    <div class="candidates">
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="plumber hero">
+        <div class="meta"><span class="id">6419128</span><span class="tag keep">APPROVED</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Work</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>totally new work photo</strong> (woman-with-tool removed). Actual plumbing work.</p>
+    <div class="removed"><span class="id">5071177</span> · removed (woman with tool)</div>
+    <a class="pexels-search" href="https://www.pexels.com/search/plumber%20pipe%20wrench/" target="_blank">↗ Pexels: plumber pipe wrench</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8488027/pexels-photo-8488027.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="plumber work A guess">
+        <div class="meta"><span class="id">8488027</span><span class="tag guess">GUESS A</span><div class="note">Aiming for hands-on pipe work.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8961342/pexels-photo-8961342.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="plumber work B guess">
+        <div class="meta"><span class="id">8961342</span><span class="tag guess">GUESS B</span><div class="note">Aiming for under-sink repair scene.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>team of plumbers in front of a truck</strong> or similar.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/plumbers%20team%20truck/" target="_blank">↗ Pexels: plumbers team truck</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8961040/pexels-photo-8961040.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="plumber team A guess">
+        <div class="meta"><span class="id">8961040</span><span class="tag guess">GUESS A</span><div class="note">Aiming for service-tech crew shot.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8961033/pexels-photo-8961033.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="plumber team B guess">
+        <div class="meta"><span class="id">8961033</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ HANDYMAN ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Handyman</h2><span class="slug">handyman</span></div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Hero</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>totally new hero</strong> (current looks like an actor in a helmet).</p>
+    <div class="removed"><span class="id">8005397</span> · removed (actor-helmet vibe)</div>
+    <a class="pexels-search" href="https://www.pexels.com/search/handyman%20tool%20belt%20repair/" target="_blank">↗ Pexels: handyman tool belt repair</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/5974318/pexels-photo-5974318.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="handyman hero A guess">
+        <div class="meta"><span class="id">5974318</span><span class="tag guess">GUESS A</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/3637837/pexels-photo-3637837.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="handyman hero B existing">
+        <div class="meta"><span class="id">3637837</span><span class="tag guess">FROM POOL</span><div class="note">Existing template asset, repurposed as hero.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Work</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>new photo, current vibe was right</strong>. Hands-on home repair.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/carpenter%20drill%20home/" target="_blank">↗ Pexels: carpenter drill home</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/5974321/pexels-photo-5974321.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="handyman work A guess">
+        <div class="meta"><span class="id">5974321</span><span class="tag guess">GUESS A</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="handyman work B existing">
+        <div class="meta"><span class="id">8005397</span><span class="tag guess">FROM POOL</span><div class="note">The hero we removed — might work as work shot at smaller size.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>team of people with tools to pass as handymen</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/construction%20workers%20group%20smiling/" target="_blank">↗ Pexels: construction workers group smiling</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8961013/pexels-photo-8961013.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="handyman team A guess">
+        <div class="meta"><span class="id">8961013</span><span class="tag guess">GUESS A</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/5691640/pexels-photo-5691640.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="handyman team B existing">
+        <div class="meta"><span class="id">5691640</span><span class="tag guess">FROM POOL</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ CLEANING ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Cleaning</h2><span class="slug">cleaning</span></div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Hero</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>fresh approach, current direction was close</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/clean%20modern%20kitchen%20bright/" target="_blank">↗ Pexels: clean modern kitchen bright</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/280471/pexels-photo-280471.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cleaning hero A guess">
+        <div class="meta"><span class="id">280471</span><span class="tag guess">GUESS A</span><div class="note">Aiming for bright, spotless interior — "we made this happen" vibe.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cleaning hero B guess">
+        <div class="meta"><span class="id">1571460</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Work</span><span class="status keep">KEEP</span></div>
+    <div class="candidates">
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cleaning work">
+        <div class="meta"><span class="id">4107112</span><span class="tag keep">APPROVED</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>less staged models, more real vibes</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/cleaners%20at%20work%20real/" target="_blank">↗ Pexels: cleaners at work real</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/4239013/pexels-photo-4239013.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cleaning team A guess">
+        <div class="meta"><span class="id">4239013</span><span class="tag guess">GUESS A</span><div class="note">Aiming for in-action cleaner, less posed.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/6196677/pexels-photo-6196677.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cleaning team B prior alt">
+        <div class="meta"><span class="id">6196677</span><span class="tag guess">PRIOR ALT</span><div class="note">The one you liked in round 1 — keeping in the pool.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ PEST CONTROL ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Pest control</h2><span class="slug">pest-control</span></div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Hero</span><span class="status keep">KEEP (+ revised alt)</span></div>
+    <p class="role-ask">Current hero approved. Alt: <strong>children playing in yard in front of a nicer house</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/kids%20playing%20backyard%20house/" target="_blank">↗ Pexels: kids playing backyard house</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="pest hero current">
+        <div class="meta"><span class="id">3555615</span><span class="tag keep">APPROVED</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8088486/pexels-photo-8088486.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="pest hero alt guess">
+        <div class="meta"><span class="id">8088486</span><span class="tag guess">ALT GUESS</span><div class="note">Aiming for kids-in-yard family-home scene.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Work</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>show pest control while remaining light</strong> — no jarring mask, no random thumbs up.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/pest%20control%20technician%20home/" target="_blank">↗ Pexels: pest control technician home</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/5825407/pexels-photo-5825407.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="pest work A guess">
+        <div class="meta"><span class="id">5825407</span><span class="tag guess">GUESS A</span><div class="note">Aiming for technician spraying baseboards — work shown, not scary.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8939776/pexels-photo-8939776.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="pest work B guess">
+        <div class="meta"><span class="id">8939776</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>real people, in a team</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/pest%20control%20uniform%20team/" target="_blank">↗ Pexels: pest control uniform team</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8961040/pexels-photo-8961040.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="pest team A guess">
+        <div class="meta"><span class="id">8961040</span><span class="tag guess">GUESS A</span><div class="note">Same ID I guessed for plumber team — uniformed crew works for both.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/8961043/pexels-photo-8961043.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="pest team B guess">
+        <div class="meta"><span class="id">8961043</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ CAFE ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Cafe</h2><span class="slug">cafe</span></div>
+
+  <div class="bespoke-flag"><strong>Sprint 2 flag:</strong> you want the cafe site rebuilt as a unique demo (not the generic plumber-style layout). I'll tackle that as a dedicated session. Photos below assume the current layout for now.</div>
+
+  <div class="role" style="margin-top:24px;">
+    <div class="role-head"><span class="label">Hero + alt</span><span class="status keep">KEEP</span></div>
+    <div class="candidates">
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cafe hero">
+        <div class="meta"><span class="id">302899</span><span class="tag keep">APPROVED</span></div>
+      </div>
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cafe hero alt">
+        <div class="meta"><span class="id">2074130</span><span class="tag keep">APPROVED ALT</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">"Work" (rename to <em>Atmosphere</em>?)</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">"Work" is the wrong term for a cafe. Renaming this slot to <strong>"Atmosphere"</strong> — drinks, interior shots, food on tables. (Final slot name confirmed in Sprint 2 redesign.)</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/latte%20art%20cafe%20warm/" target="_blank">↗ Pexels: latte art cafe warm</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1233528/pexels-photo-1233528.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cafe atmosphere A pool">
+        <div class="meta"><span class="id">1233528</span><span class="tag guess">FROM POOL</span><div class="note">Latte art close-up from existing pool.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1695052/pexels-photo-1695052.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cafe atmosphere B pool">
+        <div class="meta"><span class="id">1695052</span><span class="tag guess">FROM POOL</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>actual baristas</strong> (not the generic team-standing-together photo).</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/barista%20coffee%20shop%20smile/" target="_blank">↗ Pexels: barista coffee shop smile</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1813752/pexels-photo-1813752.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cafe team A guess">
+        <div class="meta"><span class="id">1813752</span><span class="tag guess">GUESS A</span><div class="note">Aiming for barista pulling espresso.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/4350146/pexels-photo-4350146.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="cafe team B guess">
+        <div class="meta"><span class="id">4350146</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ RESTAURANT ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Restaurant</h2><span class="slug">restaurant</span></div>
+
+  <div class="bespoke-flag"><strong>Sprint 2 flag:</strong> rethinking the restaurant site as a unique demo (menu, signature dishes, chef story, gallery). Photos below cover the current layout; final structure changes when we rebuild it.</div>
+
+  <div class="role" style="margin-top:24px;">
+    <div class="role-head"><span class="label">Hero</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>new hero</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/restaurant%20warm%20interior%20dining/" target="_blank">↗ Pexels: restaurant warm interior dining</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/941861/pexels-photo-941861.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="restaurant hero A guess">
+        <div class="meta"><span class="id">941861</span><span class="tag guess">GUESS A</span><div class="note">Aiming for warm-lit dining room.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1581384/pexels-photo-1581384.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="restaurant hero B guess">
+        <div class="meta"><span class="id">1581384</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">"Work" (rename to <em>The Food</em>?)</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Renaming to <strong>"The Food"</strong>. Your ask: <strong>guys in front of a BBQ pit</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/bbq%20pit%20smoker%20grill/" target="_blank">↗ Pexels: bbq pit smoker grill</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1857162/pexels-photo-1857162.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="restaurant food A guess">
+        <div class="meta"><span class="id">1857162</span><span class="tag guess">GUESS A</span><div class="note">Aiming for grill / smoke / meat.</div></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/2233348/pexels-photo-2233348.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="restaurant food B guess">
+        <div class="meta"><span class="id">2233348</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Aiming for: <strong>chef + kitchen crew</strong>. (You didn't spec — defaulting to a chef-style team shot. Tell me if you want something else.)</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/chef%20team%20kitchen/" target="_blank">↗ Pexels: chef team kitchen</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="restaurant team A current">
+        <div class="meta"><span class="id">3184183</span><span class="tag guess">CURRENT</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="restaurant team B guess">
+        <div class="meta"><span class="id">2696064</span><span class="tag guess">GUESS B</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ SALON / BARBERSHOP ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Salon / Barbershop</h2><span class="slug">salon</span></div>
+
+  <div class="bespoke-flag"><strong>Sprint 2 flag:</strong> rethinking salon as a unique demo, with a barbershop variant split. Photos below give the salon+barbershop pair for each role.</div>
+
+  <div class="role" style="margin-top:24px;">
+    <div class="role-head"><span class="label">Hero + alt</span><span class="status keep">KEEP both</span></div>
+    <div class="candidates">
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="salon hero">
+        <div class="meta"><span class="id">3993449</span><span class="tag keep">APPROVED (salon)</span></div>
+      </div>
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="salon hero alt">
+        <div class="meta"><span class="id">1813272</span><span class="tag keep">APPROVED (barber)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">"Work" (rename to <em>Styles</em>?)</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Renaming to <strong>"Styles"</strong>. Salon variant: keep current. Barber variant: <strong>electric razors / men's cut close-up</strong>.</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/barber%20electric%20razor%20clipper/" target="_blank">↗ Pexels: barber electric razor clipper</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand keep">
+        <img src="https://images.pexels.com/photos/3992874/pexels-photo-3992874.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="salon styles A current">
+        <div class="meta"><span class="id">3992874</span><span class="tag keep">CURRENT (salon)</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="salon styles B barber guess">
+        <div class="meta"><span class="id">1319460</span><span class="tag guess">GUESS (barber)</span><div class="note">Aiming for electric clipper close-up.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span class="label">Team</span><span class="status revised">REVISED</span></div>
+    <p class="role-ask">Your ask: <strong>one salon team + one barbershop team</strong> (the picker offers both, theme/template chooses).</p>
+    <a class="pexels-search" href="https://www.pexels.com/search/salon%20staff%20group/" target="_blank">↗ Pexels: salon staff group</a> &nbsp;
+    <a class="pexels-search" href="https://www.pexels.com/search/barbershop%20barbers%20pose/" target="_blank">↗ Pexels: barbershop barbers pose</a>
+    <div class="candidates" style="margin-top:10px;">
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="salon team A current">
+        <div class="meta"><span class="id">3065209</span><span class="tag keep">CURRENT (salon)</span></div>
+      </div>
+      <div class="cand guess">
+        <img src="https://images.pexels.com/photos/1813346/pexels-photo-1813346.jpeg?auto=compress&cs=tinysrgb&w=800" loading="lazy" alt="salon team B barber guess">
+        <div class="meta"><span class="id">1813346</span><span class="tag guess">GUESS (barber)</span><div class="note">Aiming for barbers posing in shop.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ LOGO ═══ -->
+<div class="industry">
+  <div class="industry-head"><h2>Logo</h2><span class="slug">auto-generated</span></div>
+  <div class="logo-note">
+    <p style="margin:0 0 8px;"><strong>No stock logos.</strong> Generated client-side from business name + accent color as inline SVG data URI.</p>
+    <svg width="320" height="80" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="80" fill="#0B1120"/>
+      <text x="160" y="50" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="28" fill="#D4A853" letter-spacing="-.5">Acme Plumbing</text>
+      <line x1="80" y1="62" x2="240" y2="62" stroke="#D4A853" stroke-width="1.5" opacity=".5"/>
+    </svg>
+    <p style="margin:8px 0 0;font-size:.78rem;color:var(--muted);">↑ Implementation lands with the photo restructure.</p>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

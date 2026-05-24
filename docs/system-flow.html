@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polaris Point — Site Builder Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #050D1E;
+    --surface:   #0c1422;
+    --surface-2: #111c30;
+    --border:    rgba(91,141,239,.14);
+    --border-2:  rgba(91,141,239,.32);
+    --blue:      #5B8DEF;
+    --gold:      #D4A853;
+    --green:     #16a34a;
+    --amber:     #f59e0b;
+    --text:      #e2e8f0;
+    --muted:     #94a3b8;
+    --dim:       #475569;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; line-height: 1.55; }
+  body { padding: 48px 24px 80px; }
+  .page { max-width: 1080px; margin: 0 auto; }
+
+  header h1 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    margin: 0 0 6px;
+    letter-spacing: -.01em;
+  }
+  header h1 .accent { color: var(--gold); }
+  header .sub {
+    color: var(--muted);
+    font-size: .92rem;
+    margin: 0 0 6px;
+  }
+  header .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    margin: 0 0 32px;
+  }
+
+  /* Lane / phase headers */
+  .phase {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 40px 0 18px;
+  }
+  .phase .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .phase.you .badge      { background: rgba(212,168,83,.14); color: var(--gold);  border: 1px solid rgba(212,168,83,.35); }
+  .phase.deploy .badge   { background: rgba(22,163,74,.14);  color: var(--green); border: 1px solid rgba(22,163,74,.35);  }
+  .phase.client .badge   { background: rgba(91,141,239,.14); color: var(--blue);  border: 1px solid rgba(91,141,239,.35); }
+  .phase.visitor .badge  { background: rgba(245,158,11,.14); color: var(--amber); border: 1px solid rgba(245,158,11,.35); }
+  .phase h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .phase h2 small {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: .8rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    position: relative;
+  }
+  .card + .card { margin-top: 14px; }
+  .card.feat { border-color: var(--border-2); }
+  .card .step {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    margin-bottom: 4px;
+  }
+  .card h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: #fff;
+  }
+  .card p { margin: 0 0 8px; color: var(--muted); font-size: .86rem; }
+  .card ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: .85rem; }
+  .card ul li { margin: 3px 0; }
+  .card code, .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    color: var(--blue);
+    background: rgba(91,141,239,.08);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .pill {
+    display: inline-block;
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .pill.blue  { background: rgba(91,141,239,.16); color: var(--blue); }
+  .pill.gold  { background: rgba(212,168,83,.16); color: var(--gold); }
+  .pill.green { background: rgba(22,163,74,.16);  color: var(--green); }
+
+  /* Branches (parallel options inside YOU phase) */
+  .branches {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .branch {
+    background: var(--surface-2);
+    border: 1px dashed rgba(91,141,239,.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .branch .label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: .82rem;
+    color: var(--blue);
+    margin: 0 0 4px;
+  }
+  .branch p { margin: 0; font-size: .76rem; color: var(--muted); line-height: 1.5; }
+
+  /* Down arrow between steps */
+  .arrow {
+    width: 1px;
+    height: 22px;
+    background: linear-gradient(to bottom, transparent, var(--border-2), transparent);
+    margin: 6px auto;
+    position: relative;
+  }
+  .arrow::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: -3px;
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid var(--border-2);
+  }
+  .arrow.long { height: 36px; }
+  .arrow.with-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    background: none;
+    width: 100%;
+  }
+  .arrow.with-label .line {
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--border-2), var(--border-2));
+    position: relative;
+  }
+  .arrow.with-label .line::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: -3px;
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid var(--border-2);
+  }
+  .arrow.with-label .text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--gold);
+    background: var(--bg);
+    padding: 2px 10px;
+    margin-left: 12px;
+    border: 1px solid rgba(212,168,83,.3);
+    border-radius: 12px;
+  }
+
+  /* Split when deploy fans out */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .split .card { margin-top: 0; }
+
+  /* Code-style trace block */
+  .trace {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .76rem;
+    color: var(--muted);
+    margin: 10px 0 0;
+    line-height: 1.7;
+  }
+  .trace .k { color: var(--blue); }
+  .trace .v { color: var(--gold); }
+
+  /* Legend / footer */
+  .legend {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .legend h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: .85rem;
+    color: var(--gold);
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+  .legend ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: .82rem; }
+  .legend li { margin: 4px 0; }
+  .legend code { font-family: 'JetBrains Mono', monospace; color: var(--blue); font-size: .76rem; }
+
+  @media print {
+    body { background: white; color: #111; padding: 24px; }
+    .card, .branch, .trace { background: #fafafa; border-color: #ddd; color: #111; }
+    .card p, .card ul, .branch p, .legend ul, .legend li { color: #333; }
+    .arrow, .arrow.with-label .line { background: #aaa; }
+    .arrow.with-label .text { background: white; color: #333; border-color: #ccc; }
+    .phase.you .badge      { background: #fff7e0; color: #8a6500; border-color: #d4a853; }
+    .phase.deploy .badge   { background: #e6f4ea; color: #1e6a30; border-color: #16a34a; }
+    .phase.client .badge   { background: #e7efff; color: #2a51a8; border-color: #5b8def; }
+    .phase.visitor .badge  { background: #fff4dd; color: #8a5800; border-color: #f59e0b; }
+    code, .mono { color: #2a51a8; background: #eef2ff; }
+    h1, h2, h3 { color: #111; }
+    .legend h3 { color: #8a6500; }
+  }
+
+  @media (max-width: 720px) {
+    .branches { grid-template-columns: 1fr; }
+    .split { grid-template-columns: 1fr; }
+    .legend { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <h1>Polaris Point — <span class="accent">Site Builder Flow</span></h1>
+    <p class="sub">From lead pull to live chatbot conversation. Every box maps to one or more functions in the codebase.</p>
+    <p class="meta">build · deploy · live loop</p>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════
+       PHASE 1 — YOU (admin builder)
+       ════════════════════════════════════════════════════════════ -->
+  <div class="phase you">
+    <span class="badge">1</span>
+    <h2>You — in <code class="mono">admin/index.html</code>
+      <small>The internal builder. Pre-fills, configures, deploys.</small>
+    </h2>
+  </div>
+
+  <div class="card">
+    <span class="step">Step 1</span>
+    <h3>Pull a lead → click "Build Site"</h3>
+    <p><code>resetSiteBuilder()</code> wipes any stale state from a previous lead, then the intake auto-fills from <code>_leadsCache</code>: business name, phone, address, listing URL.</p>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="card">
+    <span class="step">Step 2</span>
+    <h3>Search &amp; Auto-Fill <span class="pill blue">Google Places</span></h3>
+    <p>One click pulls live data from Google: name · phone · hours · photos · reviews (now with <strong>real per-review star ratings</strong>) · place_id (saved for the weekly review refresh cron).</p>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="card feat">
+    <span class="step">Step 2.5 — fallbacks</span>
+    <h3>No online footprint? Use these.</h3>
+    <p>Three optional buttons that fill empty fields so you always have a presentable demo:</p>
+    <div class="branches">
+      <div class="branch">
+        <p class="label">Use Template Defaults</p>
+        <p>Loads the 5 baseline services from the template's config.js + generic hero/about copy.</p>
+      </div>
+      <div class="branch">
+        <p class="label">Compose with AI</p>
+        <p>POSTs to <code>/api/generate</code> (type <code>site_compose</code>), Haiku drafts services + hero + about + sample reviews.</p>
+      </div>
+      <div class="branch">
+        <p class="label">Use Generic Photos</p>
+        <p>Per-industry Pexels picker (5-8 curated photos). Pre-assigns hero/about roles.</p>
+      </div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="card">
+    <span class="step">Steps 3-5 — intake form</span>
+    <h3>Fill or refine the structured config</h3>
+    <ul>
+      <li><strong>Step 3 · Content</strong> — hero, about, services, reviews (with stars), FAQs, team, blog</li>
+      <li><strong>Step 4 · Notifications &amp; Reporting</strong> <span class="pill green">ALL TIERS</span> — lead email, CC, alert cadence, report recipient, owner notes</li>
+      <li><strong>Step 5 · Chatbot &amp; Brand Voice</strong> <span class="pill blue">ORBIT &amp; APEX</span> — persona, voice, custom greeting, never-say list, always-suggest list, brand differentiators</li>
+    </ul>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="card">
+    <span class="step">Step 6</span>
+    <h3>Generate config.js + set admin password</h3>
+    <p>Generator emits flat fields plus three nested blocks: <code>chatbot:</code>, <code>brand:</code>, <code>ops:</code>. Set the Site Admin Password (or click <strong>Generate</strong> for a memorable random one like <code>Polaris-7K3M-9X2</code>).</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       PHASE 2 — DEPLOY (one click, two endpoints)
+       ════════════════════════════════════════════════════════════ -->
+  <div class="arrow with-label"><div class="line"></div><span class="text">click "Deploy Live Site"</span></div>
+
+  <div class="phase deploy">
+    <span class="badge">2</span>
+    <h2>Deploy
+      <small>One click fans out to two endpoints, then converges on a success card.</small>
+    </h2>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <span class="step">POST /api/deploy</span>
+      <h3>Infra provisioning</h3>
+      <ul>
+        <li>Creates a new GitHub repo (<code>pp-&lt;slug&gt;</code>)</li>
+        <li>Copies template files + config</li>
+        <li>Creates Vercel project, triggers first build</li>
+        <li>Wires custom domain (if provided)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="step">POST /api/sites</span>
+      <h3>DB registration</h3>
+      <ul>
+        <li>Inserts row in <code>sites</code> table</li>
+        <li>Stores SHA-256 <code>admin_password_hash</code></li>
+        <li>Saves slug, template, vercel_url, repo_url, domain</li>
+        <li>Marks status <code>active</code>, owner = signed-in user</li>
+      </ul>
+    </div>
+  </div>
+  <div class="arrow long"></div>
+
+  <div class="card feat">
+    <span class="step">Success card</span>
+    <h3>Live site + handoff materials</h3>
+    <p>Shown once after deploy completes:</p>
+    <ul>
+      <li><strong>Visit Site ↗</strong> — public URL</li>
+      <li><strong>Site Admin ↗</strong> (gold, prominent) — where the client signs in</li>
+      <li><strong>Plaintext password</strong> — copy now, hash stored in DB</li>
+      <li><strong>GitHub Repo ↗</strong></li>
+    </ul>
+    <p style="margin-top: 10px; font-size: .78rem; color: var(--dim);">Also appears in the <strong>Sites</strong> tab as compact Site ↗ / Admin ↗ buttons per row.</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       PHASE 3 — CLIENT (per-site admin)
+       ════════════════════════════════════════════════════════════ -->
+  <div class="arrow with-label"><div class="line"></div><span class="text">hand off URL + password</span></div>
+
+  <div class="phase client">
+    <span class="badge">3</span>
+    <h2>Client — at <code class="mono">&lt;their-site&gt;/admin</code>
+      <small>Refines what you pre-filled. Same source of truth, different entry point.</small>
+    </h2>
+  </div>
+
+  <div class="card">
+    <span class="step">Auth</span>
+    <h3>Sign in</h3>
+    <p>Their per-site password (or your <code>MASTER_ADMIN_HASH</code> as a universal override). SHA-256 hash verified against <code>sites.admin_password_hash</code> via <code>/api/config?action=login</code>.</p>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="card">
+    <span class="step">13-section editor</span>
+    <h3>shared/site-admin.js</h3>
+    <p>The client can refine any field — content, photos, theme, AND the new sections you set during build:</p>
+    <ul>
+      <li><strong>1-11</strong> — Business info, photos, hero, stats, about, services, reviews, FAQs, areas, theme, team</li>
+      <li><strong>12 · Notifications &amp; Reporting</strong> — lead email, alert cadence, report recipient</li>
+      <li><strong>13 · Chatbot &amp; Brand Voice</strong> — persona, never-say, always-suggest, brand voice</li>
+    </ul>
+    <p style="margin-top: 10px;">Save → <code>PUT /api/config?slug=…</code> updates <code>sites.site_config</code> in the DB. Live within ~60 seconds (Vercel edge cache TTL).</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       PHASE 4 — VISITOR (live site)
+       ════════════════════════════════════════════════════════════ -->
+  <div class="arrow with-label"><div class="line"></div><span class="text">visitor lands on live site</span></div>
+
+  <div class="phase visitor">
+    <span class="badge">4</span>
+    <h2>Visitor — on the live site
+      <small>What the customer sees. Driven entirely by the saved config.</small>
+    </h2>
+  </div>
+
+  <div class="card">
+    <span class="step">Page render</span>
+    <h3>Static template + config injection</h3>
+    <p><code>shared/config-engine.js</code> reads <code>config.js</code> (or fetches from <code>/api/config</code> on DB-backed sites) and injects every field via <code>data-cfg</code> / <code>data-cfg-list</code> / <code>data-cfg-item-stars</code> directives.</p>
+    <p style="margin-top: 8px;">Reviews now render <strong>real per-review star ratings</strong> — the new <code>data-cfg-item-stars="rating"</code> directive draws N filled ★ + (5−N) empty ☆ from the rating field, and updates aria-label for screen readers.</p>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="card">
+    <span class="step">Chat bubble click <span class="pill blue">Orbit &amp; Apex only</span></span>
+    <h3>POST /api/site-chat</h3>
+    <div class="trace">
+<span class="k">message</span>  → <span class="v">"are you open Sunday?"</span><br>
+<span class="k">slug</span>     → <span class="v">"geronimo-plumbing"</span><br>
+<br>
+load <span class="v">sites.site_config</span> from DB<br>
+build prompt:<br>
+  <span class="k">=== TONE &amp; BEHAVIOR ===</span><br>
+  (persona + voice + neverSay + alwaysSuggest + notes)<br>
+  <span class="k">=== BUSINESS INFORMATION ===</span><br>
+  (name + services + hours + FAQs + brand voice)<br>
+<br>
+call <span class="v">Claude Haiku 4.5</span><br>
+limits: 600 in / 400 out tokens, 8-turn history<br>
+cost: ~$0.005 / reply
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       LEGEND
+       ════════════════════════════════════════════════════════════ -->
+  <div class="legend">
+    <div>
+      <h3>Source of truth</h3>
+      <ul>
+        <li><code>lib/services-pricing.js</code> — Launch $25 / Orbit $59 / Apex $99 ladder, bundles, builds</li>
+        <li><code>lib/tier-limits.js</code> — Beacon Spark / Beam / Lighthouse (Beacon Lite TBD)</li>
+        <li><code>sites.site_config</code> JSONB — per-site content, chatbot, brand, ops</li>
+        <li><code>sites.admin_password_hash</code> — SHA-256, set at deploy</li>
+        <li><code>MASTER_ADMIN_HASH</code> env var — Pete's universal override</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Backend endpoints touched</h3>
+      <ul>
+        <li><code>POST /api/deploy</code> — GitHub + Vercel</li>
+        <li><code>POST /api/sites</code> — DB registry insert</li>
+        <li><code>POST /api/config?action=login</code> — client auth</li>
+        <li><code>PUT /api/config?slug=…</code> — client save</li>
+        <li><code>POST /api/site-chat</code> — visitor chat → Haiku</li>
+        <li><code>POST /api/site-lead</code> — visitor form → owner email</li>
+        <li><code>POST /api/generate</code> — AI compose / blog / SEO copy</li>
+        <li><code>GET /api/places</code> — Google Places lookup</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
