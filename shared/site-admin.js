@@ -369,10 +369,13 @@
       var key = inp.getAttribute('data-key');
       // Skip list items (handled separately)
       if (key.indexOf('reviewsList_') === 0 || key.indexOf('faqsList_') === 0 || key.indexOf('servicesList_') === 0) return;
-      // Parse line-separated textareas into string arrays.
+      // Parse line-separated textareas into string arrays; checkboxes into bool.
+      var asType = inp.getAttribute('data-as');
       var value = inp.value;
-      if (inp.getAttribute('data-as') === 'lines') {
+      if (asType === 'lines') {
         value = (value || '').split(/\r?\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+      } else if (asType === 'bool') {
+        value = !!inp.checked;
       }
       // Dotted keys (e.g. "chatbot.persona") become nested objects so the
       // emitted config matches what /api/site-chat.js and /api/site-lead.js
@@ -737,6 +740,34 @@
     var sec13Note = el('p', '', { text: 'Defines how the AI popup chat speaks for your business — and the brand voice that shapes site copy. Only used on Orbit / Apex plans.' });
     sec13Note.style.cssText = 'font-size:.78rem;color:#94a3b8;margin:-4px 0 12px;';
     sec13.appendChild(sec13Note);
+
+    // Master enabled toggle. Mirrors the Step 5 builder toggle. When off,
+    // chatbot fields are dimmed/disabled and the saved config sets
+    // chatbot.enabled=false, which makes /api/site-chat refuse and the widget
+    // skip rendering. Brand voice stays editable since it shapes site copy
+    // regardless of whether the chatbot runs.
+    var botEnabledRow = el('div', '');
+    botEnabledRow.style.cssText = 'background:rgba(91,141,239,.06);border:1px solid rgba(91,141,239,.25);border-radius:8px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;';
+    var botCb = el('input', '', { type: 'checkbox', id: 'sa-chatbot-enabled', 'data-key': 'chatbot.enabled', 'data-as': 'bool' });
+    botCb.style.cssText = 'width:18px;height:18px;cursor:pointer;accent-color:#5B8DEF;';
+    if (bot.enabled === true) botCb.checked = true;
+    var botCbLabel = el('label', '', { text: 'Enable AI popup chat on this site' });
+    botCbLabel.setAttribute('for', 'sa-chatbot-enabled');
+    botCbLabel.style.cssText = 'color:#fff;font-size:.85rem;font-weight:600;cursor:pointer;flex:1;';
+    botEnabledRow.appendChild(botCb);
+    botEnabledRow.appendChild(botCbLabel);
+    sec13.appendChild(botEnabledRow);
+    // Wrap chatbot-only fields so we can dim them when the toggle is off.
+    var botWrap = el('div', '');
+    botWrap.style.transition = 'opacity .15s';
+    var applyBotEnabledStyle = function() {
+      var on = botCb.checked;
+      botWrap.style.opacity = on ? '1' : '.4';
+      botWrap.style.pointerEvents = on ? 'auto' : 'none';
+    };
+    botCb.addEventListener('change', applyBotEnabledStyle);
+    applyBotEnabledStyle();
+    sec13.appendChild(botWrap);
     var botRow = el('div', 'sa-field-row');
     addSelect(botRow, 'Persona', 'chatbot.persona', [
       { value: 'friendly', label: 'Friendly & warm' },
@@ -749,14 +780,14 @@
       { value: 'we', label: 'We / our team' },
       { value: 'they', label: 'They / the business' }
     ], bot.voice || 'we');
-    sec13.appendChild(botRow);
-    addField(sec13, 'Custom greeting', 'chatbot.greeting', 'text', bot.greeting || '');
-    addLinesField(sec13, 'Things the bot should NEVER say (one per line)', 'chatbot.neverSay', bot.neverSay,
+    botWrap.appendChild(botRow);
+    addField(botWrap, 'Custom greeting', 'chatbot.greeting', 'text', bot.greeting || '');
+    addLinesField(botWrap, 'Things the bot should NEVER say (one per line)', 'chatbot.neverSay', bot.neverSay,
       "Don't quote prices\nDon't promise same-day service");
-    addLinesField(sec13, 'Things the bot should ALWAYS suggest (one per line)', 'chatbot.alwaysSuggest', bot.alwaysSuggest,
+    addLinesField(botWrap, 'Things the bot should ALWAYS suggest (one per line)', 'chatbot.alwaysSuggest', bot.alwaysSuggest,
       'Suggest the booking link for appointments\nSuggest calling for emergencies');
-    addField(sec13, 'Extra tone notes (optional)', 'chatbot.notes', 'textarea', bot.notes || '');
-    // Brand voice subsection — shapes both site copy AND chatbot replies
+    addField(botWrap, 'Extra tone notes (optional)', 'chatbot.notes', 'textarea', bot.notes || '');
+    // Brand voice subsection — shapes site copy regardless of whether the chatbot runs
     var brandHeader = el('h3', '', { text: 'Brand voice' });
     brandHeader.style.cssText = 'font-size:.85rem;color:#fff;margin:18px 0 8px;padding-top:14px;border-top:1px solid rgba(91,141,239,.14);';
     sec13.appendChild(brandHeader);

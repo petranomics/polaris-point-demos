@@ -306,7 +306,10 @@
     var stack = el('div', { class: 'pp-fab-stack' });
     document.body.appendChild(stack);
     try { if (F.booking) initBooking(cfg, stack); } catch (e) { console.warn('[pp-automation] booking:', e); }
-    try { if (F.aiChat) initChat(cfg, stack); } catch (e) { console.warn('[pp-automation] chat:', e); }
+    // Skip chat entirely when the Step 5 toggle says no. Legacy sites with
+    // no chatbot block fall through (treated as enabled) for backward compat.
+    var chatOff = cfg.chatbot && cfg.chatbot.enabled === false;
+    try { if (F.aiChat && !chatOff) initChat(cfg, stack); } catch (e) { console.warn('[pp-automation] chat:', e); }
     try { if (F.leadAutoReply) initLeadAutoReply(cfg); } catch (e) { console.warn('[pp-automation] lead:', e); }
     if (!stack.children.length) stack.remove();
   }

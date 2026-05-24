@@ -141,6 +141,13 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Config load failed: ' + err.message });
   }
 
+  // Defense in depth — if the Step 5 chatbot toggle is explicitly off, refuse.
+  // The widget won't even render on properly-deployed sites, but a direct API
+  // hit (curl, scraping, embedded elsewhere) should still be honored.
+  if (cfg.chatbot && cfg.chatbot.enabled === false) {
+    return res.status(403).json({ error: 'Chatbot disabled for this site' });
+  }
+
   var ctx = buildContext(cfg);
   var persona = buildPersonaPreamble(cfg, ctx.name);
   var system =
