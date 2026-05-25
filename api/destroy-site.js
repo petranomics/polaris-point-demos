@@ -44,11 +44,17 @@ module.exports = async function handler(req, res) {
   var sql = neon(process.env.DATABASE_URL);
 
   // ── Step 0: verify senior user ───────────────────────────────────────────
-  // LOWER() on both sides — usernames may be stored with any casing but we
-  // always send the lowercase form from the frontend, and login normalises
-  // to lowercase too.
+  // LOWER() on both sides, and match against username / email / full_name
+  // so a session that holds a short-form identifier ("pete" instead of
+  // "peter@polarispoint.io") still resolves to the right user row.
   try {
-    var users = await sql`SELECT username, password_hash, role FROM users WHERE LOWER(username) = LOWER(${username}) LIMIT 1`;
+    var users = await sql`
+      SELECT username, password_hash, role FROM users
+      WHERE LOWER(username)  = LOWER(${username})
+         OR LOWER(email)     = LOWER(${username})
+         OR LOWER(full_name) = LOWER(${username})
+      LIMIT 1
+    `;
     if (!users.length) return res.status(403).json({ error: 'unknown user (session: ' + username + ')' });
     if (users[0].password_hash !== pwHash) return res.status(403).json({ error: 'bad password' });
     if (users[0].role !== 'senior') return res.status(403).json({ error: 'senior role required' });
