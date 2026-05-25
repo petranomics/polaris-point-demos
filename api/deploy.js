@@ -266,18 +266,34 @@ module.exports = async function handler(req, res) {
     var vercelData = await vercelResp.json().catch(function() { return {}; });
     var vercelProjectId = vercelData.id || null;
 
-    // Disable Vercel authentication so the site is publicly accessible
-    if (vercelProjectId) {
-      await vercelApi('/v9/projects/' + vercelProjectId, {
-        method: 'PATCH',
-        body: JSON.stringify({ ssoProtection: null, passwordProtection: null })
-      }).catch(function() {});
+    // FAIL FAST if Vercel project creation didn't succeed. Previous behaviour
+    // was to swallow the error and continue, which left orphan GitHub repos
+    // and DB rows pointing at 404 URLs. Now: roll back the GitHub repo we
+    // just created (best-effort) and return Vercel's actual error to the
+    // frontend so the user can diagnose (name conflict, quota, auth, etc.).
+    if (!vercelResp.ok || !vercelProjectId) {
+      console.error('Vercel project creation failed:', vercelResp.status, vercelData);
+      var vercelErr = (vercelData && vercelData.error && vercelData.error.message)
+        || (vercelData && vercelData.message)
+        || ('Vercel returned HTTP ' + vercelResp.status);
+      // Best-effort GitHub cleanup so we don't leave an orphan repo.
+      try {
+        await ghApi('https://api.github.com/repos/' + owner + '/' + newRepoName, { method: 'DELETE' });
+      } catch (cleanupErr) {
+        console.error('GitHub cleanup after Vercel fail failed:', cleanupErr.message);
+      }
+      return res.status(502).json({
+        error: 'Vercel project creation failed: ' + vercelErr,
+        detail: vercelData,
+        cleanup: 'GitHub repo deletion attempted'
+      });
     }
 
-    if (!vercelResp.ok) {
-      console.error('Vercel project creation warning:', vercelData.error || vercelData);
-      // Don't fail the whole deploy — the repo is created and Vercel can be linked manually
-    }
+    // Disable Vercel authentication so the site is publicly accessible
+    await vercelApi('/v9/projects/' + vercelProjectId, {
+      method: 'PATCH',
+      body: JSON.stringify({ ssoProtection: null, passwordProtection: null })
+    }).catch(function() {});
 
     // ── Step 6: Trigger first deployment ──────────────────────────────
     if (vercelProjectId) {
