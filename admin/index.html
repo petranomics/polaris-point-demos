@@ -7976,13 +7976,18 @@
     // After deletion, refreshes the Sites tab so the row disappears.
     async function destroySite(slug, displayName) {
       if (!slug) { alert('Slug missing — refresh and retry.'); return; }
-      var typed = prompt(
-        'PERMANENT — this will delete the GitHub repo, the Vercel project, and the DB row for:\n\n  ' +
-        (displayName || slug) + '\n\nType the slug exactly to confirm: ' + slug
-      );
-      if (!typed) return;
+      // Step 1: explain + prep clipboard. Cancel = abort.
+      if (!confirm(
+        'PERMANENT — this will delete the GitHub repo, the Vercel project, and the DB row.\n\n' +
+        'Site:  ' + (displayName || slug) + '\n' +
+        'Slug:  ' + slug + '\n\n' +
+        'Continue? You\'ll be asked to type the slug to confirm.'
+      )) return;
+      // Step 2: typed-slug check on its own — no other text to crowd it out.
+      var typed = prompt('Type the slug exactly to confirm destruction:\n\n' + slug);
+      if (typed === null) return; // user cancelled
       if (typed.trim().toLowerCase() !== slug.toLowerCase()) {
-        alert('Slug mismatch — destroy cancelled.');
+        alert('Slug mismatch — destroy cancelled.\n\nYou typed: ' + JSON.stringify(typed.trim()) + '\nExpected: ' + JSON.stringify(slug));
         return;
       }
       var pw = prompt('Re-enter your admin password to authorize the destroy:');
