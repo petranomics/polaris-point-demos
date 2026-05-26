@@ -733,9 +733,12 @@
     addField(sec12, 'Internal notes (never shown publicly)', 'ops.ownerNotes', 'textarea', ops.ownerNotes || '');
     wrap.appendChild(sec12);
 
-    // 13. Chatbot & Brand Voice (Orbit / Apex tiers)
+    // 13. Chatbot & Brand Voice — only rendered if the chatbot was enabled
+    // at deploy time. The build-flow toggle sets chatbot.enabled=true; sites
+    // that didn't opt in (Launch-tier clients) never see this section.
     var bot = config.chatbot || {};
     var brand = config.brand || {};
+    if (bot.enabled === true) {
     var sec13 = makeSection('Chatbot & Brand Voice');
     var sec13Note = el('p', '', { text: 'Defines how the AI popup chat speaks for your business — and the brand voice that shapes site copy. Only used on Orbit / Apex plans.' });
     sec13Note.style.cssText = 'font-size:.78rem;color:#94a3b8;margin:-4px 0 12px;';
@@ -796,6 +799,7 @@
       'Family-owned since 2008\n24/7 emergency service\nLifetime warranty');
     addField(sec13, 'Brand voice notes', 'brand.voiceNotes', 'textarea', brand.voiceNotes || '');
     wrap.appendChild(sec13);
+    } // end chatbot.enabled gate
 
     // Sticky save bar
     var bar = el('div', 'sa-save-bar');
