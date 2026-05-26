@@ -67,13 +67,22 @@ module.exports = async function handler(req, res) {
   };
 
   // Vercel API helper
+  // Optional team scope. If VERCEL_TEAM_ID is set, append it to every API
+  // call so team-scoped tokens land their projects in the right team.
+  // Without this, a token created at the personal level can't create
+  // projects under a team — Vercel returns "Not authorized".
+  var vercelTeamId = process.env.VERCEL_TEAM_ID || '';
   var vercelApi = function(path, options) {
     options = options || {};
     options.headers = Object.assign({
       'Authorization': 'Bearer ' + vercelToken,
       'Content-Type': 'application/json'
     }, options.headers || {});
-    return fetch('https://api.vercel.com' + path, options);
+    var url = 'https://api.vercel.com' + path;
+    if (vercelTeamId) {
+      url += (path.indexOf('?') === -1 ? '?' : '&') + 'teamId=' + encodeURIComponent(vercelTeamId);
+    }
+    return fetch(url, options);
   };
 
   var createdRepo = false;

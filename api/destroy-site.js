@@ -100,9 +100,13 @@ module.exports = async function handler(req, res) {
   }
 
   // ── Step 2: delete Vercel project ───────────────────────────────────────
+  // Team scope mirrors deploy.js: if VERCEL_TEAM_ID is set, scope the call
+  // to the team so we hit the right project namespace.
   if (process.env.VERCEL_TOKEN) {
     try {
-      var vResp = await fetch('https://api.vercel.com/v9/projects/' + repoName, {
+      var vTeam = process.env.VERCEL_TEAM_ID || '';
+      var vUrl = 'https://api.vercel.com/v9/projects/' + repoName + (vTeam ? '?teamId=' + encodeURIComponent(vTeam) : '');
+      var vResp = await fetch(vUrl, {
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + process.env.VERCEL_TOKEN }
       });
