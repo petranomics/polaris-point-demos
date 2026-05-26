@@ -5121,9 +5121,14 @@
             return;
           }
           var u = res.d;
+          // Always overwrite — auto-heals a stale session that might be
+          // holding an old username from before a DB rename (e.g. "pete"
+          // before it became "peter@polarispoint.io"). Also store email so
+          // future endpoints have a stable second identifier.
           sessionStorage.setItem('pp_admin', u.role);
           sessionStorage.setItem('pp_user', u.username);
           sessionStorage.setItem('pp_fullname', u.full_name);
+          if (u.email) sessionStorage.setItem('pp_email', u.email);
           showAdmin(u.role, u.full_name, u.username);
         })
         .catch(function() { err.textContent = 'Network error — try again'; err.style.display = 'block'; });
