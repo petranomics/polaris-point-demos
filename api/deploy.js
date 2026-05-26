@@ -181,7 +181,10 @@ module.exports = async function handler(req, res) {
       content: Buffer.from(body.config).toString('base64')
     });
 
-    // admin/index.html
+    // admin/index.html — sets BOTH PP_DEMO (template-name display) and
+    // PP_CLIENT_SLUG (switches shared/site-admin.js from demo-mode auth to
+    // DB-backed /api/config?action=login). Without PP_CLIENT_SLUG, the per-
+    // client password we just stored never gets checked.
     var adminHtml = '<!doctype html>\n<html lang="en">\n<head>\n' +
       '  <meta charset="UTF-8">\n' +
       '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
@@ -192,7 +195,8 @@ module.exports = async function handler(req, res) {
       '  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n' +
       '  <link rel="stylesheet" href="/shared/site-admin.css">\n' +
       '</head>\n<body>\n' +
-      '  <script>window.PP_DEMO = ' + JSON.stringify(slug) + ';</script>\n' +
+      '  <script>window.PP_DEMO = ' + JSON.stringify(template) + ';</script>\n' +
+      '  <script>window.PP_CLIENT_SLUG = ' + JSON.stringify(slug) + ';</script>\n' +
       '  <script src="/config.js"></script>\n' +
       '  <div id="adminRoot"></div>\n' +
       '  <script src="/shared/site-admin.js"></script>\n' +
@@ -203,10 +207,16 @@ module.exports = async function handler(req, res) {
       content: Buffer.from(adminHtml).toString('base64')
     });
 
-    // vercel.json
+    // vercel.json — rewrites proxy /shared/* + /api/* back to polarispoint.io
+    // so the deployed pp-<slug>.vercel.app site doesn't need to bundle the
+    // shared JS/CSS or every backend endpoint. One source of truth for both.
     var vercelJson = JSON.stringify({
       cleanUrls: true,
-      trailingSlash: false
+      trailingSlash: false,
+      rewrites: [
+        { source: '/shared/:path*', destination: 'https://polarispoint.io/shared/:path*' },
+        { source: '/api/:path*',    destination: 'https://polarispoint.io/api/:path*' }
+      ]
     }, null, 2);
 
     filesToWrite.push({
