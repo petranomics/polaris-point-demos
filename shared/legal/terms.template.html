@@ -1,0 +1,91 @@
+<!--
+  Polaris Point — Terms of Service template.
+  See privacy.template.html for the substitution model + disclaimer.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service — {{businessName}}</title>
+<meta name="robots" content="index,follow">
+<style>
+  :root { --ink: #1f2937; --muted: #475569; --rule: #e5e7eb; --accent: #2563eb; --bg: #ffffff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.65; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  header { padding-bottom: 18px; border-bottom: 1px solid var(--rule); margin-bottom: 28px; }
+  header .biz { font-size: .82rem; font-weight: 600; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+  header h1 { font-size: 1.9rem; margin: 4px 0 6px; }
+  header .meta { font-size: .85rem; color: var(--muted); }
+  h2 { font-size: 1.15rem; margin: 28px 0 8px; }
+  p, ul { margin: 0 0 12px; }
+  ul { padding-left: 22px; }
+  a { color: var(--accent); }
+  footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--muted); }
+  .back { display: inline-block; margin-bottom: 24px; font-size: .85rem; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="/">&larr; Back to {{businessNameShort}}</a>
+<header>
+  <div class="biz">{{businessName}}</div>
+  <h1>Terms of Service</h1>
+  <div class="meta">Effective {{effectiveDate}} · Last updated {{effectiveDate}}</div>
+</header>
+
+<p>These Terms of Service ("Terms") govern your access to and use of the {{businessName}} website ("Site") and any related services we provide. By using the Site, you agree to these Terms. If you do not agree, do not use the Site.</p>
+
+<h2>1. Use of the Site</h2>
+<p>You may use the Site for lawful purposes only. You agree not to:</p>
+<ul>
+  <li>Violate any applicable law or regulation.</li>
+  <li>Submit false, misleading, or harmful information.</li>
+  <li>Interfere with, disrupt, or attempt to gain unauthorized access to the Site or our systems.</li>
+  <li>Copy, scrape, or systematically extract content from the Site without our written permission.</li>
+  <li>Use the Site to send unsolicited communications, advertising, or spam.</li>
+</ul>
+
+<h2>2. Service Inquiries and Bookings</h2>
+<p>Submitting a contact form or service inquiry through the Site does not create a binding service agreement. We will respond to discuss the work, scope, and pricing, and a separate agreement may apply to any services we perform.</p>
+
+<h2>3. Intellectual Property</h2>
+<p>All content on the Site — including text, images, logos, code, and design — is owned by {{businessName}} or its licensors and is protected by intellectual property laws. You may not reproduce, distribute, modify, or create derivative works without our prior written consent.</p>
+
+<h2>4. User-Submitted Content</h2>
+<p>If you submit reviews, comments, or other content to us, you grant {{businessName}} a non-exclusive, royalty-free, worldwide license to use, display, and reproduce that content in connection with our business. You are responsible for ensuring you have the right to submit anything you send us.</p>
+
+<h2>5. Disclaimer of Warranties</h2>
+<p>The Site is provided "AS IS" and "AS AVAILABLE", without warranties of any kind, either express or implied. We do not warrant that the Site will be uninterrupted, error-free, or free of viruses or other harmful components. We disclaim all warranties to the fullest extent permitted by law, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+
+<h2>6. Limitation of Liability</h2>
+<p>To the maximum extent permitted by law, {{businessName}} and its owners, employees, and agents are not liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, data, or goodwill — arising from your use of the Site, even if we have been advised of the possibility of such damages. Our total liability for any claim related to the Site will not exceed one hundred dollars (US$100).</p>
+
+<h2>7. Indemnification</h2>
+<p>You agree to indemnify, defend, and hold harmless {{businessName}}, its owners, employees, and agents from any claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or related to (a) your use of the Site, (b) your violation of these Terms, or (c) your violation of any rights of another party.</p>
+
+<h2>8. Third-Party Links and Services</h2>
+<p>The Site may contain links to third-party websites or services that we do not own or control. We are not responsible for the content, policies, or practices of those sites. Your use of third-party sites is at your own risk.</p>
+
+<h2>9. Termination</h2>
+<p>We may suspend or terminate your access to the Site at any time, with or without notice, for any reason — including violation of these Terms. Provisions of these Terms that by their nature should survive termination will survive (including intellectual property, disclaimers, limitations of liability, and indemnification).</p>
+
+<h2>10. Governing Law and Disputes</h2>
+<p>These Terms are governed by the laws of the State of {{jurisdiction}}, without regard to its conflict-of-laws principles. You agree that any dispute arising from these Terms or the Site will be brought exclusively in the state or federal courts located in {{jurisdiction}}, and you consent to personal jurisdiction there.</p>
+
+<h2>11. Changes to These Terms</h2>
+<p>We may update these Terms at any time. The updated version will be posted on this page with a new "Last updated" date. Material changes will be highlighted when feasible. Your continued use of the Site after changes are posted constitutes acceptance of the updated Terms.</p>
+
+<h2>12. Contact</h2>
+<p>Questions about these Terms? Contact us at <a href="mailto:{{privacyEmail}}">{{privacyEmail}}</a> or {{businessAddress}}.</p>
+
+<footer>
+  &copy; {{currentYear}} {{businessName}}. All rights reserved. &nbsp;|&nbsp;
+  <a href="/privacy">Privacy Policy</a> &nbsp;|&nbsp;
+  <a href="/accessibility">Accessibility</a>
+</footer>
+</div>
+</body>
+</html>

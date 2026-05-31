@@ -224,6 +224,48 @@ module.exports = async function handler(req, res) {
       content: Buffer.from(vercelJson).toString('base64')
     });
 
+    // ── Step 3.5: Render the legal pages (privacy / terms / accessibility) ──
+    // Templates live in shared/legal/*.template.html and use {{placeholders}}
+    // that we substitute from body.legal. They're written as static HTML into
+    // the new repo at /privacy, /terms, /accessibility so the deployed site
+    // owns its own legal copy and isn't dependent on polarispoint.io for them.
+    var legal = body.legal || {};
+    var legalDefaults = {
+      businessName: legal.businessName || 'Your Business',
+      businessNameShort: legal.businessNameShort || legal.businessName || 'this business',
+      businessAddress: legal.businessAddress || '',
+      privacyEmail: legal.privacyEmail || 'contact@example.com',
+      jurisdiction: legal.jurisdiction || 'Texas',
+      effectiveDate: legal.effectiveDate || new Date().toISOString().slice(0, 10),
+      currentYear: legal.currentYear || String(new Date().getFullYear())
+    };
+    function renderLegal(templateText) {
+      return templateText.replace(/\{\{(\w+)\}\}/g, function(match, key) {
+        return Object.prototype.hasOwnProperty.call(legalDefaults, key) ? legalDefaults[key] : match;
+      });
+    }
+    var fs = require('fs');
+    var path = require('path');
+    var legalDir = path.join(__dirname, '..', 'shared', 'legal');
+    [
+      { name: 'privacy', file: 'privacy.template.html' },
+      { name: 'terms', file: 'terms.template.html' },
+      { name: 'accessibility', file: 'accessibility.template.html' }
+    ].forEach(function(p) {
+      try {
+        var tpl = fs.readFileSync(path.join(legalDir, p.file), 'utf8');
+        var rendered = renderLegal(tpl);
+        filesToWrite.push({
+          path: p.name + '.html',
+          content: Buffer.from(rendered).toString('base64')
+        });
+      } catch (e) {
+        console.error('Legal template missing:', p.file, e.message);
+        // Continue without that page — deployment shouldn't fail because of a
+        // template read; the footer link would just 404, which is recoverable.
+      }
+    });
+
     // ── Step 4: Write all files to the new repo ─────────────────────────
     // GitHub Contents API requires sequential commits (each needs the latest SHA).
     // To parallelize, we batch files that don't collide. But the simplest reliable

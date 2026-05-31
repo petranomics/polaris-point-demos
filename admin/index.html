@@ -2160,9 +2160,48 @@
         </div>
       </div>
 
-      <!-- Step 6: Generate & Preview -->
+      <!-- Step 6: Legal — universal across all tiers. Drives auto-generated
+           privacy / terms / accessibility pages written by api/deploy.js
+           from templates under shared/legal/. Defaults are conservative;
+           clients can hand off to a lawyer for review later. -->
       <div class="intake-section">
-        <h3><span class="step-num">6</span> Generate</h3>
+        <h3><span class="step-num">6</span> Legal &amp; Disclosures</h3>
+        <p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Auto-generates <code style="color:#5B8DEF;">/privacy</code>, <code style="color:#5B8DEF;">/terms</code>, and <code style="color:#5B8DEF;">/accessibility</code> pages at deploy time using these values. Footer links to all three. Required on every site.</p>
+
+        <div class="intake-row">
+          <div class="intake-field">
+            <label>Legal business name</label>
+            <input type="text" id="intLegalName" placeholder="Defaults to business name if blank (e.g. 'Lone Star Plumbing LLC')">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">The full registered entity name. Used on legal pages and the copyright line.</p>
+          </div>
+          <div class="intake-field">
+            <label>Privacy contact email</label>
+            <input type="email" id="intPrivacyEmail" placeholder="Defaults to business email">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">Where users send privacy / accessibility requests.</p>
+          </div>
+        </div>
+
+        <div class="intake-row" style="margin-top:6px;">
+          <div class="intake-field">
+            <label>Governing state / jurisdiction</label>
+            <input type="text" id="intLegalJurisdiction" placeholder="e.g. Texas">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">State whose laws govern the Terms of Service. Usually where the business is registered.</p>
+          </div>
+          <div class="intake-field">
+            <label>Effective date</label>
+            <input type="date" id="intLegalEffectiveDate">
+            <p style="font-size:.68rem;color:#475569;margin:6px 0 0;">Date shown on each legal page. Defaults to today.</p>
+          </div>
+        </div>
+
+        <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:10px 14px;margin-top:12px;">
+          <p style="font-size:.72rem;color:#f59e0b;margin:0;line-height:1.5;"><strong>Reminder:</strong> the generated pages are reasonable starting points, not legal advice. Recommend the client have a lawyer review before significant traffic — especially e-commerce, regulated industries, or large-scale data collection.</p>
+        </div>
+      </div>
+
+      <!-- Step 7: Generate & Preview -->
+      <div class="intake-section">
+        <h3><span class="step-num">7</span> Generate</h3>
         <div class="btn-row" style="margin-top:0;">
           <button class="btn-export" onclick="generateConfig()">Generate config.js</button>
           <button class="btn-export secondary senior-only-inline" id="btnCopyConfig" onclick="copyConfig()" style="display:none;">Copy to Clipboard</button>
@@ -4640,7 +4679,11 @@
         '  ctaButton: ' + JSON.stringify('Call ' + phone) + ',\n\n' +
         '  // === FOOTER ===\n' +
         '  footerDescription: ' + JSON.stringify(bizName + '. Licensed, insured, and committed to getting the job done right.') + ',\n' +
-        '  footerLegal: ' + JSON.stringify('&copy; ' + new Date().getFullYear() + ' ' + bizName + '. All rights reserved.' + (license ? ' &middot; ' + license : '')) + ',\n' +
+        '  footerLegal: ' + JSON.stringify(
+          '&copy; ' + new Date().getFullYear() + ' ' + bizName + '. All rights reserved.' +
+          (license ? ' &middot; ' + license : '') +
+          ' &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/accessibility">Accessibility</a>'
+        ) + ',\n' +
         '  footerServices: ' + JSON.stringify(services.map(function(s) { return s.name; })) + ',\n\n' +
         '  // === FEATURE FLAGS ===\n' +
         '  features: {\n' +
@@ -4762,6 +4805,13 @@
         '    leadAlertCadence: ' + JSON.stringify(val('intLeadAlertCadence') || 'instant') + ',\n' +
         '    reportEmail: ' + JSON.stringify(val('intReportEmail') || val('intLeadEmail') || val('intEmail')) + ',\n' +
         '    ownerNotes: ' + JSON.stringify(val('intOwnerNotes')) + '\n' +
+        '  },\n\n' +
+        '  // === LEGAL (drives generated /privacy, /terms, /accessibility) ===\n' +
+        '  legal: {\n' +
+        '    name: ' + JSON.stringify(val('intLegalName') || val('intBizName')) + ',\n' +
+        '    privacyEmail: ' + JSON.stringify(val('intPrivacyEmail') || val('intEmail')) + ',\n' +
+        '    jurisdiction: ' + JSON.stringify(val('intLegalJurisdiction')) + ',\n' +
+        '    effectiveDate: ' + JSON.stringify(val('intLegalEffectiveDate') || new Date().toISOString().slice(0,10)) + '\n' +
         '  }\n' +
         '};\n';
 
@@ -4878,6 +4928,22 @@
       status.style.display = 'block';
       status.innerHTML = '<p style="color:#5B8DEF;font-size:.85rem;">Creating repo &amp; deploying to Vercel...</p>';
 
+      // Build a structured legal payload so /api/deploy can render the
+      // shared/legal/*.template.html files into static pages in the new repo.
+      // Mirrors what the generated config.legal block holds.
+      var bizNameVal = (document.getElementById('intBizName').value || '').trim() || slug;
+      var legalPayload = {
+        businessName: (document.getElementById('intLegalName').value || '').trim() || bizNameVal,
+        businessNameShort: (document.getElementById('intBizShort').value || '').trim() || bizNameVal,
+        businessAddress: (document.getElementById('intAddress').value || '').trim() || '',
+        privacyEmail: (document.getElementById('intPrivacyEmail').value || '').trim() ||
+                      (document.getElementById('intEmail').value || '').trim() || 'contact@example.com',
+        jurisdiction: (document.getElementById('intLegalJurisdiction').value || '').trim() || 'Texas',
+        effectiveDate: (document.getElementById('intLegalEffectiveDate').value || '').trim() ||
+                       new Date().toISOString().slice(0, 10),
+        currentYear: String(new Date().getFullYear())
+      };
+
       try {
         var deployResp = await fetch('/api/deploy', {
           method: 'POST',
@@ -4886,7 +4952,8 @@
             slug: slug,
             template: template,
             config: window._generatedConfig,
-            domain: domain
+            domain: domain,
+            legal: legalPayload
           })
         });
         var data = await deployResp.json();

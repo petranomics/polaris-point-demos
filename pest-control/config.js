@@ -174,7 +174,7 @@ window.SITE_CONFIG = {
   // === FOOTER ===
   footerDescription: "Locally owned and operated in Austin, Texas since 2005. Protecting homes and businesses from pests with safe, effective, eco-friendly solutions.",
   footerServices: ["Termite Control", "Ant Extermination", "Roach Control", "Mosquito Control", "Rodent Control", "Bed Bug Treatment"],
-  footerLegal: "&copy; 2026 Pete's Termite & Pest Control. All rights reserved. | <a href=\"#\">Privacy Policy</a> | <a href=\"#\">Terms of Service</a> | TPCL #12345",
+  footerLegal: "&copy; 2026 Pete's Termite & Pest Control. All rights reserved. &middot; TPCL #12345",
 
   // === CTA BANNER (not present in current design but reserved for future use) ===
   heroImage: "https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg?auto=compress&cs=tinysrgb&w=1400",
