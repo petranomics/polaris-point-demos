@@ -1121,7 +1121,7 @@
   <p style="text-align:center;margin-bottom:8px;"><button onclick="signOut()" style="background:none;border:none;color:#64748b;font-size:.7rem;cursor:pointer;text-decoration:underline;">Sign Out</button></p>
   <div class="admin-tabs">
     <button class="admin-tab active" onclick="switchTab('deck')">Sales Deck</button>
-    <button class="admin-tab senior-only" onclick="switchTab('outreach')">1. Find Prospects</button>
+    <button class="admin-tab" onclick="switchTab('outreach')">1. Find Prospects</button>
     <button class="admin-tab" onclick="switchTab('leads')">2. My Leads</button>
     <button class="admin-tab" onclick="switchTab('intake')">3. Build Site</button>
     <button class="admin-tab" onclick="switchTab('offers')">Offers</button>
@@ -3418,8 +3418,10 @@
       // Sub-section names route to their parent tab + that sub.
       if (MARKETING_SUBS.indexOf(tab) !== -1) { switchTab('marketing'); switchSub(tab); return; }
       if (OPS_SUBS.indexOf(tab) !== -1) { switchTab('ops'); switchSub(tab); return; }
-      // Senior-only parents
-      if ((tab === 'outreach' || tab === 'ops') && currentRole !== 'senior') return;
+      // Senior-only parents. Outreach (Find Prospects) is open to juniors —
+      // individual destructive controls inside the tab remain senior-only via
+      // the .senior-only CSS classes on those elements.
+      if (tab === 'ops' && currentRole !== 'senior') return;
 
       document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.admin-tab').forEach(function(el) { el.classList.remove('active'); });
